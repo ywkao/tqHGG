@@ -1,8 +1,8 @@
 #
 ## ref: https://hiltmon.com/blog/2013/07/03/a-simple-c-plus-plus-project-structure/
 #
-CC := g++ # This is the main compiler
 # CC := clang --analyze # and comment out the linker last line for sanity
+CC := g++ # This is the main compiler
 SRCDIR := src
 BUILDDIR := build
 TARGET := bin/runner
@@ -11,7 +11,7 @@ SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -g # -Wall
-LIB := -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
+#LIB := -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
 INC := -I include
 
 $(TARGET): $(OBJECTS)
