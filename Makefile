@@ -1,6 +1,11 @@
-#
-## ref: https://hiltmon.com/blog/2013/07/03/a-simple-c-plus-plus-project-structure/
-#
+################################################################################## 
+# 26. Nov. 2018                                                                  #
+# Compiler: Yu-Wei Kao                                                           #
+# References:                                                                    # 
+# 1) https://hiltmon.com/blog/2013/07/03/a-simple-c-plus-plus-project-structure/ #
+# 2) http://mropengate.blogspot.com/2018/01/makefile.html                        # 
+##################################################################################
+
 # CC := clang --analyze # and comment out the linker last line for sanity
 CC := g++ # This is the main compiler
 SRCDIR := src
