@@ -5,3 +5,5 @@ lib/*
 # Ignore any executables
 bin/*
 
+# Ignore any plots
+plots/*
