@@ -14,6 +14,7 @@ int main(){
     TH1D  *hist_num_bjets = new TH1D("hist_num_bjets", "hist_num_bjets", 10, 0, 10);
     TH1D  *hist_wboson_mass_spectrum = new TH1D("hist_wboson_mass_spectrum", "hist_wboson_mass_spectrum", 50, 55, 105);
     TH1D  *hist_diphoton_mass = new TH1D("hist_diphoton_mass", "hist_diphoton_mass", 50, 100, 150);
+    TH1D  *hist_jet_pt = new TH1D("hist_jet_pt", "hist_jet_pt", 50, 0, 1000);
     // Declaration of leaf types
     Int_t jets_size=0;
     std::vector<float> *JetInfo_Pt=0;
@@ -50,7 +51,14 @@ int main(){
     for(int ientry=0; ientry<nentries; ientry++){
         flashggStdTree->GetEntry(ientry);//load data
         if((ientry+1)%100==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
+        //##################################################//
+        //##########     Physical Observables     ##########//
+        //##################################################//
+        for(int i=0; i<jets_size; i++){
+            hist_jet_pt->Fill(JetInfo_Pt->at(i));
+        }
 
+        /*
         //##################################################//
         //##########     W-boson Mass Spectrum    ##########//
         //##################################################//
@@ -95,30 +103,39 @@ int main(){
         TLorentzVector best_dijet_pair = vec_nonbtagged_jets[id_jet1] + vec_nonbtagged_jets[id_jet2];
         dijet_invariant_mass = best_dijet_pair.M();
         hist_wboson_mass_spectrum->Fill(dijet_invariant_mass);
+        */
 
+        /*
         //##################################################//
         //##########    DiPhoton Mass Spectrum    ##########//
         //##################################################//
         if(DiPhoInfo_mass>0) hist_diphoton_mass->Fill(DiPhoInfo_mass);
+        */
     }// End of event loop.
 
 
     //##################################################//
     //##############     Make Plots !!    ##############//
     //##################################################//
+    hist_jet_pt->Draw();
+    c1->SaveAs("plots/hist_jet_pt.png");
     //hist_num_bjets->Draw();
+    /*
     hist_wboson_mass_spectrum->Draw();
     hist_wboson_mass_spectrum->SetTitle("W boson mass spectrum");
     hist_wboson_mass_spectrum->SetXTitle("dijet_invariant_mass [GeV / c^{2}]");
     hist_wboson_mass_spectrum->SetYTitle("Entries / 1 GeV");
     hist_wboson_mass_spectrum->GetYaxis()->SetTitleOffset(1.4);
-    c1->SaveAs("hist_wboson_mass_spectrum.png");
+    c1->SaveAs("plots/hist_wboson_mass_spectrum.png");
+    */
 
+    /*
     hist_diphoton_mass->Draw();
     hist_diphoton_mass->SetTitle("Diphoton mass spectrum");
     hist_diphoton_mass->SetXTitle("DiPhoInfo_mass [GeV / c^{2}]");
     hist_diphoton_mass->SetYTitle("Entries / 1 GeV");
     hist_diphoton_mass->GetYaxis()->SetTitleOffset(1.4);
-    c1->SaveAs("hist_diphoton_mass.png");
+    c1->SaveAs("plots/hist_diphoton_mass.png");
+    */
     return 1;
 }
