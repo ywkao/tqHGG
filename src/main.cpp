@@ -9,15 +9,26 @@
 //ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X?fbclid=IwAR0QAekcVDaD2SL6lI7xFXkHxQigtkpuPiUHiP14t_i9pKvwfZ__v92MYiE
 
 int main(){
-    TFile *fin = TFile::Open("/wk_cms2/youying/public/forYuWei/tthTest.root");
+    //TString *path = "/wk_cms2/youying/public/forYuWei/tthTest.root";
+    //const char *path = "/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root";
+    //TFile *fin  = TFile::Open(path);
+    //TFile *fin  = TFile::Open("/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root");
+    TFile *fin  = TFile::Open("/wk_cms2/youying/public/forYuWei/tthTest.root");
+    TFile *fout = new TFile("plots/hist_tth.root", "RECREATE");
     TTree *flashggStdTree = (TTree*)fin->Get("flashggNtuple/flashggStdTree");
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
 
     //==================//
     //--- histograms ---//
     //==================//
+    TH1D  *hist_num_jets = new TH1D("hist_num_jets", "hist_num_jets", 20, 0, 20);
+    TH1D  *hist_num_btagged_jets = new TH1D("hist_num_btagged_jets", "hist_num_btagged_jets", 10, 0, 10);
     TH1D  *hist_num_nonbtagged_jets = new TH1D("hist_num_nonbtagged_jets", "hist_num_nonbtagged_jets", 20, 0, 20);
     TH1D  *hist_wboson_mass_spectrum = new TH1D("hist_wboson_mass_spectrum", "hist_wboson_mass_spectrum", 50, 55, 105);
+    TH1D  *hist_diphoton_mass_spectrum = new TH1D("hist_diphoton_mass_spectrum", "hist_diphoton_mass_spectrum", 50, 100, 150);
+    TH1D  *hist_bjet_pt = new TH1D("hist_bjet_pt", "hist_bjet_pt", 50, 0, 1000);
+    TH1D  *hist_jet1_pt = new TH1D("hist_jet1_pt", "hist_jet1_pt", 50, 0, 1000);
+    TH1D  *hist_jet2_pt = new TH1D("hist_jet2_pt", "hist_jet2_pt", 50, 0, 1000);
     TH1D  *hist_cjet_pt = new TH1D("hist_cjet_pt", "hist_cjet_pt", 50, 0, 1000);
     TH1D  *hist_inv_mass_tch = new TH1D("hist_inv_mass_tch", "hist_inv_mass_tch", 50, 0, 500);
     TH1D  *hist_inv_mass_tbw = new TH1D("hist_inv_mass_tbw", "hist_inv_mass_tbw", 50, 0, 500);
@@ -102,12 +113,14 @@ int main(){
             if(JetInfo_pfDeepCSVJetTags_probb->at(i)+JetInfo_pfDeepCSVJetTags_probbb->at(i) >= pfDeepCSVJetTags_tight){
                 bjetindex = i;
                 leading_bjet.SetPtEtaPhiE(JetInfo_Pt->at(i), JetInfo_Eta->at(i), JetInfo_Phi->at(i), JetInfo_Energy->at(i));
+                num_bjet+=1;
             }
-            num_bjet+=1;
-            if(num_bjet==2) break;
+            //if(num_bjet==2) break;
         }
+        hist_num_btagged_jets->Fill(num_bjet);
         if(bjetindex==-1) continue;
-        //if(num_bjet!=1)   continue;
+        if(num_bjet!=1)   continue;
+        hist_bjet_pt->Fill(leading_bjet.Pt());
         //=== Store rest jets ===//
         int num_nonbtagged_jets=0;
         for(int i=0; i<jets_size; i++){
@@ -121,6 +134,7 @@ int main(){
         }
         if(num_nonbtagged_jets<3) continue;
         hist_num_nonbtagged_jets->Fill(num_nonbtagged_jets);
+        hist_num_jets->Fill(num_bjet+num_nonbtagged_jets);
         //=== Chi-2 sorting ===//
         int wjetindices[2]={0};//indices in non-btagged vector
         double dijet_invariant_mass, chi2, chi2_min=9999;
@@ -136,6 +150,10 @@ int main(){
         best_dijet_pair = vec_nonbtagged_jets[wjetindices[0]] + vec_nonbtagged_jets[wjetindices[1]];
         dijet_invariant_mass = best_dijet_pair.M();
         hist_wboson_mass_spectrum->Fill(dijet_invariant_mass);
+        hist_jet1_pt->Fill(vec_nonbtagged_jets[wjetindices[0]].Pt());
+        hist_jet2_pt->Fill(vec_nonbtagged_jets[wjetindices[1]].Pt());
+        //=== Diphoton inv mass ===//
+        hist_diphoton_mass_spectrum->Fill(DiPhoInfo_mass);
         //=== Determine cjet ===//
         int cjetindex=-1;//indices in non-btagged vector
         TLorentzVector leading_cjet;
@@ -161,22 +179,95 @@ int main(){
     //##############     Make Plots !!    ##############//
     //##################################################//
     printf("Start making plots!\n");
-    //hist->Draw();
-    //c1->SaveAs("plots/hist.png");
+    //------------------------------
+    hist_num_jets->Draw();
+    hist_num_jets->SetTitle("Multiplicity of jets");
+    hist_num_jets->SetXTitle("# of jets");
+    hist_num_jets->SetYTitle("Entries");
+    hist_num_jets->GetYaxis()->SetTitleOffset(1.4);
+    hist_num_jets->Write();
+    c1->SaveAs("plots/hist_num_jets.png");
+    //------------------------------
+    hist_num_btagged_jets->Draw();
+    hist_num_btagged_jets->SetTitle("Multiplicity of b-tagged jets");
+    hist_num_btagged_jets->SetXTitle("# of b-tagged jets");
+    hist_num_btagged_jets->SetYTitle("Entries");
+    hist_num_btagged_jets->GetYaxis()->SetTitleOffset(1.4);
+    hist_num_btagged_jets->Write();
+    c1->SaveAs("plots/hist_num_btagged_jets.png");
+    //------------------------------
     hist_num_nonbtagged_jets->Draw();
+    hist_num_nonbtagged_jets->SetTitle("Multiplicity of non-b-tagged jets");
+    hist_num_nonbtagged_jets->SetXTitle("# of non-b-tagged jets");
+    hist_num_nonbtagged_jets->SetYTitle("Entries");
+    hist_num_nonbtagged_jets->GetYaxis()->SetTitleOffset(1.4);
+    hist_num_nonbtagged_jets->Write();
     c1->SaveAs("plots/hist_num_nonbtagged_jets.png");
+    //------------------------------
+    hist_bjet_pt->Draw();
+    hist_bjet_pt->SetTitle("Pt of b-tagged jet");
+    hist_bjet_pt->SetXTitle("Pt of b-tagged jet [GeV]");
+    hist_bjet_pt->SetYTitle("Entries / 20 [GeV]");
+    hist_bjet_pt->GetYaxis()->SetTitleOffset(1.4);
+    hist_bjet_pt->Write();
+    c1->SaveAs("plots/hist_bjet_pt.png");
+    //------------------------------
+    hist_jet1_pt->Draw();
+    hist_jet1_pt->SetTitle("Pt of hadronic jet1 candidate");
+    hist_jet1_pt->SetXTitle("Pt of hadronic jet1 candidate [GeV]");
+    hist_jet1_pt->SetYTitle("Entries / 20 [GeV]");
+    hist_jet1_pt->GetYaxis()->SetTitleOffset(1.4);
+    hist_jet1_pt->Write();
+    c1->SaveAs("plots/hist_jet1_pt.png");
+    //------------------------------
+    hist_jet2_pt->Draw();
+    hist_jet2_pt->SetTitle("Pt of hadronic jet2 candidate");
+    hist_jet2_pt->SetXTitle("Pt of hadronic jet2 candidate [GeV]");
+    hist_jet2_pt->SetYTitle("Entries / 20 [GeV]");
+    hist_jet2_pt->GetYaxis()->SetTitleOffset(1.4);
+    hist_jet2_pt->Write();
+    c1->SaveAs("plots/hist_jet2_pt.png");
+    //------------------------------
     hist_cjet_pt->Draw();
+    hist_cjet_pt->SetTitle("Pt of cjet candidates");
+    hist_cjet_pt->SetXTitle("Pt of cjet candidates [GeV]");
+    hist_cjet_pt->SetYTitle("Entries / 20 [GeV]");
+    hist_cjet_pt->GetYaxis()->SetTitleOffset(1.4);
+    hist_cjet_pt->Write();
     c1->SaveAs("plots/hist_cjet_pt.png");
+    //------------------------------
     hist_wboson_mass_spectrum->Draw();
     hist_wboson_mass_spectrum->SetTitle("W boson mass spectrum");
-    hist_wboson_mass_spectrum->SetXTitle("dijet_invariant_mass [GeV / c^{2}]");
+    hist_wboson_mass_spectrum->SetXTitle("dijet invariant mass [GeV / c^{2}]");
     hist_wboson_mass_spectrum->SetYTitle("Entries / 1 GeV");
     hist_wboson_mass_spectrum->GetYaxis()->SetTitleOffset(1.4);
+    hist_wboson_mass_spectrum->Write();
     c1->SaveAs("plots/hist_wboson_mass_spectrum.png");
+    //------------------------------
+    hist_diphoton_mass_spectrum->Draw();
+    hist_diphoton_mass_spectrum->SetTitle("Diphoton mass spectrum");
+    hist_diphoton_mass_spectrum->SetXTitle("Diphoton invariant mass [GeV / c^{2}]");
+    hist_diphoton_mass_spectrum->SetYTitle("Entries / 1 GeV");
+    hist_diphoton_mass_spectrum->GetYaxis()->SetTitleOffset(1.4);
+    hist_diphoton_mass_spectrum->Write();
+    c1->SaveAs("plots/hist_diphoton_mass_spectrum.png");
+    //------------------------------
     hist_inv_mass_tch->Draw();
+    hist_inv_mass_tch->SetTitle("M1 mass spectrum");
+    hist_inv_mass_tch->SetXTitle("diphoton + cjet candidate invariant_mass [GeV/c^{2}]");
+    hist_inv_mass_tch->SetYTitle("Entries / 10 GeV");
+    hist_inv_mass_tch->GetYaxis()->SetTitleOffset(1.4);
+    hist_inv_mass_tch->Write();
     c1->SaveAs("plots/hist_inv_mass_tch.png");
+    //------------------------------
     hist_inv_mass_tbw->Draw();
+    hist_inv_mass_tbw->SetTitle("M2 mass spectrum");
+    hist_inv_mass_tbw->SetXTitle("dijet + b-tagged jet invariant_mass [GeV / c^{2}]");
+    hist_inv_mass_tbw->SetYTitle("Entries / 10 GeV");
+    hist_inv_mass_tbw->GetYaxis()->SetTitleOffset(1.4);
+    hist_inv_mass_tbw->Write();
     c1->SaveAs("plots/hist_inv_mass_tbw.png");
 
+    fout->Close();
     return 1;
 }
