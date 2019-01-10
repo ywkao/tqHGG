@@ -1,0 +1,3 @@
+#!/bin/bash
+set -e
+mkdir plots/"`cat ListRootFiles | grep -v "#" | awk -F"." '{print $1}'`"

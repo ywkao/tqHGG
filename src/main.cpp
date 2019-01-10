@@ -1,3 +1,5 @@
+//=== 10. Jan. 2019 ===//
+//=== ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X?fbclid=IwAR0QAekcVDaD2SL6lI7xFXkHxQigtkpuPiUHiP14t_i9pKvwfZ__v92MYiE
 #include <stdio.h>
 #include <math.h>
 #include <TCanvas.h>
@@ -6,17 +8,19 @@
 #include <TLorentzVector.h>
 #include <TTree.h>
 #include <vector>
-//ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X?fbclid=IwAR0QAekcVDaD2SL6lI7xFXkHxQigtkpuPiUHiP14t_i9pKvwfZ__v92MYiE
 
-int main(){
-    //TString *path = "/wk_cms2/youying/public/forYuWei/tthTest.root";
-    //const char *path = "/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root";
-    //TFile *fin  = TFile::Open(path);
-    //TFile *fin  = TFile::Open("/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root");
-    TFile *fin  = TFile::Open("/wk_cms2/youying/public/forYuWei/tthTest.root");
-    TFile *fout = new TFile("plots/hist_tth.root", "RECREATE");
-    TTree *flashggStdTree = (TTree*)fin->Get("flashggNtuple/flashggStdTree");
+int main(int argc, char *argv[]){
+    //const char *file = "/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root";
+    char file[256] = argv[1]; printf("file = %s\n", file);
+    TFile *fin  = TFile::Open(file);
+    TFile *fout = new TFile(argv[2], "RECREATE");
+    TTree *flashggStdTree = (TTree*)fin->Get("flashggNtuples/flashggStdTree");
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
+    //=== test ===//
+    //TFile *fin  = TFile::Open("/wk_cms2/youying/public/forYuWei/tthTest.root");
+    //TFile *fout = new TFile("plots/hist_tth.root", "RECREATE");
+    //TTree *flashggStdTree = (TTree*)fin->Get("flashggNtuple/flashggStdTree");
+    //TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
 
     //==================//
     //--- histograms ---//
@@ -179,6 +183,7 @@ int main(){
     //##############     Make Plots !!    ##############//
     //##################################################//
     printf("Start making plots!\n");
+    char output_dir = argv[3];
     //------------------------------
     hist_num_jets->Draw();
     hist_num_jets->SetTitle("Multiplicity of jets");
@@ -186,7 +191,7 @@ int main(){
     hist_num_jets->SetYTitle("Entries");
     hist_num_jets->GetYaxis()->SetTitleOffset(1.4);
     hist_num_jets->Write();
-    c1->SaveAs("plots/hist_num_jets.png");
+    c1->SaveAs(Form("%s/hist_num_jets.png", output_dir));
     //------------------------------
     hist_num_btagged_jets->Draw();
     hist_num_btagged_jets->SetTitle("Multiplicity of b-tagged jets");
@@ -194,7 +199,7 @@ int main(){
     hist_num_btagged_jets->SetYTitle("Entries");
     hist_num_btagged_jets->GetYaxis()->SetTitleOffset(1.4);
     hist_num_btagged_jets->Write();
-    c1->SaveAs("plots/hist_num_btagged_jets.png");
+    c1->SaveAs(Form("%s/hist_num_btagged_jets.png", output_dir));
     //------------------------------
     hist_num_nonbtagged_jets->Draw();
     hist_num_nonbtagged_jets->SetTitle("Multiplicity of non-b-tagged jets");
@@ -202,7 +207,7 @@ int main(){
     hist_num_nonbtagged_jets->SetYTitle("Entries");
     hist_num_nonbtagged_jets->GetYaxis()->SetTitleOffset(1.4);
     hist_num_nonbtagged_jets->Write();
-    c1->SaveAs("plots/hist_num_nonbtagged_jets.png");
+    c1->SaveAs(Form("%s/hist_num_nonbtagged_jets.png", output_dir));
     //------------------------------
     hist_bjet_pt->Draw();
     hist_bjet_pt->SetTitle("Pt of b-tagged jet");
@@ -210,7 +215,7 @@ int main(){
     hist_bjet_pt->SetYTitle("Entries / 20 [GeV]");
     hist_bjet_pt->GetYaxis()->SetTitleOffset(1.4);
     hist_bjet_pt->Write();
-    c1->SaveAs("plots/hist_bjet_pt.png");
+    c1->SaveAs(Form("%s/hist_bjet_pt.png", output_dir));
     //------------------------------
     hist_jet1_pt->Draw();
     hist_jet1_pt->SetTitle("Pt of hadronic jet1 candidate");
@@ -218,7 +223,7 @@ int main(){
     hist_jet1_pt->SetYTitle("Entries / 20 [GeV]");
     hist_jet1_pt->GetYaxis()->SetTitleOffset(1.4);
     hist_jet1_pt->Write();
-    c1->SaveAs("plots/hist_jet1_pt.png");
+    c1->SaveAs(Form("%s/hist_jet1_pt.png", output_dir));
     //------------------------------
     hist_jet2_pt->Draw();
     hist_jet2_pt->SetTitle("Pt of hadronic jet2 candidate");
@@ -226,7 +231,7 @@ int main(){
     hist_jet2_pt->SetYTitle("Entries / 20 [GeV]");
     hist_jet2_pt->GetYaxis()->SetTitleOffset(1.4);
     hist_jet2_pt->Write();
-    c1->SaveAs("plots/hist_jet2_pt.png");
+    c1->SaveAs(Form("%s/hist_jet2_pt.png", output_dir));
     //------------------------------
     hist_cjet_pt->Draw();
     hist_cjet_pt->SetTitle("Pt of cjet candidates");
@@ -234,7 +239,7 @@ int main(){
     hist_cjet_pt->SetYTitle("Entries / 20 [GeV]");
     hist_cjet_pt->GetYaxis()->SetTitleOffset(1.4);
     hist_cjet_pt->Write();
-    c1->SaveAs("plots/hist_cjet_pt.png");
+    c1->SaveAs(Form("%s/hist_cjet_pt.png", output_dir));
     //------------------------------
     hist_wboson_mass_spectrum->Draw();
     hist_wboson_mass_spectrum->SetTitle("W boson mass spectrum");
@@ -242,7 +247,7 @@ int main(){
     hist_wboson_mass_spectrum->SetYTitle("Entries / 1 GeV");
     hist_wboson_mass_spectrum->GetYaxis()->SetTitleOffset(1.4);
     hist_wboson_mass_spectrum->Write();
-    c1->SaveAs("plots/hist_wboson_mass_spectrum.png");
+    c1->SaveAs(Form("%s/hist_wboson_mass_spectrum.png", output_dir));
     //------------------------------
     hist_diphoton_mass_spectrum->Draw();
     hist_diphoton_mass_spectrum->SetTitle("Diphoton mass spectrum");
@@ -250,7 +255,7 @@ int main(){
     hist_diphoton_mass_spectrum->SetYTitle("Entries / 1 GeV");
     hist_diphoton_mass_spectrum->GetYaxis()->SetTitleOffset(1.4);
     hist_diphoton_mass_spectrum->Write();
-    c1->SaveAs("plots/hist_diphoton_mass_spectrum.png");
+    c1->SaveAs(Form("%s/hist_diphoton_mass_spectrum.png", output_dir));
     //------------------------------
     hist_inv_mass_tch->Draw();
     hist_inv_mass_tch->SetTitle("M1 mass spectrum");
@@ -258,7 +263,7 @@ int main(){
     hist_inv_mass_tch->SetYTitle("Entries / 10 GeV");
     hist_inv_mass_tch->GetYaxis()->SetTitleOffset(1.4);
     hist_inv_mass_tch->Write();
-    c1->SaveAs("plots/hist_inv_mass_tch.png");
+    c1->SaveAs(Form("%s/hist_inv_mass_tch.png", output_dir));
     //------------------------------
     hist_inv_mass_tbw->Draw();
     hist_inv_mass_tbw->SetTitle("M2 mass spectrum");
@@ -266,7 +271,7 @@ int main(){
     hist_inv_mass_tbw->SetYTitle("Entries / 10 GeV");
     hist_inv_mass_tbw->GetYaxis()->SetTitleOffset(1.4);
     hist_inv_mass_tbw->Write();
-    c1->SaveAs("plots/hist_inv_mass_tbw.png");
+    c1->SaveAs(Form("%s/hist_inv_mass_tbw.png", output_dir));
 
     fout->Close();
     return 1;
