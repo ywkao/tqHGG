@@ -10,7 +10,10 @@ OUTPUTDIR="/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots"
 
 for file in `cat ListRootFiles | grep -v "#"`
 do
-    echo "` echo $file | awk -F "." '{printf("%s/%s.root %s/%s/hist_%s.root %s/%s", "'$INPUTDIR'", $1, "'$OUTPUTDIR'", $1, $1, "'$OUTPUTDIR'", $1)}'`"
+    #echo $file | awk -F "." '{printf("%s/%s.root", "'$INPUTDIR'", $1)} {printf("%s/%s/hist_%s.root", "'$OUTPUTDIR'", $1, $1)} {printf("%s/%s", "'$OUTPUTDIR'", $1)}'
+    echo $file | awk -F "." '{printf("%s/%s.root %s/%s/hist_%s.root %s/%s", "'$INPUTDIR'", $1, "'$OUTPUTDIR'", $1, $1, "'$OUTPUTDIR'", $1)}' | xargs -n3 ./bin/runner
+    #./bin/runner "` echo $file | awk -F "." '{printf("%s/%s.root %s/%s/hist_%s.root %s/%s", "'$INPUTDIR'", $1, "'$OUTPUTDIR'", $1, $1, "'$OUTPUTDIR'", $1)}'`"
+    #echo "` echo $file | awk -F "." '{printf("%s/%s.root %s/%s/hist_%s.root %s/%s", "'$INPUTDIR'", $1, "'$OUTPUTDIR'", $1, $1, "'$OUTPUTDIR'", $1)}'`"
     # input_file / output_file / output_dir
 done
 

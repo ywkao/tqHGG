@@ -10,10 +10,11 @@
 #include <vector>
 
 int main(int argc, char *argv[]){
-    //const char *file = "/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root";
-    char file[256] = argv[1]; printf("file = %s\n", file);
-    TFile *fin  = TFile::Open(file);
-    TFile *fout = new TFile(argv[2], "RECREATE");
+    //const char *input_file = "/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root";
+    char input_file[256]; sprintf(input_file, "%s", argv[1]); printf("input_file = %s\n", input_file);
+    char output_file[256]; sprintf(output_file, "%s", argv[2]); printf("output_file = %s\n", output_file);
+    TFile *fin  = TFile::Open(input_file);
+    TFile *fout = new TFile(output_file, "RECREATE");
     TTree *flashggStdTree = (TTree*)fin->Get("flashggNtuples/flashggStdTree");
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
     //=== test ===//
@@ -183,7 +184,7 @@ int main(int argc, char *argv[]){
     //##############     Make Plots !!    ##############//
     //##################################################//
     printf("Start making plots!\n");
-    char output_dir = argv[3];
+    char output_dir[256]; sprintf(output_dir, "%s", argv[3]); printf("output_dir = %s\n", output_dir);
     //------------------------------
     hist_num_jets->Draw();
     hist_num_jets->SetTitle("Multiplicity of jets");
