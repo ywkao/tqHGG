@@ -1,3 +1,6 @@
 #!/bin/bash
 set -e
-mkdir plots/"`cat ListRootFiles | grep -v "#" | awk -F"." '{print $1}'`"
+for file in `cat ListRootFiles | grep -v "#"`
+do
+    mkdir plots/"`echo $file | awk -F "." '{print $1}'`"
+done

@@ -6,4 +6,8 @@ lib/*
 bin/*
 
 # Ignore any plots
-plots/*
+plots*
+
+# Ignore any logs
+log/*
+test/*
