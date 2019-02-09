@@ -7,6 +7,7 @@ const int NUM_nonresbkg = 10;
 const int NUM_data = 5;
 const int NUM = NUM_sig + NUM_resbkg + NUM_nonresbkg + NUM_data;
 
+void MakeStackHist(const char* histName);
 void RegisterHistogram(const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false);
 
 //#--------------- Signal ---------------#
