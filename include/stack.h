@@ -1,5 +1,7 @@
 #ifndef __STACK_H__
 #define __STACK_H__
+#include <string>
+using namespace std;
 
 const int NUM_sig = 8;
 const int NUM_resbkg = 3;
@@ -9,6 +11,9 @@ const int NUM = NUM_sig + NUM_resbkg + NUM_nonresbkg + NUM_data;
 
 void MakeStackHist(const char* histName);
 void RegisterHistogram(const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false);
+string GetXtitleAccordingToHistName(const char* histName);
+string GetYtitleAccordingToHistName(const char* histName, double BinWidth);
+bool isThisNumEtaPhi(const char* histName);
 
 //#--------------- Signal ---------------#
 string fileNames_sig[NUM_sig] = {

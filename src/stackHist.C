@@ -3,83 +3,118 @@
 #include <TFile.h>
 #include <THStack.h>
 #include <TH1D.h>
+#include <TLine.h>
 #include <TPad.h>
+#include <string>
 #include "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/include/stack.h"
+using namespace std;
 
-const double TunableSigBranchingFraction = 0.0003; //The branching fraction of signal MC = 0.03%
+const double TunableSigBranchingFraction = 0.0001; //The branching fraction of signal MC = 0.01%
 
 void stackHist(){
     MakeStackHist("hist_inv_mass_tch");
+    MakeStackHist("hist_num_jets");
+    MakeStackHist("hist_num_btagged_jets");
+    MakeStackHist("hist_num_nonbtagged_jets");
+    MakeStackHist("hist_wboson_mass_spectrum");
+    MakeStackHist("hist_diphoton_mass_spectrum");
+    MakeStackHist("hist_bjet_pt");
+    MakeStackHist("hist_jet1_pt");
+    MakeStackHist("hist_jet2_pt");
+    MakeStackHist("hist_cjet_pt");
+    MakeStackHist("hist_bjet_eta");
+    MakeStackHist("hist_jet1_eta");
+    MakeStackHist("hist_jet2_eta");
+    MakeStackHist("hist_cjet_eta");
+    MakeStackHist("hist_bjet_phi");
+    MakeStackHist("hist_jet1_phi");
+    MakeStackHist("hist_jet2_phi");
+    MakeStackHist("hist_cjet_phi");
+    MakeStackHist("hist_inv_mass_tch");
+    MakeStackHist("hist_inv_mass_tbw");
 }
 void MakeStackHist(const char* histName){
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
-    THStack *stackHist = new THStack("stackHist", ";;Entries");
+    THStack *stackHist = new THStack("stackHist", "");//If setting titles here, the x(y)-title will NOT be able to set later.
+    bool isNumEtaPhi = isThisNumEtaPhi(histName);
 
-    TH1D  *hist_inv_mass_tch_sig_hadronic;
-    TH1D  *hist_inv_mass_tch_sig_leptonic;
-    TH1D  *hist_inv_mass_tch_sig[NUM_sig];
-    TH1D  *hist_inv_mass_tch_resbkg[NUM_resbkg+1];
-    TH1D  *hist_inv_mass_tch_nonresbkg[NUM_nonresbkg+1];
-    TH1D  *hist_inv_mass_tch_data[NUM_data+1];
-    TH1D  *hist_inv_mass_tch_mc_wosig;
-    TH1D  *hist_inv_mass_tch_ratio;
+    TH1D  *hist_tqh_sig_hadronic;
+    TH1D  *hist_tqh_sig_leptonic;
+    TH1D  *hist_tqh_sig[NUM_sig];
+    TH1D  *hist_tqh_resbkg[NUM_resbkg+1];
+    TH1D  *hist_tqh_nonresbkg[NUM_nonresbkg+1];
+    TH1D  *hist_tqh_data[NUM_data+1];
+    TH1D  *hist_tqh_mc_wosig; //1.Calculate data/bkg ratio. 2.Statistical bkg uncertainty.
+    TH1D  *hist_tqh_ratio;
     //===== Register histograms =====//
-    for(int i=0; i<NUM_sig; i++) RegisterHistogram(fileNames_sig[i].c_str(), hist_inv_mass_tch_sig[i], histName, kRed-i, true, false);
-    for(int i=0; i<NUM_resbkg; i++) RegisterHistogram(fileNames_resbkg[i].c_str(), hist_inv_mass_tch_resbkg[i], histName, kBlue-i-2, false, false);
-    for(int i=0; i<NUM_nonresbkg; i++) RegisterHistogram(fileNames_nonresbkg[i].c_str(), hist_inv_mass_tch_nonresbkg[i], histName, kGreen+2, false, false);
-    for(int i=0; i<NUM_data; i++) RegisterHistogram(fileNames_data[i].c_str(), hist_inv_mass_tch_data[i], histName, kBlack, false, true);
+    for(int i=0; i<NUM_sig; i++) RegisterHistogram(fileNames_sig[i].c_str(), hist_tqh_sig[i], histName, kRed-i, true, false);
+    for(int i=0; i<NUM_resbkg; i++) RegisterHistogram(fileNames_resbkg[i].c_str(), hist_tqh_resbkg[i], histName, kBlue-i-2, false, false);
+    for(int i=0; i<NUM_nonresbkg; i++) RegisterHistogram(fileNames_nonresbkg[i].c_str(), hist_tqh_nonresbkg[i], histName, kGreen+2, false, false);
+    for(int i=0; i<NUM_data; i++) RegisterHistogram(fileNames_data[i].c_str(), hist_tqh_data[i], histName, kBlack, false, true);
     //===== Combine had/lep signal =====//
-    hist_inv_mass_tch_sig_hadronic = (TH1D*) hist_inv_mass_tch_sig[0]->Clone();
-    for(int i=1; i<NUM_sig-4; i++) hist_inv_mass_tch_sig_hadronic->Add(hist_inv_mass_tch_sig[i]);
-    hist_inv_mass_tch_sig_leptonic = (TH1D*) hist_inv_mass_tch_sig[4]->Clone();
-    for(int i=5; i<NUM_sig; i++) hist_inv_mass_tch_sig_leptonic->Add(hist_inv_mass_tch_sig[i]);
+    hist_tqh_sig_hadronic = (TH1D*) hist_tqh_sig[0]->Clone();
+    for(int i=1; i<NUM_sig-4; i++) hist_tqh_sig_hadronic->Add(hist_tqh_sig[i]);
+    hist_tqh_sig[4]->SetLineStyle(2);
+    hist_tqh_sig_leptonic = (TH1D*) hist_tqh_sig[4]->Clone();
+    for(int i=5; i<NUM_sig; i++) hist_tqh_sig_leptonic->Add(hist_tqh_sig[i]);
     //===== Combine backgournds =====//
-    hist_inv_mass_tch_resbkg[NUM_resbkg] = (TH1D*) hist_inv_mass_tch_resbkg[0]->Clone();
-    for(int i=1; i<NUM_resbkg; i++) hist_inv_mass_tch_resbkg[NUM_resbkg]->Add(hist_inv_mass_tch_resbkg[i]);
-    hist_inv_mass_tch_nonresbkg[NUM_nonresbkg] = (TH1D*) hist_inv_mass_tch_nonresbkg[0]->Clone();
-    for(int i=1; i<NUM_nonresbkg; i++) hist_inv_mass_tch_nonresbkg[NUM_nonresbkg]->Add(hist_inv_mass_tch_nonresbkg[i]);
+    hist_tqh_resbkg[NUM_resbkg] = (TH1D*) hist_tqh_resbkg[0]->Clone();
+    for(int i=1; i<NUM_resbkg; i++) hist_tqh_resbkg[NUM_resbkg]->Add(hist_tqh_resbkg[i]);
+    hist_tqh_nonresbkg[NUM_nonresbkg] = (TH1D*) hist_tqh_nonresbkg[0]->Clone();
+    for(int i=1; i<NUM_nonresbkg; i++) hist_tqh_nonresbkg[NUM_nonresbkg]->Add(hist_tqh_nonresbkg[i]);
     //===== Combine data =====//
-    hist_inv_mass_tch_data[NUM_data] = (TH1D*) hist_inv_mass_tch_data[0]->Clone();
-    for(int i=1; i<NUM_data; i++) hist_inv_mass_tch_data[NUM_data]->Add(hist_inv_mass_tch_data[i]);
+    hist_tqh_data[NUM_data] = (TH1D*) hist_tqh_data[0]->Clone();
+    for(int i=1; i<NUM_data; i++) hist_tqh_data[NUM_data]->Add(hist_tqh_data[i]);
     //===== Combine mc w/o sig =====//
-    hist_inv_mass_tch_mc_wosig = (TH1D*) hist_inv_mass_tch_resbkg[NUM_resbkg]->Clone();
-    hist_inv_mass_tch_mc_wosig->Add(hist_inv_mass_tch_nonresbkg[NUM_nonresbkg]);
+    hist_tqh_mc_wosig = (TH1D*) hist_tqh_resbkg[NUM_resbkg]->Clone();
+    hist_tqh_mc_wosig->Add(hist_tqh_nonresbkg[NUM_nonresbkg]);
     //===== Make data-mc ratio histogram =====//
-    hist_inv_mass_tch_ratio = (TH1D*) hist_inv_mass_tch_data[NUM_data]->Clone();
-    hist_inv_mass_tch_ratio->Divide(hist_inv_mass_tch_mc_wosig);
+    hist_tqh_ratio = (TH1D*) hist_tqh_data[NUM_data]->Clone();
+    hist_tqh_ratio->Divide(hist_tqh_mc_wosig);
     //===== Make stack histograms =====//
-    stackHist->Add(hist_inv_mass_tch_resbkg[NUM_resbkg]);
-    stackHist->Add(hist_inv_mass_tch_nonresbkg[NUM_nonresbkg]);
+    stackHist->Add(hist_tqh_resbkg[NUM_resbkg]);
+    stackHist->Add(hist_tqh_nonresbkg[NUM_nonresbkg]);
     //===== Draw upper plots =====//
     TPad *pad1 = new TPad("pad1", "pad1", 0, 0.25, 1, 1.0);
     pad1->SetBottomMargin(0); //Upper and lower pads are joined
+    pad1->SetAttLinePS(kBlack,1,2);
     pad1->Draw();
     pad1->cd(); //pad1 becomes current pad
     gPad->SetTicks(1,1);
+    //--------------------
     gPad->SetLogy(1);
-    //--------------------
-    //stackHist->SetMaximum(1e+3);
-    stackHist->SetMaximum(1e+6);
+    stackHist->SetMaximum(isNumEtaPhi ? 1e+9 : 1e+6);
     stackHist->SetMinimum(5e-1);
+    //stackHist->SetMaximum(2000);
+    //stackHist->SetMinimum(0);
     stackHist->Draw("hist");
-    hist_inv_mass_tch_sig_leptonic->Draw("h,same");
-    hist_inv_mass_tch_sig_hadronic->Draw("h,same");
-    hist_inv_mass_tch_data[NUM_data]->Draw("p,E1,same");
-    double BinWidth = hist_inv_mass_tch_data[NUM_data]->GetXaxis()->GetBinWidth(1);//Take the width of the first bin as a representative.
-    stackHist->GetYaxis()->SetTitle(Form("Entries / %.2f [GeV]", BinWidth));
+    hist_tqh_sig_leptonic->Draw("h,same");
+    hist_tqh_sig_hadronic->Draw("h,same");
+    hist_tqh_mc_wosig->SetLineWidth(0);
+    hist_tqh_mc_wosig->SetMarkerColor(kGray+1);
+    hist_tqh_mc_wosig->SetFillColor(kGray+1);
+    hist_tqh_mc_wosig->SetFillStyle(3002);
+    hist_tqh_mc_wosig->Draw("E2,same");
+    hist_tqh_data[NUM_data]->Draw("p,E1,same");
     //--------------------
+    double BinWidth = hist_tqh_data[NUM_data]->GetXaxis()->GetBinWidth(1);//Take the width of the first bin as a representative.
+    string yTitle = GetYtitleAccordingToHistName(histName, BinWidth);
+    stackHist->GetYaxis()->SetTitle(yTitle.c_str());
     stackHist->GetYaxis()->SetTitleSize(20);
     stackHist->GetYaxis()->SetTitleFont(43);
     stackHist->GetYaxis()->SetTitleOffset(1.2);
     stackHist->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
     stackHist->GetYaxis()->SetLabelSize(15);
     //--------------------
-    TLegend *legend = new TLegend(0.60,0.62,0.87,0.87);
-    legend->AddEntry(hist_inv_mass_tch_resbkg[NUM_resbkg], "Resonant bkg", "f");
-    legend->AddEntry(hist_inv_mass_tch_nonresbkg[NUM_nonresbkg], "Non-resonant bkg", "f");
-    legend->AddEntry(hist_inv_mass_tch_sig_hadronic, Form("Hadronic t#bar{t} (tqH, BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
-    legend->AddEntry(hist_inv_mass_tch_sig_leptonic, Form("Leptonic t#bar{t} (tqH, BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
-    legend->AddEntry(hist_inv_mass_tch_data[NUM_data], "DoubleEG B-F", "lep");
+    TLegend *legend = new TLegend(0.30,0.55,0.85,0.85);
+    legend->SetNColumns(2);
+    //legend->AddEntry(hist_tqh_data[NUM_data], "Data (DoubleEG B-F)", "lep");
+    legend->AddEntry(hist_tqh_data[NUM_data], "Observed", "lep");
+    legend->AddEntry(hist_tqh_sig_hadronic, Form("Hadronic t#bar{t} (tqH, BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    legend->AddEntry(hist_tqh_resbkg[NUM_resbkg], "Resonant bkg", "f");
+    legend->AddEntry(hist_tqh_sig_leptonic, Form("Leptonic t#bar{t} (tqH, BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    legend->AddEntry(hist_tqh_nonresbkg[NUM_nonresbkg], "Non-resonant bkg", "f");
+    legend->AddEntry(hist_tqh_mc_wosig, "Bkg uncertainty", "f");
     legend->SetLineColor(0);
     legend->Draw("same");
     //--------------------
@@ -101,32 +136,114 @@ void MakeStackHist(const char* histName){
     TPad *pad2 = new TPad("pad2", "pad2", 0, 0.05, 1, 0.25);
     pad2->SetTopMargin(0.01); 
     pad2->SetBottomMargin(0.4);
+    pad2->SetAttLinePS(kBlack,1,2);
     pad2->SetGridx(1); //Upper and lower pads are joined
     pad2->Draw();
     pad2->cd(); //pad2 becomes current pad
     gPad->SetTicks(1,1);
     //--------------------
-    //hist_inv_mass_tch_ratio->SetMaximum(2);
-    //hist_inv_mass_tch_ratio->SetMinimum(0);
-    hist_inv_mass_tch_ratio->SetTitle("");
-    hist_inv_mass_tch_ratio->SetStats(0); //No statistics on lower plot
-    hist_inv_mass_tch_ratio->Draw("p,E1");
+    hist_tqh_ratio->SetMaximum(2.25);
+    hist_tqh_ratio->SetMinimum(0);
+    hist_tqh_ratio->SetTitle("");
+    hist_tqh_ratio->SetStats(0); //No statistics on lower plot
+    hist_tqh_ratio->Draw("p,E1");
     //--------------------
-    hist_inv_mass_tch_ratio->GetYaxis()->SetTitle("Data/MC");
-    hist_inv_mass_tch_ratio->GetYaxis()->SetNdivisions(505);
-    hist_inv_mass_tch_ratio->GetYaxis()->SetTitleSize(20);
-    hist_inv_mass_tch_ratio->GetYaxis()->SetTitleFont(43);
-    hist_inv_mass_tch_ratio->GetYaxis()->SetTitleOffset(1.2);
-    hist_inv_mass_tch_ratio->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
-    hist_inv_mass_tch_ratio->GetYaxis()->SetLabelSize(15);
+    hist_tqh_ratio->GetYaxis()->SetTitle("Obs/Exp");
+    hist_tqh_ratio->GetYaxis()->SetNdivisions(5);
+    hist_tqh_ratio->GetYaxis()->SetTitleSize(20);
+    hist_tqh_ratio->GetYaxis()->SetTitleFont(43);
+    hist_tqh_ratio->GetYaxis()->SetTitleOffset(1.2);
+    hist_tqh_ratio->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+    hist_tqh_ratio->GetYaxis()->SetLabelSize(15);
     //--------------------
-    hist_inv_mass_tch_ratio->GetXaxis()->SetTitle("Invariant mass of diphoton + jet [GeV/c^{2}]");
-    hist_inv_mass_tch_ratio->GetXaxis()->SetTitleSize(20);
-    hist_inv_mass_tch_ratio->GetXaxis()->SetTitleFont(43);
-    hist_inv_mass_tch_ratio->GetXaxis()->SetTitleOffset(4.);
-    hist_inv_mass_tch_ratio->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
-    hist_inv_mass_tch_ratio->GetXaxis()->SetLabelSize(15);
+    //hist_tqh_ratio->GetXaxis()->SetTitle("Invariant mass of diphoton + jet [GeV/c^{2}]");
+    string xTitle = GetXtitleAccordingToHistName(histName);
+    hist_tqh_ratio->GetXaxis()->SetTitle(xTitle.c_str());
+    hist_tqh_ratio->GetXaxis()->SetTitleSize(20);
+    hist_tqh_ratio->GetXaxis()->SetTitleFont(43);
+    hist_tqh_ratio->GetXaxis()->SetTitleOffset(4.);
+    hist_tqh_ratio->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+    hist_tqh_ratio->GetXaxis()->SetLabelSize(15);
+    //--------------------
+    c1->Update();//update the value of pad2->GetUxmax().
+    TLine line;
+    line.SetLineStyle(2);
+    line.DrawLine(pad2->GetUxmin(),0.5,pad2->GetUxmax(),0.5);
+    line.DrawLine(pad2->GetUxmin(),1.0,pad2->GetUxmax(),1.0);
+    line.DrawLine(pad2->GetUxmin(),1.5,pad2->GetUxmax(),1.5);
+    line.DrawLine(pad2->GetUxmin(),2.0,pad2->GetUxmax(),2.0);
     c1->SaveAs(Form("plots/stack_%s.png", histName));
+}
+
+bool isThisNumEtaPhi(const char* histName){
+    if((string)histName == "hist_num_jets") return true;
+    if((string)histName == "hist_num_btagged_jets") return true;
+    if((string)histName == "hist_num_nonbtagged_jets") return true;
+    if((string)histName == "hist_wboson_mass_spectrum") return false;
+    if((string)histName == "hist_diphoton_mass_spectrum") return false;
+    if((string)histName == "hist_bjet_pt") return false;
+    if((string)histName == "hist_jet1_pt") return false;
+    if((string)histName == "hist_jet2_pt") return false;
+    if((string)histName == "hist_cjet_pt") return false;
+    if((string)histName == "hist_bjet_eta") return true;
+    if((string)histName == "hist_jet1_eta") return true;
+    if((string)histName == "hist_jet2_eta") return true;
+    if((string)histName == "hist_cjet_eta") return true;
+    if((string)histName == "hist_bjet_phi") return true;
+    if((string)histName == "hist_jet1_phi") return true;
+    if((string)histName == "hist_jet2_phi") return true;
+    if((string)histName == "hist_cjet_phi") return true;
+    if((string)histName == "hist_inv_mass_tch") return false;
+    if((string)histName == "hist_inv_mass_tbw") return false;
+    return false;
+}
+
+string GetXtitleAccordingToHistName(const char* histName){
+    if((string)histName == "hist_num_jets") return "Number of jets";
+    if((string)histName == "hist_num_btagged_jets") return "Number of btagged jets";
+    if((string)histName == "hist_num_nonbtagged_jets") return "Number of nonbtagged jets";
+    if((string)histName == "hist_wboson_mass_spectrum") return "Invariant mass of di-jets [GeV/c^{2}]";
+    if((string)histName == "hist_diphoton_mass_spectrum") return "Invariant mass of di-photon [GeV/c^{2}]";
+    if((string)histName == "hist_bjet_pt") return "Pt of bjet [GeV/c]";
+    if((string)histName == "hist_jet1_pt") return "Pt of jet1 [GeV/c]";
+    if((string)histName == "hist_jet2_pt") return "Pt of jet2 [GeV/c]";
+    if((string)histName == "hist_cjet_pt") return "Pt of cjet [GeV/c]";
+    if((string)histName == "hist_bjet_eta") return "Eta of bjet";
+    if((string)histName == "hist_jet1_eta") return "Eta of jet1";
+    if((string)histName == "hist_jet2_eta") return "Eta of jet2";
+    if((string)histName == "hist_cjet_eta") return "Eta of cjet";
+    if((string)histName == "hist_bjet_phi") return "Phi of bjet";
+    if((string)histName == "hist_jet1_phi") return "Phi of jet1";
+    if((string)histName == "hist_jet2_phi") return "Phi of jet2";
+    if((string)histName == "hist_cjet_phi") return "Phi of cjet";
+    if((string)histName == "hist_inv_mass_tch") return "Invariant mass of diphoton + jet [GeV/c^{2}]";
+    if((string)histName == "hist_inv_mass_tbw") return "Invariant mass of w boson + b-jet [GeV/c^{2}]";
+    return "";
+}
+
+string GetYtitleAccordingToHistName(const char* histName, double BinWidth){
+    string str_ytitle_1("Entries");
+    string str_ytitle_2(Form("Entries / %.2f [GeV]", BinWidth));
+    if((string)histName == "hist_num_jets") return str_ytitle_1;
+    if((string)histName == "hist_num_btagged_jets") return str_ytitle_1;
+    if((string)histName == "hist_num_nonbtagged_jets") return str_ytitle_1;
+    if((string)histName == "hist_bjet_eta") return str_ytitle_1;
+    if((string)histName == "hist_jet1_eta") return str_ytitle_1;
+    if((string)histName == "hist_jet2_eta") return str_ytitle_1;
+    if((string)histName == "hist_cjet_eta") return str_ytitle_1;
+    if((string)histName == "hist_bjet_phi") return str_ytitle_1;
+    if((string)histName == "hist_jet1_phi") return str_ytitle_1;
+    if((string)histName == "hist_jet2_phi") return str_ytitle_1;
+    if((string)histName == "hist_cjet_phi") return str_ytitle_1;
+    if((string)histName == "hist_bjet_pt") return str_ytitle_2;
+    if((string)histName == "hist_jet1_pt") return str_ytitle_2;
+    if((string)histName == "hist_jet2_pt") return str_ytitle_2;
+    if((string)histName == "hist_cjet_pt") return str_ytitle_2;
+    if((string)histName == "hist_wboson_mass_spectrum") return str_ytitle_2;
+    if((string)histName == "hist_diphoton_mass_spectrum") return str_ytitle_2;
+    if((string)histName == "hist_inv_mass_tch") return str_ytitle_2;
+    if((string)histName == "hist_inv_mass_tbw") return str_ytitle_2;
+    return "";
 }
 
 void RegisterHistogram(const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false){

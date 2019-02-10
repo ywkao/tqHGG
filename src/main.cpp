@@ -8,6 +8,7 @@
 #include <TLorentzVector.h>
 #include <TTree.h>
 #include <vector>
+#include "../include/main.h"
 #include "../include/cross_section.h"
 
 int main(int argc, char *argv[]){
@@ -15,6 +16,7 @@ int main(int argc, char *argv[]){
     char input_file[256]; sprintf(input_file, "%s", argv[1]); printf("input_file = %s\n", input_file);
     char output_file[256]; sprintf(output_file, "%s", argv[2]); printf("output_file = %s\n", output_file);
     char dataset[256]; sprintf(dataset, "%s", argv[3]); printf("dataset = %s\n", dataset);
+    bool isData = isThisDataOrNot(dataset);
     TFile *fin  = TFile::Open(input_file);
     TFile *fout = new TFile(output_file, "RECREATE");
     TTree *flashggStdTree = (TTree*)fin->Get("flashggNtuples/flashggStdTree");
@@ -121,8 +123,8 @@ int main(int argc, char *argv[]){
     double Luminosity = 42.; //fb{-1}
     double CrossSection = GetXsec(dataset); //pb
     double BranchingFraction = GetBranchingFraction(dataset); //pb
-    printf("Get xs = %f !\n", CrossSection);
-    printf("Get bf = %f !\n", BranchingFraction);
+    printf("Get CrossSection = %f !\n", CrossSection);
+    printf("Get BranchingFraction = %f !\n", BranchingFraction);
     double TotalGenweight=0;
     for(int ientry=0; ientry<nentries; ientry++){
         flashggStdTree->GetEntry(ientry);
@@ -130,8 +132,8 @@ int main(int argc, char *argv[]){
         TotalGenweight+=EvtInfo_genweight;
     }
     NormalizationFactor = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
-    printf("\nGet TG = %f!\n", TotalGenweight);
-    printf("Get NF = %f!\n", NormalizationFactor);
+    printf("\nGet TotalGenweight = %f!\n", TotalGenweight);
+    printf("Get NormalizationFactor = %f!\n", isData ? 1. : NormalizationFactor);
     //##################################################//
     //#########    Event Loop [Selection]    ###########//
     //##################################################//
@@ -172,12 +174,12 @@ int main(int argc, char *argv[]){
             }
             //if(num_bjet==2) break;
         }
-        hist_num_btagged_jets->Fill(num_bjet, NormalizationFactor*EvtInfo_genweight);
+        hist_num_btagged_jets->Fill(num_bjet, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         if(bjetindex==-1) continue;
         if(num_bjet!=1)   continue;
-        hist_bjet_pt->Fill(leading_bjet.Pt(), NormalizationFactor*EvtInfo_genweight);
-        hist_bjet_eta->Fill(leading_bjet.Eta(), NormalizationFactor*EvtInfo_genweight);
-        hist_bjet_phi->Fill(leading_bjet.Phi(), NormalizationFactor*EvtInfo_genweight);
+        hist_bjet_pt->Fill(leading_bjet.Pt(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_bjet_eta->Fill(leading_bjet.Eta(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_bjet_phi->Fill(leading_bjet.Phi(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         //=== Store rest jets ===//
         int num_nonbtagged_jets=0;
         for(int i=0; i<jets_size; i++){
@@ -190,8 +192,8 @@ int main(int argc, char *argv[]){
             num_nonbtagged_jets+=1;
         }
         if(num_nonbtagged_jets<3) continue;
-        hist_num_nonbtagged_jets->Fill(num_nonbtagged_jets, NormalizationFactor*EvtInfo_genweight);
-        hist_num_jets->Fill(num_bjet+num_nonbtagged_jets, NormalizationFactor*EvtInfo_genweight);
+        hist_num_nonbtagged_jets->Fill(num_nonbtagged_jets, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_num_jets->Fill(num_bjet+num_nonbtagged_jets, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         //=== Chi-2 sorting ===//
         int wjetindices[2]={0};//indices in non-btagged vector
         double dijet_invariant_mass, chi2, chi2_min=9999;
@@ -206,15 +208,15 @@ int main(int argc, char *argv[]){
         }
         best_dijet_pair = vec_nonbtagged_jets[wjetindices[0]] + vec_nonbtagged_jets[wjetindices[1]];
         dijet_invariant_mass = best_dijet_pair.M();
-        hist_wboson_mass_spectrum->Fill(dijet_invariant_mass, NormalizationFactor*EvtInfo_genweight);
-        hist_jet1_pt->Fill(vec_nonbtagged_jets[wjetindices[0]].Pt(), NormalizationFactor*EvtInfo_genweight);
-        hist_jet1_eta->Fill(vec_nonbtagged_jets[wjetindices[0]].Eta(), NormalizationFactor*EvtInfo_genweight);
-        hist_jet1_phi->Fill(vec_nonbtagged_jets[wjetindices[0]].Phi(), NormalizationFactor*EvtInfo_genweight);
-        hist_jet2_pt->Fill(vec_nonbtagged_jets[wjetindices[1]].Pt(), NormalizationFactor*EvtInfo_genweight);
-        hist_jet2_eta->Fill(vec_nonbtagged_jets[wjetindices[1]].Eta(), NormalizationFactor*EvtInfo_genweight);
-        hist_jet2_phi->Fill(vec_nonbtagged_jets[wjetindices[1]].Phi(), NormalizationFactor*EvtInfo_genweight);
+        hist_wboson_mass_spectrum->Fill(dijet_invariant_mass, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_jet1_pt->Fill(vec_nonbtagged_jets[wjetindices[0]].Pt(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_jet1_eta->Fill(vec_nonbtagged_jets[wjetindices[0]].Eta(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_jet1_phi->Fill(vec_nonbtagged_jets[wjetindices[0]].Phi(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_jet2_pt->Fill(vec_nonbtagged_jets[wjetindices[1]].Pt(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_jet2_eta->Fill(vec_nonbtagged_jets[wjetindices[1]].Eta(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_jet2_phi->Fill(vec_nonbtagged_jets[wjetindices[1]].Phi(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         //=== Diphoton inv mass ===//
-        hist_diphoton_mass_spectrum->Fill(DiPhoInfo_mass, NormalizationFactor*EvtInfo_genweight);
+        hist_diphoton_mass_spectrum->Fill(DiPhoInfo_mass, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         //=== Determine cjet ===//
         int cjetindex=-1;//indices in non-btagged vector
         TLorentzVector leading_cjet;
@@ -224,16 +226,16 @@ int main(int argc, char *argv[]){
             leading_cjet.SetPtEtaPhiE(JetInfo_Pt->at(i), JetInfo_Eta->at(i), JetInfo_Phi->at(i), JetInfo_Energy->at(i));
             if(cjetindex!=-1) break;
         }
-        hist_cjet_pt->Fill(leading_cjet.Pt(), NormalizationFactor*EvtInfo_genweight);
-        hist_cjet_eta->Fill(leading_cjet.Eta(), NormalizationFactor*EvtInfo_genweight);
-        hist_cjet_phi->Fill(leading_cjet.Phi(), NormalizationFactor*EvtInfo_genweight);
+        hist_cjet_pt->Fill(leading_cjet.Pt(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_cjet_eta->Fill(leading_cjet.Eta(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_cjet_phi->Fill(leading_cjet.Phi(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         //=== InvMass of tops ===//
         TLorentzVector tch_jgg = leading_diphoton + leading_cjet;
         TLorentzVector tbw_bjj = best_dijet_pair + leading_bjet;
         double inv_mass_tch = tch_jgg.M();
         double inv_mass_tbw = tbw_bjj.M();
-        hist_inv_mass_tch->Fill(inv_mass_tch, NormalizationFactor*EvtInfo_genweight);
-        hist_inv_mass_tbw->Fill(inv_mass_tbw, NormalizationFactor*EvtInfo_genweight);
+        hist_inv_mass_tch->Fill(inv_mass_tch, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_inv_mass_tbw->Fill(inv_mass_tbw, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
 
         //==================================================//
         //-------------   Event Selection    ---------------//
