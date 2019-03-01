@@ -3,21 +3,38 @@
 set -e
 
 INPUTDIR="/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0"
+INPUTDIR_ywk="/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0"
 OUTPUTDIR="/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots"
 
 ExeAnalysis(){
     file=$1
-    log=log_${file}.txt
+    log=log/log_${file}.txt
     echo "MESSAGE: Start to analyze ${file}" | tee ${log} 
     echo $file | awk -F "." '{print "'$INPUTDIR'""/"$1".root", "'$OUTPUTDIR'""/"$1"/hist_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' | xargs -n4 ./bin/runner | tee -a ${log}
     # REMARK: input_file / output_file / datasets / output_dir
 }
+ExeAnalysis_multi(){
+    file=$1
+    log=log/log_${file}.txt
+    echo "MESSAGE: Start to analyze ${file}" | tee ${log} 
+    echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1, "'$OUTPUTDIR'""/"$1"/hist_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' | xargs -n4 ./bin/runner | tee -a ${log}
+    # REMARK: input_file / output_file / datasets / output_dir
+}
+ExeAnalysis_singletop(){
+    file=$1
+    log=log/log_${file}.txt
+    echo "MESSAGE: Start to analyze ${file}" | tee ${log} 
+    echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1".root", "'$OUTPUTDIR'""/"$1"/hist_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' | xargs -n4 ./bin/runner | tee -a ${log}
+    # REMARK: input_file / output_file / datasets / output_dir
+}
 
-#--------------- Resonant bkg ---------------#
-ExeAnalysis VBFHToGG_M125_13TeV_amcatnlo_pythia8.root
-ExeAnalysis VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
-ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
-#--------------- Signal ---------------#
+#--------------- Data ---------------#
+ExeAnalysis DoubleEG_B.root
+ExeAnalysis DoubleEG_C.root
+ExeAnalysis DoubleEG_D.root
+ExeAnalysis DoubleEG_E.root
+ExeAnalysis DoubleEG_F.root
+#--------------- TT Signal ---------------#
 ExeAnalysis TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root
 ExeAnalysis TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root
 ExeAnalysis TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root
@@ -26,21 +43,32 @@ ExeAnalysis TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root
 ExeAnalysis TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root
 ExeAnalysis TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root
 ExeAnalysis TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root
+#--------------- Resonant bkg ---------------#
+ExeAnalysis GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8.root
+ExeAnalysis VBFHToGG_M125_13TeV_amcatnlo_pythia8.root
+ExeAnalysis VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
+ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
 #--------------- non-Resonant bkg ---------------#
 ExeAnalysis DiPhotonJetsBox_M40_80-Sherpa.root
-###DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
-ExeAnalysis DoubleEG_B.root
-ExeAnalysis DoubleEG_C.root
-ExeAnalysis DoubleEG_D.root
-ExeAnalysis DoubleEG_E.root
-ExeAnalysis DoubleEG_F.root
 ExeAnalysis GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root
 ExeAnalysis GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8.root
-###GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
-ExeAnalysis GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8.root
 ExeAnalysis QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root
 ExeAnalysis QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8.root
 ExeAnalysis QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root
 ExeAnalysis TGJets_TuneCP5_13TeV_amcatnlo_madspin_pythia8.root
 ExeAnalysis TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8.root
 ExeAnalysis TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8.root
+#--------------- non-Resonant bkg (multi root files) ---------------#
+ExeAnalysis_multi DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
+ExeAnalysis_multi GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
+echo "This is the end of execution."
+exit 1
+echo "Warnning: Still running!!"
+#--------------- ST Signal ---------------#
+ExeAnalysis_singletop ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root
+ExeAnalysis_singletop ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root
+ExeAnalysis_singletop ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root
+ExeAnalysis_singletop ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root
+echo "This is the end of execution."
+exit 1
+echo "Warnning: Still running!!"

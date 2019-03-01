@@ -2,5 +2,8 @@
 set -e
 for file in `cat ListRootFiles | grep -v "#"`
 do
-    mkdir plots/"`echo $file | awk -F "." '{print $1}'`"
+    DIRECTORY=plots/"`echo $file | awk -F "." '{print $1}'`"
+    if [ ! -d "${DIRECTORY}" ]; then
+        mkdir ${DIRECTORY}
+    fi
 done

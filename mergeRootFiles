@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8"
+INPUT_GJet=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
+OUTPUT_GJet=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
+DATASET_GJet=GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
+hadd "${OUTPUT_GJet}/${DATASET_GJet}_01.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{1..100}.root`
+hadd "${OUTPUT_GJet}/${DATASET_GJet}_02.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{101..200}.root`
+hadd "${OUTPUT_GJet}/${DATASET_GJet}_03.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{201..300}.root`
+hadd "${OUTPUT_GJet}/${DATASET_GJet}_04.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{301..422}.root`
+
+echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa"
+INPUT_DiPhoton=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
+OUTPUT_DiPhoton=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
+DATASET_DiPhoton=DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
+hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_01.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{1..100}.root`
+hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_02.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{101..200}.root`
+hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_03.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{201..300}.root`
+hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_04.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{301..400}.root`
+
+#ls ${INPUT} | awk '{print "'$INPUT'"$1}' | xargs -n40 echo `echo ${OUTPUT}`| tee tmp.log

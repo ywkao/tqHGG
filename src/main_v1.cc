@@ -1,7 +1,5 @@
-//===========================================//
-//=== 27. Feb. 2019                       ===//
-//=== Develop for single top tqH analysis ===//
-//===========================================//
+//=== 10. Jan. 2019 ===//
+//=== ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X?fbclid=IwAR0QAekcVDaD2SL6lI7xFXkHxQigtkpuPiUHiP14t_i9pKvwfZ__v92MYiE
 #include <stdio.h>
 #include <math.h>
 #include <TCanvas.h>
@@ -46,7 +44,6 @@ int main(int argc, char *argv[]){
     TH1D  *hist_num_nonbtagged_jets = new TH1D("hist_num_nonbtagged_jets", "hist_num_nonbtagged_jets", 20, 0, 20);
     TH1D  *hist_wboson_mass_spectrum = new TH1D("hist_wboson_mass_spectrum", "hist_wboson_mass_spectrum", 50, 55, 105);
     TH1D  *hist_diphoton_mass_spectrum = new TH1D("hist_diphoton_mass_spectrum", "hist_diphoton_mass_spectrum", 50, 100, 150);
-    TH1D  *hist_diphoton_IDMVA = new TH1D("hist_diphoton_IDMVA", "hist_diphoton_IDMVA", 50, 0., 1.);
     TH1D  *hist_bjet_pt = new TH1D("hist_bjet_pt", "hist_bjet_pt", 50, 0, 1000);
     TH1D  *hist_jet1_pt = new TH1D("hist_jet1_pt", "hist_jet1_pt", 50, 0, 1000);
     TH1D  *hist_jet2_pt = new TH1D("hist_jet2_pt", "hist_jet2_pt", 50, 0, 1000);
@@ -59,10 +56,7 @@ int main(int argc, char *argv[]){
     TH1D  *hist_jet1_phi = new TH1D("hist_jet1_phi", "hist_jet1_phi", 40, -3.0, 3.0);
     TH1D  *hist_jet2_phi = new TH1D("hist_jet2_phi", "hist_jet2_phi", 40, -3.0, 3.0);
     TH1D  *hist_cjet_phi = new TH1D("hist_cjet_phi", "hist_cjet_phi", 40, -3.0, 3.0);
-    TH1D  *hist_dijet_eta = new TH1D("hist_dijet_eta", "hist_dijet_eta", 40, 0., 5.0);
-    TH1D  *hist_dijet_phi = new TH1D("hist_dijet_phi", "hist_dijet_phi", 40, 0., 6.0);
-    TH1D  *hist_dijet_angle = new TH1D("hist_dijet_angle", "hist_dijet_angle", 40, 0., 8.0);
-    TH1D  *hist_inv_mass_tqh = new TH1D("hist_inv_mass_tqh", "hist_inv_mass_tqh", 50, 0, 500);// not used in single top analysis
+    TH1D  *hist_inv_mass_tch = new TH1D("hist_inv_mass_tch", "hist_inv_mass_tch", 50, 0, 500);
     TH1D  *hist_inv_mass_tbw = new TH1D("hist_inv_mass_tbw", "hist_inv_mass_tbw", 50, 0, 500);
     //TH1D  *hist = new TH1D("hist", "hist", 50, 0, 1000);
     //TH1D  *hist = new TH1D("hist", "hist", 50, -10, 10);
@@ -72,7 +66,6 @@ int main(int argc, char *argv[]){
     hist_num_nonbtagged_jets -> Sumw2();
     hist_wboson_mass_spectrum -> Sumw2();
     hist_diphoton_mass_spectrum -> Sumw2();
-    hist_diphoton_IDMVA -> Sumw2();
     hist_bjet_pt -> Sumw2();
     hist_jet1_pt -> Sumw2();
     hist_jet2_pt -> Sumw2();
@@ -85,10 +78,7 @@ int main(int argc, char *argv[]){
     hist_jet1_phi -> Sumw2();
     hist_jet2_phi -> Sumw2();
     hist_cjet_phi -> Sumw2();
-    hist_dijet_eta -> Sumw2();
-    hist_dijet_phi -> Sumw2();
-    hist_dijet_angle -> Sumw2();
-    hist_inv_mass_tqh -> Sumw2();
+    hist_inv_mass_tch -> Sumw2();
     hist_inv_mass_tbw -> Sumw2();
 
     //==========================//
@@ -108,7 +98,6 @@ int main(int argc, char *argv[]){
     float DiPhoInfo_leadEta=0;
     float DiPhoInfo_leadPhi=0;
     float DiPhoInfo_leadE=0;
-    float DiPhoInfo_leadIDMVA=0;
     //------------------------
     flashggStdTree->SetBranchAddress("EvtInfo.genweight", &EvtInfo_genweight);
     flashggStdTree->SetBranchAddress("jets_size", &jets_size);
@@ -124,7 +113,6 @@ int main(int argc, char *argv[]){
     flashggStdTree->SetBranchAddress("DiPhoInfo.leadEta", &DiPhoInfo_leadEta);
     flashggStdTree->SetBranchAddress("DiPhoInfo.leadPhi", &DiPhoInfo_leadPhi);
     flashggStdTree->SetBranchAddress("DiPhoInfo.leadE", &DiPhoInfo_leadE);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.leadIDMVA", &DiPhoInfo_leadIDMVA);
 
     //==========================//
     //---  Useful Constants  ---//
@@ -183,7 +171,7 @@ int main(int argc, char *argv[]){
         TLorentzVector leading_diphoton;
         leading_diphoton.SetPtEtaPhiE(DiPhoInfo_leadPt, DiPhoInfo_leadEta, DiPhoInfo_leadPhi, DiPhoInfo_leadE);
         //#######################################################//
-        //### t->b+W(jj), 1 bjet + 2 chi2 jets
+        //### 1 bjet + 2 chi2 jets + the leading jet of rest ones
         //#######################################################//
         //=== Select one bjet ===//
         int bjetindex=-1, num_bjet=0;
@@ -199,8 +187,8 @@ int main(int argc, char *argv[]){
             //if(num_bjet==2) break;
         }
         hist_num_btagged_jets->Fill(num_bjet, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        if(bjetindex==-1) continue;// discard no-b-jet events
-        if(num_bjet!=1)   continue;// exactly 1 b-jet criterion
+        if(bjetindex==-1) continue;
+        if(num_bjet!=1)   continue;
         hist_bjet_pt->Fill(leading_bjet.Pt(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_bjet_eta->Fill(leading_bjet.Eta(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_bjet_phi->Fill(leading_bjet.Phi(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
@@ -215,7 +203,7 @@ int main(int argc, char *argv[]){
             vec_nonbtagged_jets.push_back(jet_lorentzvector);
             num_nonbtagged_jets+=1;
         }
-        if(num_nonbtagged_jets<2) continue;// at least 2 non-b-tagged jets for construction of w boson
+        if(num_nonbtagged_jets<3) continue;
         hist_num_nonbtagged_jets->Fill(num_nonbtagged_jets, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_num_jets->Fill(num_bjet+num_nonbtagged_jets, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         //=== Chi-2 sorting ===//
@@ -232,9 +220,6 @@ int main(int argc, char *argv[]){
         }
         best_dijet_pair = vec_nonbtagged_jets[wjetindices[0]] + vec_nonbtagged_jets[wjetindices[1]];
         dijet_invariant_mass = best_dijet_pair.M();
-        double dijet_eta_difference = fabs(vec_nonbtagged_jets[wjetindices[0]].Eta() - vec_nonbtagged_jets[wjetindices[1]].Eta());
-        double dijet_phi_difference = fabs(vec_nonbtagged_jets[wjetindices[0]].Phi() - vec_nonbtagged_jets[wjetindices[1]].Phi());
-        double dijet_angle_difference = sqrt(dijet_eta_difference*dijet_eta_difference + dijet_phi_difference*dijet_phi_difference);
         hist_wboson_mass_spectrum->Fill(dijet_invariant_mass, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_jet1_pt->Fill(vec_nonbtagged_jets[wjetindices[0]].Pt(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_jet1_eta->Fill(vec_nonbtagged_jets[wjetindices[0]].Eta(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
@@ -242,14 +227,9 @@ int main(int argc, char *argv[]){
         hist_jet2_pt->Fill(vec_nonbtagged_jets[wjetindices[1]].Pt(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_jet2_eta->Fill(vec_nonbtagged_jets[wjetindices[1]].Eta(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_jet2_phi->Fill(vec_nonbtagged_jets[wjetindices[1]].Phi(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_dijet_eta->Fill(dijet_eta_difference, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_dijet_phi->Fill(dijet_phi_difference, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_dijet_angle->Fill(dijet_angle_difference, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         //=== Diphoton inv mass ===//
         hist_diphoton_mass_spectrum->Fill(DiPhoInfo_mass, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_diphoton_IDMVA->Fill(DiPhoInfo_leadIDMVA, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         //=== Determine cjet ===//
-        /*
         int cjetindex=-1;//indices in non-btagged vector
         TLorentzVector leading_cjet;
         for(int i=0; i<vec_nonbtagged_jets.size(); i++){
@@ -261,13 +241,12 @@ int main(int argc, char *argv[]){
         hist_cjet_pt->Fill(leading_cjet.Pt(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_cjet_eta->Fill(leading_cjet.Eta(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_cjet_phi->Fill(leading_cjet.Phi(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        */
         //=== InvMass of tops ===//
-        //TLorentzVector tqh_jgg = leading_diphoton + leading_cjet;
+        TLorentzVector tch_jgg = leading_diphoton + leading_cjet;
         TLorentzVector tbw_bjj = best_dijet_pair + leading_bjet;
-        //double inv_mass_tqh = tqh_jgg.M();
+        double inv_mass_tch = tch_jgg.M();
         double inv_mass_tbw = tbw_bjj.M();
-        //hist_inv_mass_tqh->Fill(inv_mass_tqh, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_inv_mass_tch->Fill(inv_mass_tch, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_inv_mass_tbw->Fill(inv_mass_tbw, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
 
         //==================================================//
@@ -327,7 +306,7 @@ int main(int argc, char *argv[]){
     hist_bjet_phi->Draw();
     hist_bjet_phi->SetTitle("Phi of b-tagged jet");
     hist_bjet_phi->SetXTitle("Phi of b-tagged jet");
-    hist_bjet_phi->SetYTitle("Entries / 0.15 [rad]");
+    hist_bjet_phi->SetYTitle("Entries / 0.5 [rad]");
     hist_bjet_phi->GetYaxis()->SetTitleOffset(1.4);
     hist_bjet_phi->Write();
     c1->SaveAs(Form("%s/hist_bjet_phi.png", output_dir));
@@ -351,7 +330,7 @@ int main(int argc, char *argv[]){
     hist_jet1_phi->Draw();
     hist_jet1_phi->SetTitle("Phi of hadronic jet1 candidate");
     hist_jet1_phi->SetXTitle("Phi of hadronic jet1 candidate");
-    hist_jet1_phi->SetYTitle("Entries / 0.15 [rad]");
+    hist_jet1_phi->SetYTitle("Entries / 0.5 [rad]");
     hist_jet1_phi->GetYaxis()->SetTitleOffset(1.4);
     hist_jet1_phi->Write();
     c1->SaveAs(Form("%s/hist_jet1_phi.png", output_dir));
@@ -375,34 +354,10 @@ int main(int argc, char *argv[]){
     hist_jet2_phi->Draw();
     hist_jet2_phi->SetTitle("Phi of hadronic jet2 candidate");
     hist_jet2_phi->SetXTitle("Phi of hadronic jet2 candidate");
-    hist_jet2_phi->SetYTitle("Entries / 0.15 [rad]");
+    hist_jet2_phi->SetYTitle("Entries / 0.5 [rad]");
     hist_jet2_phi->GetYaxis()->SetTitleOffset(1.4);
     hist_jet2_phi->Write();
     c1->SaveAs(Form("%s/hist_jet2_phi.png", output_dir));
-    //------------------------------
-    hist_dijet_eta->Draw();
-    hist_dijet_eta->SetTitle("Eta difference of hadronic dijet candidate");
-    hist_dijet_eta->SetXTitle("Eta of hadronic dijet candidate");
-    hist_dijet_eta->SetYTitle("Entries / 0.5 unit");
-    hist_dijet_eta->GetYaxis()->SetTitleOffset(1.4);
-    hist_dijet_eta->Write();
-    c1->SaveAs(Form("%s/hist_dijet_eta.png", output_dir));
-    //------------------------------
-    hist_dijet_phi->Draw();
-    hist_dijet_phi->SetTitle("Phi difference of hadronic dijet candidate");
-    hist_dijet_phi->SetXTitle("Phi of hadronic dijet candidate");
-    hist_dijet_phi->SetYTitle("Entries / 0.15 [rad]");
-    hist_dijet_phi->GetYaxis()->SetTitleOffset(1.4);
-    hist_dijet_phi->Write();
-    c1->SaveAs(Form("%s/hist_dijet_phi.png", output_dir));
-    //------------------------------
-    hist_dijet_angle->Draw();
-    hist_dijet_angle->SetTitle("Angle difference of hadronic dijet candidate");
-    hist_dijet_angle->SetXTitle("Angle difference of hadronic dijet candidate");
-    hist_dijet_angle->SetYTitle("Entries");
-    hist_dijet_angle->GetYaxis()->SetTitleOffset(1.4);
-    hist_dijet_angle->Write();
-    c1->SaveAs(Form("%s/hist_dijet_angle.png", output_dir));
     //------------------------------
     hist_cjet_pt->Draw();
     hist_cjet_pt->SetTitle("Pt of cjet candidates");
@@ -423,7 +378,7 @@ int main(int argc, char *argv[]){
     hist_cjet_phi->Draw();
     hist_cjet_phi->SetTitle("Phi of cjet candidates");
     hist_cjet_phi->SetXTitle("Phi of cjet candidates");
-    hist_cjet_phi->SetYTitle("Entries / 0.15 [rad]");
+    hist_cjet_phi->SetYTitle("Entries / 0.5 [rad]");
     hist_cjet_phi->GetYaxis()->SetTitleOffset(1.4);
     hist_cjet_phi->Write();
     c1->SaveAs(Form("%s/hist_cjet_phi.png", output_dir));
@@ -444,21 +399,13 @@ int main(int argc, char *argv[]){
     hist_diphoton_mass_spectrum->Write();
     c1->SaveAs(Form("%s/hist_diphoton_mass_spectrum.png", output_dir));
     //------------------------------
-    hist_diphoton_IDMVA->Draw();
-    hist_diphoton_IDMVA->SetTitle("Diphoton ID MVA");
-    hist_diphoton_IDMVA->SetXTitle("Diphoton ID MVA");
-    hist_diphoton_IDMVA->SetYTitle("Entries");
-    hist_diphoton_IDMVA->GetYaxis()->SetTitleOffset(1.4);
-    hist_diphoton_IDMVA->Write();
-    c1->SaveAs(Form("%s/hist_diphoton_IDMVA.png", output_dir));
-    //------------------------------
-    hist_inv_mass_tqh->Draw();
-    hist_inv_mass_tqh->SetTitle("M1 mass spectrum");
-    hist_inv_mass_tqh->SetXTitle("diphoton + cjet candidate invariant_mass [GeV/c^{2}]");
-    hist_inv_mass_tqh->SetYTitle("Entries / 10 GeV");
-    hist_inv_mass_tqh->GetYaxis()->SetTitleOffset(1.4);
-    hist_inv_mass_tqh->Write();
-    c1->SaveAs(Form("%s/hist_inv_mass_tqh.png", output_dir));
+    hist_inv_mass_tch->Draw();
+    hist_inv_mass_tch->SetTitle("M1 mass spectrum");
+    hist_inv_mass_tch->SetXTitle("diphoton + cjet candidate invariant_mass [GeV/c^{2}]");
+    hist_inv_mass_tch->SetYTitle("Entries / 10 GeV");
+    hist_inv_mass_tch->GetYaxis()->SetTitleOffset(1.4);
+    hist_inv_mass_tch->Write();
+    c1->SaveAs(Form("%s/hist_inv_mass_tch.png", output_dir));
     //------------------------------
     hist_inv_mass_tbw->Draw();
     hist_inv_mass_tbw->SetTitle("M2 mass spectrum");

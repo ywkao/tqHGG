@@ -3,9 +3,9 @@
 #include <string>
 using namespace std;
 
-const int NUM_sig = 8;
-const int NUM_resbkg = 3;
-const int NUM_nonresbkg = 10;
+const int NUM_sig = 12;
+const int NUM_resbkg = 4;
+const int NUM_nonresbkg = 11;
 const int NUM_data = 5;
 const int NUM = NUM_sig + NUM_resbkg + NUM_nonresbkg + NUM_data;
 
@@ -14,6 +14,7 @@ void RegisterHistogram(const char* fileName, TH1D* &hist, const char* histName, 
 string GetXtitleAccordingToHistName(const char* histName);
 string GetYtitleAccordingToHistName(const char* histName, double BinWidth);
 bool isThisNumEtaPhi(const char* histName);
+bool isThisMassSpectrum(const char* histName);
 
 //#--------------- Signal ---------------#
 string fileNames_sig[NUM_sig] = {
@@ -24,11 +25,16 @@ string fileNames_sig[NUM_sig] = {
 "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8/hist_TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root",
 "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8/hist_TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root",
 "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hut-MadGraph5-pythia8/hist_TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hut-MadGraph5-pythia8.root",
-"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8/hist_TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root"
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8/hist_TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root",
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8/hist_ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root",
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8/hist_ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root",
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8/hist_ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root",
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8/hist_ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root"
 };
 
 //#--------------- Resonant bkg ---------------#
 string fileNames_resbkg[NUM_resbkg] = {
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8/hist_GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8.root",
 "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/VBFHToGG_M125_13TeV_amcatnlo_pythia8/hist_VBFHToGG_M125_13TeV_amcatnlo_pythia8.root",
 "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8/hist_VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root",
 "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8/hist_ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root"
@@ -37,17 +43,16 @@ string fileNames_resbkg[NUM_resbkg] = {
 //#--------------- non-Resonant bkg ---------------#
 string fileNames_nonresbkg[NUM_nonresbkg] = {
 "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/DiPhotonJetsBox_M40_80-Sherpa/hist_DiPhotonJetsBox_M40_80-Sherpa.root",
-//###DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa/hist_DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa.root",
 "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/hist_GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root",
 "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8/hist_GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8.root",
-//###GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
-"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8/hist_GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8.root",
-"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/hist_QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root",
-"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8/hist_QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8.root",
-"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/hist_QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root",
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/hist_GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root",
 "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/TGJets_TuneCP5_13TeV_amcatnlo_madspin_pythia8/hist_TGJets_TuneCP5_13TeV_amcatnlo_madspin_pythia8.root",
 "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8/hist_TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8.root",
-"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/hist_TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8.root"
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/hist_TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8.root",
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/hist_QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root",
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8/hist_QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8.root",
+"/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/plots/QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/hist_QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root"
 };
 
 //#--------------- Data Samples ---------------#
