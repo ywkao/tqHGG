@@ -3,5 +3,6 @@
 
 bool isThisDataOrNot(char* dataset);
 bool isThisMultiFile(char* dataset);
+bool isThisMCsignal(char* dataset);
 
 #endif
