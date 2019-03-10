@@ -11,3 +11,5 @@ do
         mkdir ${DIRECTORY}
     fi
 done
+
+echo "[MESSAGE] Directory are checked and prepared!"

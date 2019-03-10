@@ -12,36 +12,46 @@ using namespace std;
 const double TunableSigBranchingFraction = 0.0001; //The branching fraction of signal MC = 0.01%
 
 void stackHist(){
-    MakeStackHist("hist_diphoton_IDMVA");
-    MakeStackHist("hist_dijet_eta");
-    MakeStackHist("hist_dijet_phi");
-    MakeStackHist("hist_dijet_angle");
     MakeStackHist("hist_num_jets");
     MakeStackHist("hist_num_btagged_jets");
     MakeStackHist("hist_num_nonbtagged_jets");
-    MakeStackHist("hist_wboson_mass_spectrum");
-    MakeStackHist("hist_diphoton_mass_spectrum");
     MakeStackHist("hist_bjet_pt");
-    MakeStackHist("hist_bjet_eta");
-    MakeStackHist("hist_bjet_phi");
-    //MakeStackHist("hist_cjet_pt");
-    //MakeStackHist("hist_cjet_eta");
-    //MakeStackHist("hist_cjet_phi");
     MakeStackHist("hist_jet1_pt");
-    MakeStackHist("hist_jet1_eta");
-    MakeStackHist("hist_jet1_phi");
     MakeStackHist("hist_jet2_pt");
+    MakeStackHist("hist_bjet_eta");
+    MakeStackHist("hist_jet1_eta");
     MakeStackHist("hist_jet2_eta");
+    MakeStackHist("hist_bjet_phi");
+    MakeStackHist("hist_jet1_phi");
     MakeStackHist("hist_jet2_phi");
-    //MakeStackHist("hist_inv_mass_tqh");
+    MakeStackHist("hist_dijet_eta");
+    MakeStackHist("hist_dijet_phi");
+    MakeStackHist("hist_dijet_angle");
+    MakeStackHist("hist_inv_mass_dijet");
+    MakeStackHist("hist_inv_mass_diphoton");
     MakeStackHist("hist_inv_mass_tbw");
+    MakeStackHist("hist_DiPhoInfo_leadPt");
+    MakeStackHist("hist_DiPhoInfo_leadEta");
+    MakeStackHist("hist_DiPhoInfo_leadPhi");
+    MakeStackHist("hist_DiPhoInfo_leadE");
+    MakeStackHist("hist_DiPhoInfo_leadIDMVA");
+    MakeStackHist("hist_DiPhoInfo_subleadPt");
+    MakeStackHist("hist_DiPhoInfo_subleadEta");
+    MakeStackHist("hist_DiPhoInfo_subleadPhi");
+    MakeStackHist("hist_DiPhoInfo_subleadE");
+    MakeStackHist("hist_DiPhoInfo_subleadIDMVA");
+    MakeStackHist("hist_DiPhoInfo_leadIDMVA_ori");
+    MakeStackHist("hist_DiPhoInfo_subleadIDMVA_ori");
+    MakeStackHist("hist_inv_mass_diphoton_ori");
 }
 void MakeStackHist(const char* histName){
     TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
     THStack *stackHist = new THStack("stackHist", "");//If setting titles here, the x(y)-title will NOT be able to set later.
     bool considerQCD = true;
+    bool isIDMVA = isThisIDMVA(histName);
     bool isNumEtaPhi = isThisNumEtaPhi(histName);
     bool isMassSpectrum = isThisMassSpectrum(histName);
+    bool isDijetSpectrum = isThisDijetSpectrum(histName);
     //--------------------
     TH1D  *hist_tqh_sig_ttpair;
     TH1D  *hist_tqh_sig_singletop;
@@ -200,12 +210,17 @@ void MakeStackHist(const char* histName){
     pad1->cd(); //pad1 becomes current pad
     gPad->SetTicks(1,1);
     //--------------------
-    if(isMassSpectrum){
-        stackHist->SetMaximum(2500);
+    if(isIDMVA){
+        stackHist->SetMaximum(3e+5);
+        stackHist->SetMinimum(0);
+    } else if(isMassSpectrum){
+        if(isDijetSpectrum) stackHist->SetMaximum(6e+4);
+        //if(isDijetSpectrum) stackHist->SetMaximum(8e+3);
+        else                 stackHist->SetMaximum(1.5e+5);
         stackHist->SetMinimum(0);
     } else{
         gPad->SetLogy(1);
-        stackHist->SetMaximum(isNumEtaPhi ? 1e+9 : 1e+6);
+        stackHist->SetMaximum(isNumEtaPhi ? 1e+9 : 1e+9);
         stackHist->SetMinimum(5e-1);
     }
     stackHist->Draw("hist");
@@ -320,122 +335,134 @@ void MakeStackHist(const char* histName){
     if(isMassSpectrum){
         c1->cd();
         pad1->cd();
-        stackHist->SetMaximum(600);
-        c1->SaveAs(Form("plots/stack_%s_zoomin.png", histName));
+        //stackHist->SetMaximum(600);
+        //c1->SaveAs(Form("plots/stack_%s_zoomin.png", histName));
         gPad->SetLogy(1);
-        stackHist->SetMaximum(isNumEtaPhi ? 1e+9 : 1e+6);
+        stackHist->SetMaximum(isNumEtaPhi ? 1e+9 : 1e+10);
         stackHist->SetMinimum(5e-1);
         c1->SaveAs(Form("plots/stack_%s_log.png", histName));
     }
 }
 
+bool isThisIDMVA(const char* histName){
+    if((string)histName == "hist_DiPhoInfo_leadIDMVA") return true;
+    if((string)histName == "hist_DiPhoInfo_subleadIDMVA") return true;
+    return false;
+}
+bool isThisDijetSpectrum(const char* histName){
+    if((string)histName == "hist_inv_mass_dijet") return true;
+    return false;
+}
 bool isThisMassSpectrum(const char* histName){
-    if((string)histName == "hist_diphoton_IDMVA") return false;
-    if((string)histName == "hist_dijet_eta") return false;
-    if((string)histName == "hist_dijet_phi") return false;
-    if((string)histName == "hist_dijet_angle") return false;
-    if((string)histName == "hist_num_jets") return false;
-    if((string)histName == "hist_num_btagged_jets") return false;
-    if((string)histName == "hist_num_nonbtagged_jets") return false;
-    if((string)histName == "hist_wboson_mass_spectrum") return true;
-    if((string)histName == "hist_diphoton_mass_spectrum") return true;
-    if((string)histName == "hist_bjet_pt") return false;
-    if((string)histName == "hist_jet1_pt") return false;
-    if((string)histName == "hist_jet2_pt") return false;
-    if((string)histName == "hist_cjet_pt") return false;
-    if((string)histName == "hist_bjet_eta") return false;
-    if((string)histName == "hist_jet1_eta") return false;
-    if((string)histName == "hist_jet2_eta") return false;
-    if((string)histName == "hist_cjet_eta") return false;
-    if((string)histName == "hist_bjet_phi") return false;
-    if((string)histName == "hist_jet1_phi") return false;
-    if((string)histName == "hist_jet2_phi") return false;
-    if((string)histName == "hist_cjet_phi") return false;
-    if((string)histName == "hist_inv_mass_tch") return true;
+    if((string)histName == "hist_inv_mass_dijet") return true;
+    if((string)histName == "hist_inv_mass_diphoton") return true;
     if((string)histName == "hist_inv_mass_tbw") return true;
     return false;
 }
-
 bool isThisNumEtaPhi(const char* histName){
-    if((string)histName == "hist_diphoton_IDMVA") return false;
-    if((string)histName == "hist_dijet_eta") return true;
-    if((string)histName == "hist_dijet_phi") return true;
-    if((string)histName == "hist_dijet_angle") return true;
     if((string)histName == "hist_num_jets") return true;
     if((string)histName == "hist_num_btagged_jets") return true;
     if((string)histName == "hist_num_nonbtagged_jets") return true;
-    if((string)histName == "hist_wboson_mass_spectrum") return false;
-    if((string)histName == "hist_diphoton_mass_spectrum") return false;
-    if((string)histName == "hist_bjet_pt") return false;
-    if((string)histName == "hist_jet1_pt") return false;
-    if((string)histName == "hist_jet2_pt") return false;
-    if((string)histName == "hist_cjet_pt") return false;
+    //--------------------
     if((string)histName == "hist_bjet_eta") return true;
     if((string)histName == "hist_jet1_eta") return true;
     if((string)histName == "hist_jet2_eta") return true;
-    if((string)histName == "hist_cjet_eta") return true;
+    if((string)histName == "hist_dijet_eta") return true;
+    //--------------------
     if((string)histName == "hist_bjet_phi") return true;
     if((string)histName == "hist_jet1_phi") return true;
     if((string)histName == "hist_jet2_phi") return true;
-    if((string)histName == "hist_cjet_phi") return true;
-    if((string)histName == "hist_inv_mass_tch") return false;
-    if((string)histName == "hist_inv_mass_tbw") return false;
+    if((string)histName == "hist_dijet_phi") return true;
+    if((string)histName == "hist_dijet_angle") return true;
+    //--------------------
+    if((string)histName == "hist_DiPhoInfo_leadEta") return true;
+    if((string)histName == "hist_DiPhoInfo_leadPhi") return true;
+    if((string)histName == "hist_DiPhoInfo_leadE") return true;
+    if((string)histName == "hist_DiPhoInfo_subleadEta") return true;
+    if((string)histName == "hist_DiPhoInfo_subleadPhi") return true;
+    if((string)histName == "hist_DiPhoInfo_subleadE") return true;
+    //--------------------
     return false;
 }
 
 string GetXtitleAccordingToHistName(const char* histName){
-    if((string)histName == "hist_diphoton_IDMVA") return "Diphoton_IDMVA";
-    if((string)histName == "hist_dijet_eta") return "Dijet_eta";
-    if((string)histName == "hist_dijet_phi") return "Dijet_phi";
-    if((string)histName == "hist_dijet_angle") return "Dijet_angle";
-    if((string)histName == "hist_num_jets") return "Number of jets";
+    if((string)histName == "hist_num_jets") return "Number of Jets";
     if((string)histName == "hist_num_btagged_jets") return "Number of btagged jets";
     if((string)histName == "hist_num_nonbtagged_jets") return "Number of nonbtagged jets";
-    if((string)histName == "hist_wboson_mass_spectrum") return "Invariant mass of di-jets [GeV/c^{2}]";
-    if((string)histName == "hist_diphoton_mass_spectrum") return "Invariant mass of di-photon [GeV/c^{2}]";
+    //--------------------
     if((string)histName == "hist_bjet_pt") return "Pt of bjet [GeV/c]";
     if((string)histName == "hist_jet1_pt") return "Pt of jet1 [GeV/c]";
     if((string)histName == "hist_jet2_pt") return "Pt of jet2 [GeV/c]";
-    if((string)histName == "hist_cjet_pt") return "Pt of cjet [GeV/c]";
+    //--------------------
     if((string)histName == "hist_bjet_eta") return "Eta of bjet";
     if((string)histName == "hist_jet1_eta") return "Eta of jet1";
     if((string)histName == "hist_jet2_eta") return "Eta of jet2";
-    if((string)histName == "hist_cjet_eta") return "Eta of cjet";
+    if((string)histName == "hist_dijet_eta") return "Eta of dijet";
+    //--------------------
     if((string)histName == "hist_bjet_phi") return "Phi of bjet";
     if((string)histName == "hist_jet1_phi") return "Phi of jet1";
     if((string)histName == "hist_jet2_phi") return "Phi of jet2";
-    if((string)histName == "hist_cjet_phi") return "Phi of cjet";
-    if((string)histName == "hist_inv_mass_tch") return "Invariant mass of diphoton + jet [GeV/c^{2}]";
-    if((string)histName == "hist_inv_mass_tbw") return "Invariant mass of w boson + b-jet [GeV/c^{2}]";
+    if((string)histName == "hist_dijet_phi") return "Phi of dijet";
+    if((string)histName == "hist_dijet_angle") return "Open angle between dijet";
+    //--------------------
+    if((string)histName == "hist_DiPhoInfo_leadPt") return "Pt of leading photon [GeV/c]";
+    if((string)histName == "hist_DiPhoInfo_leadEta") return "Eta of leading photon";
+    if((string)histName == "hist_DiPhoInfo_leadPhi") return "Phi of leading photon";
+    if((string)histName == "hist_DiPhoInfo_leadE") return "Energy of leading photon [GeV]";
+    if((string)histName == "hist_DiPhoInfo_leadIDMVA") return "IDMVA of leading photon";
+    //--------------------
+    if((string)histName == "hist_DiPhoInfo_subleadPt") return "Pt of SubleaddiPhoInfo [GeV/c]";
+    if((string)histName == "hist_DiPhoInfo_subleadEta") return "Eta of subleading photon";
+    if((string)histName == "hist_DiPhoInfo_subleadPhi") return "Phi of subleading photon";
+    if((string)histName == "hist_DiPhoInfo_subleadE") return "Energy of subleading photon [GeV]";
+    if((string)histName == "hist_DiPhoInfo_subleadIDMVA") return "IDMVA of subleading photon";
+    //--------------------
+    if((string)histName == "hist_inv_mass_dijet") return "Invariant mass of dijet [GeV/c^{2}]";
+    if((string)histName == "hist_inv_mass_diphoton") return "Invariant mass of diphoton [GeV/c^{2}]";
+    if((string)histName == "hist_inv_mass_tbw") return "Invariant mass of dijet+bjet [GeV/c^{2}]";
+    //--------------------
     return "";
 }
 
 string GetYtitleAccordingToHistName(const char* histName, double BinWidth){
     string str_ytitle_1("Entries");
     string str_ytitle_2(Form("Entries / %.2f [GeV]", BinWidth));
-    if((string)histName == "hist_diphoton_IDMVA") return str_ytitle_1;
-    if((string)histName == "hist_dijet_eta") return str_ytitle_1;
-    if((string)histName == "hist_dijet_phi") return str_ytitle_1;
-    if((string)histName == "hist_dijet_angle") return str_ytitle_1;
+    //--------------------
     if((string)histName == "hist_num_jets") return str_ytitle_1;
     if((string)histName == "hist_num_btagged_jets") return str_ytitle_1;
     if((string)histName == "hist_num_nonbtagged_jets") return str_ytitle_1;
-    if((string)histName == "hist_bjet_eta") return str_ytitle_1;
-    if((string)histName == "hist_jet1_eta") return str_ytitle_1;
-    if((string)histName == "hist_jet2_eta") return str_ytitle_1;
-    if((string)histName == "hist_cjet_eta") return str_ytitle_1;
-    if((string)histName == "hist_bjet_phi") return str_ytitle_1;
-    if((string)histName == "hist_jet1_phi") return str_ytitle_1;
-    if((string)histName == "hist_jet2_phi") return str_ytitle_1;
-    if((string)histName == "hist_cjet_phi") return str_ytitle_1;
+    //--------------------
     if((string)histName == "hist_bjet_pt") return str_ytitle_2;
     if((string)histName == "hist_jet1_pt") return str_ytitle_2;
     if((string)histName == "hist_jet2_pt") return str_ytitle_2;
-    if((string)histName == "hist_cjet_pt") return str_ytitle_2;
-    if((string)histName == "hist_wboson_mass_spectrum") return str_ytitle_2;
-    if((string)histName == "hist_diphoton_mass_spectrum") return str_ytitle_2;
-    if((string)histName == "hist_inv_mass_tch") return str_ytitle_2;
+    //--------------------
+    if((string)histName == "hist_bjet_eta") return str_ytitle_1;
+    if((string)histName == "hist_jet1_eta") return str_ytitle_1;
+    if((string)histName == "hist_jet2_eta") return str_ytitle_1;
+    if((string)histName == "hist_dijet_eta") return str_ytitle_1;
+    //--------------------
+    if((string)histName == "hist_bjet_phi") return str_ytitle_1;
+    if((string)histName == "hist_jet1_phi") return str_ytitle_1;
+    if((string)histName == "hist_jet2_phi") return str_ytitle_1;
+    if((string)histName == "hist_dijet_phi") return str_ytitle_1;
+    if((string)histName == "hist_dijet_angle") return str_ytitle_1;
+    //--------------------
+    if((string)histName == "hist_DiPhoInfo_leadPt") return str_ytitle_2;
+    if((string)histName == "hist_DiPhoInfo_leadEta") return str_ytitle_1;
+    if((string)histName == "hist_DiPhoInfo_leadPhi") return str_ytitle_1;
+    if((string)histName == "hist_DiPhoInfo_leadE") return str_ytitle_1;
+    if((string)histName == "hist_DiPhoInfo_leadIDMVA") return str_ytitle_1;
+    //--------------------
+    if((string)histName == "hist_DiPhoInfo_subleadPt") return str_ytitle_2;
+    if((string)histName == "hist_DiPhoInfo_subleadEta") return str_ytitle_1;
+    if((string)histName == "hist_DiPhoInfo_subleadPhi") return str_ytitle_1;
+    if((string)histName == "hist_DiPhoInfo_subleadE") return str_ytitle_1;
+    if((string)histName == "hist_DiPhoInfo_subleadIDMVA") return str_ytitle_1;
+    //--------------------
+    if((string)histName == "hist_inv_mass_dijet") return str_ytitle_2;
+    if((string)histName == "hist_inv_mass_diphoton") return str_ytitle_2;
     if((string)histName == "hist_inv_mass_tbw") return str_ytitle_2;
+    //--------------------
     return "";
 }
 

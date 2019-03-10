@@ -13,8 +13,10 @@ void MakeStackHist(const char* histName);
 void RegisterHistogram(const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false);
 string GetXtitleAccordingToHistName(const char* histName);
 string GetYtitleAccordingToHistName(const char* histName, double BinWidth);
+bool isThisIDMVA(const char* histName);
 bool isThisNumEtaPhi(const char* histName);
 bool isThisMassSpectrum(const char* histName);
+bool isThisDijetSpectrum(const char* histName);
 
 //#--------------- Signal ---------------#
 string fileNames_sig[NUM_sig] = {
