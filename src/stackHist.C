@@ -297,8 +297,10 @@ void MakeStackHist(const char* histName){
     pad2->cd(); //pad2 becomes current pad
     gPad->SetTicks(1,1);
     //--------------------
-    hist_tqh_ratio->SetMaximum(2.25);
-    hist_tqh_ratio->SetMinimum(0);
+    hist_tqh_ratio->SetMaximum(1.75);
+    hist_tqh_ratio->SetMinimum(0.5);
+    //hist_tqh_ratio->SetMaximum(2.25);
+    //hist_tqh_ratio->SetMinimum(0);
     hist_tqh_ratio->SetTitle("");
     hist_tqh_ratio->SetStats(0); //No statistics on lower plot
     hist_tqh_ratio->Draw("p,E1");
@@ -347,6 +349,8 @@ void MakeStackHist(const char* histName){
 bool isThisIDMVA(const char* histName){
     if((string)histName == "hist_DiPhoInfo_leadIDMVA") return true;
     if((string)histName == "hist_DiPhoInfo_subleadIDMVA") return true;
+    if((string)histName == "hist_DiPhoInfo_leadIDMVA_ori") return true;
+    if((string)histName == "hist_DiPhoInfo_subleadIDMVA_ori") return true;
     return false;
 }
 bool isThisDijetSpectrum(const char* histName){
@@ -356,6 +360,7 @@ bool isThisDijetSpectrum(const char* histName){
 bool isThisMassSpectrum(const char* histName){
     if((string)histName == "hist_inv_mass_dijet") return true;
     if((string)histName == "hist_inv_mass_diphoton") return true;
+    if((string)histName == "hist_inv_mass_diphoton_ori") return true;
     if((string)histName == "hist_inv_mass_tbw") return true;
     return false;
 }
@@ -467,7 +472,7 @@ string GetYtitleAccordingToHistName(const char* histName, double BinWidth){
 }
 
 void RegisterHistogram(const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false){
-    printf("Registering histogram of %s\n", fileName);
+    //printf("Registering histogram of %s\n", fileName);
     TFile *file = TFile::Open(fileName);
     hist = (TH1D*)file->Get(histName);
     if(isSigMC) hist->Scale(TunableSigBranchingFraction);

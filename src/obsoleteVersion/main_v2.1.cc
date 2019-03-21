@@ -197,8 +197,6 @@ int main(int argc, char *argv[]){
         //==================================================//
         //-------------   Reset Parameters   ---------------//
         //==================================================//
-        vec_bjet_indices.clear();
-        vec_btagged_jets.clear();
         vec_nonbtagged_jets.clear();
         //==================================================//
         //--------------   Basic Selectoin   ---------------//
@@ -236,8 +234,10 @@ int main(int argc, char *argv[]){
             }
         }
         hist_num_btagged_jets->Fill(num_bjets, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        bool CUT_no_bjet_events = (bjetindex==-1) ? true : false; // discard no-b-jet events
-        bool CUT_num_bjets_is_not_exactly_one = (num_bjets!=1) ? true : false; // exactly 1 b-jet criterion
+        bool CUT_no_bjet_events = (bjetindex==-1) ? true : false;
+        bool CUT_num_bjets_is_not_exactly_one = (num_bjets!=1) ? true : false;
+        //if(bjetindex==-1) continue;// discard no-b-jet events
+        //if(num_bjets!=1)   continue;// exactly 1 b-jet criterion
         hist_bjet_pt->Fill( CUT_no_bjet_events ? -999. : leading_bjet.Pt(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_bjet_eta->Fill( CUT_no_bjet_events ? -999. : leading_bjet.Eta(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_bjet_phi->Fill( CUT_no_bjet_events ? -999. : leading_bjet.Phi(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
@@ -249,8 +249,8 @@ int main(int argc, char *argv[]){
         for(int i=0; i<jets_size; i++){
             if( fabs(JetInfo_Eta->at(i)) > 2.4 ) continue;
             if( fabs(JetInfo_Pt->at(i))  < 30  ) continue;
-            //--------------------
             // Exclude bjet
+            //if(i == bjetindex) continue;
             isbjet=false;
             if(!CUT_no_bjet_events){for(int j=0; j<vec_btagged_jets.size(); j++){if(i==vec_bjet_indices[j]) isbjet=true;}}
             if(isbjet) continue;
@@ -261,6 +261,7 @@ int main(int argc, char *argv[]){
             num_nonbtagged_jets+=1;
         }
         bool CUT_num_nonbjets_less_than_2 = (num_nonbtagged_jets<2) ? true : false;
+        //if(num_nonbtagged_jets<2) continue;// at least 2 non-b-tagged jets for construction of w boson
         hist_num_nonbtagged_jets->Fill(num_nonbtagged_jets, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_num_jets->Fill(num_bjets+num_nonbtagged_jets, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         //==================================================//
@@ -276,6 +277,32 @@ int main(int argc, char *argv[]){
         else Nevents_anti_CUT_nand += 1;
 
 
+        if(bjetindex==-1) continue;
+        if(num_bjets!=1)   continue;
+        if(num_nonbtagged_jets<2) continue;
+
+        int wjetindices[2]={0};//indices in non-btagged vector
+        double dijet_invariant_mass, chi2, chi2_min=9999;
+        TLorentzVector best_dijet_pair;
+        for(int i=0; i<vec_nonbtagged_jets.size(); i++){
+            for(int j=i+1; j<vec_nonbtagged_jets.size(); j++){
+                TLorentzVector w_candidate_temp = vec_nonbtagged_jets[i] + vec_nonbtagged_jets[j];
+                dijet_invariant_mass = w_candidate_temp.M();
+                chi2 = (dijet_invariant_mass-w_boson_mass)*(dijet_invariant_mass-w_boson_mass);
+                if(chi2<chi2_min){wjetindices[0]=i; wjetindices[1]=j; chi2_min=chi2;};
+            }
+        }
+        best_dijet_pair = vec_nonbtagged_jets[wjetindices[0]] + vec_nonbtagged_jets[wjetindices[1]];
+        dijet_invariant_mass = best_dijet_pair.M();
+
+        TLorentzVector tbw_bjj = best_dijet_pair + leading_bjet;
+        double inv_mass_tbw = tbw_bjj.M();
+        
+        hist_inv_mass_dijet->Fill(dijet_invariant_mass, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        hist_inv_mass_tbw->Fill(inv_mass_tbw, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+
+
+        /*
         //==================================================//
         //------  Reconstruction(tbW): Chi-2 sorting  ------//
         //==================================================//
@@ -349,6 +376,7 @@ int main(int argc, char *argv[]){
         hist_DiPhoInfo_subleadE->Fill(DiPhoInfo_subleadE, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_DiPhoInfo_subleadIDMVA->Fill(DiPhoInfo_subleadIDMVA, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
         hist_inv_mass_diphoton->Fill(DiPhoInfo_mass, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        */
         //==================================================//
         //-------------   Event Selection    ---------------//
         //==================================================//
@@ -368,10 +396,15 @@ int main(int argc, char *argv[]){
     printf("[DEBUG] Nevents_CUT_nand = %d (%.4f)\n", Nevents_CUT_nand, (double)Nevents_CUT_nand/(double)nevents_pass_selection);
     printf("[DEBUG] Nevents_anti_CUT_nand = %d (%.4f)\n", Nevents_anti_CUT_nand, (double)Nevents_anti_CUT_nand/(double)nevents_pass_selection);
 
+    char output_dir[256]; sprintf(output_dir, "%s", argv[4]); printf("[INFO] output_dir = %s\n", output_dir);
+    MakePlots(c1, hist_inv_mass_tbw, "M2 mass spectrum", Form("%s/hist_inv_mass_tbw.png", output_dir));
+    MakePlots(c1, hist_inv_mass_dijet, "W boson mass spectrum", Form("%s/hist_inv_mass_dijet.png", output_dir));
+
 
     //##################################################//
     //##############     Make Plots !!    ##############//
     //##################################################//
+    /*
     printf("[INFO] Start making plots!\n");
     char output_dir[256]; sprintf(output_dir, "%s", argv[4]); printf("[INFO] output_dir = %s\n", output_dir);
     //------------------------------
@@ -411,6 +444,7 @@ int main(int argc, char *argv[]){
     MakePlots(c1, hist_DiPhoInfo_subleadIDMVA_ori, "Diphoton_subleadIDMVA", Form("%s/hist_DiPhoInfo_subleadIDMVA_ori.png", output_dir));
     MakePlots(c1, hist_inv_mass_diphoton_ori, "Diphoton mass spectrum", Form("%s/hist_inv_mass_diphoton_ori.png", output_dir));
     //------------------------------
+    */
     fout->Close();
     return 1;
 }

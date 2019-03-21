@@ -34,6 +34,12 @@ echo "[MESSAGE] Check directories for plots..."
 echo "[MESSAGE] Check executable..."
 make
 echo "[MESSAGE] Ready!"
+#--------------- DryRun ---------------#
+#ExeAnalysis_singletop ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root
+#ExeAnalysis_singletop ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root
+#echo "[MESSAGE] This is the end of execution."
+#exit 1
+#echo "[WARNNING] Still running!!"
 
 #--------------- TT Signal ---------------#
 ExeAnalysis TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root
