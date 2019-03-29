@@ -1,5 +1,5 @@
 //===========================================//
-//=== 27. Feb. 2019                       ===//
+//=== 22. Mar. 2019                       ===//
 //=== Develop for single top tqH analysis ===//
 //===========================================//
 #include <stdio.h>
@@ -22,7 +22,9 @@ double pfDeepCSVJetTags_tight  = 0.8001;
 double pfDeepCSVJetTags_medium = 0.4941;
 double pfDeepCSVJetTags_loose  = 0.1522;
 double w_boson_mass = 80.385;//GeV
+double w_boson_width = 2.085;//GeV
 double top_quark_mass = 173.0 ;//GeV
+double top_quark_width = 1.41 ;//GeV
 
 
 int main(int argc, char *argv[]){
@@ -33,85 +35,27 @@ int main(int argc, char *argv[]){
     bool isMCsignal = isThisMCsignal(dataset);
     bool isMultiFile = isThisMultiFile(dataset);
     TFile *fout = new TFile(output_file, "RECREATE");
+
+    flashggStdTreeReader treeReader;
+    treeReader.InitChain("flashggNtuples/flashggStdTree");
+    if(isMultiFile) treeReader.AddSingleRootFile(input_file);
+    else            treeReader.AddMultiRootFile(input_file);
+    treeReader.SetBranchAddresses();
+
+    myTreeClass mytree;
+    mytree.InitTree();
+    mytree.SetBranchAddresses();
+
+    /*
     TChain *flashggStdTree = new TChain("flashggNtuples/flashggStdTree");
     if(isMultiFile) flashggStdTree->Add(Form("%s/*.root", input_file));
     else flashggStdTree->Add(input_file);
-
-    //==================//
-    //--- histograms ---//
-    //==================//
-    TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
-    TH1D  *hist_num_jets = new TH1D("hist_num_jets", "hist_num_jets", 20, 0, 20);
-    TH1D  *hist_num_btagged_jets = new TH1D("hist_num_btagged_jets", "hist_num_btagged_jets", 10, 0, 10);
-    TH1D  *hist_num_nonbtagged_jets = new TH1D("hist_num_nonbtagged_jets", "hist_num_nonbtagged_jets", 20, 0, 20);
-    //------------------------
-    TH1D  *hist_bjet_pt = new TH1D("hist_bjet_pt", "hist_bjet_pt", 50, 0, 1000);
-    TH1D  *hist_jet1_pt = new TH1D("hist_jet1_pt", "hist_jet1_pt", 50, 0, 1000);
-    TH1D  *hist_jet2_pt = new TH1D("hist_jet2_pt", "hist_jet2_pt", 50, 0, 1000);
-    TH1D  *hist_bjet_eta = new TH1D("hist_bjet_eta", "hist_bjet_eta", 40, -2.5, 2.5);
-    TH1D  *hist_jet1_eta = new TH1D("hist_jet1_eta", "hist_jet1_eta", 40, -2.5, 2.5);
-    TH1D  *hist_jet2_eta = new TH1D("hist_jet2_eta", "hist_jet2_eta", 40, -2.5, 2.5);
-    TH1D  *hist_bjet_phi = new TH1D("hist_bjet_phi", "hist_bjet_phi", 40, -3.0, 3.0);
-    TH1D  *hist_jet1_phi = new TH1D("hist_jet1_phi", "hist_jet1_phi", 40, -3.0, 3.0);
-    TH1D  *hist_jet2_phi = new TH1D("hist_jet2_phi", "hist_jet2_phi", 40, -3.0, 3.0);
-    //------------------------
-    TH1D  *hist_dijet_eta = new TH1D("hist_dijet_eta", "hist_dijet_eta", 40, 0., 5.0);
-    TH1D  *hist_dijet_phi = new TH1D("hist_dijet_phi", "hist_dijet_phi", 40, 0., 6.0);
-    TH1D  *hist_dijet_angle = new TH1D("hist_dijet_angle", "hist_dijet_angle", 40, 0., 8.0);
-    TH1D  *hist_inv_mass_dijet = new TH1D("hist_inv_mass_dijet", "hist_inv_mass_dijet", 50, 55, 105);
-    TH1D  *hist_inv_mass_diphoton = new TH1D("hist_inv_mass_diphoton", "hist_inv_mass_diphoton", 50, 100, 150);
-    TH1D  *hist_inv_mass_tbw = new TH1D("hist_inv_mass_tbw", "hist_inv_mass_tbw", 50, 0, 500);
-    //------------------------
-    TH1D  *hist_DiPhoInfo_leadPt = new TH1D("hist_DiPhoInfo_leadPt", "DiPhoInfo_leadPt", 50, 0., 1000);
-    TH1D  *hist_DiPhoInfo_leadEta = new TH1D("hist_DiPhoInfo_leadEta", "DiPhoInfo_leadEta", 40, -2.5, 2.5);
-    TH1D  *hist_DiPhoInfo_leadPhi = new TH1D("hist_DiPhoInfo_leadPhi", "DiPhoInfo_leadPhi", 40, -3., 3.);
-    TH1D  *hist_DiPhoInfo_leadE = new TH1D("hist_DiPhoInfo_leadE", "DiPhoInfo_leadE", 50, 0., 1000);
-    TH1D  *hist_DiPhoInfo_leadIDMVA = new TH1D("hist_DiPhoInfo_leadIDMVA", "DiPhoInfo_leadIDMVA", 50, -1., 1.);
-    TH1D  *hist_DiPhoInfo_subleadPt = new TH1D("hist_DiPhoInfo_subleadPt", "DiPhoInfo_subleadPt", 50, 0., 1000);
-    TH1D  *hist_DiPhoInfo_subleadEta = new TH1D("hist_DiPhoInfo_subleadEta", "DiPhoInfo_subleadEta", 40, -2.5, 2.5);
-    TH1D  *hist_DiPhoInfo_subleadPhi = new TH1D("hist_DiPhoInfo_subleadPhi", "DiPhoInfo_subleadPhi", 40, -3., 3.);
-    TH1D  *hist_DiPhoInfo_subleadE = new TH1D("hist_DiPhoInfo_subleadE", "DiPhoInfo_subleadE", 50, 0., 1000);
-    TH1D  *hist_DiPhoInfo_subleadIDMVA = new TH1D("hist_DiPhoInfo_subleadIDMVA", "DiPhoInfo_subleadIDMVA", 50, -1., 1.);
-    //------------------------
-    TH1D  *hist_DiPhoInfo_leadIDMVA_ori = new TH1D("hist_DiPhoInfo_leadIDMVA_ori", "DiPhoInfo_leadIDMVA", 50, -1., 1.);
-    TH1D  *hist_DiPhoInfo_subleadIDMVA_ori = new TH1D("hist_DiPhoInfo_subleadIDMVA_ori", "DiPhoInfo_subleadIDMVA", 50, -1., 1.);
-    TH1D  *hist_inv_mass_diphoton_ori = new TH1D("hist_inv_mass_diphoton_ori", "hist_inv_mass_diphoton", 50, 100, 150);
-    //------------------------
-    hist_num_jets -> Sumw2();
-    hist_num_btagged_jets -> Sumw2();
-    hist_num_nonbtagged_jets -> Sumw2();
-    hist_bjet_pt -> Sumw2();
-    hist_jet1_pt -> Sumw2();
-    hist_jet2_pt -> Sumw2();
-    hist_bjet_eta -> Sumw2();
-    hist_jet1_eta -> Sumw2();
-    hist_jet2_eta -> Sumw2();
-    hist_bjet_phi -> Sumw2();
-    hist_jet1_phi -> Sumw2();
-    hist_jet2_phi -> Sumw2();
-    hist_dijet_eta -> Sumw2();
-    hist_dijet_phi -> Sumw2();
-    hist_dijet_angle -> Sumw2();
-    hist_inv_mass_dijet -> Sumw2();
-    hist_inv_mass_diphoton -> Sumw2();
-    hist_inv_mass_tbw -> Sumw2();
-    hist_DiPhoInfo_leadPt -> Sumw2();
-    hist_DiPhoInfo_leadEta -> Sumw2();
-    hist_DiPhoInfo_leadPhi -> Sumw2();
-    hist_DiPhoInfo_leadE -> Sumw2();
-    hist_DiPhoInfo_leadIDMVA -> Sumw2();
-    hist_DiPhoInfo_subleadPt -> Sumw2();
-    hist_DiPhoInfo_subleadEta -> Sumw2();
-    hist_DiPhoInfo_subleadPhi -> Sumw2();
-    hist_DiPhoInfo_subleadE -> Sumw2();
-    hist_DiPhoInfo_subleadIDMVA -> Sumw2();
-    hist_DiPhoInfo_leadIDMVA_ori -> Sumw2();
-    hist_DiPhoInfo_subleadIDMVA_ori -> Sumw2();
-    hist_inv_mass_diphoton_ori -> Sumw2();
+    */
 
     //==========================//
-    //--- readout parameters ---//
+    //--- Readout Parameters ---//
     //==========================//
+    /*
     Int_t jets_size=0;
     std::vector<float> *JetInfo_Pt=0;
     std::vector<float> *JetInfo_Eta=0;
@@ -153,14 +97,80 @@ int main(int argc, char *argv[]){
     flashggStdTree->SetBranchAddress("DiPhoInfo.subleadPhi", &DiPhoInfo_subleadPhi);
     flashggStdTree->SetBranchAddress("DiPhoInfo.subleadE", &DiPhoInfo_subleadE);
     flashggStdTree->SetBranchAddress("DiPhoInfo.subleadIDMVA", &DiPhoInfo_subleadIDMVA);
+    */
 
-    std::vector<int> vec_bjet_indices;
-    std::vector<TLorentzVector> vec_btagged_jets;
-    std::vector<TLorentzVector> vec_nonbtagged_jets;
+
+    //==================//
+    //--- MyTreeVar ----//
+    //==================//
+    /*
+    Int_t num_jets;
+    Int_t num_btagged_jets;
+    Int_t num_nonbtagged_jets;
+    //------------------------
+    float inv_mass_dijet;
+    float inv_mass_diphoton;
+    float inv_mass_tbw;
+    float JetInfo_dijet_delta_eta;
+    float JetInfo_dijet_delta_phi;
+    float JetInfo_dijet_delta_angle;
+    //------------------------
+    std::vector<float> JetInfo_bjet_pt;
+    std::vector<float> JetInfo_bjet_eta;
+    std::vector<float> JetInfo_bjet_phi;
+    std::vector<float> JetInfo_jet1_pt;
+    std::vector<float> JetInfo_jet1_eta;
+    std::vector<float> JetInfo_jet1_phi;
+    std::vector<float> JetInfo_jet2_pt;
+    std::vector<float> JetInfo_jet2_eta;
+    std::vector<float> JetInfo_jet2_phi;
+    */
+
+    //==================//
+    //---- Branches ----//
+    //==================//
+    /*
+    TTree *mytree = new TTree("mytree", "mytree");
+    //------------------------
+    mytree -> Branch("num_jets", &num_jets, "num_jets/I");
+    mytree -> Branch("num_btagged_jets", &num_btagged_jets, "num_btagged_jets/I");
+    mytree -> Branch("num_nonbtagged_jets", &num_nonbtagged_jets, "num_nonbtagged_jets/I");
+    //------------------------
+    mytree -> Branch("inv_mass_dijet", &inv_mass_dijet, "inv_mass_dijet/F");
+    mytree -> Branch("inv_mass_diphoton", &inv_mass_diphoton, "inv_mass_diphoton/F");
+    mytree -> Branch("inv_mass_tbw", &inv_mass_tbw, "inv_mass_tbw/F");
+    //------------------------
+    mytree -> Branch("JetInfo_bjet_pt", &JetInfo_bjet_pt);
+    mytree -> Branch("JetInfo_bjet_eta", &JetInfo_bjet_eta);
+    mytree -> Branch("JetInfo_bjet_phi", &JetInfo_bjet_phi);
+    mytree -> Branch("JetInfo_jet1_pt", &JetInfo_jet1_pt);
+    mytree -> Branch("JetInfo_jet1_eta", &JetInfo_jet1_eta);
+    mytree -> Branch("JetInfo_jet1_phi", &JetInfo_jet1_phi);
+    mytree -> Branch("JetInfo_jet2_pt", &JetInfo_jet2_pt);
+    mytree -> Branch("JetInfo_jet2_eta", &JetInfo_jet2_eta);
+    mytree -> Branch("JetInfo_jet2_phi", &JetInfo_jet2_phi);
+    //------------------------
+    mytree -> Branch("JetInfo_dijet_delta_eta", &JetInfo_dijet_delta_eta, "JetInfo_dijet_delta_eta/F");
+    mytree -> Branch("JetInfo_dijet_delta_phi", &JetInfo_dijet_delta_phi, "JetInfo_dijet_delta_phi/F");
+    mytree -> Branch("JetInfo_dijet_delta_angle", &JetInfo_dijet_delta_angle, "JetInfo_dijet_delta_angle/F");
+    //------------------------
+    mytree -> Branch("DiPhoInfo_leadPt", &DiPhoInfo_leadPt, "DiPhoInfo_leadPt/F");
+    mytree -> Branch("DiPhoInfo_leadEta", &DiPhoInfo_leadEta, "DiPhoInfo_leadEta/F");
+    mytree -> Branch("DiPhoInfo_leadPhi", &DiPhoInfo_leadPhi, "DiPhoInfo_leadPhi/F");
+    mytree -> Branch("DiPhoInfo_leadE", &DiPhoInfo_leadE, "DiPhoInfo_leadE/F");
+    mytree -> Branch("DiPhoInfo_leadIDMVA", &DiPhoInfo_leadIDMVA, "DiPhoInfo_leadIDMVA/F");
+    mytree -> Branch("DiPhoInfo_subleadPt", &DiPhoInfo_subleadPt, "DiPhoInfo_subleadPt/F");
+    mytree -> Branch("DiPhoInfo_subleadEta", &DiPhoInfo_subleadEta, "DiPhoInfo_subleadEta/F");
+    mytree -> Branch("DiPhoInfo_subleadPhi", &DiPhoInfo_subleadPhi, "DiPhoInfo_subleadPhi/F");
+    mytree -> Branch("DiPhoInfo_subleadE", &DiPhoInfo_subleadE, "DiPhoInfo_subleadE/F");
+    mytree -> Branch("DiPhoInfo_subleadIDMVA", &DiPhoInfo_subleadIDMVA, "DiPhoInfo_subleadIDMVA/F");
+    mytree -> Branch("DiPhoInfo_mass", &DiPhoInfo_mass, "DiPhoInfo_mass/F");
+    */
 
     //##################################################//
     //########   Event Loop [Normalization]   ##########//
     //##################################################//
+    /*
     int nentries = flashggStdTree->GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
     double NormalizationFactor;
     double Luminosity = 42.; //fb{-1}
@@ -177,11 +187,11 @@ int main(int argc, char *argv[]){
     NormalizationFactor = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
     printf("\n[INFO] TotalGenweight = %f!\n", TotalGenweight);
     printf("[INFO] NormalizationFactor = %f!\n", isData ? 1. : NormalizationFactor);
+    */
+
     //##################################################//
-    //#########    Event Loop [Selection]    ###########//
+    //#######    Parameters used to report     #########//
     //##################################################//
-    // Goal 1: t->b+W(jj), 1 bjet + 2 chi2 jets 
-    // Goal 2: diphoton info
     int nevents_pass_selection = 0;
     int Nevents_CUT_num_bjets_is_not_exactly_one = 0;
     int Nevents_anti_CUT_num_bjets_is_not_exactly_one = 0;
@@ -191,13 +201,45 @@ int main(int argc, char *argv[]){
     int Nevents_anti_CUT_num_nonbjets_less_than_2 = 0;
     int Nevents_CUT_nand = 0;
     int Nevents_anti_CUT_nand = 0;
+
+    //##################################################//
+    //#########    Event Loop [Selection]    ###########//
+    //##################################################//
+    // Goal 1: t->b+W(jj), 1 bjet + 2 chi2 jets 
+    // Goal 2: diphoton info
+    int nentries = treeReader.flashggStdTree->GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
     for(int ientry=0; ientry<nentries; ientry++){
-        flashggStdTree->GetEntry(ientry);//load data
+        treeReader.flashggStdTree->GetEntry(ientry);//load data
         if((ientry+1)%1000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
         //==================================================//
         //-------------   Reset Parameters   ---------------//
         //==================================================//
-        vec_nonbtagged_jets.clear();
+        std::vector<int> vec_bjet_indices;
+        std::vector<TLorentzVector> vec_btagged_jets;
+        std::vector<TLorentzVector> vec_nonbtagged_jets;
+        //vec_bjet_indices.clear();
+        //vec_btagged_jets.clear();
+        //vec_nonbtagged_jets.clear();
+        //------------------------
+        num_jets = 0;
+        num_btagged_jets = 0;
+        num_nonbtagged_jets = 0;
+        inv_mass_dijet = 0;
+        inv_mass_diphoton = 0;
+        inv_mass_tbw = 0;
+        JetInfo_dijet_delta_eta = 0;
+        JetInfo_dijet_delta_phi = 0;
+        JetInfo_dijet_delta_angle = 0;
+        //------------------------
+        JetInfo_bjet_pt.clear();
+        JetInfo_bjet_eta.clear();
+        JetInfo_bjet_phi.clear();
+        JetInfo_jet1_pt.clear();
+        JetInfo_jet1_eta.clear();
+        JetInfo_jet1_phi.clear();
+        JetInfo_jet2_pt.clear();
+        JetInfo_jet2_eta.clear();
+        JetInfo_jet2_phi.clear();
         //==================================================//
         //--------------   Basic Selectoin   ---------------//
         //==================================================//
@@ -205,12 +247,7 @@ int main(int argc, char *argv[]){
         if( !(jets_size>0) ) continue;
         if(DiPhoInfo_mass<100 || DiPhoInfo_mass>150) continue;
         if( !isMCsignal && DiPhoInfo_mass>120 && DiPhoInfo_mass<130) continue;
-        //--------------------
-        hist_DiPhoInfo_leadIDMVA_ori -> Fill(DiPhoInfo_leadIDMVA, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_DiPhoInfo_subleadIDMVA_ori -> Fill(DiPhoInfo_subleadIDMVA, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_inv_mass_diphoton_ori -> Fill(DiPhoInfo_mass, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        //--------------------
-        if(!(DiPhoInfo_leadIDMVA>0)) continue;
+        //if(!(DiPhoInfo_leadIDMVA>0)) continue;
         //==================================================//
         //------------   Physical Observables   ------------//
         //==================================================//
@@ -218,7 +255,8 @@ int main(int argc, char *argv[]){
         //==================================================//
         //-----  Reconstruction(tbW): Select one bjet  -----//
         //==================================================//
-        int bjetindex=-1, num_bjets=0;
+        int bjetindex=-1;
+        num_btagged_jets = 0;
         TLorentzVector leading_bjet;
         for(int i=0; i<jets_size; i++){
             if( fabs(JetInfo_Eta->at(i)) > 2.4 ) continue;
@@ -230,27 +268,24 @@ int main(int argc, char *argv[]){
                 jet_lorentzvector.SetPtEtaPhiE(JetInfo_Pt->at(i), JetInfo_Eta->at(i), JetInfo_Phi->at(i), JetInfo_Energy->at(i));
                 vec_btagged_jets.push_back(jet_lorentzvector);
                 vec_bjet_indices.push_back(bjetindex);
-                num_bjets+=1;
+                num_btagged_jets+=1;
             }
         }
-        hist_num_btagged_jets->Fill(num_bjets, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        bool CUT_no_bjet_events = (bjetindex==-1) ? true : false;
-        bool CUT_num_bjets_is_not_exactly_one = (num_bjets!=1) ? true : false;
-        //if(bjetindex==-1) continue;// discard no-b-jet events
-        //if(num_bjets!=1)   continue;// exactly 1 b-jet criterion
-        hist_bjet_pt->Fill( CUT_no_bjet_events ? -999. : leading_bjet.Pt(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_bjet_eta->Fill( CUT_no_bjet_events ? -999. : leading_bjet.Eta(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_bjet_phi->Fill( CUT_no_bjet_events ? -999. : leading_bjet.Phi(), isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        bool CUT_no_bjet_events = (bjetindex==-1) ? true : false; // discard no-b-jet events
+        bool CUT_num_bjets_is_not_exactly_one = (num_btagged_jets!=1) ? true : false; // exactly 1 b-jet criterion
+        JetInfo_bjet_pt.push_back(leading_bjet.Pt());
+        JetInfo_bjet_eta.push_back(leading_bjet.Eta());
+        JetInfo_bjet_phi.push_back(leading_bjet.Phi());
         //==================================================//
         //-----  Reconstruction(tbW): Store rest jets  -----//
         //==================================================//
         bool isbjet;
-        int num_nonbtagged_jets=0;
+        num_nonbtagged_jets=0;
         for(int i=0; i<jets_size; i++){
             if( fabs(JetInfo_Eta->at(i)) > 2.4 ) continue;
             if( fabs(JetInfo_Pt->at(i))  < 30  ) continue;
+            //--------------------
             // Exclude bjet
-            //if(i == bjetindex) continue;
             isbjet=false;
             if(!CUT_no_bjet_events){for(int j=0; j<vec_btagged_jets.size(); j++){if(i==vec_bjet_indices[j]) isbjet=true;}}
             if(isbjet) continue;
@@ -261,9 +296,7 @@ int main(int argc, char *argv[]){
             num_nonbtagged_jets+=1;
         }
         bool CUT_num_nonbjets_less_than_2 = (num_nonbtagged_jets<2) ? true : false;
-        //if(num_nonbtagged_jets<2) continue;// at least 2 non-b-tagged jets for construction of w boson
-        hist_num_nonbtagged_jets->Fill(num_nonbtagged_jets, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_num_jets->Fill(num_bjets+num_nonbtagged_jets, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        num_jets = num_btagged_jets + num_nonbtagged_jets;
         //==================================================//
         //---------------------  Test  ---------------------//
         //==================================================//
@@ -277,32 +310,6 @@ int main(int argc, char *argv[]){
         else Nevents_anti_CUT_nand += 1;
 
 
-        if(bjetindex==-1) continue;
-        if(num_bjets!=1)  continue;
-        if(num_nonbtagged_jets<2) continue;
-
-        int wjetindices[2]={0};//indices in non-btagged vector
-        double dijet_invariant_mass, chi2, chi2_min=9999;
-        TLorentzVector best_dijet_pair;
-        for(int i=0; i<vec_nonbtagged_jets.size(); i++){
-            for(int j=i+1; j<vec_nonbtagged_jets.size(); j++){
-                TLorentzVector w_candidate_temp = vec_nonbtagged_jets[i] + vec_nonbtagged_jets[j];
-                dijet_invariant_mass = w_candidate_temp.M();
-                chi2 = (dijet_invariant_mass-w_boson_mass)*(dijet_invariant_mass-w_boson_mass);
-                if(chi2<chi2_min){wjetindices[0]=i; wjetindices[1]=j; chi2_min=chi2;};
-            }
-        }
-        best_dijet_pair = vec_nonbtagged_jets[wjetindices[0]] + vec_nonbtagged_jets[wjetindices[1]];
-        dijet_invariant_mass = best_dijet_pair.M();
-
-        TLorentzVector tbw_bjj = best_dijet_pair + leading_bjet;
-        double inv_mass_tbw = tbw_bjj.M();
-        
-        hist_inv_mass_dijet->Fill(dijet_invariant_mass, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_inv_mass_tbw->Fill(inv_mass_tbw, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-
-
-        /*
         //==================================================//
         //------  Reconstruction(tbW): Chi-2 sorting  ------//
         //==================================================//
@@ -344,49 +351,38 @@ int main(int argc, char *argv[]){
         double dijet_phi_difference = CUT_num_nonbjets_less_than_2 ? -999. : fabs(dijet_jet1_phi - dijet_jet2_phi);
         double dijet_angle_difference = sqrt(dijet_eta_difference*dijet_eta_difference + dijet_phi_difference*dijet_phi_difference);
         //------------------------------
-        hist_jet1_pt->Fill(dijet_jet1_pt, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_jet1_eta->Fill(dijet_jet1_eta, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_jet1_phi->Fill(dijet_jet1_phi, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_jet2_pt->Fill(dijet_jet2_pt, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_jet2_eta->Fill(dijet_jet2_eta, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_jet2_phi->Fill(dijet_jet2_phi, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_dijet_eta->Fill(dijet_eta_difference, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_dijet_phi->Fill(dijet_phi_difference, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_dijet_angle->Fill(dijet_angle_difference, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_inv_mass_dijet->Fill(dijet_invariant_mass, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        JetInfo_jet1_pt.push_back(dijet_jet1_pt);
+        JetInfo_jet1_eta.push_back(dijet_jet1_eta);
+        JetInfo_jet1_phi.push_back(dijet_jet1_phi);
+        JetInfo_jet2_pt.push_back(dijet_jet2_pt);
+        JetInfo_jet2_eta.push_back(dijet_jet2_eta);
+        JetInfo_jet2_phi.push_back(dijet_jet2_phi);
+        JetInfo_dijet_delta_eta = dijet_eta_difference;
+        JetInfo_dijet_delta_phi = dijet_phi_difference;
+        JetInfo_dijet_delta_angle = dijet_angle_difference;
+        inv_mass_dijet = dijet_invariant_mass;
         //==================================================//
         //-----  Reconstruction(tbW): InvMass of top  ------//
         //==================================================//
         //TLorentzVector tbw_bjj = best_dijet + leading_bjet;
-        //double inv_mass_tbw = CUT_no_any_top_candidate ? -999. : tbw_bjj.M();
         best_trijet = CUT_no_any_top_candidate ? best_trijet : best_dijet + vec_btagged_jets[good_bjet_index];
         trijet_invariant_mass = CUT_no_any_top_candidate ? -999. : best_trijet.M();
-        hist_inv_mass_tbw->Fill(trijet_invariant_mass, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
+        inv_mass_tbw = trijet_invariant_mass;
         //==================================================//
         //-----------   Diphoton Related Info    -----------//
         //==================================================//
-        hist_DiPhoInfo_leadPt->Fill(DiPhoInfo_leadPt, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_DiPhoInfo_leadEta->Fill(DiPhoInfo_leadEta, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_DiPhoInfo_leadPhi->Fill(DiPhoInfo_leadPhi, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_DiPhoInfo_leadE->Fill(DiPhoInfo_leadE, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_DiPhoInfo_leadIDMVA->Fill(DiPhoInfo_leadIDMVA, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_DiPhoInfo_subleadPt->Fill(DiPhoInfo_subleadPt, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_DiPhoInfo_subleadEta->Fill(DiPhoInfo_subleadEta, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_DiPhoInfo_subleadPhi->Fill(DiPhoInfo_subleadPhi, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_DiPhoInfo_subleadE->Fill(DiPhoInfo_subleadE, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_DiPhoInfo_subleadIDMVA->Fill(DiPhoInfo_subleadIDMVA, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        hist_inv_mass_diphoton->Fill(DiPhoInfo_mass, isData ? 1. : NormalizationFactor*EvtInfo_genweight);
-        */
+        // Automatically stored
         //==================================================//
-        //-------------   Event Selection    ---------------//
+        //-------------   Event Counting     ---------------//
         //==================================================//
         nevents_pass_selection += 1;
+        mytree->Fill();
     }// End of event loop.
 
     //==================================================//
-    //---------------------  Test  ---------------------//
+    //---------------------  Report  -------------------//
     //==================================================//
-    printf("[INFO] N_nevents_pass_selection = %d\n", nevents_pass_selection);
+    printf("[INFO] N_nevents_pass_selection = %d/%d\n", nevents_pass_selection, nentries);
     printf("[DEBUG] Nevents_CUT_num_bjets_is_not_exactly_one = %d (%.4f)\n", Nevents_CUT_num_bjets_is_not_exactly_one, (double)Nevents_CUT_num_bjets_is_not_exactly_one/(double)nevents_pass_selection);
     printf("[DEBUG] Nevents_anti_CUT_num_bjets_is_not_exactly_one = %d (%.4f)\n", Nevents_anti_CUT_num_bjets_is_not_exactly_one, (double)Nevents_anti_CUT_num_bjets_is_not_exactly_one/(double)nevents_pass_selection);
     printf("[DEBUG] Nevents_CUT_no_bjet_events = %d (%.4f)\n", Nevents_CUT_no_bjet_events, (double)Nevents_CUT_no_bjet_events/(double)nevents_pass_selection);
@@ -396,61 +392,14 @@ int main(int argc, char *argv[]){
     printf("[DEBUG] Nevents_CUT_nand = %d (%.4f)\n", Nevents_CUT_nand, (double)Nevents_CUT_nand/(double)nevents_pass_selection);
     printf("[DEBUG] Nevents_anti_CUT_nand = %d (%.4f)\n", Nevents_anti_CUT_nand, (double)Nevents_anti_CUT_nand/(double)nevents_pass_selection);
 
-    char output_dir[256]; sprintf(output_dir, "%s", argv[4]); printf("[INFO] output_dir = %s\n", output_dir);
-    MakePlots(c1, hist_inv_mass_tbw, "M2 mass spectrum", Form("%s/hist_inv_mass_tbw.png", output_dir));
-    MakePlots(c1, hist_inv_mass_dijet, "W boson mass spectrum", Form("%s/hist_inv_mass_dijet.png", output_dir));
 
-
-    //##################################################//
-    //##############     Make Plots !!    ##############//
-    //##################################################//
-    /*
-    printf("[INFO] Start making plots!\n");
-    char output_dir[256]; sprintf(output_dir, "%s", argv[4]); printf("[INFO] output_dir = %s\n", output_dir);
-    //------------------------------
-    MakePlots(c1, hist_num_jets, "Multiplicity of jets", Form("%s/hist_num_jets.png", output_dir));
-    MakePlots(c1, hist_num_btagged_jets, "Multiplicity of b-tagged jets", Form("%s/hist_num_btagged_jets.png", output_dir));
-    MakePlots(c1, hist_num_nonbtagged_jets, "Multiplicity of non-b-tagged jets", Form("%s/hist_num_nonbtagged_jets.png", output_dir));
-    //------------------------------
-    MakePlots(c1, hist_bjet_pt, "Pt of b-tagged jet", Form("%s/hist_bjet_pt.png", output_dir));
-    MakePlots(c1, hist_bjet_eta, "Eta of b-tagged jet", Form("%s/hist_bjet_eta.png", output_dir));
-    MakePlots(c1, hist_bjet_phi, "Phi of b-tagged jet", Form("%s/hist_bjet_phi.png", output_dir));
-    MakePlots(c1, hist_jet1_pt, "Pt of hadronic jet1 candidate", Form("%s/hist_jet1_pt.png", output_dir));
-    MakePlots(c1, hist_jet1_eta, "Eta of hadronic jet1 candidate", Form("%s/hist_jet1_eta.png", output_dir));
-    MakePlots(c1, hist_jet1_phi, "Phi of hadronic jet1 candidate", Form("%s/hist_jet1_phi.png", output_dir));
-    MakePlots(c1, hist_jet2_pt, "Pt of hadronic jet2 candidate", Form("%s/hist_jet2_pt.png", output_dir));
-    MakePlots(c1, hist_jet2_eta, "Eta of hadronic jet2 candidate", Form("%s/hist_jet2_eta.png", output_dir));
-    MakePlots(c1, hist_jet2_phi, "Phi of hadronic jet2 candidate", Form("%s/hist_jet2_phi.png", output_dir));
-    //------------------------------
-    MakePlots(c1, hist_dijet_eta, "Eta difference of hadronic dijet candidate", Form("%s/hist_dijet_eta.png", output_dir));
-    MakePlots(c1, hist_dijet_phi, "Phi difference of hadronic dijet candidate", Form("%s/hist_dijet_phi.png", output_dir));
-    MakePlots(c1, hist_dijet_angle, "Angle difference of hadronic dijet candidate", Form("%s/hist_dijet_angle.png", output_dir));
-    //------------------------------
-    MakePlots(c1, hist_DiPhoInfo_leadPt, "Diphoton_leadPt", Form("%s/hist_DiPhoInfo_leadPt.png", output_dir));
-    MakePlots(c1, hist_DiPhoInfo_leadEta, "Diphoton_leadEta", Form("%s/hist_DiPhoInfo_leadEta.png", output_dir));
-    MakePlots(c1, hist_DiPhoInfo_leadPhi, "Diphoton_leadPhi", Form("%s/hist_DiPhoInfo_leadPhi.png", output_dir));
-    MakePlots(c1, hist_DiPhoInfo_leadE, "Diphoton_leadE", Form("%s/hist_DiPhoInfo_leadE.png", output_dir));
-    MakePlots(c1, hist_DiPhoInfo_leadIDMVA, "Diphoton_leadIDMVA", Form("%s/hist_DiPhoInfo_leadIDMVA.png", output_dir));
-    MakePlots(c1, hist_DiPhoInfo_subleadPt, "Diphoton_subleadPt", Form("%s/hist_DiPhoInfo_subleadPt.png", output_dir));
-    MakePlots(c1, hist_DiPhoInfo_subleadEta, "Diphoton_subleadEta", Form("%s/hist_DiPhoInfo_subleadEta.png", output_dir));
-    MakePlots(c1, hist_DiPhoInfo_subleadPhi, "Diphoton_subleadPhi", Form("%s/hist_DiPhoInfo_subleadPhi.png", output_dir));
-    MakePlots(c1, hist_DiPhoInfo_subleadE, "Diphoton_subleadE", Form("%s/hist_DiPhoInfo_subleadE.png", output_dir));
-    MakePlots(c1, hist_DiPhoInfo_subleadIDMVA, "Diphoton_subleadIDMVA", Form("%s/hist_DiPhoInfo_subleadIDMVA.png", output_dir));
-    MakePlots(c1, hist_inv_mass_tbw, "M2 mass spectrum", Form("%s/hist_inv_mass_tbw.png", output_dir));
-    MakePlots(c1, hist_inv_mass_dijet, "W boson mass spectrum", Form("%s/hist_inv_mass_dijet.png", output_dir));
-    MakePlots(c1, hist_inv_mass_diphoton, "Diphoton mass spectrum", Form("%s/hist_inv_mass_diphoton.png", output_dir));
-    //------------------------------
-    MakePlots(c1, hist_DiPhoInfo_leadIDMVA_ori, "Diphoton_leadIDMVA", Form("%s/hist_DiPhoInfo_leadIDMVA_ori.png", output_dir));
-    MakePlots(c1, hist_DiPhoInfo_subleadIDMVA_ori, "Diphoton_subleadIDMVA", Form("%s/hist_DiPhoInfo_subleadIDMVA_ori.png", output_dir));
-    MakePlots(c1, hist_inv_mass_diphoton_ori, "Diphoton mass spectrum", Form("%s/hist_inv_mass_diphoton_ori.png", output_dir));
-    //------------------------------
-    */
+    fout->Write();
     fout->Close();
     return 1;
 }
 
 double Chi2_calculator(double w_mass, double t_mass){
-    return (w_mass-w_boson_mass)*(w_mass-w_boson_mass) + (t_mass-top_quark_mass)*(t_mass-top_quark_mass);
+    return (w_mass-w_boson_mass)*(w_mass-w_boson_mass)/w_boson_width + (t_mass-top_quark_mass)*(t_mass-top_quark_mass)/top_quark_width;
 }
 void MakePlots(TCanvas *c1, TH1D* hist, const char* title, const char* outputFile){
     hist->Draw();

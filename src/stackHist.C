@@ -9,7 +9,7 @@
 #include "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/include/stack.h"
 using namespace std;
 
-const double TunableSigBranchingFraction = 0.0001; //The branching fraction of signal MC = 0.01%
+const double TunableSigBranchingFraction = 0.001; //The branching fraction of signal MC = 0.01%
 
 void stackHist(){
     MakeStackHist("hist_num_jets");
@@ -52,6 +52,8 @@ void MakeStackHist(const char* histName){
     bool isNumEtaPhi = isThisNumEtaPhi(histName);
     bool isMassSpectrum = isThisMassSpectrum(histName);
     bool isDijetSpectrum = isThisDijetSpectrum(histName);
+    bool isDiPhotonSpectrum = isThisDiPhotonSpectrum(histName);
+    bool isTopSpectrum = isThisTopSpectrum(histName);
     //--------------------
     TH1D  *hist_tqh_sig_ttpair;
     TH1D  *hist_tqh_sig_singletop;
@@ -214,15 +216,16 @@ void MakeStackHist(const char* histName){
         stackHist->SetMaximum(3e+5);
         stackHist->SetMinimum(0);
     } else if(isMassSpectrum){
-        if(isDijetSpectrum) stackHist->SetMaximum(6e+4);
-        //if(isDijetSpectrum) stackHist->SetMaximum(8e+3);
-        else                 stackHist->SetMaximum(1.5e+5);
+        if(isDiPhotonSpectrum) stackHist->SetMaximum(1.6e+5);
+        if(isDijetSpectrum)    stackHist->SetMaximum(1.6e+3);
+        if(isTopSpectrum)      stackHist->SetMaximum(1.6e+3);
         stackHist->SetMinimum(0);
     } else{
         gPad->SetLogy(1);
         stackHist->SetMaximum(isNumEtaPhi ? 1e+9 : 1e+9);
         stackHist->SetMinimum(5e-1);
     }
+    //--------------------
     stackHist->Draw("hist");
     //hist_tqh_sig_ttpair->Draw("hist,same");
     hist_tqh_sig_st_hadronic->Draw("hist,same");
@@ -340,7 +343,9 @@ void MakeStackHist(const char* histName){
         //stackHist->SetMaximum(600);
         //c1->SaveAs(Form("plots/stack_%s_zoomin.png", histName));
         gPad->SetLogy(1);
-        stackHist->SetMaximum(isNumEtaPhi ? 1e+9 : 1e+10);
+        if(isDiPhotonSpectrum) stackHist->SetMaximum(1e+11);
+        if(isDijetSpectrum)    stackHist->SetMaximum(1e+8);
+        if(isTopSpectrum)      stackHist->SetMaximum(1e+8);
         stackHist->SetMinimum(5e-1);
         c1->SaveAs(Form("plots/stack_%s_log.png", histName));
     }
@@ -355,6 +360,15 @@ bool isThisIDMVA(const char* histName){
 }
 bool isThisDijetSpectrum(const char* histName){
     if((string)histName == "hist_inv_mass_dijet") return true;
+    return false;
+}
+bool isThisDiPhotonSpectrum(const char* histName){
+    if((string)histName == "hist_inv_mass_diphoton") return true;
+    if((string)histName == "hist_inv_mass_diphoton_ori") return true;
+    return false;
+}
+bool isThisTopSpectrum(const char* histName){
+    if((string)histName == "hist_inv_mass_tbw") return true;
     return false;
 }
 bool isThisMassSpectrum(const char* histName){
@@ -399,26 +413,26 @@ string GetXtitleAccordingToHistName(const char* histName){
     if((string)histName == "hist_jet1_pt") return "Pt of jet1 [GeV/c]";
     if((string)histName == "hist_jet2_pt") return "Pt of jet2 [GeV/c]";
     //--------------------
-    if((string)histName == "hist_bjet_eta") return "Eta of bjet";
-    if((string)histName == "hist_jet1_eta") return "Eta of jet1";
-    if((string)histName == "hist_jet2_eta") return "Eta of jet2";
-    if((string)histName == "hist_dijet_eta") return "Eta of dijet";
+    if((string)histName == "hist_bjet_eta") return "#eta of bjet";
+    if((string)histName == "hist_jet1_eta") return "#eta of jet1";
+    if((string)histName == "hist_jet2_eta") return "#eta of jet2";
+    if((string)histName == "hist_dijet_eta") return "#Delta #eta of dijet";
     //--------------------
-    if((string)histName == "hist_bjet_phi") return "Phi of bjet";
-    if((string)histName == "hist_jet1_phi") return "Phi of jet1";
-    if((string)histName == "hist_jet2_phi") return "Phi of jet2";
-    if((string)histName == "hist_dijet_phi") return "Phi of dijet";
+    if((string)histName == "hist_bjet_phi") return "#phi of bjet";
+    if((string)histName == "hist_jet1_phi") return "#phi of jet1";
+    if((string)histName == "hist_jet2_phi") return "#phi of jet2";
+    if((string)histName == "hist_dijet_phi") return "#Delta #phi of dijet";
     if((string)histName == "hist_dijet_angle") return "Open angle between dijet";
     //--------------------
     if((string)histName == "hist_DiPhoInfo_leadPt") return "Pt of leading photon [GeV/c]";
-    if((string)histName == "hist_DiPhoInfo_leadEta") return "Eta of leading photon";
-    if((string)histName == "hist_DiPhoInfo_leadPhi") return "Phi of leading photon";
+    if((string)histName == "hist_DiPhoInfo_leadEta") return "#eta of leading photon";
+    if((string)histName == "hist_DiPhoInfo_leadPhi") return "#phi of leading photon";
     if((string)histName == "hist_DiPhoInfo_leadE") return "Energy of leading photon [GeV]";
     if((string)histName == "hist_DiPhoInfo_leadIDMVA") return "IDMVA of leading photon";
     //--------------------
     if((string)histName == "hist_DiPhoInfo_subleadPt") return "Pt of SubleaddiPhoInfo [GeV/c]";
-    if((string)histName == "hist_DiPhoInfo_subleadEta") return "Eta of subleading photon";
-    if((string)histName == "hist_DiPhoInfo_subleadPhi") return "Phi of subleading photon";
+    if((string)histName == "hist_DiPhoInfo_subleadEta") return "#eta of subleading photon";
+    if((string)histName == "hist_DiPhoInfo_subleadPhi") return "#phi of subleading photon";
     if((string)histName == "hist_DiPhoInfo_subleadE") return "Energy of subleading photon [GeV]";
     if((string)histName == "hist_DiPhoInfo_subleadIDMVA") return "IDMVA of subleading photon";
     //--------------------
