@@ -17,6 +17,8 @@ bool isThisIDMVA(const char* histName);
 bool isThisNumEtaPhi(const char* histName);
 bool isThisMassSpectrum(const char* histName);
 bool isThisDijetSpectrum(const char* histName);
+bool isThisDiPhotonSpectrum(const char* histName);
+bool isThisTopSpectrum(const char* histName);
 
 //#--------------- Signal ---------------#
 string fileNames_sig[NUM_sig] = {
