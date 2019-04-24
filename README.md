@@ -1,5 +1,5 @@
 # FCNC tqHGG
-Searches for top FCNH with H to diphoton analysis.
+Searches for top FCNH with H decays to diphoton analysis.
 
 Usage:
 In the shell scipt, execution, do the following steps before applying selection to all the datasets:
