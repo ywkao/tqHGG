@@ -6,7 +6,7 @@
 #include <TLine.h>
 #include <TPad.h>
 #include <string>
-#include "/home/ykao/legacy/CMSSW_9_4_10/src/t2cH/include/stack.h"
+#include "/home/ykao/legacy/CMSSW_9_4_10/src/tqHGG/include/stack.h"
 using namespace std;
 
 const double TunableSigBranchingFraction = 0.001; //The branching fraction of signal MC = 0.01%

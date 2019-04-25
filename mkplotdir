@@ -12,4 +12,8 @@ do
     fi
 done
 
+if [ ! -d log ]; then
+    mkdir log;
+fi
+
 echo "[MESSAGE] Directory are checked and prepared!"
