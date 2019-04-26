@@ -38,13 +38,22 @@ int main(int argc, char *argv[]){
     bool isMCsignal = isThisMCsignal(dataset);
     bool isMultiFile = isThisMultiFile(dataset);
     TFile *fout = new TFile(output_file, "RECREATE");
+
+    /* ### Testing ###
+    TChain *flashggStdTree = new TChain("flashggNtuples/flashggStdTree");
+    flashggStdTree->Add(input_file);
+    float EvtInfo_genweight;
+    flashggStdTree->SetBranchAddress("EvtInfo.genweight", &EvtInfo_genweight);
+    int nentries = flashggStdTree->GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
+    */
+
     //==============================//
     //----- Read input file(s) -----//
     //==============================//
     flashggStdTreeReader treeReader;
     treeReader.InitChain("flashggNtuples/flashggStdTree");
-    if(isMultiFile) treeReader.AddSingleRootFile(input_file);
-    else            treeReader.AddMultiRootFile(input_file);
+    if(!isMultiFile) treeReader.AddSingleRootFile(input_file);
+    else             treeReader.AddMultiRootFile(input_file);
     treeReader.SetBranchAddresses();
     //===============================//
     //----- Prepare output file -----//
@@ -57,7 +66,7 @@ int main(int argc, char *argv[]){
     //##################################################//
     //########   Event Loop [Normalization]   ##########//
     //##################################################//
-    int nentries = treeReader.flashggStdTree->GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
+    int nentries = treeReader.GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
     double NormalizationFactor;
     double Luminosity = 42.; //fb{-1}
     double CrossSection = GetXsec(dataset); //pb
@@ -67,8 +76,10 @@ int main(int argc, char *argv[]){
     printf("[INFO] BranchingFraction = %f !\n", BranchingFraction);
     double TotalGenweight=0;
     for(int ientry=0; ientry<nentries; ientry++){
-        treeReader.flashggStdTree->GetEntry(ientry);
-        TotalGenweight+=treeReader.EvtInfo_genweight;
+        //treeReader.GetTChain()->GetEntry(ientry);
+        TChain* tmp = treeReader.GetTChain();
+        tmp->GetEntry(ientry);
+        TotalGenweight+=treeReader.GetGenWeight();
     }
     NormalizationFactor = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
     printf("\n[INFO] TotalGenweight = %f!\n", TotalGenweight);
@@ -188,8 +199,10 @@ int main(int argc, char *argv[]){
                             TLorentzVector top_candidate = w_candidate + vec_btagged_jets[k];
                             trijet_invariant_mass = top_candidate.M();
                             chi2 = Chi2_calculator(dijet_invariant_mass, trijet_invariant_mass);
-                            if(chi2<chi2_min){wjetindices[0]=i; wjetindices[1]=j; good_bjet_index=k; chi2_min=chi2;};
+                            if(chi2<chi2_min){wjetindices[0]=i; wjetindices[1]=j; good_bjet_index=k; chi2_min=chi2;}
                         }// end of k loop (b-jet))
+                    } else{
+                            if(chi2<chi2_min){wjetindices[0]=i; wjetindices[1]=j;}
                     }
                 }// end of jet2
             }// end of jet1
@@ -260,6 +273,8 @@ int main(int argc, char *argv[]){
     return 1;
 }
 
+
+
 double Chi2_calculator(double w_mass, double t_mass){
     return (w_mass-w_boson_mass)*(w_mass-w_boson_mass)/w_boson_width + (t_mass-top_quark_mass)*(t_mass-top_quark_mass)/top_quark_width;
 }
@@ -295,7 +310,6 @@ bool isThisDataOrNot(char* dataset){
     if((string)dataset == "DoubleEG_F") return true;
     return false;
 }
-
 bool isThisMultiFile(char* dataset){
     if((string)dataset == "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa") return true;
     if((string)dataset == "GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8") return true;
@@ -303,21 +317,50 @@ bool isThisMultiFile(char* dataset){
 }
 
 
+
+flashggStdTreeParameters::flashggStdTreeParameters(){
+    JetInfo_Pt = new std::vector<float>;
+    JetInfo_Eta = new std::vector<float>;
+    JetInfo_Phi = new std::vector<float>;
+    JetInfo_Mass = new std::vector<float>;
+    JetInfo_Energy = new std::vector<float>;
+    JetInfo_pfDeepCSVJetTags_probb = new std::vector<float>;
+    JetInfo_pfDeepCSVJetTags_probbb = new std::vector<float>;
+}
+flashggStdTreeParameters::~flashggStdTreeParameters(){
+    delete JetInfo_Pt;
+    delete JetInfo_Eta;
+    delete JetInfo_Phi;
+    delete JetInfo_Mass;
+    delete JetInfo_Energy;
+    delete JetInfo_pfDeepCSVJetTags_probb;
+    delete JetInfo_pfDeepCSVJetTags_probbb;
+}
 flashggStdTreeReader::flashggStdTreeReader(void){
-    printf("[INFO] Reading data...");
+    printf("[INFO] Reading data...\n");
 }
 void flashggStdTreeReader::InitChain(const char* treeName){
-    printf("From flashggStdTreeReader: %s\n", treeName);
     flashggStdTree = new TChain(treeName);
+    printf("[INFO] flashggStdTreeReader::InitChain : Finished!\n");
 }
 void flashggStdTreeReader::AddSingleRootFile(char* input_file){
     flashggStdTree->Add(input_file);
+    printf("[INFO] flashggStdTreeReader::AddSingleRootFile : Finished!\n");
 }
 void flashggStdTreeReader::AddMultiRootFile(char* input_file){
     flashggStdTree->Add(Form("%s/*.root", input_file));
+    printf("[INFO] flashggStdTreeReader::AddMultiRootFile : Finished!\n");
 }
-
-
+int flashggStdTreeReader::GetEntries(void){
+    printf("[INFO] flashggStdTreeReader::GetEntries : %d\n", flashggStdTree->GetEntries());
+    return flashggStdTree->GetEntries();
+}
+double flashggStdTreeReader::GetGenWeight(void){
+    return EvtInfo_genweight;
+}
+TChain* flashggStdTreeReader::GetTChain(void){
+    return flashggStdTree;
+}
 void flashggStdTreeReader::SetBranchAddresses(){
     flashggStdTree->SetBranchAddress("EvtInfo.genweight", &EvtInfo_genweight);
     flashggStdTree->SetBranchAddress("jets_size", &jets_size);
@@ -339,7 +382,11 @@ void flashggStdTreeReader::SetBranchAddresses(){
     flashggStdTree->SetBranchAddress("DiPhoInfo.subleadPhi", &DiPhoInfo_subleadPhi);
     flashggStdTree->SetBranchAddress("DiPhoInfo.subleadE", &DiPhoInfo_subleadE);
     flashggStdTree->SetBranchAddress("DiPhoInfo.subleadIDMVA", &DiPhoInfo_subleadIDMVA);
+    printf("[INFO] flashggStdTreeReader::SetBranchAddresses : Finished!\n");
 }
+
+
+
 void myTreeClass::InitTree(){
     mytree =  new TTree("mytree", "mytree");
 }
@@ -381,7 +428,6 @@ void myTreeClass::SetBranchAddresses(){
 void myTreeClass::Fill(){
     mytree -> Fill();
 }
-
 void myParameters::Clear(){
     num_jets = 0;
     num_btagged_jets = 0;

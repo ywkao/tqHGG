@@ -9,6 +9,8 @@ bool isThisMCsignal(char* dataset);
 
 class flashggStdTreeParameters{
 public:
+    flashggStdTreeParameters();
+    ~flashggStdTreeParameters();
     Int_t jets_size;
     std::vector<float> *JetInfo_Pt;
     std::vector<float> *JetInfo_Eta;
@@ -62,7 +64,10 @@ public:
     void InitChain(const char* treeName);
     void AddSingleRootFile(char* input_file);
     void AddMultiRootFile(char* input_file);
-    void SetBranchAddresses();
+    void SetBranchAddresses(void);
+    int GetEntries(void);
+    double GetGenWeight(void);
+    TChain *GetTChain(void);
 };
 class myTreeClass: public myParameters, public flashggStdTreeParameters{
 public:
