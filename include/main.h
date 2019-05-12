@@ -11,6 +11,8 @@ class flashggStdTreeParameters{
 public:
     flashggStdTreeParameters();
     ~flashggStdTreeParameters();
+    Int_t EvtInfo_NPu;
+    Int_t EvtInfo_NVtx;
     Int_t jets_size;
     std::vector<float> *JetInfo_Pt;
     std::vector<float> *JetInfo_Eta;
@@ -34,6 +36,9 @@ public:
 };
 class myParameters{
 public:
+    Int_t EvtInfo_totalEntry_before_preselection;
+    float EvtInfo_NormalizationFactor_lumi;
+    //------------------------
     Int_t num_jets;
     Int_t num_btagged_jets;
     Int_t num_nonbtagged_jets;
@@ -41,19 +46,22 @@ public:
     float inv_mass_dijet;
     float inv_mass_diphoton;
     float inv_mass_tbw;
+    //------------------------
     float JetInfo_dijet_delta_eta;
     float JetInfo_dijet_delta_phi;
     float JetInfo_dijet_delta_angle;
     //------------------------
-    std::vector<float> JetInfo_bjet_pt;
-    std::vector<float> JetInfo_bjet_eta;
-    std::vector<float> JetInfo_bjet_phi;
-    std::vector<float> JetInfo_jet1_pt;
-    std::vector<float> JetInfo_jet1_eta;
-    std::vector<float> JetInfo_jet1_phi;
-    std::vector<float> JetInfo_jet2_pt;
-    std::vector<float> JetInfo_jet2_eta;
-    std::vector<float> JetInfo_jet2_phi;
+    float JetInfo_bjet_pt;
+    float JetInfo_bjet_eta;
+    float JetInfo_bjet_phi;
+    //------------------------
+    float JetInfo_jet1_pt;
+    float JetInfo_jet1_eta;
+    float JetInfo_jet1_phi;
+    //------------------------
+    float JetInfo_jet2_pt;
+    float JetInfo_jet2_eta;
+    float JetInfo_jet2_phi;
 
     void Clear();
 };
@@ -72,9 +80,16 @@ public:
 class myTreeClass: public myParameters, public flashggStdTreeParameters{
 public:
     TTree *mytree;
-    void InitTree();
-    void SetBranchAddresses();
-    void Fill();
+    //For creating new one
+    void InitTree(void);
+    void MakeNewBranchAddresses(void);
+    void Fill(void);
+    //For reading out
+    void InitTree(const char* treeName);
+    void AddRootFile(TFile* input);
+    void SetBranchAddresses(void);
+    int GetEntries(void);
+    TTree *GetTTree(void);
 };
 
 #endif

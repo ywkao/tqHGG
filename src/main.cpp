@@ -1,5 +1,5 @@
 //===========================================//
-//=== 24. April. 2019                       ===//
+//=== 24. April. 2019                     ===//
 //=== Develop for single top tqH analysis ===//
 //===========================================//
 #include <stdio.h>
@@ -21,10 +21,10 @@ using namespace std;
 double pfDeepCSVJetTags_tight  = 0.8001;
 double pfDeepCSVJetTags_medium = 0.4941;
 double pfDeepCSVJetTags_loose  = 0.1522;
-double w_boson_mass = 80.385;//GeV
-double w_boson_width = 2.085;//GeV
-double top_quark_mass = 173.0 ;//GeV
-double top_quark_width = 1.41 ;//GeV
+double w_boson_mass = 80.379;//GeV
+double w_boson_width = 9.5;//GeV
+double top_quark_mass = 173.0;//GeV
+double top_quark_width = 16.3;//GeV
 
 
 int main(int argc, char *argv[]){
@@ -60,9 +60,12 @@ int main(int argc, char *argv[]){
     //===============================//
     myTreeClass mytree;
     mytree.InitTree();
-    mytree.SetBranchAddresses();
+    mytree.MakeNewBranchAddresses();
 
 
+    // Note: Normalization factors are not used during preselection.
+    // It is stored and would be used during selection.
+    // Question: keep total genweight before or after preselection?
     //##################################################//
     //########   Event Loop [Normalization]   ##########//
     //##################################################//
@@ -126,6 +129,11 @@ int main(int argc, char *argv[]){
         //==================================================//
         //------------   Physical Observables   ------------//
         //==================================================//
+        //==================================================//
+        //------------   Normalization factor   ------------//
+        //==================================================//
+        mytree.EvtInfo_totalEntry_before_preselection = nentries;
+        mytree.EvtInfo_NormalizationFactor_lumi = isData ? 1. : NormalizationFactor;
         
         //==================================================//
         //-----  Reconstruction(tbW): Select one bjet  -----//
@@ -147,9 +155,9 @@ int main(int argc, char *argv[]){
         }
         bool CUT_no_bjet_events = (bjetindex==-1) ? true : false; // discard no-b-jet events
         bool CUT_num_bjets_is_not_exactly_one = (mytree.num_btagged_jets!=1) ? true : false; // exactly 1 b-jet criterion
-        mytree.JetInfo_bjet_pt.push_back(leading_bjet.Pt());
-        mytree.JetInfo_bjet_eta.push_back(leading_bjet.Eta());
-        mytree.JetInfo_bjet_phi.push_back(leading_bjet.Phi());
+        mytree.JetInfo_bjet_pt = CUT_no_bjet_events ? -999. : leading_bjet.Pt();
+        mytree.JetInfo_bjet_eta = CUT_no_bjet_events ? -999. : leading_bjet.Eta();
+        mytree.JetInfo_bjet_phi = CUT_no_bjet_events ? -999. : leading_bjet.Phi();
         //==================================================//
         //-----  Reconstruction(tbW): Store rest jets  -----//
         //==================================================//
@@ -226,12 +234,12 @@ int main(int argc, char *argv[]){
         double dijet_phi_difference = CUT_num_nonbjets_less_than_2 ? -999. : fabs(dijet_jet1_phi - dijet_jet2_phi);
         double dijet_angle_difference = sqrt(dijet_eta_difference*dijet_eta_difference + dijet_phi_difference*dijet_phi_difference);
         //------------------------------
-        mytree.JetInfo_jet1_pt.push_back(dijet_jet1_pt);
-        mytree.JetInfo_jet1_eta.push_back(dijet_jet1_eta);
-        mytree.JetInfo_jet1_phi.push_back(dijet_jet1_phi);
-        mytree.JetInfo_jet2_pt.push_back(dijet_jet2_pt);
-        mytree.JetInfo_jet2_eta.push_back(dijet_jet2_eta);
-        mytree.JetInfo_jet2_phi.push_back(dijet_jet2_phi);
+        mytree.JetInfo_jet1_pt = dijet_jet1_pt;
+        mytree.JetInfo_jet1_eta = dijet_jet1_eta;
+        mytree.JetInfo_jet1_phi = dijet_jet1_phi;
+        mytree.JetInfo_jet2_pt = dijet_jet2_pt;
+        mytree.JetInfo_jet2_eta = dijet_jet2_eta;
+        mytree.JetInfo_jet2_phi = dijet_jet2_phi;
         mytree.JetInfo_dijet_delta_eta = dijet_eta_difference;
         mytree.JetInfo_dijet_delta_phi = dijet_phi_difference;
         mytree.JetInfo_dijet_delta_angle = dijet_angle_difference;
@@ -246,11 +254,29 @@ int main(int argc, char *argv[]){
         //==================================================//
         //-----------   Diphoton Related Info    -----------//
         //==================================================//
-        // Automatically stored
+        mytree.DiPhoInfo_leadPt = treeReader.DiPhoInfo_leadPt;
+        mytree.DiPhoInfo_leadEta = treeReader.DiPhoInfo_leadEta;
+        mytree.DiPhoInfo_leadPhi = treeReader.DiPhoInfo_leadPhi;
+        mytree.DiPhoInfo_leadE = treeReader.DiPhoInfo_leadE;
+        mytree.DiPhoInfo_leadIDMVA = treeReader.DiPhoInfo_leadIDMVA;
+        mytree.DiPhoInfo_subleadPt = treeReader.DiPhoInfo_subleadPt;
+        mytree.DiPhoInfo_subleadEta = treeReader.DiPhoInfo_subleadEta;
+        mytree.DiPhoInfo_subleadPhi = treeReader.DiPhoInfo_subleadPhi;
+        mytree.DiPhoInfo_subleadE = treeReader.DiPhoInfo_subleadE;
+        mytree.DiPhoInfo_subleadIDMVA = treeReader.DiPhoInfo_subleadIDMVA;
+        mytree.DiPhoInfo_mass = treeReader.DiPhoInfo_mass;
+        mytree.inv_mass_diphoton = treeReader.DiPhoInfo_mass;
+        //==================================================//
+        //-----------   EventPar Related Info    -----------//
+        //==================================================//
+        mytree.EvtInfo_NPu = treeReader.EvtInfo_NPu;
+        mytree.EvtInfo_NVtx = treeReader.EvtInfo_NVtx;
+        mytree.EvtInfo_genweight = treeReader.EvtInfo_genweight;
         //==================================================//
         //-------------   Event Counting     ---------------//
         //==================================================//
         Nevents_pass_selection += 1;
+
         mytree.Fill();
     }// End of event loop.
 
@@ -362,6 +388,8 @@ TChain* flashggStdTreeReader::GetTChain(void){
     return flashggStdTree;
 }
 void flashggStdTreeReader::SetBranchAddresses(){
+    flashggStdTree->SetBranchAddress("EvtInfo.NPu", &EvtInfo_NPu);
+    flashggStdTree->SetBranchAddress("EvtInfo.NVtx", &EvtInfo_NVtx);
     flashggStdTree->SetBranchAddress("EvtInfo.genweight", &EvtInfo_genweight);
     flashggStdTree->SetBranchAddress("jets_size", &jets_size);
     flashggStdTree->SetBranchAddress("JetInfo.Pt", &JetInfo_Pt);
@@ -390,7 +418,12 @@ void flashggStdTreeReader::SetBranchAddresses(){
 void myTreeClass::InitTree(){
     mytree =  new TTree("mytree", "mytree");
 }
-void myTreeClass::SetBranchAddresses(){
+void myTreeClass::MakeNewBranchAddresses(){
+    mytree -> Branch("EvtInfo_totalEntry_before_preselection", &EvtInfo_totalEntry_before_preselection, "EvtInfo_totalEntry_before_preselection/I");
+    mytree -> Branch("EvtInfo_NormalizationFactor_lumi", &EvtInfo_NormalizationFactor_lumi, "EvtInfo_NormalizationFactor_lumi/F");
+    mytree -> Branch("EvtInfo_NPu", &EvtInfo_NPu, "EvtInfo_NPu/I");
+    mytree -> Branch("EvtInfo_NVtx", &EvtInfo_NVtx, "EvtInfo_NVtx/I");
+    mytree -> Branch("EvtInfo_genweight", &EvtInfo_genweight, "EvtInfo_genweight/F");
     mytree -> Branch("num_jets", &num_jets, "num_jets/I");
     mytree -> Branch("num_btagged_jets", &num_btagged_jets, "num_btagged_jets/I");
     mytree -> Branch("num_nonbtagged_jets", &num_nonbtagged_jets, "num_nonbtagged_jets/I");
@@ -429,6 +462,9 @@ void myTreeClass::Fill(){
     mytree -> Fill();
 }
 void myParameters::Clear(){
+    EvtInfo_totalEntry_before_preselection = 0;
+    EvtInfo_NormalizationFactor_lumi = 0;
+    //------------------------
     num_jets = 0;
     num_btagged_jets = 0;
     num_nonbtagged_jets = 0;
@@ -436,17 +472,20 @@ void myParameters::Clear(){
     inv_mass_dijet = 0;
     inv_mass_diphoton = 0;
     inv_mass_tbw = 0;
+    //------------------------
     JetInfo_dijet_delta_eta = 0;
     JetInfo_dijet_delta_phi = 0;
     JetInfo_dijet_delta_angle = 0;
     //------------------------
-    JetInfo_bjet_pt.clear();
-    JetInfo_bjet_eta.clear();
-    JetInfo_bjet_phi.clear();
-    JetInfo_jet1_pt.clear();
-    JetInfo_jet1_eta.clear();
-    JetInfo_jet1_phi.clear();
-    JetInfo_jet2_pt.clear();
-    JetInfo_jet2_eta.clear();
-    JetInfo_jet2_phi.clear();
+    JetInfo_bjet_pt = 0;
+    JetInfo_bjet_eta = 0;
+    JetInfo_bjet_phi = 0;
+    //------------------------
+    JetInfo_jet1_pt = 0;
+    JetInfo_jet1_eta = 0;
+    JetInfo_jet1_phi = 0;
+    //------------------------
+    JetInfo_jet2_pt = 0;
+    JetInfo_jet2_eta = 0;
+    JetInfo_jet2_phi = 0;
 }

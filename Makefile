@@ -3,13 +3,17 @@
 # References:                                                                    # 
 # 1) https://hiltmon.com/blog/2013/07/03/a-simple-c-plus-plus-project-structure/ #
 # 2) http://mropengate.blogspot.com/2018/01/makefile.html                        # 
+# 3) https://stackoverflow.com/questions/5950395/makefile-to-compile-multiple-c-programs
+# 4) http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
+# 5) https://www.wooster.edu/_media/files/academics/areas/computer-science/resources/makefile-tut.pdf
 ##################################################################################
 
 # CC := clang --analyze # and comment out the linker last line for sanity
 CC       := g++ # This is the main compiler
 SRCDIR   := src
 BUILDDIR := build
-TARGET   := bin/runner
+TARGET1  := bin/preselection
+TARGET2  := bin/selection
 
 SRCEXT   := cpp
 SOURCES  := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -18,17 +22,34 @@ CFLAGS   := $(shell root-config --cflags) -g -O3 #-Wno-write-strings -D_FILE_OFF
 LIB      := $(shell root-config --libs) -lMinuit
 INC      := -I include
 
-$(TARGET): $(OBJECTS)
-	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+all: ${TARGET1} ${TARGET2}
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+#$(TARGET): $(OBJECTS)
+#	@echo " Linking..."
+#	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+$(TARGET1): build/main.o
+	@echo " Linking..."
+	@echo " $(CC) $^ -o $(TARGET1) $(LIB)"; $(CC) $^ -o $(TARGET1) $(LIB)
+
+$(TARGET2): build/selection.o
+	@echo " Linking for selection cpp..."
+	@echo " $(CC) $^ -o $(TARGET2) $(LIB)"; $(CC) $^ -o $(TARGET2) $(LIB)
+
+#$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+build/main.o: src/main.cpp
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+build/selection.o: src/selection.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 clean:
 	@echo " Cleaning..."; 
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
+	@echo " $(RM) -r $(BUILDDIR) $(TARGET1)"; $(RM) -r $(BUILDDIR) $(TARGET1)
+	@echo " $(RM) -r $(TARGET2)"; $(RM) -r $(TARGET2)
+
+
 
 # Tests
 tester:
