@@ -51,9 +51,13 @@ public:
     float JetInfo_dijet_delta_phi;
     float JetInfo_dijet_delta_angle;
     //------------------------
-    float JetInfo_bjet_pt;
-    float JetInfo_bjet_eta;
-    float JetInfo_bjet_phi;
+    float JetInfo_leading_bjet_pt;
+    float JetInfo_leading_bjet_eta;
+    float JetInfo_leading_bjet_phi;
+    //------------------------
+    float JetInfo_chosen_bjet_pt;
+    float JetInfo_chosen_bjet_eta;
+    float JetInfo_chosen_bjet_phi;
     //------------------------
     float JetInfo_jet1_pt;
     float JetInfo_jet1_eta;

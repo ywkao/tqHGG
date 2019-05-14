@@ -12,28 +12,32 @@ ExeAnalysis(){
     file=$1
     log=log/log_${file}.txt
     echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
-    echo $file | awk -F "." '{print "'$INPUTDIR'""/"$1".root", "'$OUTPUTDIR'""/ntuple_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' | xargs -n4 ${EXECUTABLE} | tee -a ${log}
+    echo $file | awk -F "." '{print "'$INPUTDIR'""/"$1".root", "'$OUTPUTDIR'""/ntuple_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' |\
+    xargs -n4 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
     # REMARK: input_file / output_file / datasets / output_dir
 }
 ExeAnalysis_multi(){
     file=$1
     log=log/log_${file}.txt
     echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
-    echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1, "'$OUTPUTDIR'""/ntuple_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' | xargs -n4 ${EXECUTABLE} | tee -a ${log}
+    echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1, "'$OUTPUTDIR'""/ntuple_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' |\
+    xargs -n4 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
     # REMARK: input_file / output_file / datasets / output_dir
 }
 ExeAnalysis_singletop(){
     file=$1
     log=log/log_${file}.txt
     echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
-    echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1".root", "'$OUTPUTDIR'""/ntuple_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' | xargs -n4 ${EXECUTABLE} | tee -a ${log}
+    echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1".root", "'$OUTPUTDIR'""/ntuple_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' |\
+    xargs -n4 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
     # REMARK: input_file / output_file / datasets / output_dir
 }
 ExeAnalysis_ST_dryrun(){
     file=$1
     log=log/log_${file}.txt
     echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
-    echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1".root", "'$OUTPUTDIR'""/ntuple_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' | xargs -n4 ${EXECUTABLE} | tee -a ${log}
+    echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1".root", "'$OUTPUTDIR'""/ntuple_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' |\
+    xargs -n4 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
     # REMARK: input_file / output_file / datasets / output_dir
 }
 
@@ -44,10 +48,10 @@ echo "[MESSAGE] Check executable..."
 make
 echo "[MESSAGE] Ready!"
 #--------------- DryRun ---------------#
+#ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
 #ExeAnalysis_ST_dryrun ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root
 #echo "[MESSAGE] This is the end of execution."
 #exit 1
-#echo "[WARNNING] Still running!!"
 
 #--------------- TT Signal ---------------#
 ExeAnalysis TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root

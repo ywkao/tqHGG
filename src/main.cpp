@@ -31,9 +31,9 @@ int main(int argc, char *argv[]){
     //============================//
     //----- Input file names -----//
     //============================//
-    char input_file[256]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
-    char output_file[256]; sprintf(output_file, "%s", argv[2]); printf("[INFO] output_file = %s\n", output_file);
-    char dataset[256]; sprintf(dataset, "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset);
+    char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
+    char output_file[512]; sprintf(output_file, "%s", argv[2]); printf("[INFO] output_file = %s\n", output_file);
+    char dataset[512]; sprintf(dataset, "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset);
     bool isData = isThisDataOrNot(dataset);
     bool isMCsignal = isThisMCsignal(dataset);
     bool isMultiFile = isThisMultiFile(dataset);
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){
         TotalGenweight+=treeReader.GetGenWeight();
     }
     NormalizationFactor = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
-    printf("\n[INFO] TotalGenweight = %f!\n", TotalGenweight);
+    printf("[INFO] TotalGenweight = %f!\n", TotalGenweight);
     printf("[INFO] NormalizationFactor = %f!\n", isData ? 1. : NormalizationFactor);
 
     //##################################################//
@@ -155,9 +155,9 @@ int main(int argc, char *argv[]){
         }
         bool CUT_no_bjet_events = (bjetindex==-1) ? true : false; // discard no-b-jet events
         bool CUT_num_bjets_is_not_exactly_one = (mytree.num_btagged_jets!=1) ? true : false; // exactly 1 b-jet criterion
-        mytree.JetInfo_bjet_pt = CUT_no_bjet_events ? -999. : leading_bjet.Pt();
-        mytree.JetInfo_bjet_eta = CUT_no_bjet_events ? -999. : leading_bjet.Eta();
-        mytree.JetInfo_bjet_phi = CUT_no_bjet_events ? -999. : leading_bjet.Phi();
+        mytree.JetInfo_leading_bjet_pt = CUT_no_bjet_events ? -999. : leading_bjet.Pt();
+        mytree.JetInfo_leading_bjet_eta = CUT_no_bjet_events ? -999. : leading_bjet.Eta();
+        mytree.JetInfo_leading_bjet_phi = CUT_no_bjet_events ? -999. : leading_bjet.Phi();
         //==================================================//
         //-----  Reconstruction(tbW): Store rest jets  -----//
         //==================================================//
@@ -234,6 +234,10 @@ int main(int argc, char *argv[]){
         double dijet_phi_difference = CUT_num_nonbjets_less_than_2 ? -999. : fabs(dijet_jet1_phi - dijet_jet2_phi);
         double dijet_angle_difference = sqrt(dijet_eta_difference*dijet_eta_difference + dijet_phi_difference*dijet_phi_difference);
         //------------------------------
+        double tbw_chosen_bjet_pt = CUT_no_bjet_events ? -999. : vec_btagged_jets[good_bjet_index].Pt();
+        double tbw_chosen_bjet_eta = CUT_no_bjet_events ? -999. : vec_btagged_jets[good_bjet_index].Eta();
+        double tbw_chosen_bjet_phi = CUT_no_bjet_events ? -999. : vec_btagged_jets[good_bjet_index].Phi();
+        //------------------------------
         mytree.JetInfo_jet1_pt = dijet_jet1_pt;
         mytree.JetInfo_jet1_eta = dijet_jet1_eta;
         mytree.JetInfo_jet1_phi = dijet_jet1_phi;
@@ -244,6 +248,9 @@ int main(int argc, char *argv[]){
         mytree.JetInfo_dijet_delta_phi = dijet_phi_difference;
         mytree.JetInfo_dijet_delta_angle = dijet_angle_difference;
         mytree.inv_mass_dijet = dijet_invariant_mass;
+        mytree.JetInfo_chosen_bjet_pt = tbw_chosen_bjet_pt;
+        mytree.JetInfo_chosen_bjet_eta = tbw_chosen_bjet_eta;
+        mytree.JetInfo_chosen_bjet_phi = tbw_chosen_bjet_phi;
         //==================================================//
         //-----  Reconstruction(tbW): InvMass of top  ------//
         //==================================================//
@@ -283,7 +290,7 @@ int main(int argc, char *argv[]){
     //==================================================//
     //---------------------  Report  -------------------//
     //==================================================//
-    printf("[INFO] N_Nevents_pass_selection = %d/%d\n", Nevents_pass_selection, nentries);
+    printf("\n[INFO] N_Nevents_pass_selection = %d/%d\n", Nevents_pass_selection, nentries);
     printf("[DEBUG] Nevents_CUT_num_bjets_is_not_exactly_one = %d (%.4f)\n", Nevents_CUT_num_bjets_is_not_exactly_one, (double)Nevents_CUT_num_bjets_is_not_exactly_one/(double)Nevents_pass_selection);
     printf("[DEBUG] Nevents_anti_CUT_num_bjets_is_not_exactly_one = %d (%.4f)\n", Nevents_anti_CUT_num_bjets_is_not_exactly_one, (double)Nevents_anti_CUT_num_bjets_is_not_exactly_one/(double)Nevents_pass_selection);
     printf("[DEBUG] Nevents_CUT_no_bjet_events = %d (%.4f)\n", Nevents_CUT_no_bjet_events, (double)Nevents_CUT_no_bjet_events/(double)Nevents_pass_selection);
@@ -432,9 +439,12 @@ void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("inv_mass_diphoton", &inv_mass_diphoton, "inv_mass_diphoton/F");
     mytree -> Branch("inv_mass_tbw", &inv_mass_tbw, "inv_mass_tbw/F");
     //------------------------
-    mytree -> Branch("JetInfo_bjet_pt", &JetInfo_bjet_pt);
-    mytree -> Branch("JetInfo_bjet_eta", &JetInfo_bjet_eta);
-    mytree -> Branch("JetInfo_bjet_phi", &JetInfo_bjet_phi);
+    mytree -> Branch("JetInfo_leading_bjet_pt", &JetInfo_leading_bjet_pt);
+    mytree -> Branch("JetInfo_leading_bjet_eta", &JetInfo_leading_bjet_eta);
+    mytree -> Branch("JetInfo_leading_bjet_phi", &JetInfo_leading_bjet_phi);
+    mytree -> Branch("JetInfo_chosen_bjet_pt", &JetInfo_chosen_bjet_pt);
+    mytree -> Branch("JetInfo_chosen_bjet_eta", &JetInfo_chosen_bjet_eta);
+    mytree -> Branch("JetInfo_chosen_bjet_phi", &JetInfo_chosen_bjet_phi);
     mytree -> Branch("JetInfo_jet1_pt", &JetInfo_jet1_pt);
     mytree -> Branch("JetInfo_jet1_eta", &JetInfo_jet1_eta);
     mytree -> Branch("JetInfo_jet1_phi", &JetInfo_jet1_phi);
@@ -477,9 +487,13 @@ void myParameters::Clear(){
     JetInfo_dijet_delta_phi = 0;
     JetInfo_dijet_delta_angle = 0;
     //------------------------
-    JetInfo_bjet_pt = 0;
-    JetInfo_bjet_eta = 0;
-    JetInfo_bjet_phi = 0;
+    JetInfo_leading_bjet_pt = 0;
+    JetInfo_leading_bjet_eta = 0;
+    JetInfo_leading_bjet_phi = 0;
+    //------------------------
+    JetInfo_chosen_bjet_pt = 0;
+    JetInfo_chosen_bjet_eta = 0;
+    JetInfo_chosen_bjet_phi = 0;
     //------------------------
     JetInfo_jet1_pt = 0;
     JetInfo_jet1_eta = 0;
