@@ -55,6 +55,7 @@ public:
     float JetInfo_leading_bjet_eta;
     float JetInfo_leading_bjet_phi;
     //------------------------
+    Int_t JetInfo_chosen_bjet_is_leading_bjet;
     float JetInfo_chosen_bjet_pt;
     float JetInfo_chosen_bjet_eta;
     float JetInfo_chosen_bjet_phi;

@@ -27,7 +27,7 @@ all: ${TARGET1} ${TARGET2}
 #$(TARGET): $(OBJECTS)
 #	@echo " Linking..."
 #	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
-$(TARGET1): build/main.o
+$(TARGET1): build/preselection.o
 	@echo " Linking..."
 	@echo " $(CC) $^ -o $(TARGET1) $(LIB)"; $(CC) $^ -o $(TARGET1) $(LIB)
 
@@ -36,7 +36,7 @@ $(TARGET2): build/selection.o
 	@echo " $(CC) $^ -o $(TARGET2) $(LIB)"; $(CC) $^ -o $(TARGET2) $(LIB)
 
 #$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-build/main.o: src/main.cpp
+build/preselection.o: src/preselection.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
@@ -46,8 +46,7 @@ build/selection.o: src/selection.cpp
 
 clean:
 	@echo " Cleaning..."; 
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET1)"; $(RM) -r $(BUILDDIR) $(TARGET1)
-	@echo " $(RM) -r $(TARGET2)"; $(RM) -r $(TARGET2)
+	@echo " $(RM) -r $(BUILDDIR) $(TARGET1) $(TARGET2)"; $(RM) -r $(BUILDDIR) $(TARGET1) $(TARGET2)
 
 
 

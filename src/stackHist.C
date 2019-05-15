@@ -12,17 +12,22 @@ using namespace std;
 const double TunableSigBranchingFraction = 0.001; //The branching fraction of signal MC = 0.01%
 
 void stackHist(){
+    MakeStackHist("hist_NPu");
+    MakeStackHist("hist_NVtx");
     MakeStackHist("hist_num_jets");
     MakeStackHist("hist_num_btagged_jets");
     MakeStackHist("hist_num_nonbtagged_jets");
-    MakeStackHist("hist_bjet_pt");
+    MakeStackHist("hist_leading_bjet_pt");
+    MakeStackHist("hist_leading_bjet_eta");
+    MakeStackHist("hist_leading_bjet_phi");
+    MakeStackHist("hist_chosen_bjet_pt");
+    MakeStackHist("hist_chosen_bjet_eta");
+    MakeStackHist("hist_chosen_bjet_phi");
     MakeStackHist("hist_jet1_pt");
-    MakeStackHist("hist_jet2_pt");
-    MakeStackHist("hist_bjet_eta");
     MakeStackHist("hist_jet1_eta");
-    MakeStackHist("hist_jet2_eta");
-    MakeStackHist("hist_bjet_phi");
     MakeStackHist("hist_jet1_phi");
+    MakeStackHist("hist_jet2_pt");
+    MakeStackHist("hist_jet2_eta");
     MakeStackHist("hist_jet2_phi");
     MakeStackHist("hist_dijet_eta");
     MakeStackHist("hist_dijet_phi");

@@ -8,10 +8,7 @@
 #include "../include/enumhist.h"
 using namespace std;
 
-void Selection(){
-    char input_file[512]; sprintf(input_file, "%s", "ntuples_skimmed/ntuple_ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root"); printf("[INFO] input_file  = %s\n", input_file);
-    char output_file[512]; sprintf(output_file, "%s", "plots/test.root"); printf("[INFO] output_file = %s\n", output_file);
-    char dataset[512]; sprintf(dataset, "%s", "ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8"); printf("[INFO] dataset     = %s\n", dataset);
+void Selection(char* input_file, char* output_file, char* dataset, char* output_dir){
     bool isData = isThisDataOrNot(dataset);
 
     TFile *fin  = TFile::Open(input_file);
@@ -24,10 +21,9 @@ void Selection(){
     //==================//
     //--- histograms ---//
     //==================//
-    //TH1D* h1 = new TH1D("test1", "test1", 100, 0, 100);
     TH1D* h[totalHistNum];
     for(int i=0; i<totalHistNum; i++){
-        printf("[%d] %s, %d, %f, %f\n", i, histNames[i].c_str(), histNbins[i], histBinLow[i], histBinHigh[i]);
+        //printf("[%d] %s, %d, %f, %f\n", i, histNames[i].c_str(), histNbins[i], histBinLow[i], histBinHigh[i]);
         h[i] = new TH1D(histNames[i].c_str(), histNames[i].c_str(), histNbins[i], histBinLow[i], histBinHigh[i]);
         h[i] -> Sumw2();
     }
@@ -44,30 +40,47 @@ void Selection(){
         double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
         //EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
         //=== Selections ===//
+        
+
         //=== Store Info ===//
         h[hist_NPu]  -> Fill(treeReader.EvtInfo_NPu, isData ? 1. : NormalizationFactor);
         h[hist_NVtx] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor);
         h[hist_num_jets] -> Fill(treeReader.num_jets, isData ? 1. : NormalizationFactor);
         h[hist_num_btagged_jets] -> Fill(treeReader.num_btagged_jets, isData ? 1. : NormalizationFactor);
         h[hist_num_nonbtagged_jets] -> Fill(treeReader.num_nonbtagged_jets, isData ? 1. : NormalizationFactor);
-        h[hist_leading_bjet_pt] -> Fill(treeReader.JetInfo_leading_bjet_pt, isData ? 1. : NormalizationFactor);
-        h[hist_leading_bjet_eta] -> Fill(treeReader.JetInfo_leading_bjet_eta, isData ? 1. : NormalizationFactor);
-        h[hist_leading_bjet_phi] -> Fill(treeReader.JetInfo_leading_bjet_phi, isData ? 1. : NormalizationFactor);
-        h[hist_chosen_bjet_pt] -> Fill(treeReader.JetInfo_chosen_bjet_pt, isData ? 1. : NormalizationFactor);
-        h[hist_chosen_bjet_eta] -> Fill(treeReader.JetInfo_chosen_bjet_eta, isData ? 1. : NormalizationFactor);
-        h[hist_chosen_bjet_phi] -> Fill(treeReader.JetInfo_chosen_bjet_phi, isData ? 1. : NormalizationFactor);
-        h[hist_jet1_pt] -> Fill(treeReader.JetInfo_jet1_pt, isData ? 1. : NormalizationFactor);
-        h[hist_jet1_eta] -> Fill(treeReader.JetInfo_jet1_eta, isData ? 1. : NormalizationFactor);
-        h[hist_jet1_phi] -> Fill(treeReader.JetInfo_jet1_phi, isData ? 1. : NormalizationFactor);
-        h[hist_jet2_pt] -> Fill(treeReader.JetInfo_jet2_pt, isData ? 1. : NormalizationFactor);
-        h[hist_jet2_eta] -> Fill(treeReader.JetInfo_jet2_eta, isData ? 1. : NormalizationFactor);
-        h[hist_jet2_phi] -> Fill(treeReader.JetInfo_jet2_phi, isData ? 1. : NormalizationFactor);
-        h[hist_dijet_eta] -> Fill(treeReader.JetInfo_dijet_delta_eta, isData ? 1. : NormalizationFactor);
-        h[hist_dijet_phi] -> Fill(treeReader.JetInfo_dijet_delta_phi, isData ? 1. : NormalizationFactor);
-        h[hist_dijet_angle] -> Fill(treeReader.JetInfo_dijet_delta_angle, isData ? 1. : NormalizationFactor);
-        h[hist_inv_mass_dijet] -> Fill(treeReader.inv_mass_dijet, isData ? 1. : NormalizationFactor);
-        h[hist_inv_mass_diphoton] -> Fill(treeReader.inv_mass_diphoton, isData ? 1. : NormalizationFactor);
-        h[hist_inv_mass_tbw] -> Fill(treeReader.inv_mass_tbw, isData ? 1. : NormalizationFactor);
+        if(!(treeReader.JetInfo_leading_bjet_pt<-900.)){
+            h[hist_leading_bjet_pt] -> Fill(treeReader.JetInfo_leading_bjet_pt, isData ? 1. : NormalizationFactor);
+            h[hist_leading_bjet_eta] -> Fill(treeReader.JetInfo_leading_bjet_eta, isData ? 1. : NormalizationFactor);
+            h[hist_leading_bjet_phi] -> Fill(treeReader.JetInfo_leading_bjet_phi, isData ? 1. : NormalizationFactor);
+        }
+        if(!(treeReader.JetInfo_chosen_bjet_pt<-900.)){
+            h[hist_chosen_bjet_pt] -> Fill(treeReader.JetInfo_chosen_bjet_pt, isData ? 1. : NormalizationFactor);
+            h[hist_chosen_bjet_eta] -> Fill(treeReader.JetInfo_chosen_bjet_eta, isData ? 1. : NormalizationFactor);
+            h[hist_chosen_bjet_phi] -> Fill(treeReader.JetInfo_chosen_bjet_phi, isData ? 1. : NormalizationFactor);
+        }
+        if(!(treeReader.JetInfo_jet1_pt<-900.)){
+            h[hist_jet1_pt] -> Fill(treeReader.JetInfo_jet1_pt, isData ? 1. : NormalizationFactor);
+            h[hist_jet1_eta] -> Fill(treeReader.JetInfo_jet1_eta, isData ? 1. : NormalizationFactor);
+            h[hist_jet1_phi] -> Fill(treeReader.JetInfo_jet1_phi, isData ? 1. : NormalizationFactor);
+        }
+        if(!(treeReader.JetInfo_jet2_pt<-900.)){
+            h[hist_jet2_pt] -> Fill(treeReader.JetInfo_jet2_pt, isData ? 1. : NormalizationFactor);
+            h[hist_jet2_eta] -> Fill(treeReader.JetInfo_jet2_eta, isData ? 1. : NormalizationFactor);
+            h[hist_jet2_phi] -> Fill(treeReader.JetInfo_jet2_phi, isData ? 1. : NormalizationFactor);
+        }
+        if(!(treeReader.JetInfo_dijet_delta_eta<-900.)){
+            h[hist_dijet_eta] -> Fill(treeReader.JetInfo_dijet_delta_eta, isData ? 1. : NormalizationFactor);
+            h[hist_dijet_phi] -> Fill(treeReader.JetInfo_dijet_delta_phi, isData ? 1. : NormalizationFactor);
+            h[hist_dijet_angle] -> Fill(treeReader.JetInfo_dijet_delta_angle, isData ? 1. : NormalizationFactor);
+        }
+
+        if(!(treeReader.inv_mass_dijet<-900.))
+            h[hist_inv_mass_dijet] -> Fill(treeReader.inv_mass_dijet, isData ? 1. : NormalizationFactor);
+        if(!(treeReader.inv_mass_diphoton<-900.))
+            h[hist_inv_mass_diphoton] -> Fill(treeReader.inv_mass_diphoton, isData ? 1. : NormalizationFactor);
+        if(!(treeReader.inv_mass_tbw<-900.))
+            h[hist_inv_mass_tbw] -> Fill(treeReader.inv_mass_tbw, isData ? 1. : NormalizationFactor);
+
         h[hist_DiPhoInfo_leadPt] -> Fill(treeReader.DiPhoInfo_leadPt, isData ? 1. : NormalizationFactor);
         h[hist_DiPhoInfo_leadEta] -> Fill(treeReader.DiPhoInfo_leadEta, isData ? 1. : NormalizationFactor);
         h[hist_DiPhoInfo_leadPhi] -> Fill(treeReader.DiPhoInfo_leadPhi, isData ? 1. : NormalizationFactor);
@@ -83,48 +96,21 @@ void Selection(){
         //hist_inv_mass_diphoton_ori -> Fill(treeReader.inv_mass_diphoton_ori, isData ? 1. : NormalizationFactor);
     }
 
-    char output_dir[512] = "plots"; printf("[INFO] output_dir = %s\n", output_dir);
     TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
-    MakePlots(c1, h[hist_NPu], Form("%s/%s.png", output_dir, histNames[hist_NPu].c_str()));
-    MakePlots(c1, h[hist_NVtx], Form("%s/%s.png", output_dir, histNames[hist_NVtx].c_str()));
-    MakePlots(c1, h[hist_num_jets], Form("%s/%s.png", output_dir, histNames[hist_num_jets].c_str()));
-    MakePlots(c1, h[hist_num_btagged_jets], Form("%s/%s.png", output_dir, histNames[hist_num_btagged_jets].c_str()));
-    MakePlots(c1, h[hist_num_nonbtagged_jets], Form("%s/%s.png", output_dir, histNames[hist_num_nonbtagged_jets].c_str()));
-    MakePlots(c1, h[hist_leading_bjet_pt], Form("%s/%s.png", output_dir, histNames[hist_leading_bjet_pt].c_str()));
-    MakePlots(c1, h[hist_leading_bjet_eta], Form("%s/%s.png", output_dir, histNames[hist_leading_bjet_eta].c_str()));
-    MakePlots(c1, h[hist_leading_bjet_phi], Form("%s/%s.png", output_dir, histNames[hist_leading_bjet_phi].c_str()));
-    MakePlots(c1, h[hist_chosen_bjet_pt], Form("%s/%s.png", output_dir, histNames[hist_chosen_bjet_pt].c_str()));
-    MakePlots(c1, h[hist_chosen_bjet_eta], Form("%s/%s.png", output_dir, histNames[hist_chosen_bjet_eta].c_str()));
-    MakePlots(c1, h[hist_chosen_bjet_phi], Form("%s/%s.png", output_dir, histNames[hist_chosen_bjet_phi].c_str()));
-    MakePlots(c1, h[hist_jet1_pt], Form("%s/%s.png", output_dir, histNames[hist_jet1_pt].c_str()));
-    MakePlots(c1, h[hist_jet1_eta], Form("%s/%s.png", output_dir, histNames[hist_jet1_eta].c_str()));
-    MakePlots(c1, h[hist_jet1_phi], Form("%s/%s.png", output_dir, histNames[hist_jet1_phi].c_str()));
-    MakePlots(c1, h[hist_jet2_pt], Form("%s/%s.png", output_dir, histNames[hist_jet2_pt].c_str()));
-    MakePlots(c1, h[hist_jet2_eta], Form("%s/%s.png", output_dir, histNames[hist_jet2_eta].c_str()));
-    MakePlots(c1, h[hist_jet2_phi], Form("%s/%s.png", output_dir, histNames[hist_jet2_phi].c_str()));
-    MakePlots(c1, h[hist_dijet_eta], Form("%s/%s.png", output_dir, histNames[hist_dijet_eta].c_str()));
-    MakePlots(c1, h[hist_dijet_phi], Form("%s/%s.png", output_dir, histNames[hist_dijet_phi].c_str()));
-    MakePlots(c1, h[hist_dijet_angle], Form("%s/%s.png", output_dir, histNames[hist_dijet_angle].c_str()));
-    MakePlots(c1, h[hist_inv_mass_dijet], Form("%s/%s.png", output_dir, histNames[hist_inv_mass_dijet].c_str()));
-    MakePlots(c1, h[hist_inv_mass_diphoton], Form("%s/%s.png", output_dir, histNames[hist_inv_mass_diphoton].c_str()));
-    MakePlots(c1, h[hist_inv_mass_tbw], Form("%s/%s.png", output_dir, histNames[hist_inv_mass_tbw].c_str()));
-    MakePlots(c1, h[hist_DiPhoInfo_leadPt], Form("%s/%s.png", output_dir, histNames[hist_DiPhoInfo_leadPt].c_str()));
-    MakePlots(c1, h[hist_DiPhoInfo_leadEta], Form("%s/%s.png", output_dir, histNames[hist_DiPhoInfo_leadEta].c_str()));
-    MakePlots(c1, h[hist_DiPhoInfo_leadPhi], Form("%s/%s.png", output_dir, histNames[hist_DiPhoInfo_leadPhi].c_str()));
-    MakePlots(c1, h[hist_DiPhoInfo_leadE], Form("%s/%s.png", output_dir, histNames[hist_DiPhoInfo_leadE].c_str()));
-    MakePlots(c1, h[hist_DiPhoInfo_leadIDMVA], Form("%s/%s.png", output_dir, histNames[hist_DiPhoInfo_leadIDMVA].c_str()));
-    MakePlots(c1, h[hist_DiPhoInfo_subleadPt], Form("%s/%s.png", output_dir, histNames[hist_DiPhoInfo_subleadPt].c_str()));
-    MakePlots(c1, h[hist_DiPhoInfo_subleadEta], Form("%s/%s.png", output_dir, histNames[hist_DiPhoInfo_subleadEta].c_str()));
-    MakePlots(c1, h[hist_DiPhoInfo_subleadPhi], Form("%s/%s.png", output_dir, histNames[hist_DiPhoInfo_subleadPhi].c_str()));
-    MakePlots(c1, h[hist_DiPhoInfo_subleadE], Form("%s/%s.png", output_dir, histNames[hist_DiPhoInfo_subleadE].c_str()));
-    MakePlots(c1, h[hist_DiPhoInfo_subleadIDMVA], Form("%s/%s.png", output_dir, histNames[hist_DiPhoInfo_subleadIDMVA].c_str()));
+    for(int i=0; i<totalHistNum; i++){
+        MakePlots(c1, h[i], Form("%s/%s.png", output_dir, histNames[i].c_str()));
+    }
 
     fout -> Close();
     fin  -> Close();
 }
 
-int main(){
-    Selection();
+int main(int argc, char *argv[]){
+    char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
+    char output_file[512]; sprintf(output_file, "%s", argv[2]); printf("[INFO] output_file = %s\n", output_file);
+    char dataset[512]; sprintf(dataset, "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset);
+    char output_dir[512];  sprintf(output_dir, "%s", argv[4]); printf("[INFO] output_dir = %s\n", output_dir);
+    Selection(input_file, output_file, dataset, output_dir);
     return 1;
 }
 

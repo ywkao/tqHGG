@@ -6,8 +6,9 @@ lib/*
 bin/
 
 # Ignore any plots
-plots*
+plots/*
+ntuples_skimmed
 
-# Ignore any logs
+# Ignore any logs and test files
 log/*
 test/*

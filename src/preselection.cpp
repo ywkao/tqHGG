@@ -232,7 +232,7 @@ int main(int argc, char *argv[]){
         //------------------------------
         double dijet_eta_difference = CUT_num_nonbjets_less_than_2 ? -999. : fabs(dijet_jet1_eta - dijet_jet2_eta);
         double dijet_phi_difference = CUT_num_nonbjets_less_than_2 ? -999. : fabs(dijet_jet1_phi - dijet_jet2_phi);
-        double dijet_angle_difference = sqrt(dijet_eta_difference*dijet_eta_difference + dijet_phi_difference*dijet_phi_difference);
+        double dijet_angle_difference = CUT_num_nonbjets_less_than_2 ? -999. : sqrt(dijet_eta_difference*dijet_eta_difference + dijet_phi_difference*dijet_phi_difference);
         //------------------------------
         double tbw_chosen_bjet_pt = CUT_no_bjet_events ? -999. : vec_btagged_jets[good_bjet_index].Pt();
         double tbw_chosen_bjet_eta = CUT_no_bjet_events ? -999. : vec_btagged_jets[good_bjet_index].Eta();
@@ -248,6 +248,7 @@ int main(int argc, char *argv[]){
         mytree.JetInfo_dijet_delta_phi = dijet_phi_difference;
         mytree.JetInfo_dijet_delta_angle = dijet_angle_difference;
         mytree.inv_mass_dijet = dijet_invariant_mass;
+        mytree.JetInfo_chosen_bjet_is_leading_bjet = (good_bjet_index == 0) ? 1 : 0;
         mytree.JetInfo_chosen_bjet_pt = tbw_chosen_bjet_pt;
         mytree.JetInfo_chosen_bjet_eta = tbw_chosen_bjet_eta;
         mytree.JetInfo_chosen_bjet_phi = tbw_chosen_bjet_phi;
@@ -439,18 +440,19 @@ void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("inv_mass_diphoton", &inv_mass_diphoton, "inv_mass_diphoton/F");
     mytree -> Branch("inv_mass_tbw", &inv_mass_tbw, "inv_mass_tbw/F");
     //------------------------
-    mytree -> Branch("JetInfo_leading_bjet_pt", &JetInfo_leading_bjet_pt);
-    mytree -> Branch("JetInfo_leading_bjet_eta", &JetInfo_leading_bjet_eta);
-    mytree -> Branch("JetInfo_leading_bjet_phi", &JetInfo_leading_bjet_phi);
-    mytree -> Branch("JetInfo_chosen_bjet_pt", &JetInfo_chosen_bjet_pt);
-    mytree -> Branch("JetInfo_chosen_bjet_eta", &JetInfo_chosen_bjet_eta);
-    mytree -> Branch("JetInfo_chosen_bjet_phi", &JetInfo_chosen_bjet_phi);
-    mytree -> Branch("JetInfo_jet1_pt", &JetInfo_jet1_pt);
-    mytree -> Branch("JetInfo_jet1_eta", &JetInfo_jet1_eta);
-    mytree -> Branch("JetInfo_jet1_phi", &JetInfo_jet1_phi);
-    mytree -> Branch("JetInfo_jet2_pt", &JetInfo_jet2_pt);
-    mytree -> Branch("JetInfo_jet2_eta", &JetInfo_jet2_eta);
-    mytree -> Branch("JetInfo_jet2_phi", &JetInfo_jet2_phi);
+    mytree -> Branch("JetInfo_leading_bjet_pt", &JetInfo_leading_bjet_pt, "JetInfo_leading_bjet_pt/F");
+    mytree -> Branch("JetInfo_leading_bjet_eta", &JetInfo_leading_bjet_eta, "JetInfo_leading_bjet_eta/F");
+    mytree -> Branch("JetInfo_leading_bjet_phi", &JetInfo_leading_bjet_phi, "JetInfo_leading_bjet_phi/F");
+    mytree -> Branch("JetInfo_chosen_bjet_is_leading_bjet", &JetInfo_chosen_bjet_is_leading_bjet, "JetInfo_chosen_bjet_is_leading_bjet/I");
+    mytree -> Branch("JetInfo_chosen_bjet_pt", &JetInfo_chosen_bjet_pt, "JetInfo_chosen_bjet_pt/F");
+    mytree -> Branch("JetInfo_chosen_bjet_eta", &JetInfo_chosen_bjet_eta, "JetInfo_chosen_bjet_eta/F");
+    mytree -> Branch("JetInfo_chosen_bjet_phi", &JetInfo_chosen_bjet_phi, "JetInfo_chosen_bjet_phi/F");
+    mytree -> Branch("JetInfo_jet1_pt", &JetInfo_jet1_pt, "JetInfo_jet1_pt/F");
+    mytree -> Branch("JetInfo_jet1_eta", &JetInfo_jet1_eta, "JetInfo_jet1_eta/F");
+    mytree -> Branch("JetInfo_jet1_phi", &JetInfo_jet1_phi, "JetInfo_jet1_phi/F");
+    mytree -> Branch("JetInfo_jet2_pt", &JetInfo_jet2_pt, "JetInfo_jet2_pt/F");
+    mytree -> Branch("JetInfo_jet2_eta", &JetInfo_jet2_eta, "JetInfo_jet2_eta/F");
+    mytree -> Branch("JetInfo_jet2_phi", &JetInfo_jet2_phi, "JetInfo_jet2_phi/F");
     //------------------------
     mytree -> Branch("JetInfo_dijet_delta_eta", &JetInfo_dijet_delta_eta, "JetInfo_dijet_delta_eta/F");
     mytree -> Branch("JetInfo_dijet_delta_phi", &JetInfo_dijet_delta_phi, "JetInfo_dijet_delta_phi/F");
@@ -491,6 +493,7 @@ void myParameters::Clear(){
     JetInfo_leading_bjet_eta = 0;
     JetInfo_leading_bjet_phi = 0;
     //------------------------
+    JetInfo_chosen_bjet_is_leading_bjet = -1;
     JetInfo_chosen_bjet_pt = 0;
     JetInfo_chosen_bjet_eta = 0;
     JetInfo_chosen_bjet_phi = 0;
