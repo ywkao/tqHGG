@@ -22,7 +22,7 @@ echo "[MESSAGE] Check executable..." && make
 echo "[MESSAGE] Ready!"
 
 #--------------- DryRun ---------------#
-if [[ $1 == '-d' || '--dryRun' ]]; then
+if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
     ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
     echo "[MESSAGE] This is the end of dryRun execution." && exit 1
 fi
