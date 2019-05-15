@@ -12,7 +12,14 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
     bool isData = isThisDataOrNot(dataset);
 
     TFile *fin  = TFile::Open(input_file);
+    TFile *f_mcpu = TFile::Open("data/MCPileUp.root");
     TFile *fout = new TFile(output_file, "RECREATE");
+    TH1D  *h_mcpu = (TH1D*)f_mcpu->Get("mcpu");
+
+    //TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
+    //h_mcpu -> Draw();
+    //c1->SaveAs("mcpu.png");
+
     myTreeClass treeReader;
     treeReader.InitTree("mytree");
     treeReader.AddRootFile(fin);
@@ -37,7 +44,9 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         tmp->GetEntry(ientry);
         if(ientry==0) printf("[INFO] N_entries = %d/%d\n", nentries, treeReader.EvtInfo_totalEntry_before_preselection);
         if((ientry+1)%10000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
-        double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
+
+        double PU_reweighting_factor = h_mcpu->GetBinContent(treeReader.EvtInfo_NPu+1);
+        double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi * PU_reweighting_factor;
         //EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
         //=== Selections ===//
         
@@ -102,6 +111,7 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
     }
 
     fout -> Close();
+    f_mcpu -> Close();
     fin  -> Close();
 }
 
