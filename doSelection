@@ -65,4 +65,6 @@ ExeAnalysis ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root
 ExeAnalysis ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root
 ExeAnalysis ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root
 ExeAnalysis ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root
+#--------------- Make stack plots ---------------#
+root -l -b -q src/stackHist.C
 echo "[MESSAGE] This is the end of execution." && exit 0

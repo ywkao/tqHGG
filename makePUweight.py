@@ -77,15 +77,18 @@ def main():
     orgweightsum = 0
     puweightsum = 0
     mchist   = ROOT.TH1D("mcpu","mcpu",len(mcpileup),0,len(mcpileup))
+    puhist   = ROOT.TH1D("puhist","puhist",len(mcpileup),0,len(mcpileup))
     for i in range(0, len(mcpileup)):
         mcweight.append(datapuhist.GetBinContent(i + 1) / mcpileup[i])
         mchist.SetBinContent(i+1,mcpileup[i])
+        puhist.SetBinContent(i+1, mcweight[i])
         orgweightsum = orgweightsum + mcpileup[i]
         puweightsum = puweightsum + (mcpileup[i] * mcweight[i])
         print i, mcweight[i], mcpileup[i], datapuhist.GetBinContent(i + 1)
 
     mcfile = ROOT.TFile.Open("./data/MCPileUp.root","update")
     mchist.Write()
+    puhist.Write()
     print puweightsum
     print orgweightsum
     print len(mcweight)

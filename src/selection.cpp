@@ -47,6 +47,7 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
 
         double PU_reweighting_factor = h_mcpu->GetBinContent(treeReader.EvtInfo_NPu+1);
         double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi * PU_reweighting_factor;
+        //double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
         //EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
         //=== Selections ===//
         
