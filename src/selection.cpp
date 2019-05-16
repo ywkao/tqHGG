@@ -14,10 +14,10 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
     TFile *fin  = TFile::Open(input_file);
     TFile *f_mcpu = TFile::Open("data/MCPileUp.root");
     TFile *fout = new TFile(output_file, "RECREATE");
-    TH1D  *h_mcpu = (TH1D*)f_mcpu->Get("mcpu");
+    TH1D  *h_pu_reweighting_factor = (TH1D*)f_mcpu->Get("puhist");
 
     //TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
-    //h_mcpu -> Draw();
+    //h_pu_reweighting_factor -> Draw();
     //c1->SaveAs("mcpu.png");
 
     myTreeClass treeReader;
@@ -45,9 +45,9 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         if(ientry==0) printf("[INFO] N_entries = %d/%d\n", nentries, treeReader.EvtInfo_totalEntry_before_preselection);
         if((ientry+1)%10000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
 
-        double PU_reweighting_factor = h_mcpu->GetBinContent(treeReader.EvtInfo_NPu+1);
+        //=== PU Reweighting ===//
+        double PU_reweighting_factor = h_pu_reweighting_factor->GetBinContent(treeReader.EvtInfo_NPu+1);
         double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi * PU_reweighting_factor;
-        //double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
         //EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
         //=== Selections ===//
         

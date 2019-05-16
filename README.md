@@ -10,5 +10,6 @@ Usage:
 1. cmsenv #In order to use ROOT. 
 2. Modify the directory of input root files in the shell script, exePreselection.
 3. ./exePreselection #Perform preselection ~7hrs. Additional option: -d or --dryRun for testing purpose. 
-4. ./doSelection #Perform selection ~4min.
-5. root -l -b -q src/stackHist.C #Make stack plots.
+4. ./makePUweight.py -x 69200 #Produce rootfile of pileup reweighting factor ~5min #Need not execute again after having data/MCPileUp.root
+5. ./doSelection #Perform selection ~4min.
+6. root -l -b -q src/stackHist.C #Make stack plots.

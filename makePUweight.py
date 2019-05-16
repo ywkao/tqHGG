@@ -65,7 +65,8 @@ def main():
         --maxPileupBin  {3} \
         --numPileupBins {3} \
         ./data/PileUp.root
-    """.format(args.lumimask, args.pufile, args.xsec, 75 ) ) #because the .txt bin number is 75
+    """.format(args.lumimask, args.pufile, args.xsec, 98 ) )
+    #""".format(args.lumimask, args.pufile, args.xsec, 75 ) ) #because the .txt bin number is 75
     datapufile = ROOT.TFile.Open('./data/PileUp.root')
     datapuhist = datapufile.Get('pileup')
     datapuhist.Scale(1. / datapuhist.Integral())
