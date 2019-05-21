@@ -1,13 +1,19 @@
 # Ignore the build and lib dirs
-build
+build/*
 lib/*
 
+# Ignore any intermediate stuffs in src dir
+src/*_C.d
+src/*_C.so
+src/*ACLiC*
+
 # Ignore any executables
-bin/
+bin/*
 
 # Ignore any plots
 plots*
+ntuples_skimmed
 
-# Ignore any logs
+# Ignore any logs and test files
 log/*
 test/*

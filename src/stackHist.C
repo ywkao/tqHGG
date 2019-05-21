@@ -6,23 +6,29 @@
 #include <TLine.h>
 #include <TPad.h>
 #include <string>
-#include "/home/ykao/legacy/CMSSW_9_4_10/src/tqHGG/include/stack.h"
+#include "../include/stack.h"
 using namespace std;
 
 const double TunableSigBranchingFraction = 0.001; //The branching fraction of signal MC = 0.01%
 
 void stackHist(){
+    MakeStackHist("hist_NPu");
+    MakeStackHist("hist_NVtx");
+    MakeStackHist("hist_NVtx_wopu");
     MakeStackHist("hist_num_jets");
     MakeStackHist("hist_num_btagged_jets");
     MakeStackHist("hist_num_nonbtagged_jets");
-    MakeStackHist("hist_bjet_pt");
+    MakeStackHist("hist_leading_bjet_pt");
+    MakeStackHist("hist_leading_bjet_eta");
+    MakeStackHist("hist_leading_bjet_phi");
+    MakeStackHist("hist_chosen_bjet_pt");
+    MakeStackHist("hist_chosen_bjet_eta");
+    MakeStackHist("hist_chosen_bjet_phi");
     MakeStackHist("hist_jet1_pt");
-    MakeStackHist("hist_jet2_pt");
-    MakeStackHist("hist_bjet_eta");
     MakeStackHist("hist_jet1_eta");
-    MakeStackHist("hist_jet2_eta");
-    MakeStackHist("hist_bjet_phi");
     MakeStackHist("hist_jet1_phi");
+    MakeStackHist("hist_jet2_pt");
+    MakeStackHist("hist_jet2_eta");
     MakeStackHist("hist_jet2_phi");
     MakeStackHist("hist_dijet_eta");
     MakeStackHist("hist_dijet_phi");
@@ -40,9 +46,9 @@ void stackHist(){
     MakeStackHist("hist_DiPhoInfo_subleadPhi");
     MakeStackHist("hist_DiPhoInfo_subleadE");
     MakeStackHist("hist_DiPhoInfo_subleadIDMVA");
-    MakeStackHist("hist_DiPhoInfo_leadIDMVA_ori");
-    MakeStackHist("hist_DiPhoInfo_subleadIDMVA_ori");
-    MakeStackHist("hist_inv_mass_diphoton_ori");
+    //MakeStackHist("hist_DiPhoInfo_leadIDMVA_ori");
+    //MakeStackHist("hist_DiPhoInfo_subleadIDMVA_ori");
+    //MakeStackHist("hist_inv_mass_diphoton_ori");
 }
 void MakeStackHist(const char* histName){
     TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
@@ -203,7 +209,7 @@ void MakeStackHist(const char* histName){
     stackHist->Add(hist_tqh_TTGG);
     if(considerQCD) stackHist->Add(hist_tqh_QCD);
     //============================//
-    //===== Draw upper plots =====//
+    //===== Draw upper plots_pu =====//
     //============================//
     TPad *pad1 = new TPad("pad1", "pad1", 0, 0.25, 1, 1.0);
     pad1->SetBottomMargin(0); //Upper and lower pads are joined
@@ -217,7 +223,7 @@ void MakeStackHist(const char* histName){
         stackHist->SetMinimum(0);
     } else if(isMassSpectrum){
         if(isDiPhotonSpectrum) stackHist->SetMaximum(1.6e+5);
-        if(isDijetSpectrum)    stackHist->SetMaximum(1.6e+3);
+        if(isDijetSpectrum)    stackHist->SetMaximum(2.0e+3);
         if(isTopSpectrum)      stackHist->SetMaximum(1.6e+3);
         stackHist->SetMinimum(0);
     } else{
@@ -288,7 +294,7 @@ void MakeStackHist(const char* histName){
     latex_lumi.SetTextAlign(31);
     latex_lumi.DrawLatex(0.89, 0.92, "42 fb^{-1} (2017, 13 TeV)");
     //============================//
-    //===== Draw lower plots =====//
+    //===== Draw lower plots_pu =====//
     //============================//
     c1->cd(); //Go back to the main canvas before defining pad2
     TPad *pad2 = new TPad("pad2", "pad2", 0, 0.05, 1, 0.25);
@@ -336,18 +342,18 @@ void MakeStackHist(const char* histName){
     line.DrawLine(pad2->GetUxmin(),1.0,pad2->GetUxmax(),1.0);
     line.DrawLine(pad2->GetUxmin(),1.5,pad2->GetUxmax(),1.5);
     line.DrawLine(pad2->GetUxmin(),2.0,pad2->GetUxmax(),2.0);
-    c1->SaveAs(Form("plots/stack_%s.png", histName));
+    c1->SaveAs(Form("plots_pu/stack_%s.png", histName));
     if(isMassSpectrum){
         c1->cd();
         pad1->cd();
         //stackHist->SetMaximum(600);
-        //c1->SaveAs(Form("plots/stack_%s_zoomin.png", histName));
+        //c1->SaveAs(Form("plots_pu/stack_%s_zoomin.png", histName));
         gPad->SetLogy(1);
         if(isDiPhotonSpectrum) stackHist->SetMaximum(1e+11);
         if(isDijetSpectrum)    stackHist->SetMaximum(1e+8);
         if(isTopSpectrum)      stackHist->SetMaximum(1e+8);
         stackHist->SetMinimum(5e-1);
-        c1->SaveAs(Form("plots/stack_%s_log.png", histName));
+        c1->SaveAs(Form("plots_pu/stack_%s_log.png", histName));
     }
 }
 
@@ -383,12 +389,14 @@ bool isThisNumEtaPhi(const char* histName){
     if((string)histName == "hist_num_btagged_jets") return true;
     if((string)histName == "hist_num_nonbtagged_jets") return true;
     //--------------------
-    if((string)histName == "hist_bjet_eta") return true;
+    if((string)histName == "hist_leading_bjet_eta") return true;
+    if((string)histName == "hist_chosen_bjet_eta") return true;
     if((string)histName == "hist_jet1_eta") return true;
     if((string)histName == "hist_jet2_eta") return true;
     if((string)histName == "hist_dijet_eta") return true;
     //--------------------
-    if((string)histName == "hist_bjet_phi") return true;
+    if((string)histName == "hist_leading_bjet_phi") return true;
+    if((string)histName == "hist_chosen_bjet_phi") return true;
     if((string)histName == "hist_jet1_phi") return true;
     if((string)histName == "hist_jet2_phi") return true;
     if((string)histName == "hist_dijet_phi") return true;
@@ -405,20 +413,27 @@ bool isThisNumEtaPhi(const char* histName){
 }
 
 string GetXtitleAccordingToHistName(const char* histName){
+    if((string)histName == "hist_NPu") return "Number of pile up";
+    if((string)histName == "hist_NVtx") return "Number of vertices";
+    if((string)histName == "hist_NVtx_wopu") return "Number of vertices (w/o pu)";
+    //--------------------
     if((string)histName == "hist_num_jets") return "Number of Jets";
     if((string)histName == "hist_num_btagged_jets") return "Number of btagged jets";
     if((string)histName == "hist_num_nonbtagged_jets") return "Number of nonbtagged jets";
     //--------------------
-    if((string)histName == "hist_bjet_pt") return "Pt of bjet [GeV/c]";
+    if((string)histName == "hist_leading_bjet_pt") return "Pt of bjet [GeV/c]";
+    if((string)histName == "hist_chosen_bjet_pt") return "Pt of bjet [GeV/c]";
     if((string)histName == "hist_jet1_pt") return "Pt of jet1 [GeV/c]";
     if((string)histName == "hist_jet2_pt") return "Pt of jet2 [GeV/c]";
     //--------------------
-    if((string)histName == "hist_bjet_eta") return "#eta of bjet";
+    if((string)histName == "hist_leading_bjet_eta") return "#eta of bjet";
+    if((string)histName == "hist_chosen_bjet_eta") return "#eta of bjet";
     if((string)histName == "hist_jet1_eta") return "#eta of jet1";
     if((string)histName == "hist_jet2_eta") return "#eta of jet2";
     if((string)histName == "hist_dijet_eta") return "#Delta #eta of dijet";
     //--------------------
-    if((string)histName == "hist_bjet_phi") return "#phi of bjet";
+    if((string)histName == "hist_leading_bjet_phi") return "#phi of bjet";
+    if((string)histName == "hist_chosen_bjet_phi") return "#phi of bjet";
     if((string)histName == "hist_jet1_phi") return "#phi of jet1";
     if((string)histName == "hist_jet2_phi") return "#phi of jet2";
     if((string)histName == "hist_dijet_phi") return "#Delta #phi of dijet";
@@ -447,20 +462,27 @@ string GetYtitleAccordingToHistName(const char* histName, double BinWidth){
     string str_ytitle_1("Entries");
     string str_ytitle_2(Form("Entries / %.2f [GeV]", BinWidth));
     //--------------------
+    if((string)histName == "hist_NPu") return str_ytitle_1;
+    if((string)histName == "hist_NVtx") return str_ytitle_1;
+    if((string)histName == "hist_NVtx_wopu") return str_ytitle_1;
+    //--------------------
     if((string)histName == "hist_num_jets") return str_ytitle_1;
     if((string)histName == "hist_num_btagged_jets") return str_ytitle_1;
     if((string)histName == "hist_num_nonbtagged_jets") return str_ytitle_1;
     //--------------------
-    if((string)histName == "hist_bjet_pt") return str_ytitle_2;
+    if((string)histName == "hist_leading_bjet_pt") return str_ytitle_2;
+    if((string)histName == "hist_chosen_bjet_pt") return str_ytitle_2;
     if((string)histName == "hist_jet1_pt") return str_ytitle_2;
     if((string)histName == "hist_jet2_pt") return str_ytitle_2;
     //--------------------
-    if((string)histName == "hist_bjet_eta") return str_ytitle_1;
+    if((string)histName == "hist_leading_bjet_eta") return str_ytitle_1;
+    if((string)histName == "hist_chosen_bjet_eta") return str_ytitle_1;
     if((string)histName == "hist_jet1_eta") return str_ytitle_1;
     if((string)histName == "hist_jet2_eta") return str_ytitle_1;
     if((string)histName == "hist_dijet_eta") return str_ytitle_1;
     //--------------------
-    if((string)histName == "hist_bjet_phi") return str_ytitle_1;
+    if((string)histName == "hist_leading_bjet_phi") return str_ytitle_1;
+    if((string)histName == "hist_chosen_bjet_phi") return str_ytitle_1;
     if((string)histName == "hist_jet1_phi") return str_ytitle_1;
     if((string)histName == "hist_jet2_phi") return str_ytitle_1;
     if((string)histName == "hist_dijet_phi") return str_ytitle_1;
