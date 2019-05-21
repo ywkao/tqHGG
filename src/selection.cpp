@@ -46,8 +46,10 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         if((ientry+1)%10000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
 
         //=== PU Reweighting ===//
-        double PU_reweighting_factor = h_pu_reweighting_factor->GetBinContent(treeReader.EvtInfo_NPu+1);
+        //double PU_reweighting_factor = h_pu_reweighting_factor->GetBinContent(treeReader.EvtInfo_NPu+1);
+        double PU_reweighting_factor = 1.; //No PU
         double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi * PU_reweighting_factor;
+        double NormalizationFactor_wopu = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
         //EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
         //=== Selections ===//
         
@@ -55,6 +57,7 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         //=== Store Info ===//
         h[hist_NPu]  -> Fill(treeReader.EvtInfo_NPu, isData ? 1. : NormalizationFactor);
         h[hist_NVtx] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor);
+        h[hist_NVtx_wopu] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor_wopu);
         h[hist_num_jets] -> Fill(treeReader.num_jets, isData ? 1. : NormalizationFactor);
         h[hist_num_btagged_jets] -> Fill(treeReader.num_btagged_jets, isData ? 1. : NormalizationFactor);
         h[hist_num_nonbtagged_jets] -> Fill(treeReader.num_nonbtagged_jets, isData ? 1. : NormalizationFactor);

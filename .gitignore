@@ -2,11 +2,16 @@
 build/*
 lib/*
 
+# Ignore any intermediate stuffs in src dir
+src/*_C.d
+src/*_C.so
+src/*ACLiC*
+
 # Ignore any executables
 bin/*
 
 # Ignore any plots
-plots/*
+plots*
 ntuples_skimmed
 
 # Ignore any logs and test files

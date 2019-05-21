@@ -123,7 +123,7 @@ int main(int argc, char *argv[]){
         //==================================================//
         if(treeReader.DiPhoInfo_mass<0) continue;
         if( !(treeReader.jets_size>0) ) continue;
-        if(treeReader.DiPhoInfo_mass<100 || treeReader.DiPhoInfo_mass>150) continue;
+        if(treeReader.DiPhoInfo_mass<100 || treeReader.DiPhoInfo_mass>180) continue;
         if( !isMCsignal && treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130) continue;
         //if(!(DiPhoInfo_leadIDMVA>0)) continue;
         //==================================================//
