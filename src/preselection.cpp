@@ -210,7 +210,8 @@ int main(int argc, char *argv[]){
                             if(chi2<chi2_min){wjetindices[0]=i; wjetindices[1]=j; good_bjet_index=k; chi2_min=chi2;}
                         }// end of k loop (b-jet))
                     } else{
-                            if(chi2<chi2_min){wjetindices[0]=i; wjetindices[1]=j;}
+                            chi2 = Chi2_calculator_w_only(dijet_invariant_mass);
+                            if(chi2<chi2_min){wjetindices[0]=i; wjetindices[1]=j; chi2_min=chi2;}
                     }
                 }// end of jet2
             }// end of jet1
@@ -311,6 +312,9 @@ int main(int argc, char *argv[]){
 
 double Chi2_calculator(double w_mass, double t_mass){
     return (w_mass-w_boson_mass)*(w_mass-w_boson_mass)/w_boson_width + (t_mass-top_quark_mass)*(t_mass-top_quark_mass)/top_quark_width;
+}
+double Chi2_calculator_w_only(double w_mass){
+    return (w_mass-w_boson_mass)*(w_mass-w_boson_mass);
 }
 void MakePlots(TCanvas *c1, TH1D* hist, const char* title, const char* outputFile){
     hist->Draw();
