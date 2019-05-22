@@ -46,8 +46,8 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         if((ientry+1)%10000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
 
         //=== PU Reweighting ===//
-        //double PU_reweighting_factor = h_pu_reweighting_factor->GetBinContent(treeReader.EvtInfo_NPu+1);
-        double PU_reweighting_factor = 1.; //No PU
+        double PU_reweighting_factor = h_pu_reweighting_factor->GetBinContent(treeReader.EvtInfo_NPu+1);
+        //double PU_reweighting_factor = 1.; //No PU
         double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi * PU_reweighting_factor;
         double NormalizationFactor_wopu = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
         //EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
