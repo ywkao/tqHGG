@@ -45,25 +45,25 @@ if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
 fi
 
 #--------------- TT Signal ---------------#
-#ExeAnalysis TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root
-#ExeAnalysis TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root
-#ExeAnalysis TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root
-#ExeAnalysis TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hut-MadGraph5-pythia8.root
-#ExeAnalysis TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root
-#ExeAnalysis TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root
-#ExeAnalysis TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root
-#ExeAnalysis TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root
-##--------------- Data ---------------#
-#ExeAnalysis DoubleEG_B.root
-#ExeAnalysis DoubleEG_C.root
-#ExeAnalysis DoubleEG_D.root
-#ExeAnalysis DoubleEG_E.root
-#ExeAnalysis DoubleEG_F.root
-##--------------- Resonant bkg ---------------#
-#ExeAnalysis GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8.root
-#ExeAnalysis VBFHToGG_M125_13TeV_amcatnlo_pythia8.root
-#ExeAnalysis VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
-#ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
+ExeAnalysis TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root
+ExeAnalysis TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root
+ExeAnalysis TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root
+ExeAnalysis TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hut-MadGraph5-pythia8.root
+ExeAnalysis TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root
+ExeAnalysis TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root
+ExeAnalysis TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root
+ExeAnalysis TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root
+#--------------- Data ---------------#
+ExeAnalysis DoubleEG_B.root
+ExeAnalysis DoubleEG_C.root
+ExeAnalysis DoubleEG_D.root
+ExeAnalysis DoubleEG_E.root
+ExeAnalysis DoubleEG_F.root
+#--------------- Resonant bkg ---------------#
+ExeAnalysis GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8.root
+ExeAnalysis VBFHToGG_M125_13TeV_amcatnlo_pythia8.root
+ExeAnalysis VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
+ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
 #--------------- non-Resonant bkg ---------------#
 ExeAnalysis DiPhotonJetsBox_M40_80-Sherpa.root
 ExeAnalysis GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root
