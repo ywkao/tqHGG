@@ -90,10 +90,15 @@ void MakeStackHist(const char* histName){
     //===============================//
     //===== Register histograms =====//
     //===============================//
-    for(int i=0; i<NUM_sig; i++) RegisterHistogram(fileNames_sig[i].c_str(), hist_tqh_sig[i], histName, kRed, true, false);
-    for(int i=0; i<NUM_resbkg; i++) RegisterHistogram(fileNames_resbkg[i].c_str(), hist_tqh_resbkg[i], histName, kBlue-i-2, false, false);
-    for(int i=0; i<NUM_nonresbkg; i++) RegisterHistogram(fileNames_nonresbkg[i].c_str(), hist_tqh_nonresbkg[i], histName, kGreen+2, false, false);
-    for(int i=0; i<NUM_data; i++) RegisterHistogram(fileNames_data[i].c_str(), hist_tqh_data[i], histName, kBlack, false, true);
+    TFile *file[NUM];
+    for(int i=0; i<NUM_sig; i++)
+        RegisterHistogram(file[i], fileNames_sig[i].c_str(), hist_tqh_sig[i], histName, kRed, true, false);
+    for(int i=0; i<NUM_resbkg; i++)
+        RegisterHistogram(file[i+NUM_sig], fileNames_resbkg[i].c_str(), hist_tqh_resbkg[i], histName, kBlue-i-2, false, false);
+    for(int i=0; i<NUM_nonresbkg; i++)
+        RegisterHistogram(file[i+NUM_sig+NUM_resbkg], fileNames_nonresbkg[i].c_str(), hist_tqh_nonresbkg[i], histName, kGreen+2, false, false);
+    for(int i=0; i<NUM_data; i++)
+        RegisterHistogram(file[i+NUM_sig+NUM_resbkg+NUM_nonresbkg], fileNames_data[i].c_str(), hist_tqh_data[i], histName, kBlack, false, true);
     //==================================//
     //===== Combine had/lep signal =====//
     //==================================//
@@ -209,7 +214,7 @@ void MakeStackHist(const char* histName){
     stackHist->Add(hist_tqh_TTGG);
     if(considerQCD) stackHist->Add(hist_tqh_QCD);
     //============================//
-    //===== Draw upper plots_pu =====//
+    //===== Draw upper plots =====//
     //============================//
     TPad *pad1 = new TPad("pad1", "pad1", 0, 0.25, 1, 1.0);
     pad1->SetBottomMargin(0); //Upper and lower pads are joined
@@ -294,7 +299,7 @@ void MakeStackHist(const char* histName){
     latex_lumi.SetTextAlign(31);
     latex_lumi.DrawLatex(0.89, 0.92, "42 fb^{-1} (2017, 13 TeV)");
     //============================//
-    //===== Draw lower plots_pu =====//
+    //===== Draw lower plots =====//
     //============================//
     c1->cd(); //Go back to the main canvas before defining pad2
     TPad *pad2 = new TPad("pad2", "pad2", 0, 0.05, 1, 0.25);
@@ -342,19 +347,21 @@ void MakeStackHist(const char* histName){
     line.DrawLine(pad2->GetUxmin(),1.0,pad2->GetUxmax(),1.0);
     line.DrawLine(pad2->GetUxmin(),1.5,pad2->GetUxmax(),1.5);
     line.DrawLine(pad2->GetUxmin(),2.0,pad2->GetUxmax(),2.0);
-    c1->SaveAs(Form("plots_pu/stack_%s.png", histName));
+    c1->SaveAs(Form("plots/stack_%s.png", histName));
     if(isMassSpectrum){
         c1->cd();
         pad1->cd();
         //stackHist->SetMaximum(600);
-        //c1->SaveAs(Form("plots_pu/stack_%s_zoomin.png", histName));
+        //c1->SaveAs(Form("plots/stack_%s_zoomin.png", histName));
         gPad->SetLogy(1);
         if(isDiPhotonSpectrum) stackHist->SetMaximum(1e+11);
         if(isDijetSpectrum)    stackHist->SetMaximum(1e+8);
         if(isTopSpectrum)      stackHist->SetMaximum(1e+8);
         stackHist->SetMinimum(5e-1);
-        c1->SaveAs(Form("plots_pu/stack_%s_log.png", histName));
+        c1->SaveAs(Form("plots/stack_%s_log.png", histName));
     }
+
+    for(int i=0; i<NUM; i++) file[i]->Close();
 }
 
 bool isThisIDMVA(const char* histName){
@@ -507,9 +514,10 @@ string GetYtitleAccordingToHistName(const char* histName, double BinWidth){
     return "";
 }
 
-void RegisterHistogram(const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false){
+void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false){
     //printf("Registering histogram of %s\n", fileName);
-    TFile *file = TFile::Open(fileName);
+    //TFile *file = TFile::Open(fileName);// Will lead to problem of opening too many file.
+    file = TFile::Open(fileName);
     hist = (TH1D*)file->Get(histName);
     if(isSigMC) hist->Scale(TunableSigBranchingFraction);
     if(!isSigMC) hist->SetFillColor(color);
