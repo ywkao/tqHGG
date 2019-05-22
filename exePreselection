@@ -3,19 +3,18 @@
 set -e
 
 INPUTDIR="/wk_cms2/youying/public/RunII2016_8028_flashgg_ntuples"
-INPUTDIR_ywk="/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0"
 OUTPUTDIR="ntuples_skimmed"
-#EXECUTABLE=./bin/preselection
-EXECUTABLE=echo
+EXECUTABLE=./bin/preselection
+#EXECUTABLE=echo
 
 
 ExeAnalysis(){
     file=$1
     log=log/log_${file}.txt
     echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
-    echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1, "'$OUTPUTDIR'""/ntuple_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' |\
+    echo $file | awk -F "." '{print "'$INPUTDIR'""/"$1, "'$OUTPUTDIR'""/ntuple_"$1".root", $1}' |\
     xargs -n4 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
-    # REMARK: input_file / output_file / datasets / output_dir
+    # REMARK: input_file / output_file / datasets
 }
 
 #--------------- Setup ---------------#

@@ -34,9 +34,8 @@ int main(int argc, char *argv[]){
     char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
     char output_file[512]; sprintf(output_file, "%s", argv[2]); printf("[INFO] output_file = %s\n", output_file);
     char dataset[512]; sprintf(dataset, "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset);
-    bool isData = isThisDataOrNot(dataset);
-    bool isMCsignal = isThisMCsignal(dataset);
-    bool isMultiFile = isThisMultiFile(dataset);
+    bool isData = isThisDataOrNot(dataset);//Determine normalization factor
+    bool isMCsignal = isThisMCsignal(dataset);//Determine to show up in sig region
     TFile *fout = new TFile(output_file, "RECREATE");
 
     /* ### Testing ###
@@ -52,8 +51,7 @@ int main(int argc, char *argv[]){
     //==============================//
     flashggStdTreeReader treeReader;
     treeReader.InitChain("flashggNtuples/flashggStdTree");
-    if(!isMultiFile) treeReader.AddSingleRootFile(input_file);
-    else             treeReader.AddMultiRootFile(input_file);
+    treeReader.AddMultiRootFile(input_file);
     treeReader.SetBranchAddresses();
     //===============================//
     //----- Prepare output file -----//
@@ -341,16 +339,20 @@ bool isThisMCsignal(char* dataset){
     return false;
 }
 bool isThisDataOrNot(char* dataset){
-    if((string)dataset == "DoubleEG_B") return true;
-    if((string)dataset == "DoubleEG_C") return true;
-    if((string)dataset == "DoubleEG_D") return true;
-    if((string)dataset == "DoubleEG_E") return true;
-    if((string)dataset == "DoubleEG_F") return true;
-    return false;
-}
-bool isThisMultiFile(char* dataset){
-    if((string)dataset == "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa") return true;
-    if((string)dataset == "GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016B-07Aug17_ver2-v2") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016C-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016D-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016E-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016F-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016G-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016H-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016B-07Aug17_ver2-v2") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016C-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016D-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016E-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016F-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016G-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016H-07Aug17-v1") return true;
     return false;
 }
 
@@ -433,7 +435,7 @@ void myTreeClass::InitTree(){
 void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("EvtInfo_totalEntry_before_preselection", &EvtInfo_totalEntry_before_preselection, "EvtInfo_totalEntry_before_preselection/I");
     mytree -> Branch("EvtInfo_NormalizationFactor_lumi", &EvtInfo_NormalizationFactor_lumi, "EvtInfo_NormalizationFactor_lumi/F");
-    mytree -> Branch("EvtInfo_NPu", &EvtInfo_NPu, "EvtInfo_NPu/I");
+    mytree -> Branch("EvtInfo_NPu", &EvtInfo_NPu, "EvtInfo_NPu/F");
     mytree -> Branch("EvtInfo_NVtx", &EvtInfo_NVtx, "EvtInfo_NVtx/I");
     mytree -> Branch("EvtInfo_genweight", &EvtInfo_genweight, "EvtInfo_genweight/F");
     mytree -> Branch("num_jets", &num_jets, "num_jets/I");

@@ -5,14 +5,13 @@ double Chi2_calculator(double w_mass, double t_mass);
 double Chi2_calculator_w_only(double w_mass);
 void MakePlots(TCanvas *c1, TH1D* hist, const char* title, const char* outputFile);
 bool isThisDataOrNot(char* dataset);
-bool isThisMultiFile(char* dataset);
 bool isThisMCsignal(char* dataset);
 
 class flashggStdTreeParameters{
 public:
     flashggStdTreeParameters();
     ~flashggStdTreeParameters();
-    Int_t EvtInfo_NPu;
+    float EvtInfo_NPu;
     Int_t EvtInfo_NVtx;
     Int_t jets_size;
     std::vector<float> *JetInfo_Pt;
