@@ -41,7 +41,7 @@ echo "[MESSAGE] Ready!"
 #--------------- DryRun ---------------#
 if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
     ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
-    echo "[MESSAGE] This is the end of dryRun execution." && exit 1
+    echo "[MESSAGE] This is the end of dryRun execution." && exit 0
 fi
 
 #--------------- TT Signal ---------------#
