@@ -11,6 +11,7 @@ using namespace std;
 
 const double TunableSigBranchingFraction = 0.001; //The branching fraction of signal MC = 0.01%
 
+//# not yet have 2016 signal samples
 void stackHist(){
     MakeStackHist("hist_NPu");
     MakeStackHist("hist_NVtx");
@@ -61,13 +62,13 @@ void MakeStackHist(const char* histName){
     bool isDiPhotonSpectrum = isThisDiPhotonSpectrum(histName);
     bool isTopSpectrum = isThisTopSpectrum(histName);
     //--------------------
-    TH1D  *hist_tqh_sig_ttpair;
-    TH1D  *hist_tqh_sig_singletop;
-    TH1D  *hist_tqh_sig_st_hadronic;
-    TH1D  *hist_tqh_sig_st_leptonic;
-    TH1D  *hist_tqh_sig_tt_hadronic;
-    TH1D  *hist_tqh_sig_tt_leptonic;
-    TH1D  *hist_tqh_sig[NUM_sig];
+    //TH1D  *hist_tqh_sig_ttpair;
+    //TH1D  *hist_tqh_sig_singletop;
+    //TH1D  *hist_tqh_sig_st_hadronic;
+    //TH1D  *hist_tqh_sig_st_leptonic;
+    //TH1D  *hist_tqh_sig_tt_hadronic;
+    //TH1D  *hist_tqh_sig_tt_leptonic;
+    //TH1D  *hist_tqh_sig[NUM_sig];
     TH1D  *hist_tqh_resbkg[NUM_resbkg+1];
     TH1D  *hist_tqh_nonresbkg[NUM_nonresbkg+1];
     //--------------------
@@ -91,8 +92,8 @@ void MakeStackHist(const char* histName){
     //===== Register histograms =====//
     //===============================//
     TFile *file[NUM];
-    for(int i=0; i<NUM_sig; i++)
-        RegisterHistogram(file[i], fileNames_sig[i].c_str(), hist_tqh_sig[i], histName, kRed, true, false);
+    //for(int i=0; i<NUM_sig; i++)
+    //    RegisterHistogram(file[i], fileNames_sig[i].c_str(), hist_tqh_sig[i], histName, kRed, true, false);
     for(int i=0; i<NUM_resbkg; i++)
         RegisterHistogram(file[i+NUM_sig], fileNames_resbkg[i].c_str(), hist_tqh_resbkg[i], histName, kBlue-i-2, false, false);
     for(int i=0; i<NUM_nonresbkg; i++)
@@ -102,6 +103,7 @@ void MakeStackHist(const char* histName){
     //==================================//
     //===== Combine had/lep signal =====//
     //==================================//
+    /*
     hist_tqh_sig_tt_hadronic = (TH1D*) hist_tqh_sig[0]->Clone();
     for(int i=1; i<4; i++) hist_tqh_sig_tt_hadronic->Add(hist_tqh_sig[i]);
     hist_tqh_sig_tt_leptonic = (TH1D*) hist_tqh_sig[4]->Clone();
@@ -120,6 +122,7 @@ void MakeStackHist(const char* histName){
     hist_tqh_sig_st_hadronic->SetLineColor(kRed);
     hist_tqh_sig_st_leptonic->SetLineColor(kPink);
     hist_tqh_sig_st_leptonic->SetLineStyle(2);
+    */
     //===============================//
     //===== Combine backgournds =====//
     //===============================//
@@ -127,6 +130,8 @@ void MakeStackHist(const char* histName){
     for(int i=1; i<NUM_resbkg; i++) hist_tqh_resbkg[NUM_resbkg]->Add(hist_tqh_resbkg[i]);
     hist_tqh_nonresbkg[NUM_nonresbkg] = (TH1D*) hist_tqh_nonresbkg[0]->Clone();
     for(int i=1; i<NUM_nonresbkg; i++) hist_tqh_nonresbkg[NUM_nonresbkg]->Add(hist_tqh_nonresbkg[i]);
+    //hist_tqh_nonresbkg[NUM_nonresbkg] = (TH1D*) hist_tqh_nonresbkg[0]->Clone();
+    //for(int i=1; i<NUM_nonresbkg; i++) hist_tqh_nonresbkg[NUM_nonresbkg]->Add(hist_tqh_nonresbkg[i]);
     //--------------------
     hist_tqh_ggH = (TH1D*) hist_tqh_resbkg[0]->Clone();
     hist_tqh_VBF = (TH1D*) hist_tqh_resbkg[1]->Clone();
@@ -142,16 +147,15 @@ void MakeStackHist(const char* histName){
     hist_tqh_ttH -> SetLineColor(kBlue-10);
     //--------------------
     hist_tqh_DiPhotonJetsBox = (TH1D*) hist_tqh_nonresbkg[0]->Clone();
-    hist_tqh_DiPhotonJetsBox->Add(hist_tqh_nonresbkg[1]);
-    hist_tqh_GJet = (TH1D*) hist_tqh_nonresbkg[2]->Clone();
+    hist_tqh_GJet = (TH1D*) hist_tqh_nonresbkg[1]->Clone();
+    hist_tqh_GJet->Add(hist_tqh_nonresbkg[2]);
     hist_tqh_GJet->Add(hist_tqh_nonresbkg[3]);
-    hist_tqh_GJet->Add(hist_tqh_nonresbkg[4]);
-    hist_tqh_TGJets = (TH1D*) hist_tqh_nonresbkg[5]->Clone();
-    hist_tqh_TTGG = (TH1D*) hist_tqh_nonresbkg[6]->Clone();
-    hist_tqh_TTGJets = (TH1D*) hist_tqh_nonresbkg[7]->Clone();
-    hist_tqh_QCD = (TH1D*) hist_tqh_nonresbkg[8]->Clone();
-    hist_tqh_QCD->Add(hist_tqh_nonresbkg[9]);
-    hist_tqh_QCD->Add(hist_tqh_nonresbkg[10]);
+    hist_tqh_QCD = (TH1D*) hist_tqh_nonresbkg[4]->Clone();
+    hist_tqh_QCD->Add(hist_tqh_nonresbkg[5]);
+    hist_tqh_QCD->Add(hist_tqh_nonresbkg[6]);
+    hist_tqh_TGJets = (TH1D*) hist_tqh_nonresbkg[7]->Clone();
+    hist_tqh_TTGG = (TH1D*) hist_tqh_nonresbkg[8]->Clone();
+    hist_tqh_TTGJets = (TH1D*) hist_tqh_nonresbkg[9]->Clone();
     //--------------------
     hist_tqh_DiPhotonJetsBox->SetFillColor(kOrange+1);
     hist_tqh_DiPhotonJetsBox->SetLineColor(kOrange+1);
@@ -170,6 +174,8 @@ void MakeStackHist(const char* histName){
     //========================//
     hist_tqh_data[NUM_data] = (TH1D*) hist_tqh_data[0]->Clone();
     for(int i=1; i<NUM_data; i++) hist_tqh_data[NUM_data]->Add(hist_tqh_data[i]);
+    ////hist_tqh_data[NUM_data]->Draw("p,E1");
+    ////c1->SaveAs("plots/test.png");
     //==============================//
     //===== Combine mc w/o sig =====//
     //==============================//
@@ -238,9 +244,9 @@ void MakeStackHist(const char* histName){
     }
     //--------------------
     stackHist->Draw("hist");
-    //hist_tqh_sig_ttpair->Draw("hist,same");
-    hist_tqh_sig_st_hadronic->Draw("hist,same");
-    hist_tqh_sig_st_leptonic->Draw("hist,same");
+    ////hist_tqh_sig_ttpair->Draw("hist,same");
+    //hist_tqh_sig_st_hadronic->Draw("hist,same");
+    //hist_tqh_sig_st_leptonic->Draw("hist,same");
     hist_tqh_mc_wosig->SetLineWidth(0);
     hist_tqh_mc_wosig->SetMarkerColor(kGray+2);
     hist_tqh_mc_wosig->SetFillColor(kGray+2);
@@ -263,10 +269,10 @@ void MakeStackHist(const char* histName){
     legend->SetNColumns(2);
     //legend->AddEntry(hist_tqh_data[NUM_data], "Data (DoubleEG B-F)", "lep");
     legend->AddEntry(hist_tqh_data[NUM_data], "Observed", "lep");
-    legend->AddEntry(hist_tqh_sig_st_hadronic, Form("Had. ST (tqH, BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    //legend->AddEntry(hist_tqh_sig_st_hadronic, Form("Had. ST (tqH, BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
     legend->AddEntry(hist_tqh_mc_wosig, "Bkg uncertainty (stat. only)", "f");
     //legend->AddEntry(hist_tqh_resbkg[NUM_resbkg], "Resonant bkg", "f");
-    legend->AddEntry(hist_tqh_sig_st_leptonic, Form("Lep. ST (tqH, BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    //legend->AddEntry(hist_tqh_sig_st_leptonic, Form("Lep. ST (tqH, BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
     legend->AddEntry(hist_tqh_ggH, "ggH", "f");
     legend->AddEntry(hist_tqh_VBF, "VBF", "f");
     legend->AddEntry(hist_tqh_VH , "VH" , "f"); 
@@ -297,7 +303,7 @@ void MakeStackHist(const char* histName){
     latex_lumi.SetTextFont(43);
     latex_lumi.SetTextSize(22);
     latex_lumi.SetTextAlign(31);
-    latex_lumi.DrawLatex(0.89, 0.92, "42 fb^{-1} (2017, 13 TeV)");
+    latex_lumi.DrawLatex(0.89, 0.92, "35.9 fb^{-1} (2016, 13 TeV)");
     //============================//
     //===== Draw lower plots =====//
     //============================//
@@ -361,7 +367,8 @@ void MakeStackHist(const char* histName){
         c1->SaveAs(Form("plots/stack_%s_log.png", histName));
     }
 
-    for(int i=0; i<NUM; i++) file[i]->Close();
+    for(int i=NUM_sig; i<NUM; i++) file[i]->Close();
+    //for(int i=0; i<NUM; i++) file[i]->Close();
 }
 
 bool isThisIDMVA(const char* histName){

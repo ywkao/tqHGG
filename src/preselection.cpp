@@ -18,6 +18,11 @@ using namespace std;
 //==========================//
 //---  Useful Constants  ---//
 //==========================//
+//2016, https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
+double pfCombinedInclusiveSecondaryVertexV2BJetTags_tight  = 0.9535;
+double pfCombinedInclusiveSecondaryVertexV2BJetTags_medium = 0.8484;
+double pfCombinedInclusiveSecondaryVertexV2BJetTags_loose  = 0.5426;
+//2017, https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
 double pfDeepCSVJetTags_tight  = 0.8001;
 double pfDeepCSVJetTags_medium = 0.4941;
 double pfDeepCSVJetTags_loose  = 0.1522;
@@ -38,14 +43,6 @@ int main(int argc, char *argv[]){
     bool isMCsignal = isThisMCsignal(dataset);//Determine to show up in sig region
     TFile *fout = new TFile(output_file, "RECREATE");
 
-    /* ### Testing ###
-    TChain *flashggStdTree = new TChain("flashggNtuples/flashggStdTree");
-    flashggStdTree->Add(input_file);
-    float EvtInfo_genweight;
-    flashggStdTree->SetBranchAddress("EvtInfo.genweight", &EvtInfo_genweight);
-    int nentries = flashggStdTree->GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
-    */
-
     //==============================//
     //----- Read input file(s) -----//
     //==============================//
@@ -53,6 +50,7 @@ int main(int argc, char *argv[]){
     treeReader.InitChain("flashggNtuples/flashggStdTree");
     treeReader.AddMultiRootFile(input_file);
     treeReader.SetBranchAddresses();
+
     //===============================//
     //----- Prepare output file -----//
     //===============================//
@@ -69,7 +67,7 @@ int main(int argc, char *argv[]){
     //##################################################//
     int nentries = treeReader.GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
     double NormalizationFactor;
-    double Luminosity = 42.; //fb{-1}
+    double Luminosity = 35.9; //fb{-1}
     double CrossSection = GetXsec(dataset); //pb
     double BranchingFraction = GetBranchingFraction(dataset); //pb
     printf("[INFO] CrossSection = %f !\n", CrossSection);
@@ -85,6 +83,7 @@ int main(int argc, char *argv[]){
     NormalizationFactor = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
     printf("[INFO] TotalGenweight = %f!\n", TotalGenweight);
     printf("[INFO] NormalizationFactor = %f!\n", isData ? 1. : NormalizationFactor);
+
 
     //##################################################//
     //#######    Parameters used to report     #########//
@@ -141,7 +140,7 @@ int main(int argc, char *argv[]){
         for(int i=0; i<treeReader.jets_size; i++){
             if( fabs(treeReader.JetInfo_Eta->at(i)) > 2.4 ) continue;
             if( fabs(treeReader.JetInfo_Pt->at(i))  < 30  ) continue;
-            if(treeReader.JetInfo_pfDeepCSVJetTags_probb->at(i)+treeReader.JetInfo_pfDeepCSVJetTags_probbb->at(i) >= pfDeepCSVJetTags_tight){
+            if(treeReader.JetInfo_pfCombinedInclusiveSecondaryVertexV2BJetTags->at(i) >= pfCombinedInclusiveSecondaryVertexV2BJetTags_tight){
                 if(bjetindex==-1) leading_bjet.SetPtEtaPhiE(treeReader.JetInfo_Pt->at(i), treeReader.JetInfo_Eta->at(i), treeReader.JetInfo_Phi->at(i), treeReader.JetInfo_Energy->at(i));
                 bjetindex = i;
                 TLorentzVector jet_lorentzvector;
@@ -366,6 +365,7 @@ flashggStdTreeParameters::flashggStdTreeParameters(){
     JetInfo_Energy = new std::vector<float>;
     JetInfo_pfDeepCSVJetTags_probb = new std::vector<float>;
     JetInfo_pfDeepCSVJetTags_probbb = new std::vector<float>;
+    JetInfo_pfCombinedInclusiveSecondaryVertexV2BJetTags = new std::vector<float>;
 }
 flashggStdTreeParameters::~flashggStdTreeParameters(){
     delete JetInfo_Pt;
@@ -375,6 +375,7 @@ flashggStdTreeParameters::~flashggStdTreeParameters(){
     delete JetInfo_Energy;
     delete JetInfo_pfDeepCSVJetTags_probb;
     delete JetInfo_pfDeepCSVJetTags_probbb;
+    delete JetInfo_pfCombinedInclusiveSecondaryVertexV2BJetTags;
 }
 flashggStdTreeReader::flashggStdTreeReader(void){
     printf("[INFO] Reading data...\n");
@@ -413,6 +414,7 @@ void flashggStdTreeReader::SetBranchAddresses(){
     flashggStdTree->SetBranchAddress("JetInfo.Energy", &JetInfo_Energy);
     flashggStdTree->SetBranchAddress("JetInfo.pfDeepCSVJetTags_probb", &JetInfo_pfDeepCSVJetTags_probb);
     flashggStdTree->SetBranchAddress("JetInfo.pfDeepCSVJetTags_probbb", &JetInfo_pfDeepCSVJetTags_probbb);
+    flashggStdTree->SetBranchAddress("JetInfo.pfCombinedInclusiveSecondaryVertexV2BJetTags", &JetInfo_pfCombinedInclusiveSecondaryVertexV2BJetTags);
     flashggStdTree->SetBranchAddress("DiPhoInfo.mass", &DiPhoInfo_mass);
     flashggStdTree->SetBranchAddress("DiPhoInfo.leadPt", &DiPhoInfo_leadPt);
     flashggStdTree->SetBranchAddress("DiPhoInfo.leadEta", &DiPhoInfo_leadEta);

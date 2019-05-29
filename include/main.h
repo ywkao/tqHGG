@@ -21,6 +21,7 @@ public:
     std::vector<float> *JetInfo_Energy;
     std::vector<float> *JetInfo_pfDeepCSVJetTags_probb;
     std::vector<float> *JetInfo_pfDeepCSVJetTags_probbb;
+    std::vector<float> *JetInfo_pfCombinedInclusiveSecondaryVertexV2BJetTags;
     float EvtInfo_genweight;
     float DiPhoInfo_mass;
     float DiPhoInfo_leadPt;

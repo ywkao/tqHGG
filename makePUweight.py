@@ -26,14 +26,11 @@ def main():
                         )
     parser.add_argument('-m', '--mcmodule', dest='mcmodule', type=str,
                         help='MC Module to use from SimGeneral.MixingModule',
-                        default='mix_2017_25ns_WinterMC_PUScenarioV1_PoissonOOTPU_cfi',
-                        #default='mix_2017_25ns_UltraLegacy_PoissonOOTPU_cfi',
-                        #default='mix_2016_25ns_Moriond17MC_PoissonOOTPU_cfi',
+                        default='mix_2016_25ns_Moriond17MC_PoissonOOTPU_cfi',
                         )
     parser.add_argument('-l', '--lumimask', dest='lumimask', type=str,
                         help='Lumimask json file to use',
-                        default='data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt',
-                        #default='data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt',
+                        default='data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt',
                         )
     parser.add_argument('-p', '--pufile', dest='pufile', type=str,
                         help='Pileup json file to use',
@@ -65,8 +62,7 @@ def main():
         --maxPileupBin  {3} \
         --numPileupBins {3} \
         ./data/PileUp.root
-    """.format(args.lumimask, args.pufile, args.xsec, 98 ) )
-    #""".format(args.lumimask, args.pufile, args.xsec, 75 ) ) #because the .txt bin number is 75
+    """.format(args.lumimask, args.pufile, args.xsec, 75 ) ) #because the .txt bin number is 75
     datapufile = ROOT.TFile.Open('./data/PileUp.root')
     datapuhist = datapufile.Get('pileup')
     datapuhist.Scale(1. / datapuhist.Integral())

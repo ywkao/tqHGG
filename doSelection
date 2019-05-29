@@ -5,6 +5,7 @@ set -e
 INPUTDIR="ntuples_skimmed"
 OUTPUTDIR="plots"
 EXECUTABLE=./bin/selection
+#EXECUTABLE=echo
 
 ExeAnalysis(){
     file=$1
@@ -23,7 +24,8 @@ echo "[MESSAGE] Ready!"
 
 #--------------- DryRun ---------------#
 if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
-    ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
+    ExeAnalysis QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8
+    #ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
     echo "[MESSAGE] This is the end of dryRun execution." && exit 0
 fi
 
@@ -50,7 +52,7 @@ ExeAnalysis VBFHToGG_M125_13TeV_amcatnlo_pythia8
 ExeAnalysis VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8
 ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8
 #--------------- non-Resonant bkg ---------------#
-ExeAnalysis DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+#ExeAnalysis DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
 ExeAnalysis DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
 ExeAnalysis GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8
 ExeAnalysis GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8
@@ -61,13 +63,13 @@ ExeAnalysis QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythi
 ExeAnalysis TGJets_TuneCUETP8M1_13TeV_amcatnlo_madspin_pythia8
 ExeAnalysis TTGG_0Jets_TuneCUETP8M1_13TeV_amcatnlo_madspin_pythia8
 ExeAnalysis TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8
-ExeAnalysis TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8
-ExeAnalysis WGToLNuG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-ExeAnalysis WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
-ExeAnalysis WW_TuneCUETP8M1_13TeV-pythia8
-ExeAnalysis WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
-ExeAnalysis ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
-ExeAnalysis ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+#ExeAnalysis TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8
+#ExeAnalysis WGToLNuG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+#ExeAnalysis WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
+#ExeAnalysis WW_TuneCUETP8M1_13TeV-pythia8
+#ExeAnalysis WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+#ExeAnalysis ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+#ExeAnalysis ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
 #--------------- Make stack plots ---------------#
 root -l -b -q src/stackHist.C
 echo "[MESSAGE] This is the end of execution." && exit 0

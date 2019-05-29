@@ -46,10 +46,12 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         if((ientry+1)%10000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
 
         //=== PU Reweighting ===//
-        //double PU_reweighting_factor = h_pu_reweighting_factor->GetBinContent(treeReader.EvtInfo_NPu+1);
-        double PU_reweighting_factor = 1.; //No PU
+        double PU_reweighting_factor = h_pu_reweighting_factor->GetBinContent((int)treeReader.EvtInfo_NPu+1);
+        //double PU_reweighting_factor = 1.; //No PU
         double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi * PU_reweighting_factor;
         double NormalizationFactor_wopu = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
+        printf("test = %f, %f, %f\n", treeReader.EvtInfo_genweight, treeReader.EvtInfo_NormalizationFactor_lumi, PU_reweighting_factor);
+        //printf("NormalizationFactor = %f\n", NormalizationFactor);
         //EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
         //=== Selections ===//
         
@@ -137,11 +139,20 @@ void MakePlots(TCanvas *c1, TH1D* hist, const char* outputFile){
     c1->SaveAs(outputFile);
 }
 bool isThisDataOrNot(char* dataset){
-    if((string)dataset == "DoubleEG_B") return true;
-    if((string)dataset == "DoubleEG_C") return true;
-    if((string)dataset == "DoubleEG_D") return true;
-    if((string)dataset == "DoubleEG_E") return true;
-    if((string)dataset == "DoubleEG_F") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016B-07Aug17_ver2-v2") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016C-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016D-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016E-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016F-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016G-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016H-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016B-07Aug17_ver2-v2") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016C-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016D-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016E-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016F-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016G-07Aug17-v1") return true;
+    if((string)dataset == "DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016H-07Aug17-v1") return true;
     return false;
 }
 
