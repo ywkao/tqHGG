@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e
+#--------------- Function ---------------#
+function GetNumber(){
+    number=0
+    while [ $number -eq 0 ] # make sure no node00 occurs
+    do 
+        number=$((RANDOM%20))
+    done
+
+    if [ $number -lt 10 ]
+    then
+        echo 0$number
+    else
+        echo $number
+    fi
+}
+#--------------- Setup ---------------#
+echo "[MESSAGE] Check directories for plots..." && ./script/mkplotdir
+echo "[MESSAGE] Check executable..." && make
+echo "[MESSAGE] Ready!"
+#--------------- Submit ---------------#
+for dataset in `cat ListRootFiles | grep -v "#"`
+do
+    echo "[MESSAGE] ssh node$(GetNumber) dataset=${dataset}"
+    ssh node$(GetNumber) "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch ${dataset}" &
+    #ssh node$(GetNumber) "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_preselection_batch ${dataset}" &
+done
+
+#ssh node01 "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exePreselection_batch_01" &
+#ssh node02 "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exePreselection_batch_02" &
+#ssh node03 "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exePreselection_batch_03" &
+#ssh node04 "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exePreselection_batch_04" &
+##seq 1 4 | xargs -I{} -n1 -P4 ssh node01 "cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG && time ./script/exePreselection_batch_0{} -d" #problematic
