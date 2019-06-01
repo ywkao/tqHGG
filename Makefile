@@ -14,6 +14,7 @@ SRCDIR   := src
 BUILDDIR := build
 TARGET1  := bin/preselection
 TARGET2  := bin/selection
+TARGET3  := bin/pustudy
 
 SRCEXT   := cpp
 SOURCES  := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -22,7 +23,7 @@ CFLAGS   := $(shell root-config --cflags) -g -O3 #-Wno-write-strings -D_FILE_OFF
 LIB      := $(shell root-config --libs) -lMinuit
 INC      := -I include
 
-all: ${TARGET1} ${TARGET2}
+all: ${TARGET1} ${TARGET2} ${TARGET3}
 
 #$(TARGET): $(OBJECTS)
 #	@echo " Linking..."
@@ -35,6 +36,10 @@ $(TARGET2): build/selection.o
 	@echo " Linking for selection cpp..."
 	@echo " $(CC) $^ -o $(TARGET2) $(LIB)"; $(CC) $^ -o $(TARGET2) $(LIB)
 
+$(TARGET3): build/study_pileup_reweighting.o
+	@echo " Linking for selection cpp..."
+	@echo " $(CC) $^ -o $(TARGET3) $(LIB)"; $(CC) $^ -o $(TARGET3) $(LIB)
+
 #$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 build/preselection.o: src/preselection.cpp
 	@mkdir -p $(BUILDDIR)
@@ -44,9 +49,13 @@ build/selection.o: src/selection.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
+build/study_pileup_reweighting.o: src/study_pileup_reweighting.cpp
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
 clean:
 	@echo " Cleaning..."; 
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET1) $(TARGET2)"; $(RM) -r $(BUILDDIR) $(TARGET1) $(TARGET2)
+	@echo " $(RM) -r $(BUILDDIR) $(TARGET1) $(TARGET2) $(TARGET3)"; $(RM) -r $(BUILDDIR) $(TARGET1) $(TARGET2) $(TARGET3)
 
 
 

@@ -50,16 +50,18 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         //double PU_reweighting_factor = 1.; //No PU
         double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi * PU_reweighting_factor;
         double NormalizationFactor_wopu = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
-        printf("test = %f, %f, %f\n", treeReader.EvtInfo_genweight, treeReader.EvtInfo_NormalizationFactor_lumi, PU_reweighting_factor);
-        //printf("NormalizationFactor = %f\n", NormalizationFactor);
+        //printf("test = %f, %f, %f\n", treeReader.EvtInfo_genweight, treeReader.EvtInfo_NormalizationFactor_lumi, PU_reweighting_factor);
+        ////printf("NormalizationFactor = %f\n", NormalizationFactor);
         //EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
         //=== Selections ===//
         
 
         //=== Store Info ===//
         h[hist_NPu]  -> Fill(treeReader.EvtInfo_NPu, isData ? 1. : NormalizationFactor);
-        h[hist_NVtx] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor);
+        h[hist_Rho_wopu]  -> Fill(treeReader.EvtInfo_Rho, isData ? 1. : NormalizationFactor_wopu);
         h[hist_NVtx_wopu] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor_wopu);
+        h[hist_Rho]  -> Fill(treeReader.EvtInfo_Rho, isData ? 1. : NormalizationFactor);
+        h[hist_NVtx] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor);
         h[hist_num_jets] -> Fill(treeReader.num_jets, isData ? 1. : NormalizationFactor);
         h[hist_num_btagged_jets] -> Fill(treeReader.num_btagged_jets, isData ? 1. : NormalizationFactor);
         h[hist_num_nonbtagged_jets] -> Fill(treeReader.num_nonbtagged_jets, isData ? 1. : NormalizationFactor);
@@ -174,6 +176,7 @@ void myTreeClass::SetBranchAddresses(){
     mytree -> SetBranchAddress("EvtInfo_totalEntry_before_preselection", &EvtInfo_totalEntry_before_preselection);
     mytree -> SetBranchAddress("EvtInfo_NormalizationFactor_lumi", &EvtInfo_NormalizationFactor_lumi);
     mytree -> SetBranchAddress("EvtInfo_NPu", &EvtInfo_NPu);
+    mytree -> SetBranchAddress("EvtInfo_Rho", &EvtInfo_Rho);
     mytree -> SetBranchAddress("EvtInfo_NVtx", &EvtInfo_NVtx);
     mytree -> SetBranchAddress("EvtInfo_genweight", &EvtInfo_genweight);
     //------------------------

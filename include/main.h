@@ -13,6 +13,7 @@ public:
     ~flashggStdTreeParameters();
     float EvtInfo_NPu;
     Int_t EvtInfo_NVtx;
+    float EvtInfo_Rho;
     Int_t jets_size;
     std::vector<float> *JetInfo_Pt;
     std::vector<float> *JetInfo_Eta;

@@ -72,4 +72,5 @@ ExeAnalysis TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8
 #ExeAnalysis ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
 #--------------- Make stack plots ---------------#
 root -l -b -q src/stackHist.C
+root -l -b -q src/puReweighting.C
 echo "[MESSAGE] This is the end of execution." && exit 0

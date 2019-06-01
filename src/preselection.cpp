@@ -276,6 +276,7 @@ int main(int argc, char *argv[]){
         //-----------   EventPar Related Info    -----------//
         //==================================================//
         mytree.EvtInfo_NPu = treeReader.EvtInfo_NPu;
+        mytree.EvtInfo_Rho = treeReader.EvtInfo_Rho;
         mytree.EvtInfo_NVtx = treeReader.EvtInfo_NVtx;
         mytree.EvtInfo_genweight = treeReader.EvtInfo_genweight;
         //==================================================//
@@ -404,6 +405,7 @@ TChain* flashggStdTreeReader::GetTChain(void){
 }
 void flashggStdTreeReader::SetBranchAddresses(){
     flashggStdTree->SetBranchAddress("EvtInfo.NPu", &EvtInfo_NPu);
+    flashggStdTree->SetBranchAddress("EvtInfo.Rho", &EvtInfo_Rho);
     flashggStdTree->SetBranchAddress("EvtInfo.NVtx", &EvtInfo_NVtx);
     flashggStdTree->SetBranchAddress("EvtInfo.genweight", &EvtInfo_genweight);
     flashggStdTree->SetBranchAddress("jets_size", &jets_size);
@@ -438,6 +440,7 @@ void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("EvtInfo_totalEntry_before_preselection", &EvtInfo_totalEntry_before_preselection, "EvtInfo_totalEntry_before_preselection/I");
     mytree -> Branch("EvtInfo_NormalizationFactor_lumi", &EvtInfo_NormalizationFactor_lumi, "EvtInfo_NormalizationFactor_lumi/F");
     mytree -> Branch("EvtInfo_NPu", &EvtInfo_NPu, "EvtInfo_NPu/F");
+    mytree -> Branch("EvtInfo_Rho", &EvtInfo_Rho, "EvtInfo_Rho/F");
     mytree -> Branch("EvtInfo_NVtx", &EvtInfo_NVtx, "EvtInfo_NVtx/I");
     mytree -> Branch("EvtInfo_genweight", &EvtInfo_genweight, "EvtInfo_genweight/F");
     mytree -> Branch("num_jets", &num_jets, "num_jets/I");

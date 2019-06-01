@@ -14,6 +14,8 @@ const double TunableSigBranchingFraction = 0.001; //The branching fraction of si
 //# not yet have 2016 signal samples
 void stackHist(){
     MakeStackHist("hist_NPu");
+    MakeStackHist("hist_Rho");
+    MakeStackHist("hist_Rho_wopu");
     MakeStackHist("hist_NVtx");
     MakeStackHist("hist_NVtx_wopu");
     MakeStackHist("hist_num_jets");
@@ -55,8 +57,10 @@ void MakeStackHist(const char* histName){
     TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
     THStack *stackHist = new THStack("stackHist", "");//If setting titles here, the x(y)-title will NOT be able to set later.
     bool considerQCD = true;
+    bool isNVtx = isThisNVtx(histName);
     bool isIDMVA = isThisIDMVA(histName);
     bool isNumEtaPhi = isThisNumEtaPhi(histName);
+    bool isRho = isThisRho(histName);
     bool isMassSpectrum = isThisMassSpectrum(histName);
     bool isDijetSpectrum = isThisDijetSpectrum(histName);
     bool isDiPhotonSpectrum = isThisDiPhotonSpectrum(histName);
@@ -230,16 +234,22 @@ void MakeStackHist(const char* histName){
     gPad->SetTicks(1,1);
     //--------------------
     if(isIDMVA){
-        stackHist->SetMaximum(3e+5);
+        stackHist->SetMaximum(8e+5);
+        stackHist->SetMinimum(0);
+    } else if(isNVtx){
+        stackHist->SetMaximum(7e+5);
+        stackHist->SetMinimum(0);
+    } else if(isRho){
+        stackHist->SetMaximum(7e+5);
         stackHist->SetMinimum(0);
     } else if(isMassSpectrum){
-        if(isDiPhotonSpectrum) stackHist->SetMaximum(1.6e+5);
-        if(isDijetSpectrum)    stackHist->SetMaximum(2.0e+3);
-        if(isTopSpectrum)      stackHist->SetMaximum(1.6e+3);
+        if(isDiPhotonSpectrum) stackHist->SetMaximum(3.0e+5);
+        if(isDijetSpectrum)    stackHist->SetMaximum(6.0e+4);
+        if(isTopSpectrum)      stackHist->SetMaximum(6.0e+3);
         stackHist->SetMinimum(0);
     } else{
         gPad->SetLogy(1);
-        stackHist->SetMaximum(isNumEtaPhi ? 1e+9 : 1e+9);
+        stackHist->SetMaximum(isNumEtaPhi ? 1e+11 : 1e+11);
         stackHist->SetMinimum(5e-1);
     }
     //--------------------
@@ -251,6 +261,7 @@ void MakeStackHist(const char* histName){
     hist_tqh_mc_wosig->SetMarkerColor(kGray+2);
     hist_tqh_mc_wosig->SetFillColor(kGray+2);
     hist_tqh_mc_wosig->SetFillStyle(3001);
+    hist_tqh_mc_wosig->Draw("E2,same");
     //hist_tqh_mc_wosig->SetFillColorAlpha(kGray+1, 0.50);
     //hist_tqh_mc_wosig->SetLineColorAlpha(kGray+1, 0.50);
     hist_tqh_mc_wosig->Draw("E2,same");
@@ -354,6 +365,9 @@ void MakeStackHist(const char* histName){
     line.DrawLine(pad2->GetUxmin(),1.5,pad2->GetUxmax(),1.5);
     line.DrawLine(pad2->GetUxmin(),2.0,pad2->GetUxmax(),2.0);
     c1->SaveAs(Form("plots/stack_%s.png", histName));
+    //========================================//
+    //===== Draw upper plots (log scale) =====//
+    //========================================//
     if(isMassSpectrum){
         c1->cd();
         pad1->cd();
@@ -361,16 +375,28 @@ void MakeStackHist(const char* histName){
         //c1->SaveAs(Form("plots/stack_%s_zoomin.png", histName));
         gPad->SetLogy(1);
         if(isDiPhotonSpectrum) stackHist->SetMaximum(1e+11);
-        if(isDijetSpectrum)    stackHist->SetMaximum(1e+8);
+        if(isDijetSpectrum)    stackHist->SetMaximum(1e+9);
         if(isTopSpectrum)      stackHist->SetMaximum(1e+8);
+        stackHist->SetMinimum(5e-1);
+        c1->SaveAs(Form("plots/stack_%s_log.png", histName));
+    } else if(isNVtx){
+        c1->cd();
+        pad1->cd();
+        gPad->SetLogy(1);
+        stackHist->SetMaximum(1e+11);
         stackHist->SetMinimum(5e-1);
         c1->SaveAs(Form("plots/stack_%s_log.png", histName));
     }
 
-    for(int i=NUM_sig; i<NUM; i++) file[i]->Close();
+    for(int i=NUM_sig; i<NUM; i++) file[i]->Close();//No 2016 signal temporarily
     //for(int i=0; i<NUM; i++) file[i]->Close();
 }
 
+bool isThisNVtx(const char* histName){
+    if((string)histName == "hist_NVtx") return true;
+    if((string)histName == "hist_NVtx_wopu") return true;
+    return false;
+}
 bool isThisIDMVA(const char* histName){
     if((string)histName == "hist_DiPhoInfo_leadIDMVA") return true;
     if((string)histName == "hist_DiPhoInfo_subleadIDMVA") return true;
@@ -389,6 +415,11 @@ bool isThisDiPhotonSpectrum(const char* histName){
 }
 bool isThisTopSpectrum(const char* histName){
     if((string)histName == "hist_inv_mass_tbw") return true;
+    return false;
+}
+bool isThisRho(const char* histName){
+    if((string)histName == "hist_Rho") return true;
+    if((string)histName == "hist_Rho_wopu") return true;
     return false;
 }
 bool isThisMassSpectrum(const char* histName){

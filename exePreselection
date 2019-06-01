@@ -24,7 +24,8 @@ echo "[MESSAGE] Ready!"
 
 #--------------- DryRun ---------------#
 if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
-    ExeAnalysis QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8
+    ExeAnalysis DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016B-07Aug17_ver2-v2
+    #ExeAnalysis QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8
     #ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8
     echo "[MESSAGE] This is the end of dryRun execution." && exit 0
 fi

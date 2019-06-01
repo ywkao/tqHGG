@@ -5,6 +5,8 @@ using namespace std;
 
 enum histList {
     hist_NPu,
+    hist_Rho,
+    hist_Rho_wopu,
     hist_NVtx,
     hist_NVtx_wopu,
     hist_num_jets,
@@ -46,6 +48,8 @@ enum histList {
 
 std::string histNames[totalHistNum]{
     "hist_NPu",
+    "hist_Rho",
+    "hist_Rho_wopu",
     "hist_NVtx",
     "hist_NVtx_wopu",
     "hist_num_jets",
@@ -85,6 +89,8 @@ std::string histNames[totalHistNum]{
 };
 int histNbins[totalHistNum]{
      100,//"hist_NPu"
+     100,//"hist_Rho"
+     100,//"hist_Rho_wopu"
      100,//"hist_NVtx"
      100,//"hist_NVtx_wopu"
      20,//"hist_num_jets"
@@ -124,6 +130,8 @@ int histNbins[totalHistNum]{
 };
 double histBinLow[totalHistNum]{
      0,//"hist_NPu"
+     0,//"hist_Rho"
+     0,//"hist_Rho_wopu"
      0,//"hist_NVtx"
      0,//"hist_NVtx_wopu"
      0,//"hist_num_jets"
@@ -163,6 +171,8 @@ double histBinLow[totalHistNum]{
 };
 double histBinHigh[totalHistNum]{
      100,//"hist_NPu"
+     100,//"hist_Rho"
+     100,//"hist_Rho_wopu"
      100,//"hist_NVtx"
      100,//"hist_NVtx_wopu"
      20,//"hist_num_jets"
@@ -203,6 +213,8 @@ double histBinHigh[totalHistNum]{
 #endif
 /*
     TH1D  *hist_NPu = new TH1D("hist_NPu", "hist_NPu", 100, 0, 100);
+    TH1D  *hist_Rho = new TH1D("hist_Rho", "hist_Rho", 100, 0, 100);
+    TH1D  *hist_Rho_wopu = new TH1D("hist_Rho_wopu", "hist_Rho_wopu", 100, 0, 100);
     TH1D  *hist_NVtx = new TH1D("hist_NVtx", "hist_NVtx", 100, 0, 100);
     TH1D  *hist_NVtx_wopu = new TH1D("hist_NVtx_wopu", "hist_NVtx_wopu", 100, 0, 100);
     TH1D  *hist_num_jets = new TH1D("hist_num_jets", "hist_num_jets", 20, 0, 20);
