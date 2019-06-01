@@ -23,12 +23,9 @@ echo "[MESSAGE] Ready!"
 for dataset in `cat ListRootFiles | grep -v "#"`
 do
     echo "[MESSAGE] ssh node$(GetNumber) dataset=${dataset}"
-    ssh node$(GetNumber) "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch ${dataset}" &
+    ssh node$(GetNumber) "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch ${dataset}" &
     #ssh node$(GetNumber) "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_preselection_batch ${dataset}" &
 done
 
-#ssh node01 "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exePreselection_batch_01" &
-#ssh node02 "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exePreselection_batch_02" &
-#ssh node03 "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exePreselection_batch_03" &
-#ssh node04 "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exePreselection_batch_04" &
+#ssh node01 "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch -d" &
 ##seq 1 4 | xargs -I{} -n1 -P4 ssh node01 "cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG && time ./script/exePreselection_batch_0{} -d" #problematic

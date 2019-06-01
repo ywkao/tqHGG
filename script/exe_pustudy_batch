@@ -19,7 +19,7 @@ function ExeAnalysis(){
 
 #--------------- DryRun ---------------#
 if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
-    ExeAnalysis DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016D-07Aug17-v1
+    ExeAnalysis DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v1-Run2016B-07Aug17_ver2-v2
     echo "[MESSAGE] This is the end of dryRun execution." && exit 0
 fi
 
