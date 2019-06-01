@@ -1,5 +1,6 @@
 #ifndef __PUTOOLS_H__
 #define __PUTOOLS_H__
+#include <TH1D.h>
 
 void Rebin(TH1D *h_mc_input, TH1D* &h_mc){
     for(int i=0; i<75; ++i){//rebin from 100 to 75
@@ -20,7 +21,9 @@ double SumContents(TH1D* &h){
 }
 
 void Normalization(TH1D* &h, double Ntotal){
-    for(int i=0; i<75; ++i){
+    int num = h->GetNbinsX();
+    //printf("num = %d\n", num);
+    for(int i=0; i<num; ++i){
         double content = h->GetBinContent(i+1);
         double error = h->GetBinError(i+1);
         h->SetBinContent(i+1, content/Ntotal);
