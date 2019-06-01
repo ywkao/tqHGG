@@ -1,0 +1,29 @@
+#!/bin/bash
+#ref of command awk: https://ubuntuforums.org/showthread.php?t=840054
+set -e
+
+INPUTDIR="/wk_cms2/youying/public/RunII2016_8028_flashgg_ntuples"
+OUTPUTDIR="ntuples_pustudy"
+EXECUTABLE=./bin/pustudy
+#EXECUTABLE=echo
+
+#--------------- Function ---------------#
+function ExeAnalysis(){
+    file=$1
+    log=log/log_${file}.txt
+    echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
+    echo $file | awk -F "." '{print "'$INPUTDIR'""/"$1, "'$OUTPUTDIR'""/ntuple_"$1".root", $1}' |\
+    xargs -n3 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
+    # REMARK: input_file / output_file / datasets
+}
+
+#--------------- DryRun ---------------#
+if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
+    ExeAnalysis DoubleEG_sethzenz-LegacyReReco-07Aug2017-2_6_1-2_6_1-v0-Run2016D-07Aug17-v1
+    echo "[MESSAGE] This is the end of dryRun execution." && exit 0
+fi
+
+#--------------- Execution ---------------#
+FILE=$1
+ExeAnalysis $FILE 
+echo "[MESSAGE] This is the end of $FILE" && exit 0
