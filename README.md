@@ -6,10 +6,22 @@ Although the analysis code is performed under CMSSW_9_4_10,
 it should be independent of the version of CMSSW because the only used tool is ROOT.
 
 Usage:
-1. cmsenv #In order to use ROOT. 
-2. Modify the directory of input root files in the shell script, exePreselection.
-3. ./exePreselection #Perform preselection ~7hrs. Additional option: -d or --dryRun for testing purpose. 
-4. ./doSelection #Perform selection ~4min.
+1. Setup the cmsenv #In order to use ROOT. <br />
+   $ source /cvmfs/cms.cern.ch/cmsset_default.sh; cmsenv
+2. Check the directory of input root files in the shell script, script/exe_preselection_batch.
+3. Perform the preselection with the parallel computing. (currently, on ntugrid5 only.) <br />
+   (step 3-1) in ~/.bashrc, comment out the command(s) related to source any cvmfs. <br />
+   e.g. #source /cvmfs/cms.cern.ch/cmsset_default.sh <br />
+   (step 3-2) dryRun test <br />
+   $ ./fireBatchJobs -d <br />
+   NOTE: if there is any error message, please use another new terminal to login ntugrid5, set up the environment, and repeat (step 3-2) again.
+   If there is any further problems, please contact me, ykao@cern.ch .
+   (step 3-3) check the option in the script, execution. Then, execute it. <br />
+   $ ./execution <br />
+   NOTE: execution is kind of for lazy operation. It will also output log message (log/stdout.log), such as on which node the datasets are processed.
+4. Perform the preselection with the parallel computing. (currently, on ntugrid5 only.) <br />
+   (step 4-1) check the option in the script, execution. Then, execute it. <br />
+   $ ./execution <br />
 5. root -l -b -q src/stackHist.C #Make stack plots.
 6. ./makePUweight.py -x 69200 #Produce rootfile of pileup reweighting factor ~5min <br />
     - Step 6 is optional. Need not execute once having its output file, data/MCPileUp.root<br />
