@@ -50,6 +50,8 @@ int main(int argc, char *argv[]){
     TH1D *hist_NVtx = new TH1D("hist_NVtx", ";;", 100, 0, 100);         hist_NVtx->Sumw2();
     TH1D *hist_Rho_pu  = new TH1D("hist_Rho_pu", ";;", 100, 0, 100);    hist_Rho_pu->Sumw2();
     TH1D *hist_NVtx_pu = new TH1D("hist_NVtx_pu", ";;", 100, 0, 100);   hist_NVtx_pu->Sumw2();
+    TH1D *hist_Rho_pu_gen  = new TH1D("hist_Rho_pu_gen", ";;", 100, 0, 100);    hist_Rho_pu_gen->Sumw2();
+    TH1D *hist_NVtx_pu_gen = new TH1D("hist_NVtx_pu_gen", ";;", 100, 0, 100);   hist_NVtx_pu_gen->Sumw2();
     //===============================//
     //--------  Event loop  ---------//
     //===============================//
@@ -60,7 +62,8 @@ int main(int argc, char *argv[]){
         if((ientry+1)%1000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
         double PU_reweighting_factor = isData ? 1. : h_pu->GetBinContent((int)EvtInfo_NPu+1);
         double genweight_factor = isData ? 1. : EvtInfo_genweight;
-        double NormalizationFactor = PU_reweighting_factor * genweight_factor;//consider event genweight
+        double NormalizationFactor = PU_reweighting_factor;
+        double NormalizationFactor_gen = PU_reweighting_factor * genweight_factor;//consider event genweight
         double value_NPu  = EvtInfo_NPu;
         double value_Rho  = EvtInfo_Rho;
         double value_NVtx = EvtInfo_NVtx;
@@ -69,6 +72,8 @@ int main(int argc, char *argv[]){
         hist_NVtx->Fill(value_NVtx, 1.);
         hist_Rho_pu->Fill(value_Rho, NormalizationFactor);
         hist_NVtx_pu->Fill(value_NVtx, NormalizationFactor);
+        hist_Rho_pu_gen->Fill(value_Rho, NormalizationFactor_gen);
+        hist_NVtx_pu_gen->Fill(value_NVtx, NormalizationFactor_gen);
     }// End of event loop.
 
     fout->Write();

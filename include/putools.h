@@ -2,8 +2,8 @@
 #define __PUTOOLS_H__
 #include <TH1D.h>
 
-void Rebin(TH1D *h_mc_input, TH1D* &h_mc){
-    for(int i=0; i<75; ++i){//rebin from 100 to 75
+void Rebin(TH1D *h_mc_input, TH1D* &h_mc, int Nbins){
+    for(int i=0; i<Nbins; ++i){//rebin from 100 to 75
         double content = h_mc_input->GetBinContent(i+1);
         double error = h_mc_input->GetBinError(i+1);
         h_mc->SetBinContent(i+1, content);
