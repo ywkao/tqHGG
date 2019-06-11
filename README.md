@@ -12,7 +12,7 @@ Usage:
 3. Perform preselection with parallel computing. (currently, on ntugrid5 only.) <br />
    (step 3-1) in ~/.bashrc, comment out the command(s) related to source any cvmfs. <br />
    e.g. #source /cvmfs/cms.cern.ch/cmsset_default.sh <br />
-   NOTE: Prevent unexpected errors when using nodes for computation.
+   NOTE: Prevent unexpected errors when using nodes for computation. <br />
    (step 3-2) dryRun test <br />
    $ ./fireBatchJobs -d <br />
    NOTE: if there is any error message, please use another new terminal to login ntugrid5, set up the environment, and repeat (step 3-2) again.
