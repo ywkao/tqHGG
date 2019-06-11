@@ -10,18 +10,19 @@ Usage:
    $ source /cvmfs/cms.cern.ch/cmsset_default.sh; cmsenv
 2. Check the directory of input root files in the shell script, script/exe_preselection_batch.
 3. Perform preselection with parallel computing. (currently, on ntugrid5 only.) <br />
-   (step 3-1) in ~/.bashrc, comment out the command(s) related to source any cvmfs. <br />
+   Step 3-1: in ~/.bashrc, comment out the command(s) related to source any cvmfs. 
+   This is meant to prevent unexpected errors when using nodes for computation.<br />
    e.g. #source /cvmfs/cms.cern.ch/cmsset_default.sh <br />
-   NOTE: Prevent unexpected errors when using nodes for computation. <br />
-   (step 3-2) dryRun test <br />
+    <br />
+   Step 3-2: dryRun test <br />
    $ ./fireBatchJobs -d <br />
-   NOTE: if there is any error message, please use another new terminal to login ntugrid5, set up the environment, and repeat (step 3-2) again.
-   If there is any further problems, please contact me, ykao@cern.ch .
-   (step 3-3) check the option in the script, execution. Then, execute it. <br />
+   NOTE: if there is any error message, please use another new terminal to login ntugrid5, set up the environment, and repeat this step again.
+   If there is any further problems, please contact me, ykao@cern.ch . <br />
+   Step 3-3: check the option in the script, execution. Then, execute it. <br />
    $ ./execution <br />
    NOTE: execution is kind of for lazy operation. It will also output log message (log/stdout.log), such as on which node the datasets are processed.
 4. Perform selection with parallel computing. (currently, on ntugrid5 only.) <br />
-   (step 4-1) check the option in the script, execution. Then, execute it. <br />
+   Step 4-1: check the option in the script, execution. Then, execute it. <br />
    $ ./execution <br />
 5. root -l -b -q src/stackHist.C #Make stack plots.
 6. ./makePUweight.py -x 69200 #Produce rootfile of pileup reweighting factor ~5min <br />
