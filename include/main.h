@@ -11,6 +11,7 @@ class flashggStdTreeParameters{
 public:
     flashggStdTreeParameters();
     ~flashggStdTreeParameters();
+    bool  EvtInfo_passTrigger;
     float EvtInfo_NPu;
     Int_t EvtInfo_NVtx;
     float EvtInfo_Rho;

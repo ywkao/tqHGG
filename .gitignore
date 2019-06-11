@@ -13,6 +13,7 @@ bin/*
 # Ignore any plots
 plots*
 ntuples_*
+collections/*
 
 # Ignore any logs and test files
 log/*

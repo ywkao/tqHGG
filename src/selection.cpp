@@ -38,6 +38,8 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
     //==================//
     //--- Event Loop ---//
     //==================//
+    double totalYields = 0;
+    double totalYields_wopu = 0;
     int nentries = treeReader.GetEntries();
     for(int ientry=0; ientry<nentries; ientry++){
         TTree* tmp = treeReader.GetTTree();
@@ -53,15 +55,17 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         //printf("test = %f, %f, %f\n", treeReader.EvtInfo_genweight, treeReader.EvtInfo_NormalizationFactor_lumi, PU_reweighting_factor);
         ////printf("NormalizationFactor = %f\n", NormalizationFactor);
         //EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
+        //=== Counting Total Yields ===//
+        totalYields +=  NormalizationFactor;
+        totalYields_wopu +=  NormalizationFactor_wopu;
         //=== Selections ===//
         
-
         //=== Store Info ===//
         h[hist_NPu]  -> Fill(treeReader.EvtInfo_NPu, isData ? 1. : NormalizationFactor);
-        h[hist_Rho_wopu]  -> Fill(treeReader.EvtInfo_Rho, isData ? 1. : NormalizationFactor_wopu);
-        h[hist_NVtx_wopu] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor_wopu);
         h[hist_Rho]  -> Fill(treeReader.EvtInfo_Rho, isData ? 1. : NormalizationFactor);
+        h[hist_Rho_wopu]  -> Fill(treeReader.EvtInfo_Rho, isData ? 1. : NormalizationFactor_wopu);
         h[hist_NVtx] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor);
+        h[hist_NVtx_wopu] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor_wopu);
         h[hist_num_jets] -> Fill(treeReader.num_jets, isData ? 1. : NormalizationFactor);
         h[hist_num_btagged_jets] -> Fill(treeReader.num_btagged_jets, isData ? 1. : NormalizationFactor);
         h[hist_num_nonbtagged_jets] -> Fill(treeReader.num_nonbtagged_jets, isData ? 1. : NormalizationFactor);
@@ -112,6 +116,13 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         //hist_DiPhoInfo_subleadIDMVA_ori -> Fill(treeReader.DiPhoInfo_subleadIDMVA_ori, isData ? 1. : NormalizationFactor);
         //hist_inv_mass_diphoton_ori -> Fill(treeReader.inv_mass_diphoton_ori, isData ? 1. : NormalizationFactor);
     }
+
+    //==================//
+    //--- Report Val ---//
+    //==================//
+    printf("[INFO] nentries = %d\n", nentries);
+    printf("[INFO] totalYields = %f\n", totalYields);
+    printf("[INFO] totalYields_wopu = %f\n", totalYields_wopu);
 
     TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
     for(int i=0; i<totalHistNum; i++){

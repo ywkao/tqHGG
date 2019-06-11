@@ -10,14 +10,21 @@
 using namespace std;
 
 const double TunableSigBranchingFraction = 0.001; //The branching fraction of signal MC = 0.01%
+const char *TARGET_DIR = "plots";
+//const char *TARGET_DIR = "collections/plots_without_any_preselection";
+//const char *TARGET_DIR = "collections/plots_MGG_gt_100";
+//const char *TARGET_DIR = "collections/plots_controlRegion_atLeastOneDiphoton";
+bool DEBUG = false;
+bool PrintHistInfo;
+bool PrintTexStyle;
 
 //# not yet have 2016 signal samples
 void stackHist(){
+    MakeStackHist("hist_NVtx");
+    MakeStackHist("hist_NVtx_wopu");
     MakeStackHist("hist_NPu");
     MakeStackHist("hist_Rho");
     MakeStackHist("hist_Rho_wopu");
-    MakeStackHist("hist_NVtx");
-    MakeStackHist("hist_NVtx_wopu");
     MakeStackHist("hist_num_jets");
     MakeStackHist("hist_num_btagged_jets");
     MakeStackHist("hist_num_nonbtagged_jets");
@@ -49,15 +56,18 @@ void stackHist(){
     MakeStackHist("hist_DiPhoInfo_subleadPhi");
     MakeStackHist("hist_DiPhoInfo_subleadE");
     MakeStackHist("hist_DiPhoInfo_subleadIDMVA");
-    //MakeStackHist("hist_DiPhoInfo_leadIDMVA_ori");
-    //MakeStackHist("hist_DiPhoInfo_subleadIDMVA_ori");
+    ////MakeStackHist("hist_DiPhoInfo_leadIDMVA_ori");
+    ////MakeStackHist("hist_DiPhoInfo_subleadIDMVA_ori");
     //MakeStackHist("hist_inv_mass_diphoton_ori");
 }
 void MakeStackHist(const char* histName){
-    TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
+    //if((string)histName == "hist_NVtx" || (string)histName == "hist_NVtx_wopu") PrintHistInfo = true; else PrintHistInfo = false;
+    if((string)histName == "hist_NVtx" || (string)histName == "hist_NVtx_wopu") PrintTexStyle = true; else PrintTexStyle = false;
+    TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
+    //TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
     THStack *stackHist = new THStack("stackHist", "");//If setting titles here, the x(y)-title will NOT be able to set later.
     bool considerQCD = true;
-    bool isNVtx = isThisNVtx(histName);
+    bool isNVtxRho = isThisNVtxRho(histName);
     bool isIDMVA = isThisIDMVA(histName);
     bool isNumEtaPhi = isThisNumEtaPhi(histName);
     bool isRho = isThisRho(histName);
@@ -97,13 +107,13 @@ void MakeStackHist(const char* histName){
     //===============================//
     TFile *file[NUM];
     //for(int i=0; i<NUM_sig; i++)
-    //    RegisterHistogram(file[i], fileNames_sig[i].c_str(), hist_tqh_sig[i], histName, kRed, true, false);
+    //    RegisterHistogram(file[i], dataset_sig[i].c_str(), hist_tqh_sig[i], histName, kRed, true, false);
     for(int i=0; i<NUM_resbkg; i++)
-        RegisterHistogram(file[i+NUM_sig], fileNames_resbkg[i].c_str(), hist_tqh_resbkg[i], histName, kBlue-i-2, false, false);
+        RegisterHistogram(file[i+NUM_sig], dataset_resbkg[i].c_str(), hist_tqh_resbkg[i], histName, kBlue-i-2, false, false);
     for(int i=0; i<NUM_nonresbkg; i++)
-        RegisterHistogram(file[i+NUM_sig+NUM_resbkg], fileNames_nonresbkg[i].c_str(), hist_tqh_nonresbkg[i], histName, kGreen+2, false, false);
+        RegisterHistogram(file[i+NUM_sig+NUM_resbkg], dataset_nonresbkg[i].c_str(), hist_tqh_nonresbkg[i], histName, kGreen+2, false, false);
     for(int i=0; i<NUM_data; i++)
-        RegisterHistogram(file[i+NUM_sig+NUM_resbkg+NUM_nonresbkg], fileNames_data[i].c_str(), hist_tqh_data[i], histName, kBlack, false, true);
+        RegisterHistogram(file[i+NUM_sig+NUM_resbkg+NUM_nonresbkg], dataset_data[i].c_str(), hist_tqh_data[i], histName, kBlack, false, true);
     //==================================//
     //===== Combine had/lep signal =====//
     //==================================//
@@ -186,6 +196,46 @@ void MakeStackHist(const char* histName){
     hist_tqh_mc_wosig = (TH1D*) hist_tqh_resbkg[NUM_resbkg]->Clone();
     if(considerQCD) hist_tqh_mc_wosig->Add(hist_tqh_nonresbkg[NUM_nonresbkg]);
     else{for(int i=1; i<NUM_nonresbkg-3; i++) hist_tqh_mc_wosig->Add(hist_tqh_nonresbkg[i]);}
+    //=====================================================//
+    //===== Calculate yields from combined histograms =====//
+    //=====================================================//
+    if(PrintHistInfo){
+        printf("===========================================================================\n");
+        printf("Process \t\t\t Yields \t\t   Error \n");
+        printf("===========================================================================\n");
+        CalculateHistYields("QCD\t\t", hist_tqh_QCD);
+        CalculateHistYields("GJet\t\t", hist_tqh_GJet);
+        CalculateHistYields("DiPhotonJetsBox", hist_tqh_DiPhotonJetsBox);
+        CalculateHistYields("TGJets\t\t", hist_tqh_TGJets);
+        CalculateHistYields("TTGJets\t\t", hist_tqh_TTGJets);
+        CalculateHistYields("TTGG\t\t", hist_tqh_TTGG);
+        CalculateHistYields("ggH\t\t", hist_tqh_ggH);
+        CalculateHistYields("VBF\t\t", hist_tqh_VBF);
+        CalculateHistYields("VH\t\t", hist_tqh_VH);
+        CalculateHistYields("ttH\t\t", hist_tqh_ttH);
+        printf("---------------------------------------------------------------------------\n");
+        CalculateHistYields("MC bkg\t\t", hist_tqh_mc_wosig);
+        CalculateHistYields("Data\t\t", hist_tqh_data[NUM_data]);
+        printf("\n\n");
+    }
+    if(PrintTexStyle){
+        printf("Processes & \\multicolumn{2}{c}{Yields}\\\\ \n");
+        printf("\\hline\\hline\n");
+        CalculateHistYields("QCD\t\t", hist_tqh_QCD);
+        CalculateHistYields("GJet\t\t", hist_tqh_GJet);
+        CalculateHistYields("DiPhotonJetsBox", hist_tqh_DiPhotonJetsBox);
+        CalculateHistYields("TGJets\t\t", hist_tqh_TGJets);
+        CalculateHistYields("TTGJets\t\t", hist_tqh_TTGJets);
+        CalculateHistYields("TTGG\t\t", hist_tqh_TTGG);
+        CalculateHistYields("ggH\t\t", hist_tqh_ggH);
+        CalculateHistYields("VBF\t\t", hist_tqh_VBF);
+        CalculateHistYields("VH\t\t", hist_tqh_VH);
+        CalculateHistYields("ttH\t\t", hist_tqh_ttH);
+        printf("\\hline\n");
+        CalculateHistYields("MC background\t\t", hist_tqh_mc_wosig);
+        CalculateHistYields("Data\t\t", hist_tqh_data[NUM_data]);
+        printf("\n\n");
+    }
     //=============================================//
     //===== Calculate relative MC uncertainty =====//
     //=============================================//
@@ -203,14 +253,14 @@ void MakeStackHist(const char* histName){
         hist_tqh_mc_uncertainty->SetBinError(i+1, error_error);
         //printf("bin = %d, mean=%f, error=%f, error_error=%f\n", i+1, mean, error, error_error);
     }
-    //========================================//
-    //===== Make data-mc ratio histogram =====//
-    //========================================//
+    //===========================================//
+    //===== Prepare data-mc ratio histogram =====//
+    //===========================================//
     hist_tqh_ratio = (TH1D*) hist_tqh_data[NUM_data]->Clone();
     hist_tqh_ratio->Divide(hist_tqh_mc_wosig);
-    //=================================//
-    //===== Make stack histograms =====//
-    //=================================//
+    //====================================//
+    //===== Prepare stack histograms =====//
+    //====================================//
     //stackHist->Add(hist_tqh_resbkg[NUM_resbkg]);
     stackHist->Add(hist_tqh_ggH);
     stackHist->Add(hist_tqh_VBF);
@@ -234,13 +284,19 @@ void MakeStackHist(const char* histName){
     gPad->SetTicks(1,1);
     //--------------------
     if(isIDMVA){
+        //stackHist->SetMaximum(8e+5);
+        stackHist->SetMaximum(6e+5);
+        stackHist->SetMinimum(0);
+    } else if(isNVtxRho){
+        //stackHist->SetMaximum(7e+5);
+        //stackHist->SetMaximum(1.5e+5);
+        //stackHist->SetMaximum(1.2e+9);
+        //stackHist->SetMaximum(1e+6);
         stackHist->SetMaximum(8e+5);
         stackHist->SetMinimum(0);
-    } else if(isNVtx){
-        stackHist->SetMaximum(7e+5);
-        stackHist->SetMinimum(0);
     } else if(isRho){
-        stackHist->SetMaximum(7e+5);
+        //stackHist->SetMaximum(7e+5);
+        stackHist->SetMaximum(1.5e+5);
         stackHist->SetMinimum(0);
     } else if(isMassSpectrum){
         if(isDiPhotonSpectrum) stackHist->SetMaximum(3.0e+5);
@@ -270,9 +326,9 @@ void MakeStackHist(const char* histName){
     double BinWidth = hist_tqh_data[NUM_data]->GetXaxis()->GetBinWidth(1);//Take the width of the first bin as a representative.
     string yTitle = GetYtitleAccordingToHistName(histName, BinWidth);
     stackHist->GetYaxis()->SetTitle(yTitle.c_str());
-    stackHist->GetYaxis()->SetTitleSize(20);
+    stackHist->GetYaxis()->SetTitleSize(23);
     stackHist->GetYaxis()->SetTitleFont(43);
-    stackHist->GetYaxis()->SetTitleOffset(1.2);
+    stackHist->GetYaxis()->SetTitleOffset(1.);
     stackHist->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
     stackHist->GetYaxis()->SetLabelSize(15);
     //--------------------
@@ -328,10 +384,8 @@ void MakeStackHist(const char* histName){
     pad2->cd(); //pad2 becomes current pad
     gPad->SetTicks(1,1);
     //--------------------
-    hist_tqh_ratio->SetMaximum(1.75);
-    hist_tqh_ratio->SetMinimum(0.5);
-    //hist_tqh_ratio->SetMaximum(2.25);
-    //hist_tqh_ratio->SetMinimum(0);
+    hist_tqh_ratio->SetMaximum(2.25);
+    hist_tqh_ratio->SetMinimum(0);
     hist_tqh_ratio->SetTitle("");
     hist_tqh_ratio->SetStats(0); //No statistics on lower plot
     hist_tqh_ratio->Draw("p,E1");
@@ -340,18 +394,18 @@ void MakeStackHist(const char* histName){
     hist_tqh_mc_uncertainty->Draw("E2,same");
     hist_tqh_ratio->Draw("p,E1,same");
     //--------------------
-    hist_tqh_ratio->GetYaxis()->SetTitle("Obs/Exp");
+    hist_tqh_ratio->GetYaxis()->SetTitle("Data/MC");
+    //hist_tqh_ratio->GetYaxis()->SetTitle("Obs/Exp");
     hist_tqh_ratio->GetYaxis()->SetNdivisions(5);
-    hist_tqh_ratio->GetYaxis()->SetTitleSize(20);
+    hist_tqh_ratio->GetYaxis()->SetTitleSize(23);
     hist_tqh_ratio->GetYaxis()->SetTitleFont(43);
-    hist_tqh_ratio->GetYaxis()->SetTitleOffset(1.2);
+    hist_tqh_ratio->GetYaxis()->SetTitleOffset(1.);
     hist_tqh_ratio->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
     hist_tqh_ratio->GetYaxis()->SetLabelSize(15);
     //--------------------
-    //hist_tqh_ratio->GetXaxis()->SetTitle("Invariant mass of diphoton + jet [GeV/c^{2}]");
     string xTitle = GetXtitleAccordingToHistName(histName);
     hist_tqh_ratio->GetXaxis()->SetTitle(xTitle.c_str());
-    hist_tqh_ratio->GetXaxis()->SetTitleSize(20);
+    hist_tqh_ratio->GetXaxis()->SetTitleSize(27);
     hist_tqh_ratio->GetXaxis()->SetTitleFont(43);
     hist_tqh_ratio->GetXaxis()->SetTitleOffset(4.);
     hist_tqh_ratio->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
@@ -364,37 +418,37 @@ void MakeStackHist(const char* histName){
     line.DrawLine(pad2->GetUxmin(),1.0,pad2->GetUxmax(),1.0);
     line.DrawLine(pad2->GetUxmin(),1.5,pad2->GetUxmax(),1.5);
     line.DrawLine(pad2->GetUxmin(),2.0,pad2->GetUxmax(),2.0);
-    c1->SaveAs(Form("plots/stack_%s.png", histName));
+    c1->SaveAs(Form("%s/stack_%s.png", TARGET_DIR, histName));
     //========================================//
     //===== Draw upper plots (log scale) =====//
     //========================================//
     if(isMassSpectrum){
         c1->cd();
         pad1->cd();
-        //stackHist->SetMaximum(600);
-        //c1->SaveAs(Form("plots/stack_%s_zoomin.png", histName));
         gPad->SetLogy(1);
         if(isDiPhotonSpectrum) stackHist->SetMaximum(1e+11);
         if(isDijetSpectrum)    stackHist->SetMaximum(1e+9);
         if(isTopSpectrum)      stackHist->SetMaximum(1e+8);
         stackHist->SetMinimum(5e-1);
-        c1->SaveAs(Form("plots/stack_%s_log.png", histName));
-    } else if(isNVtx){
+        c1->SaveAs(Form("%s/stack_%s_log.png", TARGET_DIR, histName));
+    } else if(isNVtxRho){
         c1->cd();
         pad1->cd();
         gPad->SetLogy(1);
-        stackHist->SetMaximum(1e+11);
+        stackHist->SetMaximum(1e+15);
         stackHist->SetMinimum(5e-1);
-        c1->SaveAs(Form("plots/stack_%s_log.png", histName));
+        c1->SaveAs(Form("%s/stack_%s_log.png", TARGET_DIR, histName));
     }
 
     for(int i=NUM_sig; i<NUM; i++) file[i]->Close();//No 2016 signal temporarily
     //for(int i=0; i<NUM; i++) file[i]->Close();
 }
 
-bool isThisNVtx(const char* histName){
+bool isThisNVtxRho(const char* histName){
     if((string)histName == "hist_NVtx") return true;
     if((string)histName == "hist_NVtx_wopu") return true;
+    if((string)histName == "hist_Rho") return true;
+    if((string)histName == "hist_Rho_wopu") return true;
     return false;
 }
 bool isThisIDMVA(const char* histName){
@@ -461,6 +515,8 @@ string GetXtitleAccordingToHistName(const char* histName){
     if((string)histName == "hist_NPu") return "Number of pile up";
     if((string)histName == "hist_NVtx") return "Number of vertices";
     if((string)histName == "hist_NVtx_wopu") return "Number of vertices (w/o pu)";
+    if((string)histName == "hist_Rho") return "Rho";
+    if((string)histName == "hist_Rho_wopu") return "Rho (w/o pu)";
     //--------------------
     if((string)histName == "hist_num_jets") return "Number of Jets";
     if((string)histName == "hist_num_btagged_jets") return "Number of btagged jets";
@@ -510,6 +566,8 @@ string GetYtitleAccordingToHistName(const char* histName, double BinWidth){
     if((string)histName == "hist_NPu") return str_ytitle_1;
     if((string)histName == "hist_NVtx") return str_ytitle_1;
     if((string)histName == "hist_NVtx_wopu") return str_ytitle_1;
+    if((string)histName == "hist_Rho") return str_ytitle_1;
+    if((string)histName == "hist_Rho_wopu") return str_ytitle_1;
     //--------------------
     if((string)histName == "hist_num_jets") return str_ytitle_1;
     if((string)histName == "hist_num_btagged_jets") return str_ytitle_1;
@@ -552,9 +610,10 @@ string GetYtitleAccordingToHistName(const char* histName, double BinWidth){
     return "";
 }
 
-void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false){
+void RegisterHistogram(TFile *&file, const char* dataset, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false){
     //printf("Registering histogram of %s\n", fileName);
     //TFile *file = TFile::Open(fileName);// Will lead to problem of opening too many file.
+    char fileName[512]; sprintf(fileName, "%s/%s/hist_%s.root", TARGET_DIR, dataset, dataset); 
     file = TFile::Open(fileName);
     hist = (TH1D*)file->Get(histName);
     if(isSigMC) hist->Scale(TunableSigBranchingFraction);
@@ -563,4 +622,36 @@ void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const ch
     hist->SetLineWidth(2);
     if(isData) hist->SetMarkerStyle(20);
     if(isData) hist->SetMarkerSize(1.2);
+    //=== Report Yields of Stacked Histogram (hist_NVtx) ===//
+    if(DEBUG){
+        double Ntotal = hist->Integral();
+        if((string)dataset == "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8")
+            printf("[DEBUG] dataset \t yields\n");
+        printf("%s \t %f \n", dataset, Ntotal);
+        //printf("[INFO] dataset  = %s\n", dataset);
+        //printf("[INFO] Yields = %.2f\n", Ntotal);
+    }
+    if(DEBUG){
+        double Ntotal = hist->Integral();
+        if((string)dataset == "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8")
+            printf("[DEBUG] dataset \t yields (without pu)\n");
+        printf("%s \t %f (without pu)\n", dataset, Ntotal);
+    }
+}
+
+void CalculateHistYields(const char *process, TH1D* hist){
+    double totalYields = hist->Integral();
+    double totalError = SumErrors(hist);
+    if(PrintTexStyle) printf("%s & \t %15.2f & $\\pm$ \t %10.2f\\\\\n", process, totalYields, totalError);
+    else printf("%s \t %15.2f \t %15.2f\n", process, totalYields, totalError);
+}
+
+double SumErrors(TH1D* hist){
+    double totalError = 0.;
+    for(int i=0; i<hist->GetNbinsX(); ++i){
+        double error = hist->GetBinError(i+1);
+        totalError += pow(error, 2);
+    }
+    totalError = sqrt(totalError);
+    return totalError;
 }

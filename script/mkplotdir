@@ -9,9 +9,9 @@ if [ ! -d ntuples_skimmed ]; then
     mkdir ntuples_skimmed;
 fi
 #--------------------------------------------------
-if [ ! -d ntuples_pustudy ]; then
-    mkdir ntuples_pustudy;
-fi
+#if [ ! -d ntuples_pustudy ]; then
+#    mkdir ntuples_pustudy;
+#fi
 #--------------------------------------------------
 if [ ! -d plots ]; then
     mkdir plots;

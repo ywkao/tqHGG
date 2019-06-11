@@ -118,11 +118,18 @@ int main(int argc, char *argv[]){
         //==================================================//
         //--------------   Basic Selectoin   ---------------//
         //==================================================//
-        if(treeReader.DiPhoInfo_mass<0) continue;
-        if( !(treeReader.jets_size>0) ) continue;
-        if(treeReader.DiPhoInfo_mass<100 || treeReader.DiPhoInfo_mass>180) continue;
-        if( !isMCsignal && treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130) continue;
-        //if(!(DiPhoInfo_leadIDMVA>0)) continue;
+        ////if(treeReader.DiPhoInfo_mass<100) continue;
+        ////if(treeReader.DiPhoInfo_mass<0) continue;
+        //if(treeReader.DiPhoInfo_mass<100 || treeReader.DiPhoInfo_mass>180) continue;
+        //if( !isMCsignal && treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130) continue;
+        //if(!(treeReader.DiPhoInfo_leadIDMVA>0)) continue;
+        //if(!(treeReader.DiPhoInfo_subleadIDMVA>0)) continue;
+        ////if( !(treeReader.jets_size>0) ) continue;
+        //==================================================//
+        //------------   Physical Observables   ------------//
+        //==================================================//
+        //==================================================//
+        //------------   Normalization factor   ------------//
         //==================================================//
         //------------   Physical Observables   ------------//
         //==================================================//
@@ -275,6 +282,7 @@ int main(int argc, char *argv[]){
         //==================================================//
         //-----------   EventPar Related Info    -----------//
         //==================================================//
+        mytree.EvtInfo_passTrigger = treeReader.EvtInfo_passTrigger;
         mytree.EvtInfo_NPu = treeReader.EvtInfo_NPu;
         mytree.EvtInfo_Rho = treeReader.EvtInfo_Rho;
         mytree.EvtInfo_NVtx = treeReader.EvtInfo_NVtx;
@@ -404,6 +412,7 @@ TChain* flashggStdTreeReader::GetTChain(void){
     return flashggStdTree;
 }
 void flashggStdTreeReader::SetBranchAddresses(){
+    flashggStdTree->SetBranchAddress("EvtInfo.passTrigger", &EvtInfo_passTrigger);
     flashggStdTree->SetBranchAddress("EvtInfo.NPu", &EvtInfo_NPu);
     flashggStdTree->SetBranchAddress("EvtInfo.Rho", &EvtInfo_Rho);
     flashggStdTree->SetBranchAddress("EvtInfo.NVtx", &EvtInfo_NVtx);
@@ -439,6 +448,7 @@ void myTreeClass::InitTree(){
 void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("EvtInfo_totalEntry_before_preselection", &EvtInfo_totalEntry_before_preselection, "EvtInfo_totalEntry_before_preselection/I");
     mytree -> Branch("EvtInfo_NormalizationFactor_lumi", &EvtInfo_NormalizationFactor_lumi, "EvtInfo_NormalizationFactor_lumi/F");
+    mytree -> Branch("EvtInfo_passTrigger", &EvtInfo_passTrigger, "EvtInfo_passTrigger/F");
     mytree -> Branch("EvtInfo_NPu", &EvtInfo_NPu, "EvtInfo_NPu/F");
     mytree -> Branch("EvtInfo_Rho", &EvtInfo_Rho, "EvtInfo_Rho/F");
     mytree -> Branch("EvtInfo_NVtx", &EvtInfo_NVtx, "EvtInfo_NVtx/I");
