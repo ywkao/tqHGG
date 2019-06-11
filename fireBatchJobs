@@ -15,17 +15,59 @@ function GetNumber(){
         echo $number
     fi
 }
+#--------------- Option needed ---------------#
+if [[ $1 == '' ]]; then
+    echo "[WARNNING] Please input an option."
+    echo "./fireBatchJobs -d  # Dryrun"
+    echo "./fireBatchJobs -p  # Preselection"
+    echo "./fireBatchJobs -s  # Selection"
+    echo "./fireBatchJobs -pu # Pileup study"
+    exit 0
+fi
 #--------------- Setup ---------------#
 echo "[MESSAGE] Check directories for plots..." && ./script/mkplotdir
 echo "[MESSAGE] Check executable..." && make
 echo "[MESSAGE] Ready!"
+#--------------- DryRun ---------------#
+if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
+    ssh node$(GetNumber) "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_preselection_batch -d" &
+    echo "[MESSAGE] This is the end of dryRun execution." && exit 0
 #--------------- Submit ---------------#
-for dataset in `cat ListRootFiles | grep -v "#"`
-do
-    echo "[MESSAGE] ssh node$(GetNumber) dataset=${dataset}"
-    ssh node$(GetNumber) "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch ${dataset}" &
-    #ssh node$(GetNumber) "source .bashrc; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_preselection_batch ${dataset}" &
-done
+elif [[ $1 == '-pu' ]]; then
+    echo "[MESSAGE] Start submit pustudy!"
+
+    if [ ! -d ntuples_pustudy ]; then mkdir ntuples_pustudy; fi
+
+    for dataset in `cat ListRootFiles | grep -v "#"`
+    do
+        echo "[MESSAGE] ssh node$(GetNumber) dataset=${dataset}"
+        ssh node$(GetNumber) "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd;\
+        eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch ${dataset}" &
+    done
+#--------------------------------------#
+elif [[ $1 == '-p' ]]; then
+    echo "[MESSAGE] Start submit preselection!"
+    for dataset in `cat ListRootFiles | grep -v "#"`
+    do
+        echo "[MESSAGE] ssh node$(GetNumber) dataset=${dataset}"
+        ssh node$(GetNumber) "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd;\
+        eval `scramv1 runtime -sh` time ./script/exe_preselection_batch ${dataset}" &
+    done
+#--------------------------------------#
+elif [[ $1 == '-s' ]]; then
+    echo "[MESSAGE] Start submit selection!"
+    for dataset in `cat ListRootFiles | grep -v "#"`
+    do
+        echo "[MESSAGE] ssh node$(GetNumber) dataset=${dataset}"
+        ssh node$(GetNumber) "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd;\
+        eval `scramv1 runtime -sh` time ./script/exe_selection_batch ${dataset}" &
+    done
+    # Make stack plots
+    root -l -b -q src/stackHist.C | tee log/log_stack
+    echo "[MESSAGE] This is the end of making stack plots" && exit 0
+else
+    echo "[WARNNING] Uknown parameters."
+fi
 
 #ssh node01 "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch -d" &
 ##seq 1 4 | xargs -I{} -n1 -P4 ssh node01 "cd /wk_cms2/ykao/CMSSW_9_4_10/src/2016/tqHGG && time ./script/exePreselection_batch_0{} -d" #problematic

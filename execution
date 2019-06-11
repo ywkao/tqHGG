@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+time ./fireBatchJobs -p > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
+#time ./fireBatchJobs -s > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)

@@ -1,0 +1,5 @@
+#!/bin/bash
+root -l -b -q src/study_pileup_reweighting_plots.C\(\"hist_Rho\",\"puReweighting_Rho.png\"\)
+root -l -b -q src/study_pileup_reweighting_plots.C\(\"hist_Rho_pu\",\"puReweighting_Rho_pu.png\"\)
+root -l -b -q src/study_pileup_reweighting_plots.C\(\"hist_NVtx\",\"puReweighting_vertices.png\"\)
+root -l -b -q src/study_pileup_reweighting_plots.C\(\"hist_NVtx_pu\",\"puReweighting_vertices_pu.png\"\)

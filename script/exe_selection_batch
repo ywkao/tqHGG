@@ -2,19 +2,19 @@
 #ref of command awk: https://ubuntuforums.org/showthread.php?t=840054
 set -e
 
-INPUTDIR="/wk_cms2/youying/public/RunII2016_8028_flashgg_ntuples"
-OUTPUTDIR="ntuples_skimmed"
-EXECUTABLE=./bin/preselection
+INPUTDIR="ntuples_skimmed"
+OUTPUTDIR="plots"
+EXECUTABLE=./bin/selection
 #EXECUTABLE=echo
 
 #--------------- Function ---------------#
 function ExeAnalysis(){
     file=$1
-    log=log/log_${file}.txt
+    log=log/log_skimmed_ntuple_${file}.txt
     echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
-    echo $file | awk -F "." '{print "'$INPUTDIR'""/"$1, "'$OUTPUTDIR'""/ntuple_"$1".root", $1}' |\
-    xargs -n3 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
-    # REMARK: input_file / output_file / datasets
+    echo $file | awk -F "." '{print "'$INPUTDIR'""/ntuple_"$1".root", "'$OUTPUTDIR'""/"$1"/hist_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' |\
+    xargs -n4 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
+    # REMARK: input_file / output_file / datasets / output_dir
 }
 
 #--------------- DryRun ---------------#

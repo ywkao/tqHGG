@@ -1,0 +1,2 @@
+#!/bin/bash
+root -l -b -q src/stackHist.C | tee log/info_stack_plots
