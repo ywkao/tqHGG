@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+#=== Preselection ===#
+#time ./fireBatchJobs -p > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
+
+#=== Selection ===#
+time ./fireBatchJobs -s > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)

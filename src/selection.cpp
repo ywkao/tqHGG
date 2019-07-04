@@ -50,6 +50,7 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         double NormalizationFactor_wopu = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
         //Reminder: EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
         //========= Event Selections (Leptonic) =========//
+        /*
         if(treeReader.num_leptons<1) continue;
         if(treeReader.num_jets<1) continue;
         //--------- check bjets ---------//
@@ -68,12 +69,13 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
             }//end of looping jets
         }
         if(num_bjets == 0) continue;
+        */
         //========= Event Selections (Hadronic) =========//
-        /*
         if(treeReader.num_leptons>0) continue;
         if(treeReader.num_jets<3) continue;
         //check bjet
         //--------- check bjets ---------//
+        /*
         int num_bjets = 0;
         if(!(treeReader.num_jets<1)){
             for(int i=0; i<treeReader.num_jets; ++i){

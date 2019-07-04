@@ -264,19 +264,14 @@ void MakeStackHist(const char* histName){
     pad1->cd(); //pad1 becomes current pad
     gPad->SetTicks(1,1);
     //--------------------
-    if(isIDMVA){
-        stackHist->SetMaximum(3e+5);
-        stackHist->SetMinimum(0);
-    } else if(isMassSpectrum){
+    stackHist->SetMinimum(0);
+    if(isIDMVA) stackHist->SetMaximum(2e+4);
+    else if(isMassSpectrum){
         if(isDiPhotonSpectrum) stackHist->SetMaximum(1.6e+5);
         if(isDijetSpectrum)    stackHist->SetMaximum(2.0e+3);
         if(isTopSpectrum)      stackHist->SetMaximum(1.6e+3);
-        stackHist->SetMinimum(0);
-    } else{
-        gPad->SetLogy(1);
-        stackHist->SetMaximum(isNumEtaPhi ? 1e+9 : 1e+9);
-        stackHist->SetMinimum(5e-1);
     }
+    else stackHist->SetMaximum(2e+4);
     //--------------------
     stackHist->Draw("hist");
     //hist_tqh_sig_ttpair->Draw("hist,same");
@@ -338,7 +333,7 @@ void MakeStackHist(const char* histName){
     latex_lumi.SetTextFont(43);
     latex_lumi.SetTextSize(22);
     latex_lumi.SetTextAlign(31);
-    latex_lumi.DrawLatex(0.89, 0.92, "42 fb^{-1} (2017, 13 TeV)");
+    latex_lumi.DrawLatex(0.89, 0.92, "41.5 fb^{-1} (2017, 13 TeV)");
     //============================//
     //===== Draw lower plots =====//
     //============================//
@@ -389,18 +384,21 @@ void MakeStackHist(const char* histName){
     line.DrawLine(pad2->GetUxmin(),1.5,pad2->GetUxmax(),1.5);
     line.DrawLine(pad2->GetUxmin(),2.0,pad2->GetUxmax(),2.0);
     c1->SaveAs(Form("plots/stack_%s.png", histName));
+    //============================//
+    //====== Draw log scale ======//
+    //============================//
+    c1->cd(); pad1->cd();
+    gPad->SetLogy(1);
     if(isMassSpectrum){
-        c1->cd();
-        pad1->cd();
         //stackHist->SetMaximum(600);
         //c1->SaveAs(Form("plots/stack_%s_zoomin.png", histName));
-        gPad->SetLogy(1);
         if(isDiPhotonSpectrum) stackHist->SetMaximum(1e+11);
         if(isDijetSpectrum)    stackHist->SetMaximum(1e+8);
         if(isTopSpectrum)      stackHist->SetMaximum(1e+8);
         stackHist->SetMinimum(5e-1);
-        c1->SaveAs(Form("plots/stack_%s_log.png", histName));
+        c1->SaveAs(Form("plots/log_scale/stack_%s_log.png", histName));
     }
+    else stackHist->SetMaximum(isNumEtaPhi ? 1e+9 : 1e+9);
 
     for(int i=0; i<NUM; i++) file[i]->Close();
 }

@@ -1,0 +1,28 @@
+#!/bin/bash
+#ref of command awk: https://ubuntuforums.org/showthread.php?t=840054
+set -e
+
+INPUTDIR="ntuples_skimmed"
+OUTPUTDIR="plots"
+EXECUTABLE=./bin/selection
+
+#--------------- Function ---------------#
+function ExeAnalysis(){
+    file=$1
+    log=log/log_skimmed_ntuple_${file}.txt
+    echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
+    echo $file | awk -F "." '{print "'$INPUTDIR'""/ntuple_"$1".root", "'$OUTPUTDIR'""/"$1"/hist_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' |\
+    xargs -n4 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
+    # REMARK: input_file / output_file / datasets / output_dir
+}
+
+#--------------- DryRun ---------------#
+if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
+    ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
+    echo "[MESSAGE] This is the end of dryRun execution." && exit 0
+fi
+
+#--------------- Execution ---------------#
+FILE=$1
+ExeAnalysis $FILE 
+echo "[MESSAGE] This is the end of $FILE" && exit 0

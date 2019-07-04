@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+grep submit log/stdout.log
+NUM=`cat ListRootFiles | grep -v "#" | nl | cut -f 1 | tail -n1 | tr -d " "`
+echo "[CHECK] Finished files: `grep -ic end log/stdout.log` / ${NUM}"
+
+
