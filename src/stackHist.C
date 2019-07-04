@@ -12,43 +12,84 @@ using namespace std;
 const double TunableSigBranchingFraction = 0.001; //The branching fraction of signal MC = 0.01%
 
 void stackHist(){
-    MakeStackHist("hist_NPu");
-    MakeStackHist("hist_NVtx");
-    MakeStackHist("hist_NVtx_wopu");
-    MakeStackHist("hist_num_jets");
-    MakeStackHist("hist_num_btagged_jets");
-    MakeStackHist("hist_num_nonbtagged_jets");
-    MakeStackHist("hist_leading_bjet_pt");
-    MakeStackHist("hist_leading_bjet_eta");
-    MakeStackHist("hist_leading_bjet_phi");
-    MakeStackHist("hist_chosen_bjet_pt");
-    MakeStackHist("hist_chosen_bjet_eta");
-    MakeStackHist("hist_chosen_bjet_phi");
-    MakeStackHist("hist_jet1_pt");
-    MakeStackHist("hist_jet1_eta");
-    MakeStackHist("hist_jet1_phi");
-    MakeStackHist("hist_jet2_pt");
-    MakeStackHist("hist_jet2_eta");
-    MakeStackHist("hist_jet2_phi");
-    MakeStackHist("hist_dijet_eta");
-    MakeStackHist("hist_dijet_phi");
-    MakeStackHist("hist_dijet_angle");
-    MakeStackHist("hist_inv_mass_dijet");
-    MakeStackHist("hist_inv_mass_diphoton");
-    MakeStackHist("hist_inv_mass_tbw");
+    MakeStackHist("hist_EvtInfo_NPu");
+    MakeStackHist("hist_EvtInfo_Rho");
+    MakeStackHist("hist_EvtInfo_NVtx");
+    //------------------------
+    MakeStackHist("hist_DiPhoInfo_mass");
+    MakeStackHist("hist_DiPhoInfo_pt");
+    MakeStackHist("hist_DiPhoInfo_eta");
+    MakeStackHist("hist_DiPhoInfo_phi");
+    MakeStackHist("hist_DiPhoInfo_energy");
     MakeStackHist("hist_DiPhoInfo_leadPt");
     MakeStackHist("hist_DiPhoInfo_leadEta");
     MakeStackHist("hist_DiPhoInfo_leadPhi");
     MakeStackHist("hist_DiPhoInfo_leadE");
+    MakeStackHist("hist_DiPhoInfo_leadhoe");
     MakeStackHist("hist_DiPhoInfo_leadIDMVA");
     MakeStackHist("hist_DiPhoInfo_subleadPt");
     MakeStackHist("hist_DiPhoInfo_subleadEta");
     MakeStackHist("hist_DiPhoInfo_subleadPhi");
     MakeStackHist("hist_DiPhoInfo_subleadE");
+    MakeStackHist("hist_DiPhoInfo_subleadhoe");
     MakeStackHist("hist_DiPhoInfo_subleadIDMVA");
-    //MakeStackHist("hist_DiPhoInfo_leadIDMVA_ori");
-    //MakeStackHist("hist_DiPhoInfo_subleadIDMVA_ori");
-    //MakeStackHist("hist_inv_mass_diphoton_ori");
+    //------------------------
+    MakeStackHist("hist_ElecInfo_Size");
+    MakeStackHist("hist_MuonInfo_Size");
+    MakeStackHist("hist_num_leptons");// # of selected objects.
+    MakeStackHist("hist_num_electrons");// # of selected objects.
+    MakeStackHist("hist_num_muons");// # of selected objects.
+    MakeStackHist("hist_ElecInfo_electron_pt");
+    MakeStackHist("hist_ElecInfo_electron_eta");
+    MakeStackHist("hist_ElecInfo_electron_phi");
+    MakeStackHist("hist_ElecInfo_electron_energy");
+    MakeStackHist("hist_ElecInfo_electron_diphoton_deltaR");
+    MakeStackHist("hist_MuonInfo_muon_pt");
+    MakeStackHist("hist_MuonInfo_muon_eta");
+    MakeStackHist("hist_MuonInfo_muon_phi");
+    MakeStackHist("hist_MuonInfo_muon_energy");
+    MakeStackHist("hist_MuonInfo_muon_diphoton_deltaR");
+    //------------------------
+    MakeStackHist("hist_jets_size");
+    MakeStackHist("hist_num_jets");
+    MakeStackHist("hist_JetInfo_jet_pt");
+    MakeStackHist("hist_JetInfo_jet_eta");
+    MakeStackHist("hist_JetInfo_jet_phi");
+    MakeStackHist("hist_JetInfo_jet_energy");
+    MakeStackHist("hist_JetInfo_jet_diphoton_deltaR");
+    //------------------------
+    MakeStackHist("hist_lepton_pt");
+    MakeStackHist("hist_lepton_eta");
+    MakeStackHist("hist_lepton_phi");
+    MakeStackHist("hist_lepton_energy");
+    MakeStackHist("hist_lepton_diphoton_deltaR");
+    //------------------------
+    MakeStackHist("hist_jet1_diphoton_deltaR");
+    MakeStackHist("hist_jet2_diphoton_deltaR");
+    MakeStackHist("hist_jet1_lepton_deltaR");
+    MakeStackHist("hist_jet2_lepton_deltaR");
+    //------------------------
+    MakeStackHist("hist_jet1_pt");
+    MakeStackHist("hist_jet1_eta");
+    MakeStackHist("hist_jet1_phi");
+    MakeStackHist("hist_jet1_energy");
+    MakeStackHist("hist_jet2_pt");
+    MakeStackHist("hist_jet2_eta");
+    MakeStackHist("hist_jet2_phi");
+    MakeStackHist("hist_jet2_energy");
+    //------------------------
+    MakeStackHist("hist_leading_bjet_pt");
+    MakeStackHist("hist_leading_bjet_eta");
+    MakeStackHist("hist_leading_bjet_phi");
+    MakeStackHist("hist_leading_bjet_energy");
+    MakeStackHist("hist_chosen_bjet_pt");
+    MakeStackHist("hist_chosen_bjet_eta");
+    MakeStackHist("hist_chosen_bjet_phi");
+    MakeStackHist("hist_chosen_bjet_energy");
+    //------------------------
+    MakeStackHist("hist_inv_mass_dijet");
+    MakeStackHist("hist_inv_mass_diphoton");
+    MakeStackHist("hist_inv_mass_tbw");
 }
 void MakeStackHist(const char* histName){
     TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
@@ -392,125 +433,213 @@ bool isThisMassSpectrum(const char* histName){
     return false;
 }
 bool isThisNumEtaPhi(const char* histName){
+    if((string)histName == "hist_ElecInfo_Size") return true;
+    if((string)histName == "hist_MuonInfo_Size") return true;
+    if((string)histName == "hist_jets_size") return true;
+    if((string)histName == "hist_num_leptons") return true;// # of selected objects.
+    if((string)histName == "hist_num_electrons") return true;// # of selected objects.
+    if((string)histName == "hist_num_muons") return true;// # of selected objects.
     if((string)histName == "hist_num_jets") return true;
-    if((string)histName == "hist_num_btagged_jets") return true;
-    if((string)histName == "hist_num_nonbtagged_jets") return true;
     //--------------------
-    if((string)histName == "hist_leading_bjet_eta") return true;
-    if((string)histName == "hist_chosen_bjet_eta") return true;
-    if((string)histName == "hist_jet1_eta") return true;
-    if((string)histName == "hist_jet2_eta") return true;
-    if((string)histName == "hist_dijet_eta") return true;
-    //--------------------
-    if((string)histName == "hist_leading_bjet_phi") return true;
-    if((string)histName == "hist_chosen_bjet_phi") return true;
+    if((string)histName == "hist_DiPhoInfo_leadPhi") return true;
+    if((string)histName == "hist_DiPhoInfo_subleadPhi") return true;
+    if((string)histName == "hist_DiPhoInfo_phi") return true;
+    if((string)histName == "hist_ElecInfo_electron_phi") return true;
+    if((string)histName == "hist_MuonInfo_muon_phi") return true;
+    if((string)histName == "hist_JetInfo_jet_phi") return true;
+    if((string)histName == "hist_lepton_phi") return true;
     if((string)histName == "hist_jet1_phi") return true;
     if((string)histName == "hist_jet2_phi") return true;
-    if((string)histName == "hist_dijet_phi") return true;
-    if((string)histName == "hist_dijet_angle") return true;
+    if((string)histName == "hist_leading_bjet_phi") return true;
+    if((string)histName == "hist_chosen_bjet_phi") return true;
     //--------------------
     if((string)histName == "hist_DiPhoInfo_leadEta") return true;
-    if((string)histName == "hist_DiPhoInfo_leadPhi") return true;
-    if((string)histName == "hist_DiPhoInfo_leadE") return true;
     if((string)histName == "hist_DiPhoInfo_subleadEta") return true;
-    if((string)histName == "hist_DiPhoInfo_subleadPhi") return true;
-    if((string)histName == "hist_DiPhoInfo_subleadE") return true;
+    if((string)histName == "hist_DiPhoInfo_eta") return true;
+    if((string)histName == "hist_ElecInfo_electron_eta") return true;
+    if((string)histName == "hist_MuonInfo_muon_eta") return true;
+    if((string)histName == "hist_JetInfo_jet_eta") return true;
+    if((string)histName == "hist_lepton_eta") return true;
+    if((string)histName == "hist_jet1_eta") return true;
+    if((string)histName == "hist_jet2_eta") return true;
+    if((string)histName == "hist_leading_bjet_eta") return true;
+    if((string)histName == "hist_chosen_bjet_eta") return true;
     //--------------------
     return false;
 }
-
 string GetXtitleAccordingToHistName(const char* histName){
-    if((string)histName == "hist_NPu") return "Number of pile up";
-    if((string)histName == "hist_NVtx") return "Number of vertices";
-    if((string)histName == "hist_NVtx_wopu") return "Number of vertices (w/o pu)";
+    if((string)histName == "hist_EvtInfo_NPu") return "Number of pile up";
+    if((string)histName == "hist_EvtInfo_Rho") return "Rho";
+    if((string)histName == "hist_EvtInfo_NVtx") return "Number of vertices";
+    if((string)histName == "hist_EvtInfo_NVtx_wopu") return "Number of vertices (w/o pu)";
+    //----------------------------------------------------------------------
+    if((string)histName == "hist_ElecInfo_Size") return "Number of electrons (before any selection)";
+    if((string)histName == "hist_MuonInfo_Size") return "Number of muons (before any selection)";
+    if((string)histName == "hist_num_leptons") return "Number of leptons";// # of selected objects.
+    if((string)histName == "hist_num_electrons") return "Number of electrons";// # of selected objects.
+    if((string)histName == "hist_num_muons") return "Number of muons";// # of selected objects.
     //--------------------
-    if((string)histName == "hist_num_jets") return "Number of Jets";
-    if((string)histName == "hist_num_btagged_jets") return "Number of btagged jets";
-    if((string)histName == "hist_num_nonbtagged_jets") return "Number of nonbtagged jets";
+    if((string)histName == "hist_ElecInfo_electron_pt") return "Pt of electron [GeV/c]";
+    if((string)histName == "hist_ElecInfo_electron_eta") return "#eta of electron";
+    if((string)histName == "hist_ElecInfo_electron_phi") return "#phi of electron";
+    if((string)histName == "hist_ElecInfo_electron_energy") return "Energy of electron [GeV]";
+    if((string)histName == "hist_ElecInfo_electron_diphoton_deltaR") return "deltaR between electron and diphoton";
     //--------------------
+    if((string)histName == "hist_MuonInfo_muon_pt") return "Pt of muon [GeV/c]";
+    if((string)histName == "hist_MuonInfo_muon_eta") return "#eta of muon";
+    if((string)histName == "hist_MuonInfo_muon_phi") return "#phi of muon";
+    if((string)histName == "hist_MuonInfo_muon_energy") return "Energy of muon [GeV]";
+    if((string)histName == "hist_MuonInfo_muon_diphoton_deltaR") return "deltaR between muon and diphoton";
+    //--------------------
+    if((string)histName == "hist_lepton_pt") return "Pt of lepton [GeV/c]";
+    if((string)histName == "hist_lepton_eta") return "#eta of lepton";
+    if((string)histName == "hist_lepton_phi") return "#phi of lepton";
+    if((string)histName == "hist_lepton_energy") return "Energy of lepton [GeV]";
+    if((string)histName == "hist_lepton_diphoton_deltaR") return "deltaR between diphoton and diphoton";
+    //----------------------------------------------------------------------
     if((string)histName == "hist_leading_bjet_pt") return "Pt of bjet [GeV/c]";
-    if((string)histName == "hist_chosen_bjet_pt") return "Pt of bjet [GeV/c]";
-    if((string)histName == "hist_jet1_pt") return "Pt of jet1 [GeV/c]";
-    if((string)histName == "hist_jet2_pt") return "Pt of jet2 [GeV/c]";
-    //--------------------
     if((string)histName == "hist_leading_bjet_eta") return "#eta of bjet";
-    if((string)histName == "hist_chosen_bjet_eta") return "#eta of bjet";
-    if((string)histName == "hist_jet1_eta") return "#eta of jet1";
-    if((string)histName == "hist_jet2_eta") return "#eta of jet2";
-    if((string)histName == "hist_dijet_eta") return "#Delta #eta of dijet";
-    //--------------------
     if((string)histName == "hist_leading_bjet_phi") return "#phi of bjet";
+    if((string)histName == "hist_leading_bjet_energy") return "Energy of bjet [GeV]";
+    if((string)histName == "hist_chosen_bjet_pt") return "Pt of bjet [GeV/c]";
+    if((string)histName == "hist_chosen_bjet_eta") return "#eta of bjet";
     if((string)histName == "hist_chosen_bjet_phi") return "#phi of bjet";
-    if((string)histName == "hist_jet1_phi") return "#phi of jet1";
-    if((string)histName == "hist_jet2_phi") return "#phi of jet2";
-    if((string)histName == "hist_dijet_phi") return "#Delta #phi of dijet";
-    if((string)histName == "hist_dijet_angle") return "Open angle between dijet";
+    if((string)histName == "hist_chosen_bjet_energy") return "Energy of bjet [GeV]";
+    //----------------------------------------------------------------------
+    if((string)histName == "hist_DiPhoInfo_mass") return "Diphoton invariant mass [GeV/c^2]";
+    if((string)histName == "hist_DiPhoInfo_pt") return "Pt of diphoton [GeV/c]";
+    if((string)histName == "hist_DiPhoInfo_eta") return "#eta of diphoton";
+    if((string)histName == "hist_DiPhoInfo_phi") return "#phi of diphoton";
+    if((string)histName == "hist_DiPhoInfo_energy") return "Energy of diphoton [GeV]";
     //--------------------
     if((string)histName == "hist_DiPhoInfo_leadPt") return "Pt of leading photon [GeV/c]";
     if((string)histName == "hist_DiPhoInfo_leadEta") return "#eta of leading photon";
     if((string)histName == "hist_DiPhoInfo_leadPhi") return "#phi of leading photon";
     if((string)histName == "hist_DiPhoInfo_leadE") return "Energy of leading photon [GeV]";
+    if((string)histName == "hist_DiPhoInfo_leadhoe") return "Ratio of Hadronic energy over EM energy";
     if((string)histName == "hist_DiPhoInfo_leadIDMVA") return "IDMVA of leading photon";
     //--------------------
     if((string)histName == "hist_DiPhoInfo_subleadPt") return "Pt of SubleaddiPhoInfo [GeV/c]";
     if((string)histName == "hist_DiPhoInfo_subleadEta") return "#eta of subleading photon";
     if((string)histName == "hist_DiPhoInfo_subleadPhi") return "#phi of subleading photon";
     if((string)histName == "hist_DiPhoInfo_subleadE") return "Energy of subleading photon [GeV]";
+    if((string)histName == "hist_DiPhoInfo_subleadhoe") return "Ratio of Hadronic energy over EM energy";
     if((string)histName == "hist_DiPhoInfo_subleadIDMVA") return "IDMVA of subleading photon";
-    //--------------------
+    //----------------------------------------------------------------------
+    if((string)histName == "hist_jets_size") return "Number of jets (before any selection)";
+    if((string)histName == "hist_num_jets") return "Number of jets";
+    if((string)histName == "hist_JetInfo_jet_pt") return "Pt of jet [GeV/c]";
+    if((string)histName == "hist_JetInfo_jet_eta") return "#eta of jet";
+    if((string)histName == "hist_JetInfo_jet_phi") return "#phi of jet";
+    if((string)histName == "hist_JetInfo_jet_energy") return "Energy of jet [GeV]";
+    if((string)histName == "hist_JetInfo_jet_diphoton_deltaR") return "deltaR between jet and diphoton";
+    //------------------------
+    if((string)histName == "hist_jet1_pt") return "Pt of jet1 [GeV/c]";
+    if((string)histName == "hist_jet1_eta") return "#eta of jet1";
+    if((string)histName == "hist_jet1_phi") return "#phi of jet1";
+    if((string)histName == "hist_jet1_energy") return "Energy of jet1 [GeV]";
+    if((string)histName == "hist_jet1_diphoton_deltaR") return "deltaR between jet1 and diphoton";
+    if((string)histName == "hist_jet1_lepton_deltaR") return "deltaR between jet1 and lepton";
+    //------------------------
+    if((string)histName == "hist_jet2_pt") return "Pt of jet2 [GeV/c]";
+    if((string)histName == "hist_jet2_eta") return "#eta of jet2";
+    if((string)histName == "hist_jet2_phi") return "#phi of jet2";
+    if((string)histName == "hist_jet2_energy") return "Energy of jet2 [GeV]";
+    if((string)histName == "hist_jet2_diphoton_deltaR") return "deltaR between jet2 and diphoton";
+    if((string)histName == "hist_jet2_lepton_deltaR") return "deltaR between jet2 and lepton";
+    //----------------------------------------------------------------------
     if((string)histName == "hist_inv_mass_dijet") return "Invariant mass of dijet [GeV/c^{2}]";
     if((string)histName == "hist_inv_mass_diphoton") return "Invariant mass of diphoton [GeV/c^{2}]";
     if((string)histName == "hist_inv_mass_tbw") return "Invariant mass of dijet+bjet [GeV/c^{2}]";
-    //--------------------
     return "";
 }
 
 string GetYtitleAccordingToHistName(const char* histName, double BinWidth){
     string str_ytitle_1("Entries");
     string str_ytitle_2(Form("Entries / %.2f [GeV]", BinWidth));
+    if((string)histName == "hist_EvtInfo_NPu") return str_ytitle_1;
+    if((string)histName == "hist_EvtInfo_Rho") return str_ytitle_1;
+    if((string)histName == "hist_EvtInfo_NVtx") return str_ytitle_1;
+    if((string)histName == "hist_EvtInfo_NVtx_wopu") return str_ytitle_1;
+    //----------------------------------------------------------------------
+    if((string)histName == "hist_ElecInfo_Size") return str_ytitle_1;
+    if((string)histName == "hist_MuonInfo_Size") return str_ytitle_1;
+    if((string)histName == "hist_num_leptons") return str_ytitle_1;// # of selected objects.
+    if((string)histName == "hist_num_electrons") return str_ytitle_1;// # of selected objects.
+    if((string)histName == "hist_num_muons") return str_ytitle_1;// # of selected objects.
     //--------------------
-    if((string)histName == "hist_NPu") return str_ytitle_1;
-    if((string)histName == "hist_NVtx") return str_ytitle_1;
-    if((string)histName == "hist_NVtx_wopu") return str_ytitle_1;
+    if((string)histName == "hist_ElecInfo_electron_pt") return str_ytitle_2;
+    if((string)histName == "hist_ElecInfo_electron_eta") return str_ytitle_1;
+    if((string)histName == "hist_ElecInfo_electron_phi") return str_ytitle_1;
+    if((string)histName == "hist_ElecInfo_electron_energy") return str_ytitle_2;
+    if((string)histName == "hist_ElecInfo_electron_diphoton_deltaR") return str_ytitle_1;
     //--------------------
-    if((string)histName == "hist_num_jets") return str_ytitle_1;
-    if((string)histName == "hist_num_btagged_jets") return str_ytitle_1;
-    if((string)histName == "hist_num_nonbtagged_jets") return str_ytitle_1;
+    if((string)histName == "hist_MuonInfo_muon_pt") return str_ytitle_2;
+    if((string)histName == "hist_MuonInfo_muon_eta") return str_ytitle_1;
+    if((string)histName == "hist_MuonInfo_muon_phi") return str_ytitle_1;
+    if((string)histName == "hist_MuonInfo_muon_energy") return str_ytitle_2;
+    if((string)histName == "hist_MuonInfo_muon_diphoton_deltaR") return str_ytitle_1;
     //--------------------
+    if((string)histName == "hist_lepton_pt") return str_ytitle_2;
+    if((string)histName == "hist_lepton_eta") return str_ytitle_1;
+    if((string)histName == "hist_lepton_phi") return str_ytitle_1;
+    if((string)histName == "hist_lepton_energy") return str_ytitle_2;
+    if((string)histName == "hist_lepton_diphoton_deltaR") return str_ytitle_1;
+    //----------------------------------------------------------------------
     if((string)histName == "hist_leading_bjet_pt") return str_ytitle_2;
-    if((string)histName == "hist_chosen_bjet_pt") return str_ytitle_2;
-    if((string)histName == "hist_jet1_pt") return str_ytitle_2;
-    if((string)histName == "hist_jet2_pt") return str_ytitle_2;
-    //--------------------
     if((string)histName == "hist_leading_bjet_eta") return str_ytitle_1;
-    if((string)histName == "hist_chosen_bjet_eta") return str_ytitle_1;
-    if((string)histName == "hist_jet1_eta") return str_ytitle_1;
-    if((string)histName == "hist_jet2_eta") return str_ytitle_1;
-    if((string)histName == "hist_dijet_eta") return str_ytitle_1;
-    //--------------------
     if((string)histName == "hist_leading_bjet_phi") return str_ytitle_1;
+    if((string)histName == "hist_leading_bjet_energy") return str_ytitle_1;
+    if((string)histName == "hist_chosen_bjet_pt") return str_ytitle_2;
+    if((string)histName == "hist_chosen_bjet_eta") return str_ytitle_1;
     if((string)histName == "hist_chosen_bjet_phi") return str_ytitle_1;
-    if((string)histName == "hist_jet1_phi") return str_ytitle_1;
-    if((string)histName == "hist_jet2_phi") return str_ytitle_1;
-    if((string)histName == "hist_dijet_phi") return str_ytitle_1;
-    if((string)histName == "hist_dijet_angle") return str_ytitle_1;
+    if((string)histName == "hist_chosen_bjet_energy") return str_ytitle_1;
+    //----------------------------------------------------------------------
+    if((string)histName == "hist_DiPhoInfo_mass") return str_ytitle_2;
+    if((string)histName == "hist_DiPhoInfo_pt") return str_ytitle_2;
+    if((string)histName == "hist_DiPhoInfo_eta") return str_ytitle_1;
+    if((string)histName == "hist_DiPhoInfo_phi") return str_ytitle_1;
+    if((string)histName == "hist_DiPhoInfo_energy") return str_ytitle_1;
     //--------------------
     if((string)histName == "hist_DiPhoInfo_leadPt") return str_ytitle_2;
     if((string)histName == "hist_DiPhoInfo_leadEta") return str_ytitle_1;
     if((string)histName == "hist_DiPhoInfo_leadPhi") return str_ytitle_1;
-    if((string)histName == "hist_DiPhoInfo_leadE") return str_ytitle_1;
+    if((string)histName == "hist_DiPhoInfo_leadE") return str_ytitle_2;
+    if((string)histName == "hist_DiPhoInfo_leadhoe") return str_ytitle_1;
     if((string)histName == "hist_DiPhoInfo_leadIDMVA") return str_ytitle_1;
     //--------------------
     if((string)histName == "hist_DiPhoInfo_subleadPt") return str_ytitle_2;
     if((string)histName == "hist_DiPhoInfo_subleadEta") return str_ytitle_1;
     if((string)histName == "hist_DiPhoInfo_subleadPhi") return str_ytitle_1;
-    if((string)histName == "hist_DiPhoInfo_subleadE") return str_ytitle_1;
+    if((string)histName == "hist_DiPhoInfo_subleadE") return str_ytitle_2;
+    if((string)histName == "hist_DiPhoInfo_subleadhoe") return str_ytitle_1;
     if((string)histName == "hist_DiPhoInfo_subleadIDMVA") return str_ytitle_1;
-    //--------------------
+    //----------------------------------------------------------------------
+    if((string)histName == "hist_jets_size") return str_ytitle_1;
+    if((string)histName == "hist_num_jets") return str_ytitle_1;
+    if((string)histName == "hist_JetInfo_jet_pt") return str_ytitle_2;
+    if((string)histName == "hist_JetInfo_jet_eta") return str_ytitle_1;
+    if((string)histName == "hist_JetInfo_jet_phi") return str_ytitle_1;
+    if((string)histName == "hist_JetInfo_jet_energy") return str_ytitle_2;
+    if((string)histName == "hist_JetInfo_jet_diphoton_deltaR") return str_ytitle_1;
+    //------------------------
+    if((string)histName == "hist_jet1_pt") return str_ytitle_2;
+    if((string)histName == "hist_jet1_eta") return str_ytitle_1;
+    if((string)histName == "hist_jet1_phi") return str_ytitle_1;
+    if((string)histName == "hist_jet1_energy") return str_ytitle_2;
+    if((string)histName == "hist_jet1_diphoton_deltaR") return str_ytitle_1;
+    if((string)histName == "hist_jet1_lepton_deltaR") return str_ytitle_1;
+    //------------------------
+    if((string)histName == "hist_jet2_pt") return str_ytitle_2;
+    if((string)histName == "hist_jet2_eta") return str_ytitle_1;
+    if((string)histName == "hist_jet2_phi") return str_ytitle_1;
+    if((string)histName == "hist_jet2_energy") return str_ytitle_2;
+    if((string)histName == "hist_jet2_diphoton_deltaR") return str_ytitle_1;
+    if((string)histName == "hist_jet2_lepton_deltaR") return str_ytitle_2;
+    //----------------------------------------------------------------------
     if((string)histName == "hist_inv_mass_dijet") return str_ytitle_2;
     if((string)histName == "hist_inv_mass_diphoton") return str_ytitle_2;
     if((string)histName == "hist_inv_mass_tbw") return str_ytitle_2;
-    //--------------------
     return "";
 }
 
@@ -526,3 +655,55 @@ void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const ch
     if(isData) hist->SetMarkerStyle(20);
     if(isData) hist->SetMarkerSize(1.2);
 }
+/*
+    //------------------------
+    hist_EvtInfo_NPu,
+    hist_EvtInfo_Rho,
+    hist_EvtInfo_NVtx,
+    hist_EvtInfo_genweight,
+    //------------------------
+    hist_DiPhoInfo_mass,
+    hist_DiPhoInfo_pt,
+    hist_DiPhoInfo_energy,
+    hist_DiPhoInfo_leadPt,
+    hist_DiPhoInfo_leadE,
+    hist_DiPhoInfo_leadhoe,
+    hist_DiPhoInfo_leadIDMVA,
+    hist_DiPhoInfo_subleadPt,
+    hist_DiPhoInfo_subleadE,
+    hist_DiPhoInfo_subleadhoe,
+    hist_DiPhoInfo_subleadIDMVA,
+    //------------------------
+    hist_ElecInfo_electron_pt,
+    hist_ElecInfo_electron_energy,
+    hist_ElecInfo_electron_diphoton_deltaR,
+    hist_MuonInfo_muon_pt,
+    hist_MuonInfo_muon_energy,
+    hist_MuonInfo_muon_diphoton_deltaR,
+    //------------------------
+    hist_JetInfo_jet_pt,
+    hist_JetInfo_jet_energy,
+    hist_JetInfo_jet_diphoton_deltaR,
+    //------------------------
+    //Define in selection stage
+    //------------------------
+    hist_lepton_pt,
+    hist_lepton_energy,
+    hist_lepton_diphoton_deltaR,
+    //------------------------
+    hist_jet1_diphoton_deltaR,
+    hist_jet2_diphoton_deltaR,
+    hist_jet1_lepton_deltaR,
+    hist_jet2_lepton_deltaR,
+    //------------------------
+    hist_jet1_pt,
+    hist_jet1_energy,
+    hist_jet2_pt,
+    hist_jet2_energy,
+    //------------------------
+    hist_leading_bjet_pt,
+    hist_leading_bjet_energy,
+    hist_chosen_bjet_pt,
+    hist_chosen_bjet_energy,
+    //------------------------
+*/

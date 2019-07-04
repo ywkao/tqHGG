@@ -13,19 +13,8 @@
 #include <vector>
 #include <string>
 #include "../include/main.h"
-#include "../include/cross_section.h"
+#include "../include/cross_section_v2.h"
 using namespace std;
-//==========================//
-//---  Useful Constants  ---//
-//==========================//
-double pfDeepCSVJetTags_tight  = 0.8001;
-double pfDeepCSVJetTags_medium = 0.4941;
-double pfDeepCSVJetTags_loose  = 0.1522;
-double w_boson_mass = 80.379;//GeV
-double w_boson_width = 9.5;//GeV
-double top_quark_mass = 173.0;//GeV
-double top_quark_width = 16.3;//GeV
-
 
 int main(int argc, char *argv[]){
     //============================//
@@ -38,15 +27,6 @@ int main(int argc, char *argv[]){
     bool isMCsignal = isThisMCsignal(dataset);
     bool isMultiFile = isThisMultiFile(dataset);
     TFile *fout = new TFile(output_file, "RECREATE");
-
-    /* ### Testing ###
-    TChain *flashggStdTree = new TChain("flashggNtuples/flashggStdTree");
-    flashggStdTree->Add(input_file);
-    float EvtInfo_genweight;
-    flashggStdTree->SetBranchAddress("EvtInfo.genweight", &EvtInfo_genweight);
-    int nentries = flashggStdTree->GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
-    */
-
     //==============================//
     //----- Read input file(s) -----//
     //==============================//
@@ -61,17 +41,15 @@ int main(int argc, char *argv[]){
     myTreeClass mytree;
     mytree.InitTree();
     mytree.MakeNewBranchAddresses();
-
-
+    //==================================================//
+    //--------   Event Loop [Normalization]   ----------//
+    //==================================================//
     // Note: Normalization factors are not used during preselection.
     // It is stored and would be used during selection.
     // Question: keep total genweight before or after preselection?
-    //##################################################//
-    //########   Event Loop [Normalization]   ##########//
-    //##################################################//
     int nentries = treeReader.GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
     double NormalizationFactor;
-    double Luminosity = 42.; //fb{-1}
+    double Luminosity = 41.5; //fb{-1}
     double CrossSection = GetXsec(dataset); //pb
     double BranchingFraction = GetBranchingFraction(dataset); //pb
     printf("[INFO] CrossSection = %f !\n", CrossSection);
@@ -79,34 +57,19 @@ int main(int argc, char *argv[]){
     printf("[INFO] BranchingFraction = %f !\n", BranchingFraction);
     double TotalGenweight=0;
     for(int ientry=0; ientry<nentries; ientry++){
-        //treeReader.GetTChain()->GetEntry(ientry);
-        TChain* tmp = treeReader.GetTChain();
-        tmp->GetEntry(ientry);
+        treeReader.flashggStdTree->GetEntry(ientry);//load data
         TotalGenweight+=treeReader.GetGenWeight();
     }
     NormalizationFactor = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
     printf("[INFO] TotalGenweight = %f!\n", TotalGenweight);
     printf("[INFO] NormalizationFactor = %f!\n", isData ? 1. : NormalizationFactor);
 
-    //##################################################//
-    //#######    Parameters used to report     #########//
-    //##################################################//
-    int Nevents_pass_selection = 0;
-    int Nevents_CUT_num_bjets_is_not_exactly_one = 0;
-    int Nevents_anti_CUT_num_bjets_is_not_exactly_one = 0;
-    int Nevents_CUT_no_bjet_events = 0;
-    int Nevents_anti_CUT_no_bjet_events = 0;
-    int Nevents_CUT_num_nonbjets_less_than_2 = 0;
-    int Nevents_anti_CUT_num_nonbjets_less_than_2 = 0;
-    int Nevents_CUT_nand = 0;
-    int Nevents_anti_CUT_nand = 0;
 
     //##################################################//
     //#########    Event Loop [Selection]    ###########//
     //##################################################//
-    // Goal 1: t->b+W(jj), 1 bjet + 2 chi2 jets 
-    // Goal 2: diphoton info
-    //int nentries = treeReader.flashggStdTree->GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
+    // Goal: leptons, jets, diphoton; t->b+W(jj), 1 bjet + 2 chi2 jets 
+    int Nevents_pass_selection = 0;
     for(int ientry=0; ientry<nentries; ientry++){
         treeReader.flashggStdTree->GetEntry(ientry);//load data
         if((ientry+1)%1000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
@@ -114,195 +77,183 @@ int main(int argc, char *argv[]){
         //-------------   Reset Parameters   ---------------//
         //==================================================//
         mytree.Clear();
-        //------------------------
-        std::vector<int> vec_bjet_indices;
-        std::vector<TLorentzVector> vec_btagged_jets;
-        std::vector<TLorentzVector> vec_nonbtagged_jets;
         //==================================================//
         //--------------   Basic Selectoin   ---------------//
         //==================================================//
-        if(treeReader.DiPhoInfo_mass<0) continue;
-        if( !(treeReader.jets_size>0) ) continue;
         if(treeReader.DiPhoInfo_mass<100 || treeReader.DiPhoInfo_mass>180) continue;
         if( !isMCsignal && treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130) continue;
+        //if(treeReader.DiPhoInfo_mass<0) continue;
+        //if( !(treeReader.jets_size>0) ) continue;
         //if(!(DiPhoInfo_leadIDMVA>0)) continue;
-        //==================================================//
-        //------------   Physical Observables   ------------//
-        //==================================================//
         //==================================================//
         //------------   Normalization factor   ------------//
         //==================================================//
         mytree.EvtInfo_totalEntry_before_preselection = nentries;
         mytree.EvtInfo_NormalizationFactor_lumi = isData ? 1. : NormalizationFactor;
-        
-        //==================================================//
-        //-----  Reconstruction(tbW): Select one bjet  -----//
-        //==================================================//
-        int bjetindex=-1;
-        TLorentzVector leading_bjet;
-        for(int i=0; i<treeReader.jets_size; i++){
-            if( fabs(treeReader.JetInfo_Eta->at(i)) > 2.4 ) continue;
-            if( fabs(treeReader.JetInfo_Pt->at(i))  < 30  ) continue;
-            if(treeReader.JetInfo_pfDeepCSVJetTags_probb->at(i)+treeReader.JetInfo_pfDeepCSVJetTags_probbb->at(i) >= pfDeepCSVJetTags_tight){
-                if(bjetindex==-1) leading_bjet.SetPtEtaPhiE(treeReader.JetInfo_Pt->at(i), treeReader.JetInfo_Eta->at(i), treeReader.JetInfo_Phi->at(i), treeReader.JetInfo_Energy->at(i));
-                bjetindex = i;
-                TLorentzVector jet_lorentzvector;
-                jet_lorentzvector.SetPtEtaPhiE(treeReader.JetInfo_Pt->at(i), treeReader.JetInfo_Eta->at(i), treeReader.JetInfo_Phi->at(i), treeReader.JetInfo_Energy->at(i));
-                vec_btagged_jets.push_back(jet_lorentzvector);
-                vec_bjet_indices.push_back(bjetindex);
-                mytree.num_btagged_jets+=1;
-            }
-        }
-        bool CUT_no_bjet_events = (bjetindex==-1) ? true : false; // discard no-b-jet events
-        bool CUT_num_bjets_is_not_exactly_one = (mytree.num_btagged_jets!=1) ? true : false; // exactly 1 b-jet criterion
-        mytree.JetInfo_leading_bjet_pt = CUT_no_bjet_events ? -999. : leading_bjet.Pt();
-        mytree.JetInfo_leading_bjet_eta = CUT_no_bjet_events ? -999. : leading_bjet.Eta();
-        mytree.JetInfo_leading_bjet_phi = CUT_no_bjet_events ? -999. : leading_bjet.Phi();
-        //==================================================//
-        //-----  Reconstruction(tbW): Store rest jets  -----//
-        //==================================================//
-        bool isbjet;
-        for(int i=0; i<treeReader.jets_size; i++){
-            if( fabs(treeReader.JetInfo_Eta->at(i)) > 2.4 ) continue;
-            if( fabs(treeReader.JetInfo_Pt->at(i))  < 30  ) continue;
-            //--------------------
-            // Exclude bjet
-            isbjet=false;
-            if(!CUT_no_bjet_events){for(int j=0; j<vec_btagged_jets.size(); j++){if(i==vec_bjet_indices[j]) isbjet=true;}}
-            if(isbjet) continue;
-            //--------------------
-            TLorentzVector jet_lorentzvector;
-            jet_lorentzvector.SetPtEtaPhiE(treeReader.JetInfo_Pt->at(i), treeReader.JetInfo_Eta->at(i), treeReader.JetInfo_Phi->at(i), treeReader.JetInfo_Energy->at(i));
-            vec_nonbtagged_jets.push_back(jet_lorentzvector);
-            mytree.num_nonbtagged_jets+=1;
-        }
-        bool CUT_num_nonbjets_less_than_2 = (mytree.num_nonbtagged_jets<2) ? true : false;
-        mytree.num_jets = mytree.num_btagged_jets + mytree.num_nonbtagged_jets;
-        //==================================================//
-        //---------------------  Test  ---------------------//
-        //==================================================//
-        if(CUT_num_bjets_is_not_exactly_one) Nevents_CUT_num_bjets_is_not_exactly_one += 1;
-        else Nevents_anti_CUT_num_bjets_is_not_exactly_one += 1;
-        if(CUT_no_bjet_events) Nevents_CUT_no_bjet_events += 1;
-        else Nevents_anti_CUT_no_bjet_events += 1;
-        if(CUT_num_nonbjets_less_than_2) Nevents_CUT_num_nonbjets_less_than_2 += 1;
-        else Nevents_anti_CUT_num_nonbjets_less_than_2 += 1;
-        if(!CUT_no_bjet_events && !CUT_num_nonbjets_less_than_2) Nevents_CUT_nand += 1;
-        else Nevents_anti_CUT_nand += 1;
-
-
-        //==================================================//
-        //------  Reconstruction(tbW): Chi-2 sorting  ------//
-        //==================================================//
-        TLorentzVector best_dijet, best_trijet;//trijet=bjj
-        int good_bjet_index=-1, wjetindices[2]={0};//particles indices for min chi2 
-        double dijet_invariant_mass, trijet_invariant_mass, chi2, chi2_min=99999;
-        if(!CUT_num_nonbjets_less_than_2){// Requirement for at least 1 w-boson!
-            for(int i=0; i<vec_nonbtagged_jets.size(); i++){
-                for(int j=i+1; j<vec_nonbtagged_jets.size(); j++){
-                    TLorentzVector w_candidate = vec_nonbtagged_jets[i] + vec_nonbtagged_jets[j];
-                    dijet_invariant_mass = w_candidate.M();
-                    if(!CUT_no_bjet_events){// Requirement for at least 1 top!
-                        for(int k=0; k<vec_btagged_jets.size(); k++){
-                            TLorentzVector top_candidate = w_candidate + vec_btagged_jets[k];
-                            trijet_invariant_mass = top_candidate.M();
-                            chi2 = Chi2_calculator(dijet_invariant_mass, trijet_invariant_mass);
-                            if(chi2<chi2_min){wjetindices[0]=i; wjetindices[1]=j; good_bjet_index=k; chi2_min=chi2;}
-                        }// end of k loop (b-jet))
-                    } else{
-                            chi2 = Chi2_calculator_w_only(dijet_invariant_mass);
-                            if(chi2<chi2_min){wjetindices[0]=i; wjetindices[1]=j; chi2_min=chi2;}
-                    }
-                }// end of jet2
-            }// end of jet1
-        }
-        bool CUT_no_any_top_candidate = CUT_num_nonbjets_less_than_2 || CUT_no_bjet_events;
-        //==================================================//
-        //-----  Reconstruction(tbW): Store dijet info  ----//
-        //==================================================//
-        //If CUT is true, to prevent invalid addition of elements in vec, best_dijet is set to certain value.
-        best_dijet = CUT_num_nonbjets_less_than_2 ? best_dijet : vec_nonbtagged_jets[wjetindices[0]] + vec_nonbtagged_jets[wjetindices[1]];
-        dijet_invariant_mass = CUT_num_nonbjets_less_than_2 ? -999. : best_dijet.M();
-        //------------------------------
-        double dijet_jet1_pt = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[wjetindices[0]].Pt();
-        double dijet_jet1_eta = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[wjetindices[0]].Eta();
-        double dijet_jet1_phi = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[wjetindices[0]].Phi();
-        double dijet_jet2_pt = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[wjetindices[1]].Pt();
-        double dijet_jet2_eta = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[wjetindices[1]].Eta();
-        double dijet_jet2_phi = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[wjetindices[1]].Phi();
-        //------------------------------
-        double dijet_eta_difference = CUT_num_nonbjets_less_than_2 ? -999. : fabs(dijet_jet1_eta - dijet_jet2_eta);
-        double dijet_phi_difference = CUT_num_nonbjets_less_than_2 ? -999. : fabs(dijet_jet1_phi - dijet_jet2_phi);
-        double dijet_angle_difference = CUT_num_nonbjets_less_than_2 ? -999. : sqrt(dijet_eta_difference*dijet_eta_difference + dijet_phi_difference*dijet_phi_difference);
-        //------------------------------
-        double tbw_chosen_bjet_pt = CUT_no_bjet_events ? -999. : vec_btagged_jets[good_bjet_index].Pt();
-        double tbw_chosen_bjet_eta = CUT_no_bjet_events ? -999. : vec_btagged_jets[good_bjet_index].Eta();
-        double tbw_chosen_bjet_phi = CUT_no_bjet_events ? -999. : vec_btagged_jets[good_bjet_index].Phi();
-        //------------------------------
-        mytree.JetInfo_jet1_pt = dijet_jet1_pt;
-        mytree.JetInfo_jet1_eta = dijet_jet1_eta;
-        mytree.JetInfo_jet1_phi = dijet_jet1_phi;
-        mytree.JetInfo_jet2_pt = dijet_jet2_pt;
-        mytree.JetInfo_jet2_eta = dijet_jet2_eta;
-        mytree.JetInfo_jet2_phi = dijet_jet2_phi;
-        mytree.JetInfo_dijet_delta_eta = dijet_eta_difference;
-        mytree.JetInfo_dijet_delta_phi = dijet_phi_difference;
-        mytree.JetInfo_dijet_delta_angle = dijet_angle_difference;
-        mytree.inv_mass_dijet = dijet_invariant_mass;
-        mytree.JetInfo_chosen_bjet_is_leading_bjet = (good_bjet_index == 0) ? 1 : 0;
-        mytree.JetInfo_chosen_bjet_pt = tbw_chosen_bjet_pt;
-        mytree.JetInfo_chosen_bjet_eta = tbw_chosen_bjet_eta;
-        mytree.JetInfo_chosen_bjet_phi = tbw_chosen_bjet_phi;
-        //==================================================//
-        //-----  Reconstruction(tbW): InvMass of top  ------//
-        //==================================================//
-        //TLorentzVector tbw_bjj = best_dijet + leading_bjet;
-        best_trijet = CUT_no_any_top_candidate ? best_trijet : best_dijet + vec_btagged_jets[good_bjet_index];
-        trijet_invariant_mass = CUT_no_any_top_candidate ? -999. : best_trijet.M();
-        mytree.inv_mass_tbw = trijet_invariant_mass;
-        //==================================================//
-        //-----------   Diphoton Related Info    -----------//
-        //==================================================//
+        //===============================================//
+        //-----------   Store Diphoton Info   -----------//
+        //===============================================//
         mytree.DiPhoInfo_leadPt = treeReader.DiPhoInfo_leadPt;
         mytree.DiPhoInfo_leadEta = treeReader.DiPhoInfo_leadEta;
         mytree.DiPhoInfo_leadPhi = treeReader.DiPhoInfo_leadPhi;
         mytree.DiPhoInfo_leadE = treeReader.DiPhoInfo_leadE;
+        mytree.DiPhoInfo_leadhoe = treeReader.DiPhoInfo_leadhoe;
         mytree.DiPhoInfo_leadIDMVA = treeReader.DiPhoInfo_leadIDMVA;
         mytree.DiPhoInfo_subleadPt = treeReader.DiPhoInfo_subleadPt;
         mytree.DiPhoInfo_subleadEta = treeReader.DiPhoInfo_subleadEta;
         mytree.DiPhoInfo_subleadPhi = treeReader.DiPhoInfo_subleadPhi;
         mytree.DiPhoInfo_subleadE = treeReader.DiPhoInfo_subleadE;
+        mytree.DiPhoInfo_subleadhoe = treeReader.DiPhoInfo_subleadhoe;
         mytree.DiPhoInfo_subleadIDMVA = treeReader.DiPhoInfo_subleadIDMVA;
         mytree.DiPhoInfo_mass = treeReader.DiPhoInfo_mass;
-        mytree.inv_mass_diphoton = treeReader.DiPhoInfo_mass;
-        //==================================================//
-        //-----------   EventPar Related Info    -----------//
-        //==================================================//
+        mytree.DiPhoInfo_pt = treeReader.DiPhoInfo_pt;
+
+        TLorentzVector leading_photon, subleading_photon, diphoton;
+        leading_photon.SetPtEtaPhiE(treeReader.DiPhoInfo_leadPt, treeReader.DiPhoInfo_leadEta, treeReader.DiPhoInfo_leadPhi, treeReader.DiPhoInfo_leadE);
+        subleading_photon.SetPtEtaPhiE(treeReader.DiPhoInfo_subleadPt, treeReader.DiPhoInfo_subleadEta, treeReader.DiPhoInfo_subleadPhi, treeReader.DiPhoInfo_subleadE);
+        diphoton = leading_photon + subleading_photon;
+        mytree.DiPhoInfo_eta = diphoton.Eta();
+        mytree.DiPhoInfo_phi = diphoton.Phi();
+        mytree.DiPhoInfo_energy = diphoton.Energy();
+        //==============================//
+        //-----  Select Electrons  -----//
+        //==============================//
+        mytree.ElecInfo_Size = treeReader.ElecInfo_Size;
+        std::vector<TLorentzVector> Electrons;
+        bool bool_AtLeastOneElectron = treeReader.ElecInfo_Size>0 ? true : false;//treeReader.ElecInfo_Size = -999 => event without diphoton candidate
+        if(bool_AtLeastOneElectron){
+            for(int i=0; i<treeReader.ElecInfo_Size; i++){
+                if( !treeReader.ElecInfo_EGMCutBasedIDMedium ) continue;
+                if( fabs(treeReader.ElecInfo_Eta->at(i)) > 2.4 ) continue;
+                if( fabs(treeReader.ElecInfo_Pt->at(i))  < 20  ) continue;
+                //--- check deltaR(muon,photon) ---//
+                TLorentzVector electron; 
+                electron.SetPtEtaPhiE(treeReader.ElecInfo_Pt->at(i), treeReader.ElecInfo_Eta->at(i), treeReader.ElecInfo_Phi->at(i), treeReader.ElecInfo_Energy->at(i));
+                double delta_R = electron.DeltaR(leading_photon);
+                if( delta_R<0.3 ) continue;
+                delta_R = electron.DeltaR(subleading_photon);
+                if( delta_R<0.3 ) continue;
+                //--- calculate deltaR(muon,diphoton) ---//
+                delta_R = electron.DeltaR(diphoton);
+                //--- store information ---//
+                mytree.ElecInfo_electron_pt.push_back(treeReader.ElecInfo_Pt->at(i));
+                mytree.ElecInfo_electron_eta.push_back(treeReader.ElecInfo_Eta->at(i));
+                mytree.ElecInfo_electron_phi.push_back(treeReader.ElecInfo_Phi->at(i));
+                mytree.ElecInfo_electron_energy.push_back(treeReader.ElecInfo_Phi->at(i));
+                mytree.ElecInfo_electron_diphoton_deltaR.push_back(delta_R);
+                mytree.num_electrons+=1;
+                Electrons.push_back(electron);
+            }
+        }
+        else{
+                mytree.num_electrons=treeReader.ElecInfo_Size;
+        }
+        bool bool_AtLeastOneSelectedElectron = mytree.num_electrons>0 ? true : false;//for calculation of deltaR(e,j).
+        //==========================//
+        //-----  Select Muons  -----//
+        //==========================//
+        mytree.MuonInfo_Size = treeReader.MuonInfo_Size;
+        std::vector<TLorentzVector> Muons;
+        bool bool_AtLeastOneMuon = treeReader.MuonInfo_Size>0 ? true : false;//treeReader.MuonInfo_Size = -999 => event without diphoton candidate
+        if(bool_AtLeastOneMuon){
+            for(int i=0; i<treeReader.MuonInfo_Size; i++){
+                if( !treeReader.MuonInfo_CutBasedIdTight ) continue;
+                if( fabs(treeReader.MuonInfo_Eta->at(i)) > 2.4 ) continue;
+                if( fabs(treeReader.MuonInfo_Pt->at(i))  < 20  ) continue;
+                if( fabs(treeReader.MuonInfo_PFIsoDeltaBetaCorrR04->at(i))  > 0.25  ) continue;
+                //--- check deltaR(muon,photon) ---//
+                TLorentzVector muon; 
+                muon.SetPtEtaPhiE(treeReader.MuonInfo_Pt->at(i), treeReader.MuonInfo_Eta->at(i), treeReader.MuonInfo_Phi->at(i), treeReader.MuonInfo_Energy->at(i));
+                double delta_R = muon.DeltaR(leading_photon);
+                if( delta_R<0.3 ) continue;
+                delta_R = muon.DeltaR(subleading_photon);
+                if( delta_R<0.3 ) continue;
+                //--- calculate deltaR(muon,diphoton) ---//
+                delta_R = muon.DeltaR(diphoton);
+                //--- store information ---//
+                mytree.MuonInfo_muon_pt.push_back(treeReader.MuonInfo_Pt->at(i));
+                mytree.MuonInfo_muon_eta.push_back(treeReader.MuonInfo_Eta->at(i));
+                mytree.MuonInfo_muon_phi.push_back(treeReader.MuonInfo_Phi->at(i));
+                mytree.MuonInfo_muon_energy.push_back(treeReader.MuonInfo_Phi->at(i));
+                mytree.MuonInfo_muon_diphoton_deltaR.push_back(delta_R);
+                mytree.num_muons+=1;
+                Muons.push_back(muon);
+            }
+        }
+        else{
+                mytree.num_muons=treeReader.MuonInfo_Size;
+        }
+        bool bool_AtLeastOneSelectedMuon = mytree.num_muons>0 ? true : false;//for calculation of deltaR(mu,j).
+        mytree.num_leptons = mytree.num_electrons + mytree.num_muons;
+        //printf("num_leptons = %d\n", mytree.num_leptons);
+        //=========================//
+        //-----  Select Jets  -----//
+        //=========================//
+        mytree.jets_size = treeReader.jets_size;
+        std::vector<TLorentzVector> Jets;
+        bool bool_AtLeastOneJet = treeReader.jets_size>0 ? true : false;//treeReader.jets_size = -999 => event without diphoton candidate
+        if(bool_AtLeastOneJet){
+            for(int i=0; i<treeReader.jets_size; i++){
+                //flashgg::Tight2017 jet ID #Already applied flashgg package.
+                if( fabs(treeReader.JetInfo_Eta->at(i)) > 2.4 ) continue;
+                if( fabs(treeReader.JetInfo_Pt->at(i))  < 25  ) continue;
+                //--- check deltaR(jet,photon) ---//
+                TLorentzVector jet; 
+                jet.SetPtEtaPhiE(treeReader.JetInfo_Pt->at(i), treeReader.JetInfo_Eta->at(i), treeReader.JetInfo_Phi->at(i), treeReader.JetInfo_Energy->at(i));
+                double delta_R = jet.DeltaR(leading_photon);
+                if( delta_R<0.4 ) continue;
+                delta_R = jet.DeltaR(subleading_photon);
+                if( delta_R<0.4 ) continue;
+                bool bool_passJetLeptonSeparation = true;//if no leptons selected, the jet pass the delta_R criterion automatically.
+                //--- check deltaR(jet,e) ---//
+                if(bool_AtLeastOneSelectedElectron){
+                    for(int i=0; i<mytree.num_electrons; i++){
+                        delta_R = jet.DeltaR(Electrons.at(i));
+                        if( delta_R<0.4 ) bool_passJetLeptonSeparation = false;
+                    }
+                }
+                if(!bool_passJetLeptonSeparation) continue;//if not pass, reject the jet.
+                //--- check deltaR(jet,mu) ---//
+                if(bool_AtLeastOneSelectedMuon){
+                    for(int i=0; i<mytree.num_muons; i++){
+                        delta_R = jet.DeltaR(Muons.at(i));
+                        if( delta_R<0.4 ) bool_passJetLeptonSeparation = false;
+                    }
+                }
+                if(!bool_passJetLeptonSeparation) continue;//if not pass, reject the jet.
+                //--- calculate deltaR(muon,diphoton) ---//
+                delta_R = jet.DeltaR(diphoton);
+                //--- store information ---//
+                mytree.JetInfo_jet_pt.push_back(treeReader.JetInfo_Pt->at(i));
+                mytree.JetInfo_jet_eta.push_back(treeReader.JetInfo_Eta->at(i));
+                mytree.JetInfo_jet_phi.push_back(treeReader.JetInfo_Phi->at(i));
+                mytree.JetInfo_jet_energy.push_back(treeReader.JetInfo_Phi->at(i));
+                mytree.JetInfo_jet_diphoton_deltaR.push_back(delta_R);
+                mytree.JetInfo_jet_pfDeepCSVJetTags_probb.push_back(treeReader.JetInfo_pfDeepCSVJetTags_probb->at(i));
+                mytree.JetInfo_jet_pfDeepCSVJetTags_probbb.push_back(treeReader.JetInfo_pfDeepCSVJetTags_probbb->at(i));
+                mytree.num_jets+=1;
+                Jets.push_back(jet);
+            }
+        }
+        else{
+                mytree.num_jets=treeReader.jets_size;
+        }
+        //================================================//
+        //-----------   Store EventPar Info    -----------//
+        //================================================//
         mytree.EvtInfo_NPu = treeReader.EvtInfo_NPu;
+        mytree.EvtInfo_Rho = treeReader.EvtInfo_Rho;
         mytree.EvtInfo_NVtx = treeReader.EvtInfo_NVtx;
         mytree.EvtInfo_genweight = treeReader.EvtInfo_genweight;
         //==================================================//
         //-------------   Event Counting     ---------------//
         //==================================================//
         Nevents_pass_selection += 1;
-
         mytree.Fill();
     }// End of event loop.
-
     //==================================================//
     //---------------------  Report  -------------------//
     //==================================================//
-    printf("\n[INFO] N_Nevents_pass_selection = %d/%d\n", Nevents_pass_selection, nentries);
-    printf("[DEBUG] Nevents_CUT_num_bjets_is_not_exactly_one = %d (%.4f)\n", Nevents_CUT_num_bjets_is_not_exactly_one, (double)Nevents_CUT_num_bjets_is_not_exactly_one/(double)Nevents_pass_selection);
-    printf("[DEBUG] Nevents_anti_CUT_num_bjets_is_not_exactly_one = %d (%.4f)\n", Nevents_anti_CUT_num_bjets_is_not_exactly_one, (double)Nevents_anti_CUT_num_bjets_is_not_exactly_one/(double)Nevents_pass_selection);
-    printf("[DEBUG] Nevents_CUT_no_bjet_events = %d (%.4f)\n", Nevents_CUT_no_bjet_events, (double)Nevents_CUT_no_bjet_events/(double)Nevents_pass_selection);
-    printf("[DEBUG] Nevents_anti_CUT_no_bjet_events = %d (%.4f)\n", Nevents_anti_CUT_no_bjet_events, (double)Nevents_anti_CUT_no_bjet_events/(double)Nevents_pass_selection);
-    printf("[DEBUG] Nevents_CUT_num_nonbjets_less_than_2 = %d (%.4f)\n", Nevents_CUT_num_nonbjets_less_than_2, (double)Nevents_CUT_num_nonbjets_less_than_2/(double)Nevents_pass_selection);
-    printf("[DEBUG] Nevents_anti_CUT_num_nonbjets_less_than_2 = %d (%.4f)\n", Nevents_anti_CUT_num_nonbjets_less_than_2, (double)Nevents_anti_CUT_num_nonbjets_less_than_2/(double)Nevents_pass_selection);
-    printf("[DEBUG] Nevents_CUT_nand = %d (%.4f)\n", Nevents_CUT_nand, (double)Nevents_CUT_nand/(double)Nevents_pass_selection);
-    printf("[DEBUG] Nevents_anti_CUT_nand = %d (%.4f)\n", Nevents_anti_CUT_nand, (double)Nevents_anti_CUT_nand/(double)Nevents_pass_selection);
-
-
     fout->Write();
     fout->Close();
     return 1;
@@ -364,6 +315,52 @@ flashggStdTreeParameters::flashggStdTreeParameters(){
     JetInfo_Energy = new std::vector<float>;
     JetInfo_pfDeepCSVJetTags_probb = new std::vector<float>;
     JetInfo_pfDeepCSVJetTags_probbb = new std::vector<float>;
+    //------------------------
+    ElecInfo_Charge = new std::vector<int>;
+    ElecInfo_Pt = new std::vector<float>;
+    ElecInfo_Eta = new std::vector<float>;
+    ElecInfo_Phi = new std::vector<float>;
+    ElecInfo_Energy = new std::vector<float>;
+    ElecInfo_EtaSC = new std::vector<float>;
+    ElecInfo_PhiSC = new std::vector<float>;
+    ElecInfo_GsfTrackDz = new std::vector<float>;
+    ElecInfo_GsfTrackDxy = new std::vector<float>;
+    ElecInfo_EGMCutBasedIDVeto = new std::vector<bool>;
+    ElecInfo_EGMCutBasedIDLoose = new std::vector<bool>;
+    ElecInfo_EGMCutBasedIDMedium = new std::vector<bool>;
+    ElecInfo_EGMCutBasedIDTight = new std::vector<bool>;
+    ElecInfo_fggPhoVeto = new std::vector<bool>;
+    ElecInfo_tmpPhoVeto = new std::vector<bool>;
+    ElecInfo_EnergyCorrFactor = new std::vector<float>;
+    ElecInfo_EnergyPostCorrErr = new std::vector<float>;
+    ElecInfo_EnergyPostCorrScaleUp = new std::vector<float>;
+    ElecInfo_EnergyPostCorrScaleDown = new std::vector<float>;
+    ElecInfo_EnergyPostCorrSmearUp = new std::vector<float>;
+    ElecInfo_EnergyPostCorrSmearDown = new std::vector<float>;
+    ElecInfo_GenMatch = new std::vector<bool>;
+    ElecInfo_GenPdgID = new std::vector<int>;
+    ElecInfo_GenPt = new std::vector<float>;
+    ElecInfo_GenEta = new std::vector<float>;
+    ElecInfo_GenPhi = new std::vector<float>;
+    //------------------------
+    MuonInfo_Charge = new std::vector<int>;
+    MuonInfo_MuonType = new std::vector<float>;
+    MuonInfo_Pt = new std::vector<float>;
+    MuonInfo_Eta = new std::vector<float>;
+    MuonInfo_Phi = new std::vector<float>;
+    MuonInfo_Energy = new std::vector<float>;
+    MuonInfo_BestTrackDz = new std::vector<float>;
+    MuonInfo_BestTrackDxy = new std::vector<float>;
+    MuonInfo_PFIsoDeltaBetaCorrR04 = new std::vector<float>;
+    MuonInfo_TrackerBasedIsoR03 = new std::vector<float>;
+    MuonInfo_CutBasedIdMedium = new std::vector<bool>;
+    MuonInfo_CutBasedIdTight = new std::vector<bool>;
+    MuonInfo_GenMatch = new std::vector<bool>;
+    MuonInfo_GenPdgID = new std::vector<int>;
+    MuonInfo_GenPt = new std::vector<float>;
+    MuonInfo_GenEta = new std::vector<float>;
+    MuonInfo_GenPhi = new std::vector<float>;
+    //------------------------
 }
 flashggStdTreeParameters::~flashggStdTreeParameters(){
     delete JetInfo_Pt;
@@ -373,6 +370,52 @@ flashggStdTreeParameters::~flashggStdTreeParameters(){
     delete JetInfo_Energy;
     delete JetInfo_pfDeepCSVJetTags_probb;
     delete JetInfo_pfDeepCSVJetTags_probbb;
+    //------------------------
+    delete ElecInfo_Charge;
+    delete ElecInfo_Pt;
+    delete ElecInfo_Eta;
+    delete ElecInfo_Phi;
+    delete ElecInfo_Energy;
+    delete ElecInfo_EtaSC;
+    delete ElecInfo_PhiSC;
+    delete ElecInfo_GsfTrackDz;
+    delete ElecInfo_GsfTrackDxy;
+    delete ElecInfo_EGMCutBasedIDVeto;
+    delete ElecInfo_EGMCutBasedIDLoose;
+    delete ElecInfo_EGMCutBasedIDMedium;
+    delete ElecInfo_EGMCutBasedIDTight;
+    delete ElecInfo_fggPhoVeto;
+    delete ElecInfo_tmpPhoVeto;
+    delete ElecInfo_EnergyCorrFactor;
+    delete ElecInfo_EnergyPostCorrErr;
+    delete ElecInfo_EnergyPostCorrScaleUp;
+    delete ElecInfo_EnergyPostCorrScaleDown;
+    delete ElecInfo_EnergyPostCorrSmearUp;
+    delete ElecInfo_EnergyPostCorrSmearDown;
+    delete ElecInfo_GenMatch;
+    delete ElecInfo_GenPdgID;
+    delete ElecInfo_GenPt;
+    delete ElecInfo_GenEta;
+    delete ElecInfo_GenPhi;
+    //------------------------
+    delete MuonInfo_Charge;
+    delete MuonInfo_MuonType;
+    delete MuonInfo_Pt;
+    delete MuonInfo_Eta;
+    delete MuonInfo_Phi;
+    delete MuonInfo_Energy;
+    delete MuonInfo_BestTrackDz;
+    delete MuonInfo_BestTrackDxy;
+    delete MuonInfo_PFIsoDeltaBetaCorrR04;
+    delete MuonInfo_TrackerBasedIsoR03;
+    delete MuonInfo_CutBasedIdMedium;
+    delete MuonInfo_CutBasedIdTight;
+    delete MuonInfo_GenMatch;
+    delete MuonInfo_GenPdgID;
+    delete MuonInfo_GenPt;
+    delete MuonInfo_GenEta;
+    delete MuonInfo_GenPhi;
+    //------------------------
 }
 flashggStdTreeReader::flashggStdTreeReader(void){
     printf("[INFO] Reading data...\n");
@@ -400,9 +443,28 @@ TChain* flashggStdTreeReader::GetTChain(void){
     return flashggStdTree;
 }
 void flashggStdTreeReader::SetBranchAddresses(){
+    //------------------------
     flashggStdTree->SetBranchAddress("EvtInfo.NPu", &EvtInfo_NPu);
     flashggStdTree->SetBranchAddress("EvtInfo.NVtx", &EvtInfo_NVtx);
+    flashggStdTree->SetBranchAddress("EvtInfo.Rho", &EvtInfo_Rho);
     flashggStdTree->SetBranchAddress("EvtInfo.genweight", &EvtInfo_genweight);
+    //------------------------
+    flashggStdTree->SetBranchAddress("DiPhoInfo.mass", &DiPhoInfo_mass);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.pt", &DiPhoInfo_pt);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.leadPt", &DiPhoInfo_leadPt);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.leadEta", &DiPhoInfo_leadEta);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.leadPhi", &DiPhoInfo_leadPhi);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.leadE", &DiPhoInfo_leadE);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.leadhoe", &DiPhoInfo_leadhoe);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.leadIDMVA", &DiPhoInfo_leadIDMVA);
+    //------------------------
+    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadPt", &DiPhoInfo_subleadPt);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadEta", &DiPhoInfo_subleadEta);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadPhi", &DiPhoInfo_subleadPhi);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadE", &DiPhoInfo_subleadE);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadhoe", &DiPhoInfo_subleadhoe);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadIDMVA", &DiPhoInfo_subleadIDMVA);
+    //------------------------
     flashggStdTree->SetBranchAddress("jets_size", &jets_size);
     flashggStdTree->SetBranchAddress("JetInfo.Pt", &JetInfo_Pt);
     flashggStdTree->SetBranchAddress("JetInfo.Eta", &JetInfo_Eta);
@@ -411,21 +473,96 @@ void flashggStdTreeReader::SetBranchAddresses(){
     flashggStdTree->SetBranchAddress("JetInfo.Energy", &JetInfo_Energy);
     flashggStdTree->SetBranchAddress("JetInfo.pfDeepCSVJetTags_probb", &JetInfo_pfDeepCSVJetTags_probb);
     flashggStdTree->SetBranchAddress("JetInfo.pfDeepCSVJetTags_probbb", &JetInfo_pfDeepCSVJetTags_probbb);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.mass", &DiPhoInfo_mass);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.leadPt", &DiPhoInfo_leadPt);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.leadEta", &DiPhoInfo_leadEta);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.leadPhi", &DiPhoInfo_leadPhi);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.leadE", &DiPhoInfo_leadE);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.leadIDMVA", &DiPhoInfo_leadIDMVA);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadPt", &DiPhoInfo_subleadPt);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadEta", &DiPhoInfo_subleadEta);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadPhi", &DiPhoInfo_subleadPhi);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadE", &DiPhoInfo_subleadE);
-    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadIDMVA", &DiPhoInfo_subleadIDMVA);
+    //------------------------
+    flashggStdTree->SetBranchAddress("ElecInfo.Size", &ElecInfo_Size);
+    flashggStdTree->SetBranchAddress("ElecInfo.Charge", &ElecInfo_Charge);
+    flashggStdTree->SetBranchAddress("ElecInfo.Pt", &ElecInfo_Pt);
+    flashggStdTree->SetBranchAddress("ElecInfo.Eta", &ElecInfo_Eta);
+    flashggStdTree->SetBranchAddress("ElecInfo.Phi", &ElecInfo_Phi);
+    flashggStdTree->SetBranchAddress("ElecInfo.Energy", &ElecInfo_Energy);
+    flashggStdTree->SetBranchAddress("ElecInfo.EtaSC", &ElecInfo_EtaSC);
+    flashggStdTree->SetBranchAddress("ElecInfo.PhiSC", &ElecInfo_PhiSC);
+    flashggStdTree->SetBranchAddress("ElecInfo.GsfTrackDz", &ElecInfo_GsfTrackDz);
+    flashggStdTree->SetBranchAddress("ElecInfo.GsfTrackDxy", &ElecInfo_GsfTrackDxy);
+    flashggStdTree->SetBranchAddress("ElecInfo.EGMCutBasedIDVeto", &ElecInfo_EGMCutBasedIDVeto);
+    flashggStdTree->SetBranchAddress("ElecInfo.EGMCutBasedIDLoose", &ElecInfo_EGMCutBasedIDLoose);
+    flashggStdTree->SetBranchAddress("ElecInfo.EGMCutBasedIDMedium", &ElecInfo_EGMCutBasedIDMedium);
+    flashggStdTree->SetBranchAddress("ElecInfo.EGMCutBasedIDTight", &ElecInfo_EGMCutBasedIDTight);
+    flashggStdTree->SetBranchAddress("ElecInfo.fggPhoVeto", &ElecInfo_fggPhoVeto);
+    flashggStdTree->SetBranchAddress("ElecInfo.tmpPhoVeto", &ElecInfo_tmpPhoVeto);
+    flashggStdTree->SetBranchAddress("ElecInfo.EnergyCorrFactor", &ElecInfo_EnergyCorrFactor);
+    flashggStdTree->SetBranchAddress("ElecInfo.EnergyPostCorrErr", &ElecInfo_EnergyPostCorrErr);
+    flashggStdTree->SetBranchAddress("ElecInfo.EnergyPostCorrScaleUp", &ElecInfo_EnergyPostCorrScaleUp);
+    flashggStdTree->SetBranchAddress("ElecInfo.EnergyPostCorrScaleDown", &ElecInfo_EnergyPostCorrScaleDown);
+    flashggStdTree->SetBranchAddress("ElecInfo.EnergyPostCorrSmearUp", &ElecInfo_EnergyPostCorrSmearUp);
+    flashggStdTree->SetBranchAddress("ElecInfo.EnergyPostCorrSmearDown", &ElecInfo_EnergyPostCorrSmearDown);
+    flashggStdTree->SetBranchAddress("ElecInfo.GenMatch", &ElecInfo_GenMatch);
+    flashggStdTree->SetBranchAddress("ElecInfo.GenPdgID", &ElecInfo_GenPdgID);
+    flashggStdTree->SetBranchAddress("ElecInfo.GenPt", &ElecInfo_GenPt);
+    flashggStdTree->SetBranchAddress("ElecInfo.GenEta", &ElecInfo_GenEta);
+    flashggStdTree->SetBranchAddress("ElecInfo.GenPhi", &ElecInfo_GenPhi);
+    //------------------------
+    flashggStdTree->SetBranchAddress("MuonInfo.Size", &MuonInfo_Size);
+    flashggStdTree->SetBranchAddress("MuonInfo.Charge", &MuonInfo_Charge);
+    flashggStdTree->SetBranchAddress("MuonInfo.MuonType", &MuonInfo_MuonType);
+    flashggStdTree->SetBranchAddress("MuonInfo.Pt", &MuonInfo_Pt);
+    flashggStdTree->SetBranchAddress("MuonInfo.Eta", &MuonInfo_Eta);
+    flashggStdTree->SetBranchAddress("MuonInfo.Phi", &MuonInfo_Phi);
+    flashggStdTree->SetBranchAddress("MuonInfo.Energy", &MuonInfo_Energy);
+    flashggStdTree->SetBranchAddress("MuonInfo.BestTrackDz", &MuonInfo_BestTrackDz);
+    flashggStdTree->SetBranchAddress("MuonInfo.BestTrackDxy", &MuonInfo_BestTrackDxy);
+    flashggStdTree->SetBranchAddress("MuonInfo.PFIsoDeltaBetaCorrR04", &MuonInfo_PFIsoDeltaBetaCorrR04);
+    flashggStdTree->SetBranchAddress("MuonInfo.TrackerBasedIsoR03", &MuonInfo_TrackerBasedIsoR03);
+    flashggStdTree->SetBranchAddress("MuonInfo.CutBasedIdMedium", &MuonInfo_CutBasedIdMedium);
+    flashggStdTree->SetBranchAddress("MuonInfo.CutBasedIdTight", &MuonInfo_CutBasedIdTight);
+    flashggStdTree->SetBranchAddress("MuonInfo.GenMatch", &MuonInfo_GenMatch);
+    flashggStdTree->SetBranchAddress("MuonInfo.GenPdgID", &MuonInfo_GenPdgID);
+    flashggStdTree->SetBranchAddress("MuonInfo.GenPt", &MuonInfo_GenPt);
+    flashggStdTree->SetBranchAddress("MuonInfo.GenEta", &MuonInfo_GenEta);
+    flashggStdTree->SetBranchAddress("MuonInfo.GenPhi", &MuonInfo_GenPhi);
+    //------------------------
     printf("[INFO] flashggStdTreeReader::SetBranchAddresses : Finished!\n");
 }
 
 
+myParameters::myParameters(){
+    JetInfo_jet_pt_selection = new std::vector<float>;
+    JetInfo_jet_eta_selection = new std::vector<float>;
+    JetInfo_jet_phi_selection = new std::vector<float>;
+    JetInfo_jet_energy_selection = new std::vector<float>;
+    JetInfo_jet_diphoton_deltaR_selection = new std::vector<float>;
+    JetInfo_jet_pfDeepCSVJetTags_probb_selection = new std::vector<float>;
+    JetInfo_jet_pfDeepCSVJetTags_probbb_selection = new std::vector<float>;
+    ElecInfo_electron_pt_selection = new std::vector<float>;
+    ElecInfo_electron_eta_selection = new std::vector<float>;
+    ElecInfo_electron_phi_selection = new std::vector<float>;
+    ElecInfo_electron_energy_selection = new std::vector<float>;
+    ElecInfo_electron_diphoton_deltaR_selection = new std::vector<float>;
+    MuonInfo_muon_pt_selection = new std::vector<float>;
+    MuonInfo_muon_eta_selection = new std::vector<float>;
+    MuonInfo_muon_phi_selection = new std::vector<float>;
+    MuonInfo_muon_energy_selection = new std::vector<float>;
+    MuonInfo_muon_diphoton_deltaR_selection = new std::vector<float>;
+}
+myParameters::~myParameters(){
+    delete JetInfo_jet_pt_selection;
+    delete JetInfo_jet_eta_selection;
+    delete JetInfo_jet_phi_selection;
+    delete JetInfo_jet_energy_selection;
+    delete JetInfo_jet_diphoton_deltaR_selection;
+    delete JetInfo_jet_pfDeepCSVJetTags_probb_selection;
+    delete JetInfo_jet_pfDeepCSVJetTags_probbb_selection;
+    delete ElecInfo_electron_pt_selection;
+    delete ElecInfo_electron_eta_selection;
+    delete ElecInfo_electron_phi_selection;
+    delete ElecInfo_electron_energy_selection;
+    delete ElecInfo_electron_diphoton_deltaR_selection;
+    delete MuonInfo_muon_pt_selection;
+    delete MuonInfo_muon_eta_selection;
+    delete MuonInfo_muon_phi_selection;
+    delete MuonInfo_muon_energy_selection;
+    delete MuonInfo_muon_diphoton_deltaR_selection;
+}
 
 void myTreeClass::InitTree(){
     mytree =  new TTree("mytree", "mytree");
@@ -434,45 +571,68 @@ void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("EvtInfo_totalEntry_before_preselection", &EvtInfo_totalEntry_before_preselection, "EvtInfo_totalEntry_before_preselection/I");
     mytree -> Branch("EvtInfo_NormalizationFactor_lumi", &EvtInfo_NormalizationFactor_lumi, "EvtInfo_NormalizationFactor_lumi/F");
     mytree -> Branch("EvtInfo_NPu", &EvtInfo_NPu, "EvtInfo_NPu/I");
+    mytree -> Branch("EvtInfo_Rho", &EvtInfo_Rho, "EvtInfo_Rho/F");
     mytree -> Branch("EvtInfo_NVtx", &EvtInfo_NVtx, "EvtInfo_NVtx/I");
     mytree -> Branch("EvtInfo_genweight", &EvtInfo_genweight, "EvtInfo_genweight/F");
+    //------------------------
+    mytree -> Branch("DiPhoInfo_mass", &DiPhoInfo_mass, "DiPhoInfo_mass/F");
+    mytree -> Branch("DiPhoInfo_pt", &DiPhoInfo_pt, "DiPhoInfo_pt/F");
+    mytree -> Branch("DiPhoInfo_eta", &DiPhoInfo_eta, "DiPhoInfo_eta/F");
+    mytree -> Branch("DiPhoInfo_phi", &DiPhoInfo_phi, "DiPhoInfo_phi/F");
+    mytree -> Branch("DiPhoInfo_energy", &DiPhoInfo_energy, "DiPhoInfo_energy/F");
+    mytree -> Branch("DiPhoInfo_leadPt", &DiPhoInfo_leadPt, "DiPhoInfo_leadPt/F");
+    mytree -> Branch("DiPhoInfo_leadEta", &DiPhoInfo_leadEta, "DiPhoInfo_leadEta/F");
+    mytree -> Branch("DiPhoInfo_leadPhi", &DiPhoInfo_leadPhi, "DiPhoInfo_leadPhi/F");
+    mytree -> Branch("DiPhoInfo_leadE", &DiPhoInfo_leadE, "DiPhoInfo_leadE/F");
+    mytree -> Branch("DiPhoInfo_leadhoe", &DiPhoInfo_leadhoe, "DiPhoInfo_leadhoe/F");
+    mytree -> Branch("DiPhoInfo_leadIDMVA", &DiPhoInfo_leadIDMVA, "DiPhoInfo_leadIDMVA/F");
+    mytree -> Branch("DiPhoInfo_subleadPt", &DiPhoInfo_subleadPt, "DiPhoInfo_subleadPt/F");
+    mytree -> Branch("DiPhoInfo_subleadEta", &DiPhoInfo_subleadEta, "DiPhoInfo_subleadEta/F");
+    mytree -> Branch("DiPhoInfo_subleadPhi", &DiPhoInfo_subleadPhi, "DiPhoInfo_subleadPhi/F");
+    mytree -> Branch("DiPhoInfo_subleadE", &DiPhoInfo_subleadE, "DiPhoInfo_subleadE/F");
+    mytree -> Branch("DiPhoInfo_subleadhoe", &DiPhoInfo_subleadhoe, "DiPhoInfo_subleadhoe/F");
+    mytree -> Branch("DiPhoInfo_subleadIDMVA", &DiPhoInfo_subleadIDMVA, "DiPhoInfo_subleadIDMVA/F");
+    //------------------------
+    mytree -> Branch("ElecInfo_Size", &ElecInfo_Size, "ElecInfo_Size/I");
+    mytree -> Branch("MuonInfo_Size", &MuonInfo_Size, "MuonInfo_Size/I");
+    mytree -> Branch("num_leptons", &num_leptons, "num_leptons/I");// # of selected objects.
+    mytree -> Branch("num_electrons", &num_electrons, "num_electrons/I");// # of selected objects.
+    mytree -> Branch("num_muons", &num_muons, "num_muons/I");// # of selected objects.
+    mytree -> Branch("ElecInfo_electron_pt", &ElecInfo_electron_pt);
+    mytree -> Branch("ElecInfo_electron_eta", &ElecInfo_electron_eta);
+    mytree -> Branch("ElecInfo_electron_phi", &ElecInfo_electron_phi);
+    mytree -> Branch("ElecInfo_electron_energy", &ElecInfo_electron_energy);
+    mytree -> Branch("ElecInfo_electron_diphoton_deltaR", &ElecInfo_electron_diphoton_deltaR);
+    mytree -> Branch("MuonInfo_muon_pt", &MuonInfo_muon_pt);
+    mytree -> Branch("MuonInfo_muon_eta", &MuonInfo_muon_eta);
+    mytree -> Branch("MuonInfo_muon_phi", &MuonInfo_muon_phi);
+    mytree -> Branch("MuonInfo_muon_energy", &MuonInfo_muon_energy);
+    mytree -> Branch("MuonInfo_muon_diphoton_deltaR", &MuonInfo_muon_diphoton_deltaR);
+    //------------------------
+    mytree -> Branch("jets_size", &jets_size, "jets_size/I");
     mytree -> Branch("num_jets", &num_jets, "num_jets/I");
-    mytree -> Branch("num_btagged_jets", &num_btagged_jets, "num_btagged_jets/I");
-    mytree -> Branch("num_nonbtagged_jets", &num_nonbtagged_jets, "num_nonbtagged_jets/I");
-    //------------------------
-    mytree -> Branch("inv_mass_dijet", &inv_mass_dijet, "inv_mass_dijet/F");
-    mytree -> Branch("inv_mass_diphoton", &inv_mass_diphoton, "inv_mass_diphoton/F");
-    mytree -> Branch("inv_mass_tbw", &inv_mass_tbw, "inv_mass_tbw/F");
-    //------------------------
-    mytree -> Branch("JetInfo_leading_bjet_pt", &JetInfo_leading_bjet_pt, "JetInfo_leading_bjet_pt/F");
-    mytree -> Branch("JetInfo_leading_bjet_eta", &JetInfo_leading_bjet_eta, "JetInfo_leading_bjet_eta/F");
-    mytree -> Branch("JetInfo_leading_bjet_phi", &JetInfo_leading_bjet_phi, "JetInfo_leading_bjet_phi/F");
-    mytree -> Branch("JetInfo_chosen_bjet_is_leading_bjet", &JetInfo_chosen_bjet_is_leading_bjet, "JetInfo_chosen_bjet_is_leading_bjet/I");
-    mytree -> Branch("JetInfo_chosen_bjet_pt", &JetInfo_chosen_bjet_pt, "JetInfo_chosen_bjet_pt/F");
-    mytree -> Branch("JetInfo_chosen_bjet_eta", &JetInfo_chosen_bjet_eta, "JetInfo_chosen_bjet_eta/F");
-    mytree -> Branch("JetInfo_chosen_bjet_phi", &JetInfo_chosen_bjet_phi, "JetInfo_chosen_bjet_phi/F");
+    mytree -> Branch("JetInfo_jet_pt", &JetInfo_jet_pt);
+    mytree -> Branch("JetInfo_jet_eta", &JetInfo_jet_eta);
+    mytree -> Branch("JetInfo_jet_phi", &JetInfo_jet_phi);
+    mytree -> Branch("JetInfo_jet_energy", &JetInfo_jet_energy);
+    mytree -> Branch("JetInfo_jet_diphoton_deltaR", &JetInfo_jet_diphoton_deltaR);
+    mytree -> Branch("JetInfo_jet_pfDeepCSVJetTags_probb", &JetInfo_jet_pfDeepCSVJetTags_probb);
+    mytree -> Branch("JetInfo_jet_pfDeepCSVJetTags_probbb", &JetInfo_jet_pfDeepCSVJetTags_probbb);
     mytree -> Branch("JetInfo_jet1_pt", &JetInfo_jet1_pt, "JetInfo_jet1_pt/F");
     mytree -> Branch("JetInfo_jet1_eta", &JetInfo_jet1_eta, "JetInfo_jet1_eta/F");
     mytree -> Branch("JetInfo_jet1_phi", &JetInfo_jet1_phi, "JetInfo_jet1_phi/F");
     mytree -> Branch("JetInfo_jet2_pt", &JetInfo_jet2_pt, "JetInfo_jet2_pt/F");
     mytree -> Branch("JetInfo_jet2_eta", &JetInfo_jet2_eta, "JetInfo_jet2_eta/F");
     mytree -> Branch("JetInfo_jet2_phi", &JetInfo_jet2_phi, "JetInfo_jet2_phi/F");
+    //mytree -> Branch("num_btagged_jets", &num_btagged_jets, "num_btagged_jets/I");
+    //mytree -> Branch("num_nonbtagged_jets", &num_nonbtagged_jets, "num_nonbtagged_jets/I");
+    //mytree -> Branch("JetInfo_leading_bjet_pt", &JetInfo_leading_bjet_pt, "JetInfo_leading_bjet_pt/F");
+    //mytree -> Branch("JetInfo_leading_bjet_eta", &JetInfo_leading_bjet_eta, "JetInfo_leading_bjet_eta/F");
+    //mytree -> Branch("JetInfo_leading_bjet_phi", &JetInfo_leading_bjet_phi, "JetInfo_leading_bjet_phi/F");
     //------------------------
-    mytree -> Branch("JetInfo_dijet_delta_eta", &JetInfo_dijet_delta_eta, "JetInfo_dijet_delta_eta/F");
-    mytree -> Branch("JetInfo_dijet_delta_phi", &JetInfo_dijet_delta_phi, "JetInfo_dijet_delta_phi/F");
-    mytree -> Branch("JetInfo_dijet_delta_angle", &JetInfo_dijet_delta_angle, "JetInfo_dijet_delta_angle/F");
-    //------------------------
-    mytree -> Branch("DiPhoInfo_leadPt", &DiPhoInfo_leadPt, "DiPhoInfo_leadPt/F");
-    mytree -> Branch("DiPhoInfo_leadEta", &DiPhoInfo_leadEta, "DiPhoInfo_leadEta/F");
-    mytree -> Branch("DiPhoInfo_leadPhi", &DiPhoInfo_leadPhi, "DiPhoInfo_leadPhi/F");
-    mytree -> Branch("DiPhoInfo_leadE", &DiPhoInfo_leadE, "DiPhoInfo_leadE/F");
-    mytree -> Branch("DiPhoInfo_leadIDMVA", &DiPhoInfo_leadIDMVA, "DiPhoInfo_leadIDMVA/F");
-    mytree -> Branch("DiPhoInfo_subleadPt", &DiPhoInfo_subleadPt, "DiPhoInfo_subleadPt/F");
-    mytree -> Branch("DiPhoInfo_subleadEta", &DiPhoInfo_subleadEta, "DiPhoInfo_subleadEta/F");
-    mytree -> Branch("DiPhoInfo_subleadPhi", &DiPhoInfo_subleadPhi, "DiPhoInfo_subleadPhi/F");
-    mytree -> Branch("DiPhoInfo_subleadE", &DiPhoInfo_subleadE, "DiPhoInfo_subleadE/F");
-    mytree -> Branch("DiPhoInfo_subleadIDMVA", &DiPhoInfo_subleadIDMVA, "DiPhoInfo_subleadIDMVA/F");
-    mytree -> Branch("DiPhoInfo_mass", &DiPhoInfo_mass, "DiPhoInfo_mass/F");
+    //mytree -> Branch("inv_mass_dijet", &inv_mass_dijet, "inv_mass_dijet/F");
+    //mytree -> Branch("inv_mass_diphoton", &inv_mass_diphoton, "inv_mass_diphoton/F");
+    //mytree -> Branch("inv_mass_tbw", &inv_mass_tbw, "inv_mass_tbw/F");
 }
 void myTreeClass::Fill(){
     mytree -> Fill();
@@ -481,9 +641,48 @@ void myParameters::Clear(){
     EvtInfo_totalEntry_before_preselection = 0;
     EvtInfo_NormalizationFactor_lumi = 0;
     //------------------------
+    DiPhoInfo_eta = 0;
+    DiPhoInfo_phi = 0;
+    DiPhoInfo_energy = 0;
+    //------------------------
     num_jets = 0;
+    JetInfo_jet_pt.clear();
+    JetInfo_jet_eta.clear();
+    JetInfo_jet_phi.clear();
+    JetInfo_jet_energy.clear();
+    JetInfo_jet_diphoton_deltaR.clear();
+    JetInfo_jet_pfDeepCSVJetTags_probb.clear();
+    JetInfo_jet_pfDeepCSVJetTags_probbb.clear();
+    //------------------------
+    num_leptons = 0;
+    num_electrons = 0;
+    num_muons = 0;
+    ElecInfo_electron_pt.clear();
+    ElecInfo_electron_eta.clear();
+    ElecInfo_electron_phi.clear();
+    ElecInfo_electron_energy.clear();
+    ElecInfo_electron_diphoton_deltaR.clear();
+    MuonInfo_muon_pt.clear();
+    MuonInfo_muon_eta.clear();
+    MuonInfo_muon_phi.clear();
+    MuonInfo_muon_energy.clear();
+    MuonInfo_muon_diphoton_deltaR.clear();
+    //------------------------
+    //Not used in preselection stage
+    //------------------------
     num_btagged_jets = 0;
     num_nonbtagged_jets = 0;
+    JetInfo_leading_bjet_pt = 0;
+    JetInfo_leading_bjet_eta = 0;
+    JetInfo_leading_bjet_phi = 0;
+    JetInfo_jet1_pt = 0;
+    JetInfo_jet1_eta = 0;
+    JetInfo_jet1_phi = 0;
+    JetInfo_jet2_pt = 0;
+    JetInfo_jet2_eta = 0;
+    JetInfo_jet2_phi = 0;
+    //------------------------
+    //Chi-2 sorting related
     //------------------------
     inv_mass_dijet = 0;
     inv_mass_diphoton = 0;
@@ -493,20 +692,63 @@ void myParameters::Clear(){
     JetInfo_dijet_delta_phi = 0;
     JetInfo_dijet_delta_angle = 0;
     //------------------------
-    JetInfo_leading_bjet_pt = 0;
-    JetInfo_leading_bjet_eta = 0;
-    JetInfo_leading_bjet_phi = 0;
-    //------------------------
     JetInfo_chosen_bjet_is_leading_bjet = -1;
     JetInfo_chosen_bjet_pt = 0;
     JetInfo_chosen_bjet_eta = 0;
     JetInfo_chosen_bjet_phi = 0;
     //------------------------
-    JetInfo_jet1_pt = 0;
-    JetInfo_jet1_eta = 0;
-    JetInfo_jet1_phi = 0;
-    //------------------------
-    JetInfo_jet2_pt = 0;
-    JetInfo_jet2_eta = 0;
-    JetInfo_jet2_phi = 0;
 }
+/*
+        std::vector<int> vec_bjet_indices;
+        std::vector<TLorentzVector> vec_btagged_jets;
+        std::vector<TLorentzVector> vec_nonbtagged_jets;
+        //=================================//
+        //-----  Select B-tagged Jet  -----//
+        //=================================//
+        int bjetindex=-1;
+        TLorentzVector leading_bjet;
+        for(int i=0; i<treeReader.jets_size; i++){
+            if( fabs(treeReader.JetInfo_Eta->at(i)) > 2.4 ) continue;
+            if( fabs(treeReader.JetInfo_Pt->at(i))  < 25  ) continue;
+            if(treeReader.JetInfo_pfDeepCSVJetTags_probb->at(i)+treeReader.JetInfo_pfDeepCSVJetTags_probbb->at(i) >= pfDeepCSVJetTags_tight){
+                if(bjetindex==-1) leading_bjet.SetPtEtaPhiE(treeReader.JetInfo_Pt->at(i), treeReader.JetInfo_Eta->at(i), treeReader.JetInfo_Phi->at(i), treeReader.JetInfo_Energy->at(i));
+                bjetindex = i;
+                TLorentzVector jet_lorentzvector;
+                jet_lorentzvector.SetPtEtaPhiE(treeReader.JetInfo_Pt->at(i), treeReader.JetInfo_Eta->at(i), treeReader.JetInfo_Phi->at(i), treeReader.JetInfo_Energy->at(i));
+                vec_btagged_jets.push_back(jet_lorentzvector);
+                vec_bjet_indices.push_back(bjetindex);
+                mytree.num_btagged_jets+=1;
+            }
+        }
+        bool CUT_no_bjet_events = (bjetindex==-1) ? true : false; // discard no-b-jet events
+        bool CUT_num_bjets_is_not_exactly_one = (mytree.num_btagged_jets!=1) ? true : false; // exactly 1 b-jet criterion
+        mytree.JetInfo_leading_bjet_pt = CUT_no_bjet_events ? -999. : leading_bjet.Pt();
+        mytree.JetInfo_leading_bjet_eta = CUT_no_bjet_events ? -999. : leading_bjet.Eta();
+        mytree.JetInfo_leading_bjet_phi = CUT_no_bjet_events ? -999. : leading_bjet.Phi();
+        //==============================//
+        //-----  Select Rest Jets  -----//
+        //==============================//
+        bool isbjet;
+        for(int i=0; i<treeReader.jets_size; i++){
+            if( fabs(treeReader.JetInfo_Eta->at(i)) > 2.4 ) continue;
+            if( fabs(treeReader.JetInfo_Pt->at(i))  < 25  ) continue;
+            //--------------------
+            // Exclude bjet
+            isbjet=false;
+            if(!CUT_no_bjet_events){for(int j=0; j<vec_btagged_jets.size(); j++){if(i==vec_bjet_indices[j]) isbjet=true;}}
+            if(isbjet) continue;
+            //--------------------
+            TLorentzVector jet_lorentzvector;
+            jet_lorentzvector.SetPtEtaPhiE(treeReader.JetInfo_Pt->at(i), treeReader.JetInfo_Eta->at(i), treeReader.JetInfo_Phi->at(i), treeReader.JetInfo_Energy->at(i));
+            vec_nonbtagged_jets.push_back(jet_lorentzvector);
+            mytree.num_nonbtagged_jets+=1;
+        }
+        bool CUT_num_nonbjets_less_than_2 = (mytree.num_nonbtagged_jets<2) ? true : false;
+        mytree.num_jets = mytree.num_btagged_jets + mytree.num_nonbtagged_jets;
+        mytree.JetInfo_jet1_pt = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[0].Pt();
+        mytree.JetInfo_jet1_eta = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[0].Eta();
+        mytree.JetInfo_jet1_phi = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[0].Phi();
+        mytree.JetInfo_jet2_pt = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[1].Pt();
+        mytree.JetInfo_jet2_eta = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[1].Eta();
+        mytree.JetInfo_jet2_phi = CUT_num_nonbjets_less_than_2 ? -999. : vec_nonbtagged_jets[1].Phi();
+*/
