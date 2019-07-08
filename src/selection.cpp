@@ -1,3 +1,12 @@
+//***************************************************************************
+//
+// FileName    : selection.cpp
+// Purpose     : Develop for top FCNH with H to two photons analysis
+// Description : Applying event selection & Preparing histograms for individual dataset.
+// Deetail     : PU reweighting, leptonic/hadronic channels, hists, (top reconstruction).
+// Author      : Yu-Wei Kao [ykao@cern.ch]
+//
+//***************************************************************************
 #include <stdio.h>
 #include <TFile.h>
 #include <TH1D.h>
@@ -9,8 +18,14 @@
 #include "../include/enumhist.h"
 using namespace std;
 
-void Selection(char* input_file, char* output_file, char* dataset, char* output_dir){
+bool bool_isHadronic;
+
+void Selection(char* input_file, char* output_file, char* dataset, char* output_dir, char* channel){
     bool isData = isThisDataOrNot(dataset);
+    //-----
+    if((string)channel == "hadronic") bool_isHadronic = true; else bool_isHadronic = false;
+    if(bool_isHadronic) printf("[CHECK] isHadronic!\n");
+    if(!bool_isHadronic) printf("[CHECK] isLeptonic!\n");
     //============================//
     //----- Input file names -----//
     //============================//
@@ -49,33 +64,26 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi * PU_reweighting_factor;
         double NormalizationFactor_wopu = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
         //Reminder: EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
-        //========= Event Selections (Leptonic) =========//
-        /*
-        if(treeReader.num_leptons<1) continue;
-        if(treeReader.num_jets<1) continue;
-        //--------- check bjets ---------//
-        int num_bjets = 0;
-        if(!(treeReader.num_jets<1)){
-            for(int i=0; i<treeReader.num_jets; ++i){
-                if(treeReader.JetInfo_jet_pfDeepCSVJetTags_probb_selection->at(i)+treeReader.JetInfo_jet_pfDeepCSVJetTags_probbb_selection->at(i) >= pfDeepCSVJetTags_tight){
-                    num_bjets += 1;
-                    if(num_bjets == 1){
-                        h[hist_leading_bjet_pt] -> Fill(treeReader.JetInfo_jet_pt_selection->at(i), isData ? 1. : NormalizationFactor);
-                        h[hist_leading_bjet_eta] -> Fill(treeReader.JetInfo_jet_eta_selection->at(i), isData ? 1. : NormalizationFactor);
-                        h[hist_leading_bjet_phi] -> Fill(treeReader.JetInfo_jet_phi_selection->at(i), isData ? 1. : NormalizationFactor);
-                        h[hist_leading_bjet_energy] -> Fill(treeReader.JetInfo_jet_energy_selection->at(i), isData ? 1. : NormalizationFactor);
-                    }
-                }
-            }//end of looping jets
+        //========= Event Selections =========//
+        bool passEvent=true;
+        //--- Leptonic Channel ---//
+        if(!bool_isHadronic){
+            if(treeReader.num_leptons<1) passEvent = false;
+            if(treeReader.num_jets<1) passEvent = false;
+        //--- Hadronic Channel ---//
+        } else{
+            if(treeReader.num_leptons>0) passEvent = false;
+            if(treeReader.num_jets<3) passEvent = false;
         }
-        if(num_bjets == 0) continue;
-        */
+        if(!passEvent) continue;
+        //========= Event Selections (Leptonic) =========//
+        //if(treeReader.num_leptons<1) continue;
+        //if(treeReader.num_jets<1) continue;
         //========= Event Selections (Hadronic) =========//
-        if(treeReader.num_leptons>0) continue;
-        if(treeReader.num_jets<3) continue;
-        //check bjet
-        //--------- check bjets ---------//
+        //if(treeReader.num_leptons>0) continue;
+        //if(treeReader.num_jets<3) continue;
         /*
+        //--------- check bjets ---------//
         int num_bjets = 0;
         if(!(treeReader.num_jets<1)){
             for(int i=0; i<treeReader.num_jets; ++i){
@@ -96,6 +104,7 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         h[hist_EvtInfo_NPu] -> Fill(treeReader.EvtInfo_NPu, isData ? 1. : NormalizationFactor);
         h[hist_EvtInfo_Rho] -> Fill(treeReader.EvtInfo_Rho, isData ? 1. : NormalizationFactor);
         h[hist_EvtInfo_NVtx] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor);
+        h[hist_EvtInfo_NVtx_wopu] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor_wopu);
         h[hist_EvtInfo_genweight] -> Fill(treeReader.EvtInfo_genweight, isData ? 1. : NormalizationFactor);
         //--------- Diphoton ---------//
         TLorentzVector Diphoton;
@@ -218,7 +227,7 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
     //--------------------- MakePlot -------------------//
     //==================================================//
     TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
-    for(int i=0; i<totalHistNum; i++){
+    for(int i=0; i<totalHistNum; ++i){
         MakePlots(c1, h[i], Form("%s/%s.png", output_dir, histNames[i].c_str()));
     }
     //=================================================//
@@ -233,8 +242,9 @@ int main(int argc, char *argv[]){
     char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
     char output_file[512]; sprintf(output_file, "%s", argv[2]); printf("[INFO] output_file = %s\n", output_file);
     char dataset[512]; sprintf(dataset, "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset);
-    char output_dir[512];  sprintf(output_dir, "%s", argv[4]); printf("[INFO] output_dir = %s\n", output_dir);
-    Selection(input_file, output_file, dataset, output_dir);
+    char output_dir[512];  sprintf(output_dir, "%s", argv[4]); printf("[INFO] output_dir  = %s\n", output_dir);
+    char channel[512];  sprintf(channel, "%s", argv[5]); printf("[INFO] channel     = %s\n", channel);
+    Selection(input_file, output_file, dataset, output_dir, channel);
     return 1;
 }
 
@@ -320,12 +330,6 @@ void myTreeClass::SetBranchAddresses(){
     mytree -> SetBranchAddress("JetInfo_jet_diphoton_deltaR", &JetInfo_jet_diphoton_deltaR_selection);
     mytree -> SetBranchAddress("JetInfo_jet_pfDeepCSVJetTags_probb", &JetInfo_jet_pfDeepCSVJetTags_probb_selection);
     mytree -> SetBranchAddress("JetInfo_jet_pfDeepCSVJetTags_probbb", &JetInfo_jet_pfDeepCSVJetTags_probbb_selection);
-    mytree -> SetBranchAddress("JetInfo_jet1_pt", &JetInfo_jet1_pt);
-    mytree -> SetBranchAddress("JetInfo_jet1_eta", &JetInfo_jet1_eta);
-    mytree -> SetBranchAddress("JetInfo_jet1_phi", &JetInfo_jet1_phi);
-    mytree -> SetBranchAddress("JetInfo_jet2_pt", &JetInfo_jet2_pt);
-    mytree -> SetBranchAddress("JetInfo_jet2_eta", &JetInfo_jet2_eta);
-    mytree -> SetBranchAddress("JetInfo_jet2_phi", &JetInfo_jet2_phi);
     printf("[INFO] myTreeClass::SetBranchAddresses : Finished!\n");
 }
 myParameters::myParameters(){

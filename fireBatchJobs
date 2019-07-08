@@ -56,12 +56,13 @@ elif [[ $1 == '-p' ]]; then
     done
 #--------------------------------------#
 elif [[ $1 == '-s' ]]; then
-    echo "[MESSAGE] Start submit selection!"
+    CHANNEL=$2
+    echo "[MESSAGE] Start submit selection! (${CHANNEL})"
     for dataset in `cat ListRootFiles | grep -v "#"`
     do
         echo "[MESSAGE] ssh node$(GetNumber) dataset=${dataset}"
         ssh node$(GetNumber) "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd;\
-        eval `scramv1 runtime -sh` time ./script/exe_selection_batch ${dataset}" &
+        eval `scramv1 runtime -sh` time ./script/exe_selection_batch ${dataset} ${CHANNEL}" &
     done
     ## Make stack plots
     #root -l -b -q src/stackHist.C | tee log/log_stack

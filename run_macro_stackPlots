@@ -1,2 +1,3 @@
 #!/bin/bash
-root -l -b -q src/stackHist.C | tee log/info_stack_plots
+CHANNEL=$1
+root -l -b -q src/stackHist.C\(\"${CHANNEL}\"\) | tee log/info_stack_plots

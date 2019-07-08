@@ -5,4 +5,17 @@ set -e
 #time ./fireBatchJobs -p > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
 
 #=== Selection ===#
-time ./fireBatchJobs -s > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
+CHANNEL="hadronic"
+time ./fireBatchJobs -s ${CHANNEL} > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
+sleep 1m; sleep 10s
+./check_submit_status
+./run_macro_stackPlots ${CHANNEL}
+./script/resetPlotsChannels plots_${CHANNEL}
+
+
+CHANNEL="leptonic"
+time ./fireBatchJobs -s ${CHANNEL} > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
+sleep 1m; sleep 10s
+./check_submit_status
+./run_macro_stackPlots ${CHANNEL}
+./script/resetPlotsChannels plots_${CHANNEL}

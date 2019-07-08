@@ -122,6 +122,8 @@ public:
     std::vector<float> JetInfo_jet_phi;
     std::vector<float> JetInfo_jet_energy;
     std::vector<float> JetInfo_jet_diphoton_deltaR;
+    std::vector<float> JetInfo_jet_leadingPhoton_deltaR;
+    std::vector<float> JetInfo_jet_subleadingPhoton_deltaR;
     std::vector<float> JetInfo_jet_pfDeepCSVJetTags_probb;
     std::vector<float> JetInfo_jet_pfDeepCSVJetTags_probbb;
     //------------------------
@@ -133,28 +135,20 @@ public:
     std::vector<float> ElecInfo_electron_phi;
     std::vector<float> ElecInfo_electron_energy;
     std::vector<float> ElecInfo_electron_diphoton_deltaR;
+    std::vector<float> ElecInfo_electron_leadingPhoton_deltaR;
+    std::vector<float> ElecInfo_electron_subleadingPhoton_deltaR;
     std::vector<float> MuonInfo_muon_pt;
     std::vector<float> MuonInfo_muon_eta;
     std::vector<float> MuonInfo_muon_phi;
     std::vector<float> MuonInfo_muon_energy;
     std::vector<float> MuonInfo_muon_diphoton_deltaR;
+    std::vector<float> MuonInfo_muon_leadingPhoton_deltaR;
+    std::vector<float> MuonInfo_muon_subleadingPhoton_deltaR;
     //------------------------
     //Not used in preselection stage
     //------------------------
-    float JetInfo_jet1_pt;
-    float JetInfo_jet1_eta;
-    float JetInfo_jet1_phi;
-    float JetInfo_jet1_energy;
-    float JetInfo_jet2_pt;
-    float JetInfo_jet2_eta;
-    float JetInfo_jet2_phi;
-    float JetInfo_jet2_energy;
     Int_t num_btagged_jets;// # of selected objects.
     Int_t num_nonbtagged_jets;// # of selected objects.
-    float JetInfo_leading_bjet_pt;
-    float JetInfo_leading_bjet_eta;
-    float JetInfo_leading_bjet_phi;
-    float JetInfo_leading_bjet_energy;
     //------------------------
     //Chi-2 sorting related
     //------------------------
@@ -166,11 +160,6 @@ public:
     float JetInfo_dijet_delta_phi;
     float JetInfo_dijet_delta_angle;
     //------------------------
-    Int_t JetInfo_chosen_bjet_is_leading_bjet;
-    float JetInfo_chosen_bjet_pt;
-    float JetInfo_chosen_bjet_eta;
-    float JetInfo_chosen_bjet_phi;
-    //------------------------
     //containers used in selection stage
     //------------------------
     std::vector<float> *JetInfo_jet_pt_selection;
@@ -178,6 +167,8 @@ public:
     std::vector<float> *JetInfo_jet_phi_selection;
     std::vector<float> *JetInfo_jet_energy_selection;
     std::vector<float> *JetInfo_jet_diphoton_deltaR_selection;
+    std::vector<float> *JetInfo_jet_leadingPhoton_deltaR_selection;
+    std::vector<float> *JetInfo_jet_subleadingPhoton_deltaR_selection;
     std::vector<float> *JetInfo_jet_pfDeepCSVJetTags_probb_selection;
     std::vector<float> *JetInfo_jet_pfDeepCSVJetTags_probbb_selection;
     std::vector<float> *ElecInfo_electron_pt_selection;
@@ -185,11 +176,15 @@ public:
     std::vector<float> *ElecInfo_electron_phi_selection;
     std::vector<float> *ElecInfo_electron_energy_selection;
     std::vector<float> *ElecInfo_electron_diphoton_deltaR_selection;
+    std::vector<float> *ElecInfo_electron_leadingPhoton_deltaR_selection;
+    std::vector<float> *ElecInfo_electron_subleadingPhoton_deltaR_selection;
     std::vector<float> *MuonInfo_muon_pt_selection;
     std::vector<float> *MuonInfo_muon_eta_selection;
     std::vector<float> *MuonInfo_muon_phi_selection;
     std::vector<float> *MuonInfo_muon_energy_selection;
     std::vector<float> *MuonInfo_muon_diphoton_deltaR_selection;
+    std::vector<float> *MuonInfo_muon_leadingPhoton_deltaR_selection;
+    std::vector<float> *MuonInfo_muon_subleadingPhoton_deltaR_selection;
     void Clear();
 };
 class flashggStdTreeReader: public flashggStdTreeParameters{

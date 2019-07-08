@@ -1,7 +1,11 @@
-//===========================================//
-//=== 24. April. 2019                     ===//
-//=== Develop for single top tqH analysis ===//
-//===========================================//
+//***************************************************************************
+//
+// FileName    : preselection.cpp
+// Purpose     : Develop for top FCNH with H to two photons analysis
+// Description : Extracting event info & Selecting objects (diphoton, leptons, jets).
+// Author      : Yu-Wei Kao [ykao@cern.ch]
+//
+//***************************************************************************
 #include <stdio.h>
 #include <math.h>
 #include <TCanvas.h>
@@ -126,21 +130,22 @@ int main(int argc, char *argv[]){
                 if( !treeReader.ElecInfo_EGMCutBasedIDMedium ) continue;
                 if( fabs(treeReader.ElecInfo_Eta->at(i)) > 2.4 ) continue;
                 if( fabs(treeReader.ElecInfo_Pt->at(i))  < 20  ) continue;
-                //--- check deltaR(muon,photon) ---//
+                //--- check deltaR(electron,photon) ---//
                 TLorentzVector electron; 
                 electron.SetPtEtaPhiE(treeReader.ElecInfo_Pt->at(i), treeReader.ElecInfo_Eta->at(i), treeReader.ElecInfo_Phi->at(i), treeReader.ElecInfo_Energy->at(i));
                 double delta_R = electron.DeltaR(leading_photon);
                 if( delta_R<0.3 ) continue;
                 delta_R = electron.DeltaR(subleading_photon);
                 if( delta_R<0.3 ) continue;
-                //--- calculate deltaR(muon,diphoton) ---//
-                delta_R = electron.DeltaR(diphoton);
+                //--- calculate deltaR(electron,photon/diphoton) and store info ---//
+                delta_R = electron.DeltaR(diphoton);          mytree.ElecInfo_electron_diphoton_deltaR.push_back(delta_R);
+                delta_R = electron.DeltaR(leading_photon);    mytree.ElecInfo_electron_leadingPhoton_deltaR.push_back(delta_R);
+                delta_R = electron.DeltaR(subleading_photon); mytree.ElecInfo_electron_subleadingPhoton_deltaR.push_back(delta_R);
                 //--- store information ---//
                 mytree.ElecInfo_electron_pt.push_back(treeReader.ElecInfo_Pt->at(i));
                 mytree.ElecInfo_electron_eta.push_back(treeReader.ElecInfo_Eta->at(i));
                 mytree.ElecInfo_electron_phi.push_back(treeReader.ElecInfo_Phi->at(i));
                 mytree.ElecInfo_electron_energy.push_back(treeReader.ElecInfo_Phi->at(i));
-                mytree.ElecInfo_electron_diphoton_deltaR.push_back(delta_R);
                 mytree.num_electrons+=1;
                 Electrons.push_back(electron);
             }
@@ -168,14 +173,16 @@ int main(int argc, char *argv[]){
                 if( delta_R<0.3 ) continue;
                 delta_R = muon.DeltaR(subleading_photon);
                 if( delta_R<0.3 ) continue;
-                //--- calculate deltaR(muon,diphoton) ---//
-                delta_R = muon.DeltaR(diphoton);
+                //--- calculate deltaR(muon,diphoton) and store info ---//
+                delta_R = muon.DeltaR(diphoton);          mytree.MuonInfo_muon_diphoton_deltaR.push_back(delta_R);
+                delta_R = muon.DeltaR(leading_photon);    mytree.MuonInfo_muon_leadingPhoton_deltaR.push_back(delta_R);
+                delta_R = muon.DeltaR(subleading_photon); mytree.MuonInfo_muon_subleadingPhoton_deltaR.push_back(delta_R);
                 //--- store information ---//
                 mytree.MuonInfo_muon_pt.push_back(treeReader.MuonInfo_Pt->at(i));
                 mytree.MuonInfo_muon_eta.push_back(treeReader.MuonInfo_Eta->at(i));
                 mytree.MuonInfo_muon_phi.push_back(treeReader.MuonInfo_Phi->at(i));
                 mytree.MuonInfo_muon_energy.push_back(treeReader.MuonInfo_Phi->at(i));
-                mytree.MuonInfo_muon_diphoton_deltaR.push_back(delta_R);
+                
                 mytree.num_muons+=1;
                 Muons.push_back(muon);
             }
@@ -221,14 +228,16 @@ int main(int argc, char *argv[]){
                     }
                 }
                 if(!bool_passJetLeptonSeparation) continue;//if not pass, reject the jet.
-                //--- calculate deltaR(muon,diphoton) ---//
-                delta_R = jet.DeltaR(diphoton);
+                //--- calculate deltaR(jet,diphoton) and store info ---//
+                delta_R = jet.DeltaR(diphoton);          mytree.JetInfo_jet_diphoton_deltaR.push_back(delta_R);
+                delta_R = jet.DeltaR(leading_photon);    mytree.JetInfo_jet_leadingPhoton_deltaR.push_back(delta_R);
+                delta_R = jet.DeltaR(subleading_photon); mytree.JetInfo_jet_subleadingPhoton_deltaR.push_back(delta_R);
                 //--- store information ---//
                 mytree.JetInfo_jet_pt.push_back(treeReader.JetInfo_Pt->at(i));
                 mytree.JetInfo_jet_eta.push_back(treeReader.JetInfo_Eta->at(i));
                 mytree.JetInfo_jet_phi.push_back(treeReader.JetInfo_Phi->at(i));
                 mytree.JetInfo_jet_energy.push_back(treeReader.JetInfo_Phi->at(i));
-                mytree.JetInfo_jet_diphoton_deltaR.push_back(delta_R);
+                
                 mytree.JetInfo_jet_pfDeepCSVJetTags_probb.push_back(treeReader.JetInfo_pfDeepCSVJetTags_probb->at(i));
                 mytree.JetInfo_jet_pfDeepCSVJetTags_probbb.push_back(treeReader.JetInfo_pfDeepCSVJetTags_probbb->at(i));
                 mytree.num_jets+=1;
@@ -531,6 +540,8 @@ myParameters::myParameters(){
     JetInfo_jet_phi_selection = new std::vector<float>;
     JetInfo_jet_energy_selection = new std::vector<float>;
     JetInfo_jet_diphoton_deltaR_selection = new std::vector<float>;
+    JetInfo_jet_leadingPhoton_deltaR_selection = new std::vector<float>;
+    JetInfo_jet_subleadingPhoton_deltaR_selection = new std::vector<float>;
     JetInfo_jet_pfDeepCSVJetTags_probb_selection = new std::vector<float>;
     JetInfo_jet_pfDeepCSVJetTags_probbb_selection = new std::vector<float>;
     ElecInfo_electron_pt_selection = new std::vector<float>;
@@ -538,11 +549,15 @@ myParameters::myParameters(){
     ElecInfo_electron_phi_selection = new std::vector<float>;
     ElecInfo_electron_energy_selection = new std::vector<float>;
     ElecInfo_electron_diphoton_deltaR_selection = new std::vector<float>;
+    ElecInfo_electron_leadingPhoton_deltaR_selection = new std::vector<float>;
+    ElecInfo_electron_subleadingPhoton_deltaR_selection = new std::vector<float>;
     MuonInfo_muon_pt_selection = new std::vector<float>;
     MuonInfo_muon_eta_selection = new std::vector<float>;
     MuonInfo_muon_phi_selection = new std::vector<float>;
     MuonInfo_muon_energy_selection = new std::vector<float>;
     MuonInfo_muon_diphoton_deltaR_selection = new std::vector<float>;
+    MuonInfo_muon_leadingPhoton_deltaR_selection = new std::vector<float>;
+    MuonInfo_muon_subleadingPhoton_deltaR_selection = new std::vector<float>;
 }
 myParameters::~myParameters(){
     delete JetInfo_jet_pt_selection;
@@ -550,6 +565,8 @@ myParameters::~myParameters(){
     delete JetInfo_jet_phi_selection;
     delete JetInfo_jet_energy_selection;
     delete JetInfo_jet_diphoton_deltaR_selection;
+    delete JetInfo_jet_leadingPhoton_deltaR_selection;
+    delete JetInfo_jet_subleadingPhoton_deltaR_selection;
     delete JetInfo_jet_pfDeepCSVJetTags_probb_selection;
     delete JetInfo_jet_pfDeepCSVJetTags_probbb_selection;
     delete ElecInfo_electron_pt_selection;
@@ -557,11 +574,15 @@ myParameters::~myParameters(){
     delete ElecInfo_electron_phi_selection;
     delete ElecInfo_electron_energy_selection;
     delete ElecInfo_electron_diphoton_deltaR_selection;
+    delete ElecInfo_electron_leadingPhoton_deltaR_selection;
+    delete ElecInfo_electron_subleadingPhoton_deltaR_selection;
     delete MuonInfo_muon_pt_selection;
     delete MuonInfo_muon_eta_selection;
     delete MuonInfo_muon_phi_selection;
     delete MuonInfo_muon_energy_selection;
     delete MuonInfo_muon_diphoton_deltaR_selection;
+    delete MuonInfo_muon_leadingPhoton_deltaR_selection;
+    delete MuonInfo_muon_subleadingPhoton_deltaR_selection;
 }
 
 void myTreeClass::InitTree(){
@@ -603,11 +624,15 @@ void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("ElecInfo_electron_phi", &ElecInfo_electron_phi);
     mytree -> Branch("ElecInfo_electron_energy", &ElecInfo_electron_energy);
     mytree -> Branch("ElecInfo_electron_diphoton_deltaR", &ElecInfo_electron_diphoton_deltaR);
+    mytree -> Branch("ElecInfo_electron_leadingPhoton_deltaR", &ElecInfo_electron_leadingPhoton_deltaR);
+    mytree -> Branch("ElecInfo_electron_subleadingPhoton_deltaR", &ElecInfo_electron_subleadingPhoton_deltaR);
     mytree -> Branch("MuonInfo_muon_pt", &MuonInfo_muon_pt);
     mytree -> Branch("MuonInfo_muon_eta", &MuonInfo_muon_eta);
     mytree -> Branch("MuonInfo_muon_phi", &MuonInfo_muon_phi);
     mytree -> Branch("MuonInfo_muon_energy", &MuonInfo_muon_energy);
     mytree -> Branch("MuonInfo_muon_diphoton_deltaR", &MuonInfo_muon_diphoton_deltaR);
+    mytree -> Branch("MuonInfo_muon_leadingPhoton_deltaR", &MuonInfo_muon_leadingPhoton_deltaR);
+    mytree -> Branch("MuonInfo_muon_subleadingPhoton_deltaR", &MuonInfo_muon_subleadingPhoton_deltaR);
     //------------------------
     mytree -> Branch("jets_size", &jets_size, "jets_size/I");
     mytree -> Branch("num_jets", &num_jets, "num_jets/I");
@@ -616,19 +641,12 @@ void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("JetInfo_jet_phi", &JetInfo_jet_phi);
     mytree -> Branch("JetInfo_jet_energy", &JetInfo_jet_energy);
     mytree -> Branch("JetInfo_jet_diphoton_deltaR", &JetInfo_jet_diphoton_deltaR);
+    mytree -> Branch("JetInfo_jet_leadingPhoton_deltaR", &JetInfo_jet_leadingPhoton_deltaR);
+    mytree -> Branch("JetInfo_jet_subleadingPhoton_deltaR", &JetInfo_jet_subleadingPhoton_deltaR);
     mytree -> Branch("JetInfo_jet_pfDeepCSVJetTags_probb", &JetInfo_jet_pfDeepCSVJetTags_probb);
     mytree -> Branch("JetInfo_jet_pfDeepCSVJetTags_probbb", &JetInfo_jet_pfDeepCSVJetTags_probbb);
-    mytree -> Branch("JetInfo_jet1_pt", &JetInfo_jet1_pt, "JetInfo_jet1_pt/F");
-    mytree -> Branch("JetInfo_jet1_eta", &JetInfo_jet1_eta, "JetInfo_jet1_eta/F");
-    mytree -> Branch("JetInfo_jet1_phi", &JetInfo_jet1_phi, "JetInfo_jet1_phi/F");
-    mytree -> Branch("JetInfo_jet2_pt", &JetInfo_jet2_pt, "JetInfo_jet2_pt/F");
-    mytree -> Branch("JetInfo_jet2_eta", &JetInfo_jet2_eta, "JetInfo_jet2_eta/F");
-    mytree -> Branch("JetInfo_jet2_phi", &JetInfo_jet2_phi, "JetInfo_jet2_phi/F");
     //mytree -> Branch("num_btagged_jets", &num_btagged_jets, "num_btagged_jets/I");
     //mytree -> Branch("num_nonbtagged_jets", &num_nonbtagged_jets, "num_nonbtagged_jets/I");
-    //mytree -> Branch("JetInfo_leading_bjet_pt", &JetInfo_leading_bjet_pt, "JetInfo_leading_bjet_pt/F");
-    //mytree -> Branch("JetInfo_leading_bjet_eta", &JetInfo_leading_bjet_eta, "JetInfo_leading_bjet_eta/F");
-    //mytree -> Branch("JetInfo_leading_bjet_phi", &JetInfo_leading_bjet_phi, "JetInfo_leading_bjet_phi/F");
     //------------------------
     //mytree -> Branch("inv_mass_dijet", &inv_mass_dijet, "inv_mass_dijet/F");
     //mytree -> Branch("inv_mass_diphoton", &inv_mass_diphoton, "inv_mass_diphoton/F");
@@ -651,6 +669,8 @@ void myParameters::Clear(){
     JetInfo_jet_phi.clear();
     JetInfo_jet_energy.clear();
     JetInfo_jet_diphoton_deltaR.clear();
+    JetInfo_jet_leadingPhoton_deltaR.clear();
+    JetInfo_jet_subleadingPhoton_deltaR.clear();
     JetInfo_jet_pfDeepCSVJetTags_probb.clear();
     JetInfo_jet_pfDeepCSVJetTags_probbb.clear();
     //------------------------
@@ -662,25 +682,20 @@ void myParameters::Clear(){
     ElecInfo_electron_phi.clear();
     ElecInfo_electron_energy.clear();
     ElecInfo_electron_diphoton_deltaR.clear();
+    ElecInfo_electron_leadingPhoton_deltaR.clear();
+    ElecInfo_electron_subleadingPhoton_deltaR.clear();
     MuonInfo_muon_pt.clear();
     MuonInfo_muon_eta.clear();
     MuonInfo_muon_phi.clear();
     MuonInfo_muon_energy.clear();
     MuonInfo_muon_diphoton_deltaR.clear();
+    MuonInfo_muon_leadingPhoton_deltaR.clear();
+    MuonInfo_muon_subleadingPhoton_deltaR.clear();
     //------------------------
     //Not used in preselection stage
     //------------------------
     num_btagged_jets = 0;
     num_nonbtagged_jets = 0;
-    JetInfo_leading_bjet_pt = 0;
-    JetInfo_leading_bjet_eta = 0;
-    JetInfo_leading_bjet_phi = 0;
-    JetInfo_jet1_pt = 0;
-    JetInfo_jet1_eta = 0;
-    JetInfo_jet1_phi = 0;
-    JetInfo_jet2_pt = 0;
-    JetInfo_jet2_eta = 0;
-    JetInfo_jet2_phi = 0;
     //------------------------
     //Chi-2 sorting related
     //------------------------
@@ -691,11 +706,6 @@ void myParameters::Clear(){
     JetInfo_dijet_delta_eta = 0;
     JetInfo_dijet_delta_phi = 0;
     JetInfo_dijet_delta_angle = 0;
-    //------------------------
-    JetInfo_chosen_bjet_is_leading_bjet = -1;
-    JetInfo_chosen_bjet_pt = 0;
-    JetInfo_chosen_bjet_eta = 0;
-    JetInfo_chosen_bjet_phi = 0;
     //------------------------
 }
 /*

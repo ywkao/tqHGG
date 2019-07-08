@@ -9,20 +9,22 @@ EXECUTABLE=./bin/selection
 #--------------- Function ---------------#
 function ExeAnalysis(){
     file=$1
+    channel=$2
     log=log/log_skimmed_ntuple_${file}.txt
     echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
-    echo $file | awk -F "." '{print "'$INPUTDIR'""/ntuple_"$1".root", "'$OUTPUTDIR'""/"$1"/hist_"$1".root", $1, "'$OUTPUTDIR'""/"$1}' |\
-    xargs -n4 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
+    echo $file | awk -F "." '{print "'$INPUTDIR'""/ntuple_"$1".root", "'$OUTPUTDIR'""/"$1"/hist_"$1".root", $1, "'$OUTPUTDIR'""/"$1, "'$channel'"}' |\
+    xargs -n5 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
     # REMARK: input_file / output_file / datasets / output_dir
 }
 
 #--------------- DryRun ---------------#
 if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
-    ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
+    #ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root leptonic 
+    ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root hadronic 
     echo "[MESSAGE] This is the end of dryRun execution." && exit 0
 fi
 
 #--------------- Execution ---------------#
-FILE=$1
-ExeAnalysis $FILE 
+FILE=$1; CHANNEL=$2
+ExeAnalysis $FILE $CHANNEL 
 echo "[MESSAGE] This is the end of $FILE" && exit 0
