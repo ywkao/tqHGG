@@ -84,6 +84,7 @@ int main(int argc, char *argv[]){
         //==================================================//
         //--------------   Basic Selectoin   ---------------//
         //==================================================//
+        if(!treeReader.EvtInfo_passTrigger) continue;// require MC events pass trigger.
         if(treeReader.DiPhoInfo_mass<100 || treeReader.DiPhoInfo_mass>180) continue;
         if( !isMCsignal && treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130) continue;
         //if(treeReader.DiPhoInfo_mass<0) continue;
@@ -452,7 +453,7 @@ TChain* flashggStdTreeReader::GetTChain(void){
     return flashggStdTree;
 }
 void flashggStdTreeReader::SetBranchAddresses(){
-    //------------------------
+    flashggStdTree->SetBranchAddress("EvtInfo.passTrigger", &EvtInfo_passTrigger);
     flashggStdTree->SetBranchAddress("EvtInfo.NPu", &EvtInfo_NPu);
     flashggStdTree->SetBranchAddress("EvtInfo.NVtx", &EvtInfo_NVtx);
     flashggStdTree->SetBranchAddress("EvtInfo.Rho", &EvtInfo_Rho);
