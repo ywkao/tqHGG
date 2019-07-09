@@ -4,18 +4,18 @@ set -e
 #=== Preselection ===#
 #time ./fireBatchJobs -p > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
 
+
 #=== Selection ===#
-CHANNEL="hadronic"
-time ./fireBatchJobs -s ${CHANNEL} > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
-sleep 1m; sleep 10s
-./check_submit_status
-./run_macro_stackPlots ${CHANNEL}
-./script/resetPlotsChannels plots_${CHANNEL}
+function Selection(){
+    CHANNEL=$1
+    time ./fireBatchJobs -s ${CHANNEL} > >(tee log/stdout.log) 2> >(tee log/stderr >&2)
+    sleep 1m; sleep 20s # Depends on the condition of ntugrid5 computers...
+    ./check_submit_status
+    ./run_macro_stackPlots ${CHANNEL}
+    ./script/resetPlotsChannels plots_${CHANNEL}
+    mv log/stdout.log log/stdout_${CHANNEL}.log
+    mv log/stderr.log log/stderr_${CHANNEL}.log
+}
 
-
-CHANNEL="leptonic"
-time ./fireBatchJobs -s ${CHANNEL} > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
-sleep 1m; sleep 10s
-./check_submit_status
-./run_macro_stackPlots ${CHANNEL}
-./script/resetPlotsChannels plots_${CHANNEL}
+Selection "hadronic" #selection and make plots for hadronic channel
+Selection "leptonic" #selection and make plots for leptonic channel
