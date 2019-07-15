@@ -24,6 +24,7 @@ void stackHist(const char* channel){
     MakeStackHist("hist_EvtInfo_NPu");
     MakeStackHist("hist_EvtInfo_Rho");
     MakeStackHist("hist_EvtInfo_NVtx");
+    MakeStackHist("hist_EvtInfo_NVtx_wopu");
     //------------------------
     MakeStackHist("hist_DiPhoInfo_mass");
     MakeStackHist("hist_DiPhoInfo_pt");

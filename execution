@@ -8,7 +8,7 @@ set -e
 #=== Selection ===#
 function Selection(){
     CHANNEL=$1
-    time ./fireBatchJobs -s ${CHANNEL} > >(tee log/stdout.log) 2> >(tee log/stderr >&2)
+    time ./fireBatchJobs -s ${CHANNEL} > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
     sleep 1m; sleep 20s # Depends on the condition of ntugrid5 computers...
     ./check_submit_status
     ./run_macro_stackPlots ${CHANNEL}

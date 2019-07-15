@@ -223,6 +223,9 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         hist_inv_mass_tbw;
         */
     }//end of event loop
+    double yields = h[hist_EvtInfo_NPu] -> Integral();
+    printf("[INFO] Expected yields");
+    printf("[INFO] Expected yields = %f\n", yields);
     //==================================================//
     //--------------------- MakePlot -------------------//
     //==================================================//

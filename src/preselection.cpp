@@ -26,6 +26,7 @@ int main(int argc, char *argv[]){
     //============================//
     char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
     char output_file[512]; sprintf(output_file, "%s", argv[2]); printf("[INFO] output_file = %s\n", output_file);
+    //char output_file[512]; sprintf(output_file, "%s", "checkYields/checkYields_cut02"); printf("[INFO] output_file = %s\n", output_file);
     char dataset[512]; sprintf(dataset, "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset);
     bool isData = isThisDataOrNot(dataset);
     bool isMCsignal = isThisMCsignal(dataset);
@@ -74,6 +75,7 @@ int main(int argc, char *argv[]){
     //##################################################//
     // Goal: leptons, jets, diphoton; t->b+W(jj), 1 bjet + 2 chi2 jets 
     int Nevents_pass_selection = 0;
+    printf("[CHECK-0] Nevents_pass_selection = %d\n", Nevents_pass_selection);
     for(int ientry=0; ientry<nentries; ientry++){
         treeReader.flashggStdTree->GetEntry(ientry);//load data
         if((ientry+1)%1000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
@@ -130,6 +132,7 @@ int main(int argc, char *argv[]){
             for(int i=0; i<treeReader.ElecInfo_Size; i++){
                 if( !treeReader.ElecInfo_EGMCutBasedIDMedium ) continue;
                 if( fabs(treeReader.ElecInfo_Eta->at(i)) > 2.4 ) continue;
+                if( fabs(treeReader.ElecInfo_Eta->at(i)) > 1.4442 && fabs(treeReader.ElecInfo_Eta->at(i)) < 1.566 ) continue;
                 if( fabs(treeReader.ElecInfo_Pt->at(i))  < 20  ) continue;
                 //--- check deltaR(electron,photon) ---//
                 TLorentzVector electron; 
@@ -165,6 +168,7 @@ int main(int argc, char *argv[]){
             for(int i=0; i<treeReader.MuonInfo_Size; i++){
                 if( !treeReader.MuonInfo_CutBasedIdTight ) continue;
                 if( fabs(treeReader.MuonInfo_Eta->at(i)) > 2.4 ) continue;
+                if( fabs(treeReader.MuonInfo_Eta->at(i)) > 1.4442 && fabs(treeReader.MuonInfo_Eta->at(i)) < 1.566 ) continue;
                 if( fabs(treeReader.MuonInfo_Pt->at(i))  < 20  ) continue;
                 if( fabs(treeReader.MuonInfo_PFIsoDeltaBetaCorrR04->at(i))  > 0.25  ) continue;
                 //--- check deltaR(muon,photon) ---//
@@ -258,12 +262,16 @@ int main(int argc, char *argv[]){
         //==================================================//
         //-------------   Event Counting     ---------------//
         //==================================================//
+        //if(!(mytree.num_leptons>0)) continue;//check cut01
+        //if(!(mytree.num_jets>0)) continue;//check cut03, cut02(need to comment out part of code in section of selecting jets)
         Nevents_pass_selection += 1;
         mytree.Fill();
+        if(ientry == nentries - 1) printf("[CHECK-1] Nevents_pass_selection = %d\n", Nevents_pass_selection);
     }// End of event loop.
     //==================================================//
     //---------------------  Report  -------------------//
     //==================================================//
+    printf("[CHECK-2] Nevents_pass_selection = %d\n", Nevents_pass_selection);
     fout->Write();
     fout->Close();
     return 1;

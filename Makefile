@@ -12,6 +12,8 @@
 CC       := g++ # This is the main compiler
 SRCDIR   := src
 BUILDDIR := build
+TARGET   := bin/check
+TARGET0  := bin/covarianceMatrixStudy
 TARGET1  := bin/preselection
 TARGET2  := bin/selection
 
@@ -22,11 +24,22 @@ CFLAGS   := $(shell root-config --cflags) -g -O3 #-Wno-write-strings -D_FILE_OFF
 LIB      := $(shell root-config --libs) -lMinuit
 INC      := -I include
 
-all: ${TARGET1} ${TARGET2}
+#all: ${TARGET1} ${TARGET2}
+all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2}
+
+
 
 #$(TARGET): $(OBJECTS)
 #	@echo " Linking..."
 #	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+$(TARGET): build/check.o
+	@echo " Linking..."
+	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+
+$(TARGET0): build/covarianceMatrixStudy.o
+	@echo " Linking..."
+	@echo " $(CC) $^ -o $(TARGET0) $(LIB)"; $(CC) $^ -o $(TARGET0) $(LIB)
+
 $(TARGET1): build/preselection.o
 	@echo " Linking..."
 	@echo " $(CC) $^ -o $(TARGET1) $(LIB)"; $(CC) $^ -o $(TARGET1) $(LIB)
@@ -35,7 +48,17 @@ $(TARGET2): build/selection.o
 	@echo " Linking for selection cpp..."
 	@echo " $(CC) $^ -o $(TARGET2) $(LIB)"; $(CC) $^ -o $(TARGET2) $(LIB)
 
+
+
 #$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+build/check.o: src/check.cpp
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+build/covarianceMatrixStudy.o: src/covarianceMatrixStudy.cpp
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
 build/preselection.o: src/preselection.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
@@ -46,7 +69,7 @@ build/selection.o: src/selection.cpp
 
 clean:
 	@echo " Cleaning..."; 
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET1) $(TARGET2)"; $(RM) -r $(BUILDDIR) $(TARGET1) $(TARGET2)
+	@echo " $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2)"; $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2)
 
 
 
