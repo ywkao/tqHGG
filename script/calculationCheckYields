@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+log=rewiewEntries/log_calculation
+echo "#!/bin/bash" | tee ${log}
+echo "echo \"#=== Result of data ===#\"" | tee ${log}
+for case in "NoCut" "Cut01" "Cut02" "Cut03" "Cut04"
+do
+    cat rewiewEntries/log_check_* | grep ${case} | awk '{print "'${case}'_"NR"="$5}' | tee -a ${log}
+    echo "${case}_sum=\$((${case}_1 + ${case}_2 + ${case}_3 + ${case}_4 + ${case}_5))" | tee -a ${log}
+    echo "echo ${case} = \$${case}_sum" | tee -a ${log}
+    echo ""
+done
+
+chmod +x ${log}
+./${log}
