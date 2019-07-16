@@ -152,6 +152,8 @@ int main(int argc, char *argv[]){
         //==============================//
         //-----  Store PhotonInfo  -----//
         //==============================//
+        bool pass_leadingPhotonPT = DiPhoInfo_leadPt > DiPhoInfo_mass / 2. ? true : false;
+        bool pass_subleadingPhotonPT = DiPhoInfo_subleadPt > DiPhoInfo_mass / 4. ? true : false;
         TLorentzVector leading_photon, subleading_photon, diphoton;
         leading_photon.SetPtEtaPhiE(DiPhoInfo_leadPt, DiPhoInfo_leadEta, DiPhoInfo_leadPhi, DiPhoInfo_leadE);
         subleading_photon.SetPtEtaPhiE(DiPhoInfo_subleadPt, DiPhoInfo_subleadEta, DiPhoInfo_subleadPhi, DiPhoInfo_subleadE);
@@ -193,7 +195,6 @@ int main(int argc, char *argv[]){
             for(int i=0; i<MuonInfo_Size; i++){
                 if( !MuonInfo_CutBasedIdTight ) continue;
                 if( fabs(MuonInfo_Eta->at(i)) > 2.4 ) continue;
-                if( fabs(MuonInfo_Eta->at(i)) > 1.4442 && fabs(MuonInfo_Eta->at(i)) < 1.566 ) continue;
                 if( fabs(MuonInfo_Pt->at(i))  < 20  ) continue;
                 if( fabs(MuonInfo_PFIsoDeltaBetaCorrR04->at(i))  > 0.25  ) continue;
                 //--- check deltaR(muon,photon) ---//
@@ -271,8 +272,9 @@ int main(int argc, char *argv[]){
         //----- EventSelection -----//
         //==========================//
         //Individual cuts
+        bool pass_photon_criteria = pass_leadingPhotonPT && pass_subleadingPhotonPT;
         if(EvtInfo_passTrigger) counter_cut0 += 1;
-        if(EvtInfo_passTrigger && num_leptons>0 ) counter_cut1 += 1;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 ) counter_cut1 += 1;
         if(EvtInfo_passTrigger && bool_cut02 ) counter_cut2 += 1;
         if(EvtInfo_passTrigger && num_jets>0 ) counter_cut3 += 1;
         if(EvtInfo_passTrigger && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4 += 1;
