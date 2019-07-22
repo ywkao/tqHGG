@@ -330,6 +330,7 @@ int main(int argc, char *argv[]){
                 //--- check deltaR(jet,lep) ---//
                 bool bool_passJetLeptonSeparation = true;//if no leptons selected, the jet pass the delta_R criterion automatically.
                 if(ientry==9740){
+                    printf("Entry number: %d\n", ientry);
                     printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f (jet)\n", i, jet.Pt(), jet.Eta(), jet.Phi(), jet.Energy(), jet.M());
                 }
                 if(num_leptons>0){
