@@ -86,9 +86,17 @@ int main(int argc, char *argv[]){
         //==================================================//
         //--------------   Basic Selectoin   ---------------//
         //==================================================//
-        if(!treeReader.EvtInfo_passTrigger) continue;// require MC events pass trigger.
+        //require MC events pass trigger.
+        if(!treeReader.EvtInfo_passTrigger) continue;
+        //control region
         if(treeReader.DiPhoInfo_mass<100 || treeReader.DiPhoInfo_mass>180) continue;
         if( !isMCsignal && treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130) continue;
+        //require the quality of photons. (PT requirement)
+        bool pass_leadingPhotonPT = treeReader.DiPhoInfo_leadPt > treeReader.DiPhoInfo_mass / 2.;
+        bool pass_subleadingPhotonPT = treeReader.DiPhoInfo_subleadPt > treeReader.DiPhoInfo_mass / 4.;
+        bool pass_photon_criteria = pass_leadingPhotonPT && pass_subleadingPhotonPT;
+        if(!pass_photon_criteria) continue;
+        //Others
         //if(treeReader.DiPhoInfo_mass<0) continue;
         //if( !(treeReader.jets_size>0) ) continue;
         //if(!(DiPhoInfo_leadIDMVA>0)) continue;
@@ -130,7 +138,7 @@ int main(int argc, char *argv[]){
         bool bool_AtLeastOneElectron = treeReader.ElecInfo_Size>0 ? true : false;//treeReader.ElecInfo_Size = -999 => event without diphoton candidate
         if(bool_AtLeastOneElectron){
             for(int i=0; i<treeReader.ElecInfo_Size; i++){
-                if( !treeReader.ElecInfo_EGMCutBasedIDMedium ) continue;
+                if( !treeReader.ElecInfo_EGMCutBasedIDMedium->at(i) ) continue;
                 if( fabs(treeReader.ElecInfo_Eta->at(i)) > 2.4 ) continue;
                 if( fabs(treeReader.ElecInfo_Eta->at(i)) > 1.4442 && fabs(treeReader.ElecInfo_Eta->at(i)) < 1.566 ) continue;
                 if( fabs(treeReader.ElecInfo_Pt->at(i))  < 20  ) continue;
@@ -166,11 +174,11 @@ int main(int argc, char *argv[]){
         bool bool_AtLeastOneMuon = treeReader.MuonInfo_Size>0 ? true : false;//treeReader.MuonInfo_Size = -999 => event without diphoton candidate
         if(bool_AtLeastOneMuon){
             for(int i=0; i<treeReader.MuonInfo_Size; i++){
-                if( !treeReader.MuonInfo_CutBasedIdTight ) continue;
+                if( !treeReader.MuonInfo_CutBasedIdTight->at(i) ) continue;
                 if( fabs(treeReader.MuonInfo_Eta->at(i)) > 2.4 ) continue;
                 if( fabs(treeReader.MuonInfo_Eta->at(i)) > 1.4442 && fabs(treeReader.MuonInfo_Eta->at(i)) < 1.566 ) continue;
                 if( fabs(treeReader.MuonInfo_Pt->at(i))  < 20  ) continue;
-                if( fabs(treeReader.MuonInfo_PFIsoDeltaBetaCorrR04->at(i))  > 0.25  ) continue;
+                if( treeReader.MuonInfo_PFIsoDeltaBetaCorrR04->at(i)  > 0.25  ) continue;
                 //--- check deltaR(muon,photon) ---//
                 TLorentzVector muon; 
                 muon.SetPtEtaPhiE(treeReader.MuonInfo_Pt->at(i), treeReader.MuonInfo_Eta->at(i), treeReader.MuonInfo_Phi->at(i), treeReader.MuonInfo_Energy->at(i));

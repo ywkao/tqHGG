@@ -4,18 +4,19 @@ set -e
 #=== Preselection ===#
 #time ./fireBatchJobs -p > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
 
+#echo "Rename log/stdout.log to log/stdout_pre.log"; mv log/stdout.log log/stdout_pre.log; mv log/stderr.log log/stderr_pre.log
 
 #=== Selection ===#
 function Selection(){
     CHANNEL=$1
     time ./fireBatchJobs -s ${CHANNEL} > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
     sleep 1m; sleep 20s # Depends on the condition of ntugrid5 computers...
-    ./check_submit_status
-    ./run_macro_stackPlots ${CHANNEL}
-    ./script/resetPlotsChannels plots_${CHANNEL}
-    mv log/stdout.log log/stdout_${CHANNEL}.log
-    mv log/stderr.log log/stderr_${CHANNEL}.log
+    ./check_submit_status | tee -a log/stdout.log
+    #./run_macro_stackPlots ${CHANNEL}
+    #./script/resetPlotsChannels plots_${CHANNEL}
+    #mv log/stdout.log log/stdout_${CHANNEL}.log
+    #mv log/stderr.log log/stderr_${CHANNEL}.log
 }
 
-Selection "hadronic" #selection and make plots for hadronic channel
+#Selection "hadronic" #selection and make plots for hadronic channel
 Selection "leptonic" #selection and make plots for leptonic channel

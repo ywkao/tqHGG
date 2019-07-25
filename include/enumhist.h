@@ -175,8 +175,8 @@ std::string histNames[totalHistNum]{
 int histNbins[totalHistNum]{
     100,//hist_EvtInfo_NPu
     50,//hist_EvtInfo_Rho
-    100,//hist_EvtInfo_NVtx
-    100,//hist_EvtInfo_NVtx_wopu
+    50,//hist_EvtInfo_NVtx
+    50,//hist_EvtInfo_NVtx_wopu
     100,//hist_EvtInfo_genweight
     //------------------------
     40,//hist_DiPhoInfo_mass

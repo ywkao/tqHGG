@@ -331,7 +331,8 @@ int main(int argc, char *argv[]){
                 bool bool_passJetLeptonSeparation = true;//if no leptons selected, the jet pass the delta_R criterion automatically.
                 if(ientry==9740){
                     printf("Entry number: %d\n", ientry);
-                    printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f (jet)\n", i, jet.Pt(), jet.Eta(), jet.Phi(), jet.Energy(), jet.M());
+                    //printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f (jet)\n", i, jet.Pt(), jet.Eta(), jet.Phi(), jet.Energy(), jet.M());
+                    printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f (jet)\n", i, jet.Pt(), jet.Eta(), jet.Phi(), jet.Energy());
                 }
                 if(num_leptons>0){
                     for(int j=0; j<num_leptons; j++){
@@ -339,7 +340,7 @@ int main(int argc, char *argv[]){
                         delta_R = jet.DeltaR(lepton);
                         if( delta_R<0.4 ) bool_passJetLeptonSeparation = false;
                         if(ientry==9740){
-                            printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f, deltaR = %6.2f (lepton)\n", j, lepton.Pt(), lepton.Eta(), lepton.Phi(), lepton.Energy(), lepton.M(), delta_R);
+                            printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, deltaR = %6.2f (lepton)\n", j, lepton.Pt(), lepton.Eta(), lepton.Phi(), lepton.Energy(), delta_R);
                         }
                     }
                 }

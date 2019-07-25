@@ -11,7 +11,8 @@ using namespace std;
 
 bool bool_isHadronic;
 bool bool_isHut = true;
-const double TunableSigBranchingFraction = 2.0; //The branching fraction of signal MC = 0.01%
+const double TunableSigBranchingFraction = 0.25; //The branching fraction of signal MC = 0.01%
+//const double TunableSigBranchingFraction = 2.0; //The branching fraction of signal MC = 0.01%
 //const double TunableSigBranchingFraction = 0.001; //The branching fraction of signal MC = 0.01%
 bool PrintHistInfo = false;
 bool PrintTexStyle;
@@ -358,7 +359,8 @@ void MakeStackHist(const char* histName){
     hist_tqh_mc_wosig->SetFillStyle(3001);
     //--------------------
     stackHist->SetMinimum(0);
-    double scale = 2.5;
+    double scale = 1.5;
+    //double scale = 2.5;
     double max_stack = stackHist->GetMaximum();
     double max_data = hist_tqh_data[NUM_data]->GetMaximum();
     if(max_stack > max_data){
@@ -388,6 +390,25 @@ void MakeStackHist(const char* histName){
     stackHist->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
     stackHist->GetYaxis()->SetLabelSize(15);
     //--------------------
+    TLegend *legend = new TLegend(0.50,0.35,0.85,0.85);
+    legend->SetTextSize(0.03);
+    legend->AddEntry(hist_tqh_data[NUM_data], "Observed", "lep");
+    legend->AddEntry(hist_tqh_DiPhotonJetsBox, "DiPhotonJetsBox", "f");
+    legend->AddEntry(hist_tqh_GJet, "GJet", "f");
+    legend->AddEntry(hist_tqh_TGJets, "TGJets", "f");
+    legend->AddEntry(hist_tqh_TTGJets, "TTGJets", "f");
+    legend->AddEntry(hist_tqh_TTGG, "TTGG", "f");
+    if(considerQCD) legend->AddEntry(hist_tqh_QCD, "QCD", "f");
+    legend->AddEntry(hist_tqh_mc_wosig, "Bkg uncertainty", "f");
+    if(bool_isHadronic && bool_isHut)       legend->AddEntry(hist_sig_tt, Form("TT Hut (Had., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    else if(!bool_isHadronic && bool_isHut) legend->AddEntry(hist_sig_tt, Form("TT Hut (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    else if(bool_isHadronic && !bool_isHut) legend->AddEntry(hist_sig_tt, Form("TT Hct (Had., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    else                                    legend->AddEntry(hist_sig_tt, Form("TT Hct (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    if(bool_isHadronic && bool_isHut)       legend->AddEntry(hist_sig_st, Form("ST Hut (Had., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    else if(!bool_isHadronic && bool_isHut) legend->AddEntry(hist_sig_st, Form("ST Hut (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    else if(bool_isHadronic && !bool_isHut) legend->AddEntry(hist_sig_st, Form("ST Hct (Had., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    else                                    legend->AddEntry(hist_sig_st, Form("ST Hct (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    /*
     TLegend *legend = new TLegend(0.30,0.55,0.85,0.85);
     legend->SetNColumns(2);
     legend->AddEntry(hist_tqh_data[NUM_data], "Observed", "lep");
@@ -395,15 +416,17 @@ void MakeStackHist(const char* histName){
     else if(!bool_isHadronic && bool_isHut) legend->AddEntry(hist_sig_tt, Form("TT Hut (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
     else if(bool_isHadronic && !bool_isHut) legend->AddEntry(hist_sig_tt, Form("TT Hct (Had., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
     else                                  legend->AddEntry(hist_sig_tt, Form("TT Hct (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
-    legend->AddEntry(hist_tqh_mc_wosig, "Bkg uncertainty (stat. only)", "f");
+    legend->AddEntry(hist_tqh_mc_wosig, "Bkg uncertainty", "f");
+    //legend->AddEntry(hist_tqh_mc_wosig, "Bkg uncertainty (stat. only)", "f");
     if(bool_isHadronic && bool_isHut)       legend->AddEntry(hist_sig_st, Form("ST Hut (Had., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
     else if(!bool_isHadronic && bool_isHut) legend->AddEntry(hist_sig_st, Form("ST Hut (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
     else if(bool_isHadronic && !bool_isHut) legend->AddEntry(hist_sig_st, Form("ST Hct (Had., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
     else                                  legend->AddEntry(hist_sig_st, Form("ST Hct (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
-    legend->AddEntry(hist_tqh_ggH, "ggH", "f");
-    legend->AddEntry(hist_tqh_VBF, "VBF", "f");
-    legend->AddEntry(hist_tqh_VH , "VH" , "f"); 
-    legend->AddEntry(hist_tqh_ttH, "ttH", "f");
+    //--- temporarily removed from legend ---//
+    //legend->AddEntry(hist_tqh_ggH, "ggH", "f");
+    //legend->AddEntry(hist_tqh_VBF, "VBF", "f");
+    //legend->AddEntry(hist_tqh_VH , "VH" , "f"); 
+    //legend->AddEntry(hist_tqh_ttH, "ttH", "f");
     legend->AddEntry(hist_tqh_DiPhotonJetsBox, "DiPhotonJetsBox", "f");
     legend->AddEntry(hist_tqh_TGJets, "TGJets", "f");
     legend->AddEntry(hist_tqh_GJet, "GJet", "f");
@@ -415,6 +438,7 @@ void MakeStackHist(const char* histName){
     //legend->AddEntry(hist_tqh_sig_singletop, Form("single top (tqH, BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
     //legend->AddEntry(hist_tqh_nonresbkg[NUM_nonresbkg], "Non-resonant bkg", "f");
     //legend->AddEntry(hist_tqh_mc_wosig, "Bkg uncertainty (stat. only)", "f");
+    */
     legend->SetLineColor(0);
     legend->Draw("same");
     //--------------------
@@ -467,7 +491,7 @@ void MakeStackHist(const char* histName){
     //hist_tqh_ratio->GetXaxis()->SetTitle("Invariant mass of diphoton + jet [GeV/c^{2}]");
     string xTitle = GetXtitleAccordingToHistName(histName);
     hist_tqh_ratio->GetXaxis()->SetTitle(xTitle.c_str());
-    hist_tqh_ratio->GetXaxis()->SetTitleSize(20);
+    hist_tqh_ratio->GetXaxis()->SetTitleSize(25);
     hist_tqh_ratio->GetXaxis()->SetTitleFont(43);
     hist_tqh_ratio->GetXaxis()->SetTitleOffset(4.);
     hist_tqh_ratio->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
