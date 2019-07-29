@@ -72,6 +72,10 @@ int main(int argc, char *argv[]){
         //========================================//
         //-----  Start GenMatching for Jets  -----//
         //========================================//
+        //### GenMatching: find the gen particle (MC truth) for each jet (reconstructed). 
+        //### pdgID: (1, 2, 3, 4, 5, 6) = (d, u, s, c, b, t)
+        //### This is the simplest version. Identify the corresponding gen particle by selecting smallest deltaR(gen, jet).
+        //### One can try to print out the info of pt, eta, phi, energy, and deltaR of jet and corresponding gen particle to see if they are matched.
         std::vector<int> index_GenParticles, GenParticles_PdgID;
         std::vector<TLorentzVector> Jets, GenParticles;
         //--- GenMatching for each reco jet ---//
