@@ -1,13 +1,17 @@
 #include <stdio.h>
 #include <vector>
+#include <TCanvas.h>
 #include <TChain.h>
 #include <TTree.h>
 #include <TFile.h>
+#include <TH1D.h>
 #include <TLorentzVector.h>
+#include <iostream>
 using namespace std;
+double pfDeepCSVJetTags_tight  = 0.8001;
 
 int main(int argc, char *argv[]){
-
+    //HelloWorld{{{
     printf("Hello World.\n");
     char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
     TChain *flashggStdTree = new TChain("flashggNtuples/flashggStdTree");
@@ -18,6 +22,7 @@ int main(int argc, char *argv[]){
     //flashggStdTree->Add("/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DoubleEG_D.root");
     //flashggStdTree->Add("/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DoubleEG_E.root");
     //flashggStdTree->Add("/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DoubleEG_F.root");
+    //}}}
     //SetBranchAddresses{{{
     bool  EvtInfo_passTrigger;
     Int_t EvtInfo_NVtx;
@@ -44,6 +49,8 @@ int main(int argc, char *argv[]){
     std::vector<float> *JetInfo_Energy;
     std::vector<float> *JetInfo_pfDeepCSVJetTags_probb;
     std::vector<float> *JetInfo_pfDeepCSVJetTags_probbb;
+    std::vector<float>  JetInfo_jet_pfDeepCSVJetTags_probb;//bjet purpose
+    std::vector<float>  JetInfo_jet_pfDeepCSVJetTags_probbb;//bjet purpose
     Int_t           ElecInfo_Size;
     std::vector<int>     *ElecInfo_Charge;
     std::vector<float>   *ElecInfo_Pt;
@@ -140,79 +147,78 @@ int main(int argc, char *argv[]){
     flashggStdTree->SetBranchAddress("MuonInfo.CutBasedIdMedium", &MuonInfo_CutBasedIdMedium);
     flashggStdTree->SetBranchAddress("MuonInfo.CutBasedIdTight", &MuonInfo_CutBasedIdTight);
     //}}}End of SetBranchAddresses
-
+    //Set up parameters{{{
     Int_t num_jets;
     Int_t num_leptons;
-    /*
-    TFile *fout   = new TFile("check.root", "RECREATE");
-    TTree *mytree = new TTree("mytree", "mytree");
-    
-    //Branch{{{
-    Int_t num_jets;
-    Int_t num_leptons;
-    std::vector<float> jet_pt;
-    std::vector<float> jet_eta;
-    std::vector<float> jet_phi;
-    std::vector<float> jet_energy;
-    std::vector<float> lepton_pt;
-    std::vector<float> lepton_eta;
-    std::vector<float> lepton_phi;
-    std::vector<float> lepton_energy;
-    //------------------------
-    mytree -> Branch("num_jets", &num_jets, "num_jets/I");
-    mytree -> Branch("jet_pt", &jet_pt);
-    mytree -> Branch("jet_eta", &jet_eta);
-    mytree -> Branch("jet_phi", &jet_phi);
-    mytree -> Branch("jet_energy", &jet_energy);
-    mytree -> Branch("num_leptons", &num_leptons, "num_leptons/I");
-    mytree -> Branch("lepton_pt", &lepton_pt);
-    mytree -> Branch("lepton_eta", &lepton_eta);
-    mytree -> Branch("lepton_phi", &lepton_phi);
-    mytree -> Branch("lepton_energy", &lepton_energy);
-    */
-    //}}}
-
 
     int nentries = flashggStdTree->GetEntries(); printf("[INFO] nentries = %d\n", nentries);
 
     double TotalGenweight=0;
+    double total=0;
     for(int ientry=0; ientry<nentries; ientry++){
         flashggStdTree->GetEntry(ientry);//load data
-        //TotalGenweight += EvtInfo_genweight;
-        TotalGenweight += 1.;
+        TotalGenweight += EvtInfo_genweight;
+        //if(ientry<1000){ total += EvtInfo_genweight; } //printf("ie = %d, genweight = %9.7f\n", ientry+1, EvtInfo_genweight);}
+        //TotalGenweight += 1.;
     }
+    //printf("total = %14.7f\n", total);
+    //printf("total = %14.7f\n", TotalGenweight);
+    //TotalGenweight = 409426.09375;
     
-    double Luminosity = 41.5; //fb{-1}
+    double Luminosity = 41.53; //fb{-1}
     double CrossSection = 0.0016; //pb
     double BranchingFraction = 1.; //pb
     double NormalizationFactor = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
-    printf("NormalizationFactor = %.5f\n", NormalizationFactor);
-    printf("TotalGenweight = %.5f\n", TotalGenweight);
+    printf("[INFO] Luminosity = %f\n", Luminosity);
+    printf("[INFO] CrossSection = %f\n", CrossSection);
+    printf("[INFO] TotalGenweight = %.7f\n", TotalGenweight);
+    printf("[INFO] NormalizationFactor = %.7f\n", NormalizationFactor);
+    //}}}
 
-    float counter_nocut = 0;
-    float counter_cut0 = 0;
-    float counter_cut1 = 0;
-    float counter_cut2 = 0;
-    float counter_cut3 = 0;
-    float counter_cut4 = 0;
+    //Counters {{{
+    double counter_nocut = 0;
+    double counter_cut0  = 0;
+    double counter_cut1  = 0;
+    double counter_cut2  = 0;
+    double counter_cut3  = 0;
+    double counter_cut4  = 0;
+    double counter_cut5  = 0;
 
+    double counter_nocut_norm = 0;
+    double counter_cut0_norm  = 0;
+    double counter_cut1_norm  = 0;
+    double counter_cut2_norm  = 0;
+    double counter_cut3_norm  = 0;
+    double counter_cut4_norm  = 0;
+    double counter_cut5_norm  = 0;
+
+    double counter_nocut_successive = 0;
+    double counter_cut0_successive  = 0;
+    double counter_cut1_successive  = 0;
+    double counter_cut2_successive  = 0;
+    double counter_cut3_successive  = 0;
+    double counter_cut4_successive  = 0;
+    double counter_cut5_successive  = 0;
+
+    double counter_nocut_norm_successive = 0;
+    double counter_cut0_norm_successive  = 0;
+    double counter_cut1_norm_successive  = 0;
+    double counter_cut2_norm_successive  = 0;
+    double counter_cut3_norm_successive  = 0;
+    double counter_cut4_norm_successive  = 0;
+    double counter_cut5_norm_successive  = 0;
+    //}}}
+
+    TH1D *hist= new TH1D("hist", "; Number of b-tagged jets; Entries", 10, 0, 10);
 
     for(int ientry=0; ientry<nentries; ientry++){
-        //counter_nocut+=EvtInfo_genweight * NormalizationFactor;
-        counter_nocut+=1;
+        //printf("ientry = %d\n", ientry);
         flashggStdTree->GetEntry(ientry);//load data
-        //Reset{{{
-        /*
-        jet_pt.clear();
-        jet_eta.clear();
-        jet_phi.clear();
-        jet_energy.clear();
-        lepton_pt.clear();
-        lepton_eta.clear();
-        lepton_phi.clear();
-        lepton_energy.clear();
-        */
-        //}}}
+        counter_nocut += 1;
+        counter_nocut_norm += EvtInfo_genweight * NormalizationFactor;
+        counter_nocut_successive += 1;
+        counter_nocut_norm_successive += EvtInfo_genweight * NormalizationFactor;
+        if(ientry<1000) { total += EvtInfo_genweight*NormalizationFactor; printf("ie = %d, yields = %11.7f\n", ientry+1, EvtInfo_genweight * NormalizationFactor); }
         //Store photon info{{{
         //==============================//
         //-----  Store PhotonInfo  -----//
@@ -252,7 +258,7 @@ int main(int argc, char *argv[]){
                 Leptons.push_back(electron);
 
                 /*
-                if(ientry==9740){
+                if(ientry==10642){
                     printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f (electron)\n", i, electron.Pt(), electron.Eta(), electron.Phi(), electron.Energy(), electron.M());
                     printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f (leadingPhoton)\n", i, leading_photon.Pt(), leading_photon.Eta(), leading_photon.Phi(), leading_photon.Energy(), leading_photon.M());
                     printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f (subleadingPhoton)\n", i, subleading_photon.Pt(), subleading_photon.Eta(), subleading_photon.Phi(), subleading_photon.Energy(), subleading_photon.M());
@@ -285,7 +291,7 @@ int main(int argc, char *argv[]){
                 Muons.push_back(muon);
                 Leptons.push_back(muon);
                 /*
-                if(ientry==9740){
+                if(ientry==10642){
                     printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f (muon)\n", i, muon.Pt(), muon.Eta(), muon.Phi(), muon.Energy(), muon.M());
                 }
                 */
@@ -298,7 +304,7 @@ int main(int argc, char *argv[]){
         //=========================//
         //-----  Select Jets  -----//
         //=========================//
-        int num_jets = 0;
+        num_jets = 0;
         std::vector<TLorentzVector> Jets;
         bool bool_AtLeastOneJet = jets_size>0 ? true : false;//jets_size = -999 => event without diphoton candidate
         //--------------------------------------------------
@@ -329,19 +335,11 @@ int main(int argc, char *argv[]){
                 if( delta_R<0.4 ) continue;
                 //--- check deltaR(jet,lep) ---//
                 bool bool_passJetLeptonSeparation = true;//if no leptons selected, the jet pass the delta_R criterion automatically.
-                if(ientry==9740){
-                    printf("Entry number: %d\n", ientry);
-                    //printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f (jet)\n", i, jet.Pt(), jet.Eta(), jet.Phi(), jet.Energy(), jet.M());
-                    printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f (jet)\n", i, jet.Pt(), jet.Eta(), jet.Phi(), jet.Energy());
-                }
                 if(num_leptons>0){
                     for(int j=0; j<num_leptons; j++){
                         TLorentzVector lepton = Leptons.at(j);
                         delta_R = jet.DeltaR(lepton);
                         if( delta_R<0.4 ) bool_passJetLeptonSeparation = false;
-                        if(ientry==9740){
-                            printf("(%d) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, deltaR = %6.2f (lepton)\n", j, lepton.Pt(), lepton.Eta(), lepton.Phi(), lepton.Energy(), delta_R);
-                        }
                     }
                 }
                 if(!bool_passJetLeptonSeparation) continue;//if not pass, reject the jet.
@@ -366,41 +364,107 @@ int main(int argc, char *argv[]){
                 //--- store information ---//
                 num_jets+=1;
                 Jets.push_back(jet);
+                JetInfo_jet_pfDeepCSVJetTags_probb.push_back(JetInfo_pfDeepCSVJetTags_probb->at(i));//bjet purpose
+                JetInfo_jet_pfDeepCSVJetTags_probbb.push_back(JetInfo_pfDeepCSVJetTags_probbb->at(i));//bjet purpose
+                //printf("%2d JetInfo_pfDeepCSVJetTags_probb = %f\n", i, JetInfo_pfDeepCSVJetTags_probb->at(i));
+                //printf("%2d JetInfo_pfDeepCSVJetTags_probbb = %f\n", i, JetInfo_pfDeepCSVJetTags_probbb->at(i));
             }
+        }
+        //}}}
+        //Select bjet{{{
+        //----- b-jet -----//
+        int num_bjets = 0;
+        for(int i=0; i<num_jets; ++i){
+            if(JetInfo_jet_pfDeepCSVJetTags_probb.at(i)+JetInfo_jet_pfDeepCSVJetTags_probbb.at(i) >= pfDeepCSVJetTags_tight){
+                //printf("JetInfo_jet_pfDeepCSVJetTags_probb = %f\n", JetInfo_jet_pfDeepCSVJetTags_probb.at(i));
+                //printf("JetInfo_jet_pfDeepCSVJetTags_probbb = %f\n", JetInfo_jet_pfDeepCSVJetTags_probbb.at(i));
+                num_bjets += 1;
+            }
+        }//end of looping jets
+        if(!(num_jets==0) && pass_photon_criteria && EvtInfo_passTrigger){
+            //printf("[check] %7d num_bjets = %d, num_jets = %d\n", ientry, num_bjets, num_jets);
+            hist->Fill(num_bjets);
         }
         //}}}
         //Event selection (counters){{{
         //==========================//
         //----- EventSelection -----//
         //==========================//
-        //Individual cuts
+        //Individual cuts{{{
         if(pass_photon_criteria && EvtInfo_passTrigger) counter_cut0 += 1;
         if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 ) counter_cut1 += 1;
         if(pass_photon_criteria && EvtInfo_passTrigger && bool_cut02 ) counter_cut2 += 1;
         if(pass_photon_criteria && EvtInfo_passTrigger && num_jets>0 ) counter_cut3 += 1;
-        //if(pass_photon_criteria && EvtInfo_passTrigger && num_jets>0 ) printf("Entry passing cut3: %d\n", ientry+1);
         if(pass_photon_criteria && EvtInfo_passTrigger && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4 += 1;
-        /*
-        if(pass_photon_criteria && EvtInfo_passTrigger) counter_cut0 += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 ) counter_cut1 += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && bool_cut02 ) counter_cut2 += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && num_jets>0 ) counter_cut3 += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4 += EvtInfo_genweight * NormalizationFactor;
-        */
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_bjets>0 ) counter_cut5 += 1;
+        //---
+        if(pass_photon_criteria && EvtInfo_passTrigger) counter_cut0_norm += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 ) counter_cut1_norm += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger && bool_cut02 ) counter_cut2_norm += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_jets>0 ) counter_cut3_norm += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4_norm += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_bjets>0 ) counter_cut5_norm += EvtInfo_genweight * NormalizationFactor;
         //}}}
-
-        //if(pass_photon_criteria && EvtInfo_passTrigger && num_jets>0 ) mytree->Fill();//store cut3 info
+        //Successive cuts{{{
+        if(pass_photon_criteria && EvtInfo_passTrigger) counter_cut0_successive += 1;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 ) counter_cut1_successive += 1;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 ) counter_cut2_successive += 1;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 ) counter_cut3_successive += 1;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4_successive += 1;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) && num_bjets>0) counter_cut5_successive += 1;
+        //---
+        if(pass_photon_criteria && EvtInfo_passTrigger) counter_cut0_norm_successive += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 ) counter_cut1_norm_successive += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 ) counter_cut2_norm_successive += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 ) counter_cut3_norm_successive += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4_norm_successive += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) && num_bjets>0) counter_cut5_norm_successive += EvtInfo_genweight * NormalizationFactor;
+        //}}}
+        //}}}
     }//end of event loop.
 
-    //mytree->Draw(">>eventList_ywk");
-    //fout->Write();
-    //fout->Close();
-
-    printf("[INFO] NoCut: Entries = %7.3f\n", counter_nocut);
-    printf("[INFO] Cut00: Entries = %7.3f\n", counter_cut0);
-    printf("[INFO] Cut01: Entries = %7.3f\n", counter_cut1);
-    printf("[INFO] Cut02: Entries = %7.3f\n", counter_cut2);
-    printf("[INFO] Cut03: Entries = %7.3f\n", counter_cut3);
-    printf("[INFO] Cut04: Entries = %7.3f\n", counter_cut4);
+    //report individual{{{
+    printf("\nIndividual selection\n");
+    printf("--------------------\n");
+    printf("[INFO] NoCut: Entries = %.0f\n", counter_nocut);
+    printf("[INFO] Cut00: Entries = %.0f\n", counter_cut0);
+    printf("[INFO] Cut01: Entries = %.0f\n", counter_cut1);
+    printf("[INFO] Cut02: Entries = %.0f\n", counter_cut2);
+    printf("[INFO] Cut03: Entries = %.0f\n", counter_cut3);
+    printf("[INFO] Cut04: Entries = %.0f\n", counter_cut4);
+    printf("[INFO] Cut05: Entries = %.0f\n", counter_cut5);
+    printf("--------------------\n");
+    printf("[INFO] NoCut: Yields = %7.3f\n", counter_nocut_norm);
+    printf("[INFO] Cut00: Yields = %7.3f\n", counter_cut0_norm);
+    printf("[INFO] Cut01: Yields = %7.3f\n", counter_cut1_norm);
+    printf("[INFO] Cut02: Yields = %7.3f\n", counter_cut2_norm);
+    printf("[INFO] Cut03: Yields = %7.3f\n", counter_cut3_norm);
+    printf("[INFO] Cut04: Yields = %7.3f\n", counter_cut4_norm);
+    printf("[INFO] Cut05: Yields = %7.3f\n", counter_cut5_norm);
+    //}}}
+    //report successive{{{
+    printf("\nSuccesive selection\n");
+    printf("--------------------\n");
+    printf("[INFO] NoCut: Entries = %.0f\n", counter_nocut_successive);
+    printf("[INFO] Cut00: Entries = %.0f\n", counter_cut0_successive);
+    printf("[INFO] Cut01: Entries = %.0f\n", counter_cut1_successive);
+    printf("[INFO] Cut02: Entries = %.0f\n", counter_cut2_successive);
+    printf("[INFO] Cut03: Entries = %.0f\n", counter_cut3_successive);
+    printf("[INFO] Cut04: Entries = %.0f\n", counter_cut4_successive);
+    printf("[INFO] Cut05: Entries = %.0f\n", counter_cut5_successive);
+    printf("--------------------\n");
+    printf("[INFO] NoCut: Yields = %7.3f\n", counter_nocut_norm_successive);
+    printf("[INFO] Cut00: Yields = %7.3f\n", counter_cut0_norm_successive);
+    printf("[INFO] Cut01: Yields = %7.3f\n", counter_cut1_norm_successive);
+    printf("[INFO] Cut02: Yields = %7.3f\n", counter_cut2_norm_successive);
+    printf("[INFO] Cut03: Yields = %7.3f\n", counter_cut3_norm_successive);
+    printf("[INFO] Cut04: Yields = %7.3f\n", counter_cut4_norm_successive);
+    printf("[INFO] Cut05: Yields = %7.3f\n", counter_cut5_norm_successive);
+    //}}}
+    printf("total = %.13f\n", total);
+    std::cout<< total << std::endl;
+    TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
+    hist->Draw();
+    c1->SaveAs("check_num_bjets.png");
     return 0;
 }
