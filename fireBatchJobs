@@ -3,7 +3,8 @@ set -e
 #--------------- Function ---------------#
 function GetNumber(){
     number=0
-    while [ $number -eq 0 ] # make sure no node00 occurs
+    #while [ $number -eq 0 ] # make sure no node00 occurs
+    while [[ $number -eq 0 || $number -eq 10 || $number -eq 15 || $number -eq 17 ]] # make sure no node00 occurs
     do 
         number=$((RANDOM%20))
     done
@@ -15,6 +16,10 @@ function GetNumber(){
         echo $number
     fi
 }
+if [[ $1 == '-t' ]]; then
+    for i in {1..100}; do echo $(GetNumber); done
+    exit 0
+fi
 #--------------- Option needed ---------------#
 if [[ $1 == '' ]]; then
     echo "[WARNNING] Please input an option."
@@ -68,7 +73,7 @@ elif [[ $1 == '-s' ]]; then
     #root -l -b -q src/stackHist.C | tee log/log_stack
     #echo "[MESSAGE] This is the end of making stack plots" && exit 0
 else
-    echo "[WARNNING] Uknown parameters."
+    echo "[WARNNING] Unknown parameters."
 fi
 
 #ssh node01 "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch -d" &

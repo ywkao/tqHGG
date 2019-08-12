@@ -73,7 +73,7 @@ public:
     std::vector<bool>    *ElecInfo_EGMCutBasedIDMedium;
     std::vector<bool>    *ElecInfo_EGMCutBasedIDTight;
     std::vector<bool>    *ElecInfo_fggPhoVeto;
-    std::vector<bool>    *ElecInfo_tmpPhoVeto;
+    //std::vector<bool>    *ElecInfo_tmpPhoVeto;
     std::vector<float>   *ElecInfo_EnergyCorrFactor;
     std::vector<float>   *ElecInfo_EnergyPostCorrErr;
     std::vector<float>   *ElecInfo_EnergyPostCorrScaleUp;

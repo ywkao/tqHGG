@@ -59,8 +59,8 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         if(ientry==0) printf("[INFO] N_entries = %d/%d\n", nentries, treeReader.EvtInfo_totalEntry_before_preselection);
         if((ientry+1)%10000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
         //========= PU Reweighting =========//
-        //double PU_reweighting_factor = h_pu_reweighting_factor->GetBinContent(treeReader.EvtInfo_NPu+1);
-        double PU_reweighting_factor = 1.; //No PU
+        double PU_reweighting_factor = h_pu_reweighting_factor->GetBinContent(treeReader.EvtInfo_NPu+1);
+        //double PU_reweighting_factor = 1.; //No PU
         double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi * PU_reweighting_factor;
         double NormalizationFactor_wopu = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
         //Reminder: EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
@@ -76,13 +76,6 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
             if(treeReader.num_jets<3) passEvent = false;
         }
         if(!passEvent) continue;
-        //========= Event Selections (Leptonic) =========//
-        //if(treeReader.num_leptons<1) continue;
-        //if(treeReader.num_jets<1) continue;
-        //========= Event Selections (Hadronic) =========//
-        //if(treeReader.num_leptons>0) continue;
-        //if(treeReader.num_jets<3) continue;
-        /*
         //--------- check bjets ---------//
         int num_bjets = 0;
         if(!(treeReader.num_jets<1)){
@@ -99,7 +92,6 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
             }//end of looping jets
         }
         if(num_bjets == 0) continue;
-        */
         //========= Store Info =========//
         h[hist_EvtInfo_NPu] -> Fill(treeReader.EvtInfo_NPu, isData ? 1. : NormalizationFactor);
         h[hist_EvtInfo_Rho] -> Fill(treeReader.EvtInfo_Rho, isData ? 1. : NormalizationFactor);
@@ -396,7 +388,7 @@ flashggStdTreeParameters::flashggStdTreeParameters(){
     ElecInfo_EGMCutBasedIDMedium = new std::vector<bool>;
     ElecInfo_EGMCutBasedIDTight = new std::vector<bool>;
     ElecInfo_fggPhoVeto = new std::vector<bool>;
-    ElecInfo_tmpPhoVeto = new std::vector<bool>;
+    //ElecInfo_tmpPhoVeto = new std::vector<bool>;
     ElecInfo_EnergyCorrFactor = new std::vector<float>;
     ElecInfo_EnergyPostCorrErr = new std::vector<float>;
     ElecInfo_EnergyPostCorrScaleUp = new std::vector<float>;
@@ -451,7 +443,7 @@ flashggStdTreeParameters::~flashggStdTreeParameters(){
     delete ElecInfo_EGMCutBasedIDMedium;
     delete ElecInfo_EGMCutBasedIDTight;
     delete ElecInfo_fggPhoVeto;
-    delete ElecInfo_tmpPhoVeto;
+    //delete ElecInfo_tmpPhoVeto;
     delete ElecInfo_EnergyCorrFactor;
     delete ElecInfo_EnergyPostCorrErr;
     delete ElecInfo_EnergyPostCorrScaleUp;

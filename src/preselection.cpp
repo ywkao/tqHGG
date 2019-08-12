@@ -26,7 +26,6 @@ int main(int argc, char *argv[]){
     //============================//
     char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
     char output_file[512]; sprintf(output_file, "%s", argv[2]); printf("[INFO] output_file = %s\n", output_file);
-    //char output_file[512]; sprintf(output_file, "%s", "checkYields/checkYields_cut02"); printf("[INFO] output_file = %s\n", output_file);
     char dataset[512]; sprintf(dataset, "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset);
     bool isData = isThisDataOrNot(dataset);
     bool isMCsignal = isThisMCsignal(dataset);
@@ -270,8 +269,6 @@ int main(int argc, char *argv[]){
         //==================================================//
         //-------------   Event Counting     ---------------//
         //==================================================//
-        //if(!(mytree.num_leptons>0)) continue;//check cut01
-        //if(!(mytree.num_jets>0)) continue;//check cut03, cut02(need to comment out part of code in section of selecting jets)
         Nevents_pass_selection += 1;
         mytree.Fill();
         if(ientry == nentries - 1) printf("[CHECK-1] Nevents_pass_selection = %d\n", Nevents_pass_selection);
@@ -328,6 +325,14 @@ bool isThisDataOrNot(char* dataset){
 bool isThisMultiFile(char* dataset){
     if((string)dataset == "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa") return true;
     if((string)dataset == "GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8") return true;
+    if((string)dataset == "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
+    if((string)dataset == "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
+    if((string)dataset == "WGToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
+    if((string)dataset == "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8") return true;
+    if((string)dataset == "WW_TuneCP5_13TeV-pythia8") return true;
+    if((string)dataset == "WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8") return true;
+    if((string)dataset == "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
+    if((string)dataset == "ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8") return true;
     return false;
 }
 
@@ -356,7 +361,7 @@ flashggStdTreeParameters::flashggStdTreeParameters(){
     ElecInfo_EGMCutBasedIDMedium = new std::vector<bool>;
     ElecInfo_EGMCutBasedIDTight = new std::vector<bool>;
     ElecInfo_fggPhoVeto = new std::vector<bool>;
-    ElecInfo_tmpPhoVeto = new std::vector<bool>;
+    //ElecInfo_tmpPhoVeto = new std::vector<bool>;
     ElecInfo_EnergyCorrFactor = new std::vector<float>;
     ElecInfo_EnergyPostCorrErr = new std::vector<float>;
     ElecInfo_EnergyPostCorrScaleUp = new std::vector<float>;
@@ -411,7 +416,7 @@ flashggStdTreeParameters::~flashggStdTreeParameters(){
     delete ElecInfo_EGMCutBasedIDMedium;
     delete ElecInfo_EGMCutBasedIDTight;
     delete ElecInfo_fggPhoVeto;
-    delete ElecInfo_tmpPhoVeto;
+    //delete ElecInfo_tmpPhoVeto;
     delete ElecInfo_EnergyCorrFactor;
     delete ElecInfo_EnergyPostCorrErr;
     delete ElecInfo_EnergyPostCorrScaleUp;
@@ -515,7 +520,7 @@ void flashggStdTreeReader::SetBranchAddresses(){
     flashggStdTree->SetBranchAddress("ElecInfo.EGMCutBasedIDMedium", &ElecInfo_EGMCutBasedIDMedium);
     flashggStdTree->SetBranchAddress("ElecInfo.EGMCutBasedIDTight", &ElecInfo_EGMCutBasedIDTight);
     flashggStdTree->SetBranchAddress("ElecInfo.fggPhoVeto", &ElecInfo_fggPhoVeto);
-    flashggStdTree->SetBranchAddress("ElecInfo.tmpPhoVeto", &ElecInfo_tmpPhoVeto);
+    //flashggStdTree->SetBranchAddress("ElecInfo.tmpPhoVeto", &ElecInfo_tmpPhoVeto);
     flashggStdTree->SetBranchAddress("ElecInfo.EnergyCorrFactor", &ElecInfo_EnergyCorrFactor);
     flashggStdTree->SetBranchAddress("ElecInfo.EnergyPostCorrErr", &ElecInfo_EnergyPostCorrErr);
     flashggStdTree->SetBranchAddress("ElecInfo.EnergyPostCorrScaleUp", &ElecInfo_EnergyPostCorrScaleUp);
