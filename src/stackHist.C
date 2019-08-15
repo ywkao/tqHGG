@@ -564,7 +564,7 @@ void MakeStackHist(const char* histName){
     line.DrawLine(pad2->GetUxmin(),1.0,pad2->GetUxmax(),1.0);
     line.DrawLine(pad2->GetUxmin(),1.5,pad2->GetUxmax(),1.5);
     line.DrawLine(pad2->GetUxmin(),2.0,pad2->GetUxmax(),2.0);
-    c1->SaveAs(Form("%s/stack_%s.png", TARGET_DIR, histName));
+    c1->SaveAs(Form("%s/stack_%s.pdf", TARGET_DIR, histName));
     //c1->SaveAs(Form("%s/stack_%s.root", TARGET_DIR, histName));
     //}}}
     //### Draw log scale{{{ 
@@ -580,7 +580,7 @@ void MakeStackHist(const char* histName){
         if(isDijetSpectrum)    stackHist->SetMaximum(1e+8);
         if(isTopSpectrum)      stackHist->SetMaximum(1e+8);
         stackHist->SetMinimum(5e-1);
-        c1->SaveAs(Form("%s/log_scale/stack_%s_log.png", TARGET_DIR, histName));
+        c1->SaveAs(Form("%s/log_scale/stack_%s_log.pdf", TARGET_DIR, histName));
     }
     else stackHist->SetMaximum(isNum ? 1e+9 : 1e+9);
     //}}}

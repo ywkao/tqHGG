@@ -4,9 +4,9 @@ set -e
 #=== Preselection ===#
 function Preselection(){
     time ./fireBatchJobs -p > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
-    ./check_submit_status | tee -a log/stdout.log
 }
 function Intermission(){
+    ./check_submit_status | tee -a log/stdout.log
     echo "Rename log/stdout.log to log/stdout_pre.log";
     mv log/stdout.log log/stdout_pre.log
     mv log/stderr.log log/stderr_pre.log
@@ -16,7 +16,7 @@ function Intermission(){
 function Selection(){
     CHANNEL=$1
     time ./fireBatchJobs -s ${CHANNEL} > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
-    sleep 1m; sleep 20s # Depends on the condition of ntugrid5 computers...
+    sleep 1m; sleep 30s # Depends on the condition of ntugrid5 computers...
     ./check_submit_status | tee -a log/stdout.log
 }
 function AfterSelection(){
@@ -27,6 +27,7 @@ function AfterSelection(){
     cp -p log/stderr.log plots_${CHANNEL}/stderr_${CHANNEL}.log
     mv log/stdout.log log/stdout_${CHANNEL}.log
     mv log/stderr.log log/stderr_${CHANNEL}.log
+    mv log/info_stack_plots_${CHANNEL} plots_${CHANNEL}
 }
 function ReRunStackPlotsOnly(){
     CHANNEL=$1
@@ -35,20 +36,17 @@ function ReRunStackPlotsOnly(){
     fi
     ./run_macro_stackPlots ${CHANNEL}
     ./script/resetPlotsChannels plots_${CHANNEL}
-    cp -p log/stdout.log plots_${CHANNEL}/stdout_${CHANNEL}.log
-    cp -p log/stderr.log plots_${CHANNEL}/stderr_${CHANNEL}.log
-    mv log/stdout.log log/stdout_${CHANNEL}.log
-    mv log/stderr.log log/stderr_${CHANNEL}.log
+    mv log/info_stack_plots_${CHANNEL} plots_${CHANNEL}
 }
 
 #=== Main Conduction ===#
 #Preselection
 #Intermission
 
-#Selection "hadronic" #selection and make plots for hadronic channel
-#AfterSelection "hadronic" 
-#Selection "leptonic" #selection and make plots for leptonic channel
-#AfterSelection "leptonic" 
+Selection "hadronic" #selection and make plots for hadronic channel
+AfterSelection "hadronic" 
+Selection "leptonic" #selection and make plots for leptonic channel
+AfterSelection "leptonic" 
 
-ReRunStackPlotsOnly "hadronic"
-ReRunStackPlotsOnly "leptonic"
+#ReRunStackPlotsOnly "hadronic"
+#ReRunStackPlotsOnly "leptonic"

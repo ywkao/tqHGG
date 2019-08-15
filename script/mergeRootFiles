@@ -1,22 +1,103 @@
 #!/bin/bash
 set -e
 
-echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8"
-INPUT_GJet=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
-OUTPUT_GJet=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
-DATASET_GJet=GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
-hadd "${OUTPUT_GJet}/${DATASET_GJet}_01.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{1..100}.root`
-hadd "${OUTPUT_GJet}/${DATASET_GJet}_02.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{101..200}.root`
-hadd "${OUTPUT_GJet}/${DATASET_GJet}_03.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{201..300}.root`
-hadd "${OUTPUT_GJet}/${DATASET_GJet}_04.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{301..422}.root`
+DATASET_TTJets=TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8
+echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_TTJets}"
+INPUT_TTJets=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/${DATASET_TTJets}
+OUTPUT_TTJets=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_TTJets}
+#hadd "${OUTPUT_TTJets}/${DATASET_TTJets}_01.root" `ls ${INPUT_TTJets}/DiPhotonNtuples_{1..100}.root`
+hadd "${OUTPUT_TTJets}/${DATASET_TTJets}_02.root" `ls ${INPUT_TTJets}/DiPhotonNtuples_{101..200}.root`
+#hadd "${OUTPUT_TTJets}/${DATASET_TTJets}_03.root" `ls ${INPUT_TTJets}/DiPhotonNtuples_{201..300}.root`
+#hadd "${OUTPUT_TTJets}/${DATASET_TTJets}_04.root" `ls ${INPUT_TTJets}/DiPhotonNtuples_{301..400}.root`
+#hadd "${OUTPUT_TTJets}/${DATASET_TTJets}_05.root" `ls ${INPUT_TTJets}/DiPhotonNtuples_{401..500}.root`
+#hadd "${OUTPUT_TTJets}/${DATASET_TTJets}_06.root" `ls ${INPUT_TTJets}/DiPhotonNtuples_{501..600}.root`
+#hadd "${OUTPUT_TTJets}/${DATASET_TTJets}_07.root" `ls ${INPUT_TTJets}/DiPhotonNtuples_{601..700}.root`
+#hadd "${OUTPUT_TTJets}/${DATASET_TTJets}_08.root" `ls ${INPUT_TTJets}/DiPhotonNtuples_{701..764}.root`
+#
+#
+#
+DATASET_DYJetsToLL=DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8
+echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_DYJetsToLL}"
+INPUT_DYJetsToLL=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/${DATASET_DYJetsToLL}
+OUTPUT_DYJetsToLL=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_DYJetsToLL}
+#hadd "${OUTPUT_DYJetsToLL}/${DATASET_DYJetsToLL}_01.root" `ls ${INPUT_DYJetsToLL}/DiPhotonNtuples_{1..100}.root`
+#hadd "${OUTPUT_DYJetsToLL}/${DATASET_DYJetsToLL}_02.root" `ls ${INPUT_DYJetsToLL}/DiPhotonNtuples_{101..200}.root`
+#hadd "${OUTPUT_DYJetsToLL}/${DATASET_DYJetsToLL}_03.root" `ls ${INPUT_DYJetsToLL}/DiPhotonNtuples_{201..300}.root`
+#hadd "${OUTPUT_DYJetsToLL}/${DATASET_DYJetsToLL}_04.root" `ls ${INPUT_DYJetsToLL}/DiPhotonNtuples_{301..400}.root`
+#hadd "${OUTPUT_DYJetsToLL}/${DATASET_DYJetsToLL}_05.root" `ls ${INPUT_DYJetsToLL}/DiPhotonNtuples_{401..500}.root`
+hadd "${OUTPUT_DYJetsToLL}/${DATASET_DYJetsToLL}_06.root" `ls ${INPUT_DYJetsToLL}/DiPhotonNtuples_{501..600}.root`
+#hadd "${OUTPUT_DYJetsToLL}/${DATASET_DYJetsToLL}_07.root" `ls ${INPUT_DYJetsToLL}/DiPhotonNtuples_{601..700}.root`
+#hadd "${OUTPUT_DYJetsToLL}/${DATASET_DYJetsToLL}_08.root" `ls ${INPUT_DYJetsToLL}/DiPhotonNtuples_{701..708}.root`
+#
+#
+#DATASET_WGToLNuG=WGToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8
+#echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WGToLNuG}"
+#INPUT_WGToLNuG=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WGToLNuG}
+#OUTPUT_WGToLNuG=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WGToLNuG}
+#hadd "${OUTPUT_WGToLNuG}/${DATASET_WGToLNuG}_01.root" `ls ${INPUT_WGToLNuG}/DiPhotonNtuples_{1..100}.root`
+#hadd "${OUTPUT_WGToLNuG}/${DATASET_WGToLNuG}_02.root" `ls ${INPUT_WGToLNuG}/DiPhotonNtuples_{101..200}.root`
+#hadd "${OUTPUT_WGToLNuG}/${DATASET_WGToLNuG}_03.root" `ls ${INPUT_WGToLNuG}/DiPhotonNtuples_{201..207}.root`
+#
+#
+#DATASET_WJetsToLNu=WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8
+#echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WJetsToLNu}"
+#INPUT_WJetsToLNu=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WJetsToLNu}
+#OUTPUT_WJetsToLNu=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WJetsToLNu}
+#hadd "${OUTPUT_WJetsToLNu}/${DATASET_WJetsToLNu}_01.root" `ls ${INPUT_WJetsToLNu}/DiPhotonNtuples_{1..100}.root`
+#hadd "${OUTPUT_WJetsToLNu}/${DATASET_WJetsToLNu}_02.root" `ls ${INPUT_WJetsToLNu}/DiPhotonNtuples_{101..200}.root`
+#hadd "${OUTPUT_WJetsToLNu}/${DATASET_WJetsToLNu}_03.root" `ls ${INPUT_WJetsToLNu}/DiPhotonNtuples_{201..257}.root`
+#
+#
+#DATASET_WW=WW_TuneCP5_13TeV-pythia8
+#echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WW}"
+#INPUT_WW=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WW}
+#OUTPUT_WW=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WW}
+#hadd "${OUTPUT_WW}/${DATASET_WW}_01.root" `ls ${INPUT_WW}/DiPhotonNtuples_{1..47}.root`
+#
+#
+#DATASET_WZTo2L2Q=WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+#echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WZTo2L2Q}"
+#INPUT_WZTo2L2Q=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WZTo2L2Q}
+#OUTPUT_WZTo2L2Q=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_WZTo2L2Q}
+#hadd "${OUTPUT_WZTo2L2Q}/${DATASET_WZTo2L2Q}_01.root" `ls ${INPUT_WZTo2L2Q}/DiPhotonNtuples_{1..100}.root`
+#hadd "${OUTPUT_WZTo2L2Q}/${DATASET_WZTo2L2Q}_02.root" `ls ${INPUT_WZTo2L2Q}/DiPhotonNtuples_{101..200}.root`
+#hadd "${OUTPUT_WZTo2L2Q}/${DATASET_WZTo2L2Q}_03.root" `ls ${INPUT_WZTo2L2Q}/DiPhotonNtuples_{201..203}.root`
+#
+#
+#DATASET_ZGToLLG=ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8
+#echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_ZGToLLG}"
+#INPUT_ZGToLLG=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/${DATASET_ZGToLLG}
+#OUTPUT_ZGToLLG=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_ZGToLLG}
+#hadd "${OUTPUT_ZGToLLG}/${DATASET_ZGToLLG}_01.root" `ls ${INPUT_ZGToLLG}/DiPhotonNtuples_{1..100}.root`
+#hadd "${OUTPUT_ZGToLLG}/${DATASET_ZGToLLG}_02.root" `ls ${INPUT_ZGToLLG}/DiPhotonNtuples_{101..200}.root`
+#hadd "${OUTPUT_ZGToLLG}/${DATASET_ZGToLLG}_03.root" `ls ${INPUT_ZGToLLG}/DiPhotonNtuples_{201..263}.root`
+#
+#
+#DATASET_ZZTo2L2Q=ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8
+#echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_ZZTo2L2Q}"
+#INPUT_ZZTo2L2Q=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/${DATASET_ZZTo2L2Q}
+#OUTPUT_ZZTo2L2Q=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/${DATASET_ZZTo2L2Q}
+#hadd "${OUTPUT_ZZTo2L2Q}/${DATASET_ZZTo2L2Q}_01.root" `ls ${INPUT_ZZTo2L2Q}/DiPhotonNtuples_{1..100}.root`
+#hadd "${OUTPUT_ZZTo2L2Q}/${DATASET_ZZTo2L2Q}_02.root" `ls ${INPUT_ZZTo2L2Q}/DiPhotonNtuples_{101..200}.root`
+#hadd "${OUTPUT_ZZTo2L2Q}/${DATASET_ZZTo2L2Q}_03.root" `ls ${INPUT_ZZTo2L2Q}/DiPhotonNtuples_{201..205}.root`
 
-echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa"
-INPUT_DiPhoton=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
-OUTPUT_DiPhoton=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
-DATASET_DiPhoton=DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
-hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_01.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{1..100}.root`
-hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_02.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{101..200}.root`
-hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_03.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{201..300}.root`
-hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_04.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{301..400}.root`
+
+#echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8"
+#INPUT_GJet=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
+#OUTPUT_GJet=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
+#DATASET_GJet=GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8
+#hadd "${OUTPUT_GJet}/${DATASET_GJet}_01.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{1..100}.root`
+#hadd "${OUTPUT_GJet}/${DATASET_GJet}_02.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{101..200}.root`
+#hadd "${OUTPUT_GJet}/${DATASET_GJet}_03.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{201..300}.root`
+#hadd "${OUTPUT_GJet}/${DATASET_GJet}_04.root" `ls ${INPUT_GJet}/DiPhotonNtuples_{301..422}.root`
+#
+#echo "output_dir: /wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa"
+#INPUT_DiPhoton=/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
+#OUTPUT_DiPhoton=/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0/DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
+#DATASET_DiPhoton=DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
+#hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_01.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{1..100}.root`
+#hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_02.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{101..200}.root`
+#hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_03.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{201..300}.root`
+#hadd "${OUTPUT_DiPhoton}/${DATASET_DiPhoton}_04.root" `ls ${INPUT_DiPhoton}/DiPhotonNtuples_{301..400}.root`
 
 #ls ${INPUT} | awk '{print "'$INPUT'"$1}' | xargs -n40 echo `echo ${OUTPUT}`| tee tmp.log

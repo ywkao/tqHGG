@@ -29,6 +29,7 @@ public:
     //------------------------
     bool  EvtInfo_passTrigger;
     Int_t EvtInfo_NPu;
+    //float EvtInfo_NPu;//New MC samples
     Int_t EvtInfo_NVtx;
     float EvtInfo_Rho;
     float EvtInfo_genweight;

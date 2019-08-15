@@ -16,6 +16,7 @@ TARGET   := bin/check
 TARGET0  := bin/covarianceMatrixStudy
 TARGET1  := bin/preselection
 TARGET2  := bin/selection
+TARGET3  := bin/generalChiSquareStudy
 
 SRCEXT   := cpp
 SOURCES  := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -25,7 +26,7 @@ LIB      := $(shell root-config --libs) -lMinuit
 INC      := -I include
 
 #all: ${TARGET1} ${TARGET2}
-all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2}
+all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2} $(TARGET3)
 
 
 
@@ -48,6 +49,10 @@ $(TARGET2): build/selection.o
 	@echo " Linking for selection cpp..."
 	@echo " $(CC) $^ -o $(TARGET2) $(LIB)"; $(CC) $^ -o $(TARGET2) $(LIB)
 
+$(TARGET3): build/generalChiSquareStudy.o
+	@echo " Linking for generalChiSquareStudy cpp..."
+	@echo " $(CC) $^ -o $(TARGET3) $(LIB)"; $(CC) $^ -o $(TARGET3) $(LIB)
+
 
 
 #$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
@@ -67,9 +72,13 @@ build/selection.o: src/selection.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
+build/generalChiSquareStudy.o: src/generalChiSquareStudy.cpp
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
 clean:
 	@echo " Cleaning..."; 
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2)"; $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2)
+	@echo " $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3)"; $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3)
 
 
 

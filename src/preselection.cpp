@@ -53,7 +53,7 @@ int main(int argc, char *argv[]){
     // Question: keep total genweight before or after preselection?
     int nentries = treeReader.GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
     double NormalizationFactor;
-    double Luminosity = 41.5; //fb{-1}
+    double Luminosity = 41.53; //fb{-1}
     double CrossSection = GetXsec(dataset); //pb
     double BranchingFraction = GetBranchingFraction(dataset); //pb
     printf("[INFO] CrossSection = %f !\n", CrossSection);
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]){
                 if( fabs(treeReader.MuonInfo_Eta->at(i)) > 2.4 ) continue;
                 if( fabs(treeReader.MuonInfo_Eta->at(i)) > 1.4442 && fabs(treeReader.MuonInfo_Eta->at(i)) < 1.566 ) continue;
                 if( fabs(treeReader.MuonInfo_Pt->at(i))  < 20  ) continue;
-                if( treeReader.MuonInfo_PFIsoDeltaBetaCorrR04->at(i)  > 0.25  ) continue;
+                if( treeReader.MuonInfo_PFIsoDeltaBetaCorrR04->at(i) > 0.25  ) continue;
                 //--- check deltaR(muon,photon) ---//
                 TLorentzVector muon; 
                 muon.SetPtEtaPhiE(treeReader.MuonInfo_Pt->at(i), treeReader.MuonInfo_Eta->at(i), treeReader.MuonInfo_Phi->at(i), treeReader.MuonInfo_Energy->at(i));
@@ -614,6 +614,7 @@ void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("EvtInfo_totalEntry_before_preselection", &EvtInfo_totalEntry_before_preselection, "EvtInfo_totalEntry_before_preselection/I");
     mytree -> Branch("EvtInfo_NormalizationFactor_lumi", &EvtInfo_NormalizationFactor_lumi, "EvtInfo_NormalizationFactor_lumi/F");
     mytree -> Branch("EvtInfo_NPu", &EvtInfo_NPu, "EvtInfo_NPu/I");
+    //mytree -> Branch("EvtInfo_NPu", &EvtInfo_NPu, "EvtInfo_NPu/F");
     mytree -> Branch("EvtInfo_Rho", &EvtInfo_Rho, "EvtInfo_Rho/F");
     mytree -> Branch("EvtInfo_NVtx", &EvtInfo_NVtx, "EvtInfo_NVtx/I");
     mytree -> Branch("EvtInfo_genweight", &EvtInfo_genweight, "EvtInfo_genweight/F");
