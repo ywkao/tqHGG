@@ -1,8 +1,10 @@
 #!/bin/bash
 set -e
 
+if [ ! -d reviewEntries ]; then mkdir reviewEntries; fi
+
 time ./bin/check "/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root" \
-"ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root" | tee reviewEntries/log_check_ttH
+"ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8" | tee reviewEntries/log_check_ttH
 
 #ssh node06 "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval `scramv1 runtime -sh` \
 #time ./bin/check \"/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root\" \
