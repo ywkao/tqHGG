@@ -1,0 +1,43 @@
+Hello World.
+[INFO] input_file  = /wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DoubleEG_C.root
+[INFO] nentries = 19092927
+[INFO] Luminosity = 41.530000
+[INFO] CrossSection = 0.001600
+[INFO] TotalGenweight = -19073834073.0000000
+[INFO] NormalizationFactor = -0.0000000
+
+Individual selection
+--------------------
+[INFO] Individual NoCut: Entries = 19092927
+[INFO] Individual Cut00: Entries = 505420
+[INFO] Individual Cut01: Entries = 1469
+[INFO] Individual Cut02: Entries = 237879
+[INFO] Individual Cut03: Entries = 237286
+[INFO] Individual Cut04: Entries = 258243
+[INFO] Individual Cut05: Entries = 0
+--------------------
+[INFO] Individual NoCut: Yields =  66.448
+[INFO] Individual Cut00: Yields =   1.759
+[INFO] Individual Cut01: Yields =   0.005
+[INFO] Individual Cut02: Yields =   0.828
+[INFO] Individual Cut03: Yields =   0.826
+[INFO] Individual Cut04: Yields =   0.899
+[INFO] Individual Cut05: Yields =   0.000
+
+Successive selection
+--------------------
+[INFO] Successive NoCut: Entries = 19092927
+[INFO] Successive Cut00: Entries = 505420
+[INFO] Successive Cut01: Entries = 1469
+[INFO] Successive Cut02: Entries = 1423
+[INFO] Successive Cut03: Entries = 830
+[INFO] Successive Cut04: Entries = 247
+[INFO] Successive Cut05: Entries = 0
+--------------------
+[INFO] Successive NoCut: Yields =  66.448
+[INFO] Successive Cut00: Yields =   1.759
+[INFO] Successive Cut01: Yields =   0.005
+[INFO] Successive Cut02: Yields =   0.005
+[INFO] Successive Cut03: Yields =   0.003
+[INFO] Successive Cut04: Yields =   0.001
+[INFO] Successive Cut05: Yields =   0.000
