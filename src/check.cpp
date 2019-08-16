@@ -7,10 +7,12 @@
 #include <TH1D.h>
 #include <TLorentzVector.h>
 #include <iostream>
+#include "../include/cross_section_v2.h"
 using namespace std;
 double pfDeepCSVJetTags_tight  = 0.8001;
 
 int main(int argc, char *argv[]){
+    char dataset[512]; sprintf(dataset, "%s", argv[2]); printf("[INFO] dataset     = %s\n", dataset);
     //HelloWorld{{{
     printf("Hello World.\n");
     char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
@@ -158,15 +160,10 @@ int main(int argc, char *argv[]){
     for(int ientry=0; ientry<nentries; ientry++){
         flashggStdTree->GetEntry(ientry);//load data
         TotalGenweight += EvtInfo_genweight;
-        //if(ientry<1000){ total += EvtInfo_genweight; } //printf("ie = %d, genweight = %9.7f\n", ientry+1, EvtInfo_genweight);}
-        //TotalGenweight += 1.;
     }
-    //printf("total = %14.7f\n", total);
-    //printf("total = %14.7f\n", TotalGenweight);
-    //TotalGenweight = 409426.09375;
     
     double Luminosity = 41.53; //fb{-1}
-    double CrossSection = 0.0016; //pb
+    double CrossSection = GetXsec(dataset); //pb
     double BranchingFraction = 1.; //pb
     double NormalizationFactor = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
     printf("[INFO] Luminosity = %f\n", Luminosity);
@@ -218,7 +215,7 @@ int main(int argc, char *argv[]){
         counter_nocut_norm += EvtInfo_genweight * NormalizationFactor;
         counter_nocut_successive += 1;
         counter_nocut_norm_successive += EvtInfo_genweight * NormalizationFactor;
-        if(ientry<1000) { total += EvtInfo_genweight*NormalizationFactor; printf("ie = %d, yields = %11.7f\n", ientry+1, EvtInfo_genweight * NormalizationFactor); }
+        //if(ientry<1000) { total += EvtInfo_genweight*NormalizationFactor; printf("ie = %d, yields = %11.7f\n", ientry+1, EvtInfo_genweight * NormalizationFactor); }
         //Store photon info{{{
         //==============================//
         //-----  Store PhotonInfo  -----//
@@ -426,43 +423,41 @@ int main(int argc, char *argv[]){
     //report individual{{{
     printf("\nIndividual selection\n");
     printf("--------------------\n");
-    printf("[INFO] NoCut: Entries = %.0f\n", counter_nocut);
-    printf("[INFO] Cut00: Entries = %.0f\n", counter_cut0);
-    printf("[INFO] Cut01: Entries = %.0f\n", counter_cut1);
-    printf("[INFO] Cut02: Entries = %.0f\n", counter_cut2);
-    printf("[INFO] Cut03: Entries = %.0f\n", counter_cut3);
-    printf("[INFO] Cut04: Entries = %.0f\n", counter_cut4);
-    printf("[INFO] Cut05: Entries = %.0f\n", counter_cut5);
+    printf("[INFO] Individual NoCut: Entries = %.0f\n", counter_nocut);
+    printf("[INFO] Individual Cut00: Entries = %.0f\n", counter_cut0);
+    printf("[INFO] Individual Cut01: Entries = %.0f\n", counter_cut1);
+    printf("[INFO] Individual Cut02: Entries = %.0f\n", counter_cut2);
+    printf("[INFO] Individual Cut03: Entries = %.0f\n", counter_cut3);
+    printf("[INFO] Individual Cut04: Entries = %.0f\n", counter_cut4);
+    printf("[INFO] Individual Cut05: Entries = %.0f\n", counter_cut5);
     printf("--------------------\n");
-    printf("[INFO] NoCut: Yields = %7.3f\n", counter_nocut_norm);
-    printf("[INFO] Cut00: Yields = %7.3f\n", counter_cut0_norm);
-    printf("[INFO] Cut01: Yields = %7.3f\n", counter_cut1_norm);
-    printf("[INFO] Cut02: Yields = %7.3f\n", counter_cut2_norm);
-    printf("[INFO] Cut03: Yields = %7.3f\n", counter_cut3_norm);
-    printf("[INFO] Cut04: Yields = %7.3f\n", counter_cut4_norm);
-    printf("[INFO] Cut05: Yields = %7.3f\n", counter_cut5_norm);
+    printf("[INFO] Individual NoCut: Yields = %7.3f\n", counter_nocut_norm);
+    printf("[INFO] Individual Cut00: Yields = %7.3f\n", counter_cut0_norm);
+    printf("[INFO] Individual Cut01: Yields = %7.3f\n", counter_cut1_norm);
+    printf("[INFO] Individual Cut02: Yields = %7.3f\n", counter_cut2_norm);
+    printf("[INFO] Individual Cut03: Yields = %7.3f\n", counter_cut3_norm);
+    printf("[INFO] Individual Cut04: Yields = %7.3f\n", counter_cut4_norm);
+    printf("[INFO] Individual Cut05: Yields = %7.3f\n", counter_cut5_norm);
     //}}}
     //report successive{{{
-    printf("\nSuccesive selection\n");
+    printf("\nSuccessive selection\n");
     printf("--------------------\n");
-    printf("[INFO] NoCut: Entries = %.0f\n", counter_nocut_successive);
-    printf("[INFO] Cut00: Entries = %.0f\n", counter_cut0_successive);
-    printf("[INFO] Cut01: Entries = %.0f\n", counter_cut1_successive);
-    printf("[INFO] Cut02: Entries = %.0f\n", counter_cut2_successive);
-    printf("[INFO] Cut03: Entries = %.0f\n", counter_cut3_successive);
-    printf("[INFO] Cut04: Entries = %.0f\n", counter_cut4_successive);
-    printf("[INFO] Cut05: Entries = %.0f\n", counter_cut5_successive);
+    printf("[INFO] Successive NoCut: Entries = %.0f\n", counter_nocut_successive);
+    printf("[INFO] Successive Cut00: Entries = %.0f\n", counter_cut0_successive);
+    printf("[INFO] Successive Cut01: Entries = %.0f\n", counter_cut1_successive);
+    printf("[INFO] Successive Cut02: Entries = %.0f\n", counter_cut2_successive);
+    printf("[INFO] Successive Cut03: Entries = %.0f\n", counter_cut3_successive);
+    printf("[INFO] Successive Cut04: Entries = %.0f\n", counter_cut4_successive);
+    printf("[INFO] Successive Cut05: Entries = %.0f\n", counter_cut5_successive);
     printf("--------------------\n");
-    printf("[INFO] NoCut: Yields = %7.3f\n", counter_nocut_norm_successive);
-    printf("[INFO] Cut00: Yields = %7.3f\n", counter_cut0_norm_successive);
-    printf("[INFO] Cut01: Yields = %7.3f\n", counter_cut1_norm_successive);
-    printf("[INFO] Cut02: Yields = %7.3f\n", counter_cut2_norm_successive);
-    printf("[INFO] Cut03: Yields = %7.3f\n", counter_cut3_norm_successive);
-    printf("[INFO] Cut04: Yields = %7.3f\n", counter_cut4_norm_successive);
-    printf("[INFO] Cut05: Yields = %7.3f\n", counter_cut5_norm_successive);
+    printf("[INFO] Successive NoCut: Yields = %7.3f\n", counter_nocut_norm_successive);
+    printf("[INFO] Successive Cut00: Yields = %7.3f\n", counter_cut0_norm_successive);
+    printf("[INFO] Successive Cut01: Yields = %7.3f\n", counter_cut1_norm_successive);
+    printf("[INFO] Successive Cut02: Yields = %7.3f\n", counter_cut2_norm_successive);
+    printf("[INFO] Successive Cut03: Yields = %7.3f\n", counter_cut3_norm_successive);
+    printf("[INFO] Successive Cut04: Yields = %7.3f\n", counter_cut4_norm_successive);
+    printf("[INFO] Successive Cut05: Yields = %7.3f\n", counter_cut5_norm_successive);
     //}}}
-    printf("total = %.13f\n", total);
-    std::cout<< total << std::endl;
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
     hist->Draw();
     c1->SaveAs("check_num_bjets.png");

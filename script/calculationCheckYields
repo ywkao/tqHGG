@@ -1,15 +1,28 @@
 #!/bin/bash
 set -e
 
-log=rewiewEntries/log_calculation
+log=reviewEntries/log_calculation
 echo "#!/bin/bash" | tee ${log}
 echo "echo \"#=== Result of data ===#\"" | tee ${log}
-for case in "NoCut" "Cut00" "Cut01" "Cut02" "Cut03" "Cut04"
+for type in "Individual" "Successive"
 do
-    cat rewiewEntries/log_check_* | grep ${case} | awk '{print "'${case}'_"NR"="$5}' | tee -a ${log}
-    echo "${case}_sum=\$((${case}_1 + ${case}_2 + ${case}_3 + ${case}_4 + ${case}_5))" | tee -a ${log}
-    echo "echo ${case} = \$${case}_sum" | tee -a ${log}
-    echo ""
+    for number in "Yields"
+    do
+        for case in "NoCut" "Cut00" "Cut01" "Cut02" "Cut03" "Cut04" "Cut05"
+        do
+            parameter="${type}_${number}_${case}";
+            #------- data -------#
+            #cat reviewEntries/log_check_? | grep ${type} | grep ${number}| grep ${case} | awk '{print "'${parameter}'_"NR"="$6}' | tee -a ${log}
+            #echo "${parameter}_sum=\$((${parameter}_1 + ${parameter}_2 + ${parameter}_3 + ${parameter}_4 + ${parameter}_5))" | tee -a ${log}
+            #echo "echo ${parameter}=\$${parameter}_sum" | tee -a ${log}
+            #echo "" | tee -a ${log}
+            #------- QCD -------#
+            cat reviewEntries/log_check_QCD_* | grep ${type} | grep ${number}| grep ${case} | awk '{print "'${parameter}'_"NR"="$6}' | tee -a ${log}
+            echo "${parameter}_sum=\$((${parameter}_1 + ${parameter}_2 + ${parameter}_3))" | tee -a ${log}
+            echo "echo ${parameter}=\$${parameter}_sum" | tee -a ${log}
+            echo "" | tee -a ${log}
+        done
+    done
 done
 
 chmod +x ${log}
