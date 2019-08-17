@@ -11,19 +11,20 @@
 using namespace std;
 double pfDeepCSVJetTags_tight  = 0.8001;
 
+bool isThisDataOrNot(char* dataset);
+bool isThisMultiFile(char* dataset);
+
+
 int main(int argc, char *argv[]){
-    char dataset[512]; sprintf(dataset, "%s", argv[2]); printf("[INFO] dataset     = %s\n", dataset);
     //HelloWorld{{{
     printf("Hello World.\n");
     char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
+    char dataset[512]; sprintf(dataset, "%s", argv[2]);       printf("[INFO] dataset     = %s\n", dataset);
+    bool isData = isThisDataOrNot(dataset);
+    bool isMultiFile = isThisMultiFile(dataset);
     TChain *flashggStdTree = new TChain("flashggNtuples/flashggStdTree");
-    flashggStdTree->Add(input_file);
-    //flashggStdTree->Add("/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root");
-    //flashggStdTree->Add("/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DoubleEG_B.root");
-    //flashggStdTree->Add("/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DoubleEG_C.root");
-    //flashggStdTree->Add("/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DoubleEG_D.root");
-    //flashggStdTree->Add("/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DoubleEG_E.root");
-    //flashggStdTree->Add("/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0/DoubleEG_F.root");
+    if(!isMultiFile) flashggStdTree->Add(input_file);
+    else             flashggStdTree->Add(Form("%s/*.root", input_file));
     //}}}
     //SetBranchAddresses{{{
     bool  EvtInfo_passTrigger;
@@ -171,7 +172,6 @@ int main(int argc, char *argv[]){
     printf("[INFO] TotalGenweight = %.7f\n", TotalGenweight);
     printf("[INFO] NormalizationFactor = %.7f\n", NormalizationFactor);
     //}}}
-
     //Counters {{{
     double counter_nocut = 0;
     double counter_cut0  = 0;
@@ -463,3 +463,27 @@ int main(int argc, char *argv[]){
     c1->SaveAs("check_num_bjets.png");
     return 0;
 }
+
+// functions{{{
+bool isThisDataOrNot(char* dataset){
+    if((string)dataset == "DoubleEG_B") return true;
+    if((string)dataset == "DoubleEG_C") return true;
+    if((string)dataset == "DoubleEG_D") return true;
+    if((string)dataset == "DoubleEG_E") return true;
+    if((string)dataset == "DoubleEG_F") return true;
+    return false;
+}
+bool isThisMultiFile(char* dataset){
+    if((string)dataset == "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa") return true;
+    if((string)dataset == "GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8") return true;
+    if((string)dataset == "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
+    if((string)dataset == "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
+    if((string)dataset == "WGToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
+    if((string)dataset == "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8") return true;
+    if((string)dataset == "WW_TuneCP5_13TeV-pythia8") return true;
+    if((string)dataset == "WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8") return true;
+    if((string)dataset == "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
+    if((string)dataset == "ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8") return true;
+    return false;
+}
+//}}}

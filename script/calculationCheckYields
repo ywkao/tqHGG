@@ -2,11 +2,10 @@
 set -e
 
 log=reviewEntries/log_calculation
-echo "#!/bin/bash" | tee ${log}
-echo "echo \"#=== Result of data ===#\"" | tee ${log}
+echo "\"\"\"=== Result of data ===\"\"\"" | tee ${log}
 for type in "Individual" "Successive"
 do
-    for number in "Yields"
+    for number in "Entries" "Yields"
     do
         for case in "NoCut" "Cut00" "Cut01" "Cut02" "Cut03" "Cut04" "Cut05"
         do
@@ -17,13 +16,16 @@ do
             #echo "echo ${parameter}=\$${parameter}_sum" | tee -a ${log}
             #echo "" | tee -a ${log}
             #------- QCD -------#
-            cat reviewEntries/log_check_QCD_* | grep ${type} | grep ${number}| grep ${case} | awk '{print "'${parameter}'_"NR"="$6}' | tee -a ${log}
-            echo "${parameter}_sum=\$((${parameter}_1 + ${parameter}_2 + ${parameter}_3))" | tee -a ${log}
-            echo "echo ${parameter}=\$${parameter}_sum" | tee -a ${log}
-            echo "" | tee -a ${log}
+            #for file in `ls reviewEntries/log_check_QCD_*`; do $((count+1)); echo ${file} $count; done
+            echo "${parameter} = \\" | tee -a ${log}
+            cat reviewEntries/log_check_QCD_* | grep ${type} | grep ${number}| grep ${case} | awk '{print $6" +\\"}' | tee -a ${log}
+            echo "0" | tee -a ${log}
+            echo "print \"${parameter} = %f\" % ${parameter}" | tee -a ${log}
+            #echo "echo ${parameter}=\$${parameter}_sum" | tee -a ${log}
+            #echo "" | tee -a ${log}
         done
     done
 done
 
 chmod +x ${log}
-./${log}
+python ${log}
