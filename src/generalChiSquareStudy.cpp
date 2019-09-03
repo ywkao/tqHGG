@@ -842,8 +842,8 @@ double Chi2_calculator_simple(double w_mass, double t_mass){
     vec_mass(0) = w_mass - w_boson_mass;
     vec_mass(1) = t_mass - top_quark_mass;
     TMatrixD matrix(2,2);
-    matrix(0,0) = 327.50; matrix(0,1) =   0.00;
-    matrix(1,0) =   0.00; matrix(1,1) = 962.52;
+    matrix(0,0) = 331.84; matrix(0,1) =   0.00;
+    matrix(1,0) =   0.00; matrix(1,1) = 965.17;
     //--- ST ---//
     //matrix(0,0) = 305.98; matrix(0,1) = 0;
     //matrix(1,0) = 0;      matrix(1,1) = 787.07;
@@ -854,8 +854,9 @@ double Chi2_calculator_modified(double w_mass, double t_mass){
     vec_mass(0) = w_mass - w_boson_mass;
     vec_mass(1) = t_mass - top_quark_mass;
     TMatrixD matrix(2,2);
-    matrix(0,0) = 327.50; matrix(0,1) = 369.63;
-    matrix(1,0) = 369.63; matrix(1,1) = 962.52;
+    matrix(0,0) = 331.84; matrix(0,1) = 374.95;
+    matrix(1,0) = 374.95; matrix(1,1) = 965.17;
+
     //--- ST ---//
     //matrix(0,0) = 305.98; matrix(0,1) = 323.97;
     //matrix(1,0) = 323.97; matrix(1,1) = 787.07;

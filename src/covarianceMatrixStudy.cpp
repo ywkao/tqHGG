@@ -272,7 +272,7 @@ int main(int argc, char *argv[]){
         }//end of gen loop
 
         //--- remove event with bad combination ---//
-        if(delta_R_gen_w > 0.6) continue;
+        if(delta_R_gen_w > 0.005) continue;
         if(gen_w_sel.M() < 20) continue; 
         hist_gen_w_sel->Fill(gen_w_sel.M());
         //}}}

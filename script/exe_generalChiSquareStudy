@@ -12,7 +12,7 @@ ExeAnalysis(){
     log=log/log_${file}.txt
     echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
     echo $file | awk -F "." '{print "'$INPUTDIR'""/"$1".root", "'$OUTPUTDIR'""/chi2_study_ntuple_"$1".root", $1}' |\
-    xargs -n3 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
+    xargs -n3 ${EXECUTABLE} | tee -a ${log}
     # REMARK: input_file / output_file / datasets / output_dir
 }
 ExeAnalysis_multi(){
