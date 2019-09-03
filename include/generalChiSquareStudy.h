@@ -15,6 +15,8 @@ double top_quark_width = 16.3;//GeV
 //==========================//
 //---  Class & Function  ---//
 //==========================//
+double GetM1M2_ratio(double M1, double M2);
+double GetBestM1(int num_jets, int index_bjet, std::vector<int> index_jet, TLorentzVector diphoton, std::vector<TLorentzVector> Jets);
 bool isMatched_with_Gen_W_Boson(TLorentzVector gen_w_sel, TH1D *&hist, Int_t GenPartInfo_size, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_PdgID);
 TLorentzVector GetGenParticle(TLorentzVector jet, Int_t GenPartInfo_size, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_PdgID, std::vector<int> &index_GenParticles, int &genParticle_PdgID);
 bool checkAvailability(int index, std::vector<int> ID_IsChosen);
@@ -24,7 +26,7 @@ void hist_report(TH1D *hist, const char* chi2_type);
 double Chi2_calculator_simple(double w_mass, double t_mass);
 double Chi2_calculator_modified(double w_mass, double t_mass);
 void MakePlots(TCanvas *c1, TH1D* hist, const char* title, const char* outputFile);
-void MakeFinalPlots(TCanvas *c1, TH1D* hist_simple, TH1D* hist_modified, TLegend *legend, const char* name);
+void MakeFinalPlots(TCanvas *c1, TH1D* hist_simple, TH1D* hist_modified, TH1D*hist_yfyj, TLegend *legend, const char* name);
 bool isThisDataOrNot(char* dataset);
 bool isThisMultiFile(char* dataset);
 bool isThisMCsignal(char* dataset);
