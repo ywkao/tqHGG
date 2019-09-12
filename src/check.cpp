@@ -7,8 +7,10 @@
 #include <TH1D.h>
 #include <TLorentzVector.h>
 #include <iostream>
-#include "../include/cross_section_v2.h"
+#include "../include/cross_section.h"
 using namespace std;
+double pfDeepCSVJetTags_loose  = 0.1522;
+double pfDeepCSVJetTags_medium = 0.4941;
 double pfDeepCSVJetTags_tight  = 0.8001;
 
 bool isThisDataOrNot(char* dataset);
@@ -181,6 +183,8 @@ int main(int argc, char *argv[]){
     double counter_cut4  = 0;
     double counter_cut5  = 0;
 
+    double counter_cut_hadronic  = 0;
+
     double counter_nocut_norm = 0;
     double counter_cut0_norm  = 0;
     double counter_cut1_norm  = 0;
@@ -206,7 +210,11 @@ int main(int argc, char *argv[]){
     double counter_cut5_norm_successive  = 0;
     //}}}
 
-    TH1D *hist= new TH1D("hist", "; Number of b-tagged jets; Entries", 10, 0, 10);
+    TH1D *hist = new TH1D("hist", "; Number of b-tagged jets; Entries", 10, 0, 10);
+    TH1D *hist_probb = new TH1D("hist_probb", "; JetInfo_pfDeepCSVJetTags_probb; Entries", 10, 0, 1.);
+    TH1D *hist_probbb = new TH1D("hist_probbb", "; JetInfo_pfDeepCSVJetTags_probbb; Entries", 10, 0, 1.);
+    TH1D *hist_jet_probb  = new TH1D("hist_jet_probb",  "; JetInfo_jet_pfDeepCSVJetTags_probb; Entries", 10, 0, 1.);
+    TH1D *hist_jet_probbb = new TH1D("hist_jet_probbb", "; JetInfo_jet_pfDeepCSVJetTags_probbb; Entries", 10, 0, 1.);
 
     for(int ientry=0; ientry<nentries; ientry++){
         //printf("ientry = %d\n", ientry);
@@ -215,6 +223,8 @@ int main(int argc, char *argv[]){
         counter_nocut_norm += EvtInfo_genweight * NormalizationFactor;
         counter_nocut_successive += 1;
         counter_nocut_norm_successive += EvtInfo_genweight * NormalizationFactor;
+        JetInfo_jet_pfDeepCSVJetTags_probb.clear();//bjet purpose
+        JetInfo_jet_pfDeepCSVJetTags_probbb.clear();//bjet purpose
         //if(ientry<1000) { total += EvtInfo_genweight*NormalizationFactor; printf("ie = %d, yields = %11.7f\n", ientry+1, EvtInfo_genweight * NormalizationFactor); }
         //Store photon info{{{
         //==============================//
@@ -363,6 +373,14 @@ int main(int argc, char *argv[]){
                 Jets.push_back(jet);
                 JetInfo_jet_pfDeepCSVJetTags_probb.push_back(JetInfo_pfDeepCSVJetTags_probb->at(i));//bjet purpose
                 JetInfo_jet_pfDeepCSVJetTags_probbb.push_back(JetInfo_pfDeepCSVJetTags_probbb->at(i));//bjet purpose
+                //printf("[check] JetInfo_pfDeepCSVJetTags_probb = %f\n", JetInfo_pfDeepCSVJetTags_probb->at(i));
+                //printf("[check] JetInfo_jet_pfDeepCSVJetTags_probb = %f\n", JetInfo_jet_pfDeepCSVJetTags_probb.at(num_jets-1));
+                //printf("[check] JetInfo_pfDeepCSVJetTags_probbb = %f\n", JetInfo_pfDeepCSVJetTags_probbb->at(i));
+                //printf("[check] JetInfo_jet_pfDeepCSVJetTags_probbb = %f\n\n", JetInfo_jet_pfDeepCSVJetTags_probbb.at(num_jets-1));
+                hist_probb -> Fill(JetInfo_pfDeepCSVJetTags_probb->at(i));
+                hist_probbb -> Fill(JetInfo_pfDeepCSVJetTags_probbb->at(i));
+                hist_jet_probb  -> Fill(JetInfo_jet_pfDeepCSVJetTags_probb.at(num_jets-1));
+                hist_jet_probbb -> Fill(JetInfo_jet_pfDeepCSVJetTags_probbb.at(num_jets-1));
                 //printf("%2d JetInfo_pfDeepCSVJetTags_probb = %f\n", i, JetInfo_pfDeepCSVJetTags_probb->at(i));
                 //printf("%2d JetInfo_pfDeepCSVJetTags_probbb = %f\n", i, JetInfo_pfDeepCSVJetTags_probbb->at(i));
             }
@@ -372,7 +390,7 @@ int main(int argc, char *argv[]){
         //----- b-jet -----//
         int num_bjets = 0;
         for(int i=0; i<num_jets; ++i){
-            if(JetInfo_jet_pfDeepCSVJetTags_probb.at(i)+JetInfo_jet_pfDeepCSVJetTags_probbb.at(i) >= pfDeepCSVJetTags_tight){
+            if(JetInfo_jet_pfDeepCSVJetTags_probb.at(i)+JetInfo_jet_pfDeepCSVJetTags_probbb.at(i) >= pfDeepCSVJetTags_medium){
                 //printf("JetInfo_jet_pfDeepCSVJetTags_probb = %f\n", JetInfo_jet_pfDeepCSVJetTags_probb.at(i));
                 //printf("JetInfo_jet_pfDeepCSVJetTags_probbb = %f\n", JetInfo_jet_pfDeepCSVJetTags_probbb.at(i));
                 num_bjets += 1;
@@ -417,8 +435,16 @@ int main(int argc, char *argv[]){
         if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4_norm_successive += EvtInfo_genweight * NormalizationFactor;
         if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) && num_bjets>0) counter_cut5_norm_successive += EvtInfo_genweight * NormalizationFactor;
         //}}}
+        // MoreInfo (hadronic){{{
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons<1 && bool_cut02 && num_jets>3 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) && num_bjets>0) counter_cut_hadronic += 1;
+        
+        // }}}
         //}}}
     }//end of event loop.
+
+    printf("\nIndividual selection\n");
+    printf("--------------------\n");
+    printf("[INFO] Hadronic: Entries = %.0f\n", counter_cut_hadronic);
 
     //report individual{{{
     printf("\nIndividual selection\n");
@@ -458,9 +484,23 @@ int main(int argc, char *argv[]){
     printf("[INFO] Successive Cut04: Yields = %7.3f\n", counter_cut4_norm_successive);
     printf("[INFO] Successive Cut05: Yields = %7.3f\n", counter_cut5_norm_successive);
     //}}}
+
+    /*
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
     hist->Draw();
     c1->SaveAs("check_num_bjets.png");
+    hist_probb->SetLineColor(kBlue);
+    hist_jet_probb->SetLineColor(kRed);
+    hist_probb->Draw();
+    hist_jet_probb->Draw("same");
+    c1->SaveAs("check_probb.png");
+
+    hist_probbb->SetLineColor(kBlue);
+    hist_jet_probbb->SetLineColor(kRed);
+    hist_probbb->Draw();
+    hist_jet_probbb->Draw("same");
+    c1->SaveAs("check_probbb.png");
+    */
     return 0;
 }
 

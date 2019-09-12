@@ -32,6 +32,13 @@ ExeAnalysis_singletop(){
 }
 #}}}
 
+# DryRun{{{ 
+if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
+    ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
+    echo "[MESSAGE] This is the end of dryRun execution." && exit 0
+fi
+#}}}
+
 FILE=$1
 #FILE="ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root"
 #FILE='TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8'
