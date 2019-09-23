@@ -17,7 +17,7 @@
 #include <vector>
 #include <string>
 #include "../include/covarianceMatrixStudy.h"
-#include "../include/cross_section_v2.h"
+#include "../include/cross_section.h"
 using namespace std;
 double w_boson_mass = 80.379;//GeV
 double top_quark_mass = 173.0;//GeV
@@ -75,7 +75,13 @@ int main(int argc, char *argv[]){
         //require the quality of photons. (PT requirement)
         bool pass_leadingPhotonPT = treeReader.DiPhoInfo_leadPt > treeReader.DiPhoInfo_mass / 2.;
         bool pass_subleadingPhotonPT = treeReader.DiPhoInfo_subleadPt > treeReader.DiPhoInfo_mass / 4.;
-        bool pass_photon_criteria = pass_leadingPhotonPT && pass_subleadingPhotonPT;
+        bool pass_photon_criteria_pt = pass_leadingPhotonPT && pass_subleadingPhotonPT;
+
+        bool pass_leadingPhotonEta =  (treeReader.DiPhoInfo_leadEta < 1.4442) || (treeReader.DiPhoInfo_leadEta > 1.566 && treeReader.DiPhoInfo_leadEta < 2.4);
+        bool pass_subleadingPhotonEta = (treeReader.DiPhoInfo_subleadEta < 1.4442) || (treeReader.DiPhoInfo_subleadEta > 1.566 && treeReader.DiPhoInfo_subleadEta < 2.4);
+        bool pass_photon_criteria_eta = pass_leadingPhotonEta && pass_subleadingPhotonEta;
+
+        bool pass_photon_criteria = pass_photon_criteria_pt && pass_photon_criteria_eta;
         if(!pass_photon_criteria) continue;
         //====== Hadronic Channel Criteria ======//
         if(treeReader.jets_size<3) continue;//quick skimmed
