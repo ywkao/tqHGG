@@ -27,10 +27,14 @@ int main(int argc, char *argv[]){
     TChain *flashggStdTree = new TChain("flashggNtuples/flashggStdTree");
     if(!isMultiFile) flashggStdTree->Add(input_file);
     else             flashggStdTree->Add(Form("%s/*.root", input_file));
+
+    TFile *f_mcpu = TFile::Open("data/MCPileUp.root");
+    TH1D  *h_pu_reweighting_factor = (TH1D*)f_mcpu->Get("puhist");
     //}}}
     //SetBranchAddresses{{{
     bool  EvtInfo_passTrigger;
     Int_t EvtInfo_NVtx;
+    Int_t EvtInfo_NPu;
     float EvtInfo_genweight;
     float DiPhoInfo_mass;
     float DiPhoInfo_pt;
@@ -107,6 +111,7 @@ int main(int argc, char *argv[]){
     //------------------------
     flashggStdTree->SetBranchAddress("EvtInfo.passTrigger", &EvtInfo_passTrigger);
     flashggStdTree->SetBranchAddress("EvtInfo.NVtx", &EvtInfo_NVtx);
+    flashggStdTree->SetBranchAddress("EvtInfo.NPu", &EvtInfo_NPu);
     flashggStdTree->SetBranchAddress("EvtInfo.genweight", &EvtInfo_genweight);
     flashggStdTree->SetBranchAddress("DiPhoInfo.mass", &DiPhoInfo_mass);
     flashggStdTree->SetBranchAddress("DiPhoInfo.pt", &DiPhoInfo_pt);
@@ -216,13 +221,20 @@ int main(int argc, char *argv[]){
     TH1D *hist_jet_probb  = new TH1D("hist_jet_probb",  "; JetInfo_jet_pfDeepCSVJetTags_probb; Entries", 10, 0, 1.);
     TH1D *hist_jet_probbb = new TH1D("hist_jet_probbb", "; JetInfo_jet_pfDeepCSVJetTags_probbb; Entries", 10, 0, 1.);
 
+
     for(int ientry=0; ientry<nentries; ientry++){
         //printf("ientry = %d\n", ientry);
         flashggStdTree->GetEntry(ientry);//load data
+
+        //========= PU Reweighting =========//
+        bool apply_PU_reweighting = true;
+        double PU_reweighting_factor = apply_PU_reweighting ? h_pu_reweighting_factor->GetBinContent((int)EvtInfo_NPu+1) : 1.;
+        double effectiveYields = EvtInfo_genweight * NormalizationFactor * PU_reweighting_factor; //### the final weighted value will be different....
+        
         counter_nocut += 1;
-        counter_nocut_norm += EvtInfo_genweight * NormalizationFactor;
+        counter_nocut_norm += effectiveYields;
         counter_nocut_successive += 1;
-        counter_nocut_norm_successive += EvtInfo_genweight * NormalizationFactor;
+        counter_nocut_norm_successive += effectiveYields;
         JetInfo_jet_pfDeepCSVJetTags_probb.clear();//bjet purpose
         JetInfo_jet_pfDeepCSVJetTags_probbb.clear();//bjet purpose
         //if(ientry<1000) { total += EvtInfo_genweight*NormalizationFactor; printf("ie = %d, yields = %11.7f\n", ientry+1, EvtInfo_genweight * NormalizationFactor); }
@@ -413,12 +425,12 @@ int main(int argc, char *argv[]){
         if(pass_photon_criteria && EvtInfo_passTrigger && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4 += 1;
         if(pass_photon_criteria && EvtInfo_passTrigger && num_bjets>0 ) counter_cut5 += 1;
         //---
-        if(pass_photon_criteria && EvtInfo_passTrigger) counter_cut0_norm += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 ) counter_cut1_norm += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && bool_cut02 ) counter_cut2_norm += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && num_jets>0 ) counter_cut3_norm += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4_norm += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && num_bjets>0 ) counter_cut5_norm += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger) counter_cut0_norm += effectiveYields;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 ) counter_cut1_norm += effectiveYields;
+        if(pass_photon_criteria && EvtInfo_passTrigger && bool_cut02 ) counter_cut2_norm += effectiveYields;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_jets>0 ) counter_cut3_norm += effectiveYields;
+        if(pass_photon_criteria && EvtInfo_passTrigger && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4_norm += effectiveYields;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_bjets>0 ) counter_cut5_norm += effectiveYields;
         //}}}
         //Successive cuts{{{
         if(pass_photon_criteria && EvtInfo_passTrigger) counter_cut0_successive += 1;
@@ -428,12 +440,12 @@ int main(int argc, char *argv[]){
         if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4_successive += 1;
         if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) && num_bjets>0) counter_cut5_successive += 1;
         //---
-        if(pass_photon_criteria && EvtInfo_passTrigger) counter_cut0_norm_successive += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 ) counter_cut1_norm_successive += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 ) counter_cut2_norm_successive += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 ) counter_cut3_norm_successive += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4_norm_successive += EvtInfo_genweight * NormalizationFactor;
-        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) && num_bjets>0) counter_cut5_norm_successive += EvtInfo_genweight * NormalizationFactor;
+        if(pass_photon_criteria && EvtInfo_passTrigger) counter_cut0_norm_successive += effectiveYields;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 ) counter_cut1_norm_successive += effectiveYields;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 ) counter_cut2_norm_successive += effectiveYields;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 ) counter_cut3_norm_successive += effectiveYields;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) ) counter_cut4_norm_successive += effectiveYields;
+        if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons>0 && bool_cut02 && num_jets>0 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) && num_bjets>0) counter_cut5_norm_successive += effectiveYields;
         //}}}
         // MoreInfo (hadronic){{{
         if(pass_photon_criteria && EvtInfo_passTrigger && num_leptons<1 && bool_cut02 && num_jets>3 && ((DiPhoInfo_mass > 100 && DiPhoInfo_mass < 120) || (DiPhoInfo_mass > 130 && DiPhoInfo_mass < 180)) && num_bjets>0) counter_cut_hadronic += 1;
