@@ -9,7 +9,6 @@ enum histList {
     hist_EvtInfo_NVtx,
     hist_EvtInfo_NVtx_wopu,
     hist_EvtInfo_genweight,
-    //------------------------
     hist_DiPhoInfo_mass,
     hist_DiPhoInfo_pt,
     hist_DiPhoInfo_eta,
@@ -27,12 +26,11 @@ enum histList {
     hist_DiPhoInfo_subleadE,
     hist_DiPhoInfo_subleadhoe,
     hist_DiPhoInfo_subleadIDMVA,
-    //------------------------
     hist_ElecInfo_Size,
     hist_MuonInfo_Size,
-    hist_num_leptons,// # of selected objects.
-    hist_num_electrons,// # of selected objects.
-    hist_num_muons,// # of selected objects.
+    hist_num_leptons,
+    hist_num_electrons,
+    hist_num_muons,
     hist_ElecInfo_electron_pt,
     hist_ElecInfo_electron_eta,
     hist_ElecInfo_electron_phi,
@@ -43,7 +41,6 @@ enum histList {
     hist_MuonInfo_muon_phi,
     hist_MuonInfo_muon_energy,
     hist_MuonInfo_muon_diphoton_deltaR,
-    //------------------------
     hist_jets_size,
     hist_num_jets,
     hist_JetInfo_jet_pt,
@@ -51,41 +48,67 @@ enum histList {
     hist_JetInfo_jet_phi,
     hist_JetInfo_jet_energy,
     hist_JetInfo_jet_diphoton_deltaR,
-    //------------------------
-    //Define in selection stage
-    //------------------------
     hist_lepton_pt,
     hist_lepton_eta,
     hist_lepton_phi,
     hist_lepton_energy,
     hist_lepton_diphoton_deltaR,
-    //------------------------
     hist_jet1_pt,
     hist_jet1_eta,
     hist_jet1_phi,
     hist_jet1_energy,
+    hist_jet1_btag_score,
     hist_jet1_diphoton_deltaR,
+    hist_jet1_lepton_deltaR,
     hist_jet2_pt,
     hist_jet2_eta,
     hist_jet2_phi,
     hist_jet2_energy,
+    hist_jet2_btag_score,
     hist_jet2_diphoton_deltaR,
-    //------------------------
-    hist_jet1_lepton_deltaR,
     hist_jet2_lepton_deltaR,
-    //------------------------
+    hist_wjet1_pt,
+    hist_wjet1_eta,
+    hist_wjet1_phi,
+    hist_wjet1_energy,
+    hist_wjet1_btag_score,
+    hist_wjet1_diphoton_deltaR,
+    hist_wjet1_lepton_deltaR,
+    hist_wjet2_pt,
+    hist_wjet2_eta,
+    hist_wjet2_phi,
+    hist_wjet2_energy,
+    hist_wjet2_btag_score,
+    hist_wjet2_diphoton_deltaR,
+    hist_wjet2_lepton_deltaR,
+    hist_jetq_pt,
+    hist_jetq_eta,
+    hist_jetq_phi,
+    hist_jetq_energy,
+    hist_jetq_btag_score,
+    hist_jetq_diphoton_deltaR,
+    hist_jetq_lepton_deltaR,
     hist_leading_bjet_pt,
     hist_leading_bjet_eta,
     hist_leading_bjet_phi,
     hist_leading_bjet_energy,
-    hist_chosen_bjet_pt,
-    hist_chosen_bjet_eta,
-    hist_chosen_bjet_phi,
-    hist_chosen_bjet_energy,
-    //------------------------
-    hist_inv_mass_dijet,
-    hist_inv_mass_diphoton,
-    hist_inv_mass_tbw,
+    hist_deltaR_top_top,
+    hist_deltaR_jet1_jet2,
+    hist_deltaR_wjet1_wjet2,
+    hist_deltaR_photon_photon,
+    hist_deltaR_qH,
+    hist_deltaR_bW,
+    hist_deltaR_HW,
+    hist_deltaR_tH,
+    hist_w_candidate_pt,
+    hist_w_candidate_eta,
+    hist_w_candidate_mass,
+    hist_top_tbw_pt,
+    hist_top_tbw_eta,
+    hist_top_tbw_mass,
+    hist_top_tqh_pt,
+    hist_top_tqh_eta,
+    hist_top_tqh_mass,
     totalHistNum
 };
 std::string histNames[totalHistNum]{
@@ -94,7 +117,6 @@ std::string histNames[totalHistNum]{
     "hist_EvtInfo_NVtx",
     "hist_EvtInfo_NVtx_wopu",
     "hist_EvtInfo_genweight",
-    //------------------------
     "hist_DiPhoInfo_mass",
     "hist_DiPhoInfo_pt",
     "hist_DiPhoInfo_eta",
@@ -112,12 +134,11 @@ std::string histNames[totalHistNum]{
     "hist_DiPhoInfo_subleadE",
     "hist_DiPhoInfo_subleadhoe",
     "hist_DiPhoInfo_subleadIDMVA",
-    //------------------------
     "hist_ElecInfo_Size",
     "hist_MuonInfo_Size",
-    "hist_num_leptons",// # of selected objects.
-    "hist_num_electrons",// # of selected objects.
-    "hist_num_muons",// # of selected objects.
+    "hist_num_leptons",
+    "hist_num_electrons",
+    "hist_num_muons",
     "hist_ElecInfo_electron_pt",
     "hist_ElecInfo_electron_eta",
     "hist_ElecInfo_electron_phi",
@@ -128,7 +149,6 @@ std::string histNames[totalHistNum]{
     "hist_MuonInfo_muon_phi",
     "hist_MuonInfo_muon_energy",
     "hist_MuonInfo_muon_diphoton_deltaR",
-    //------------------------
     "hist_jets_size",
     "hist_num_jets",
     "hist_JetInfo_jet_pt",
@@ -136,41 +156,67 @@ std::string histNames[totalHistNum]{
     "hist_JetInfo_jet_phi",
     "hist_JetInfo_jet_energy",
     "hist_JetInfo_jet_diphoton_deltaR",
-    //------------------------
-    //Define in selection stage
-    //------------------------
     "hist_lepton_pt",
     "hist_lepton_eta",
     "hist_lepton_phi",
     "hist_lepton_energy",
     "hist_lepton_diphoton_deltaR",
-    //------------------------
     "hist_jet1_pt",
     "hist_jet1_eta",
     "hist_jet1_phi",
     "hist_jet1_energy",
+    "hist_jet1_btag_score",
     "hist_jet1_diphoton_deltaR",
+    "hist_jet1_lepton_deltaR",
     "hist_jet2_pt",
     "hist_jet2_eta",
     "hist_jet2_phi",
     "hist_jet2_energy",
+    "hist_jet2_btag_score",
     "hist_jet2_diphoton_deltaR",
-    //------------------------
-    "hist_jet1_lepton_deltaR",
     "hist_jet2_lepton_deltaR",
-    //------------------------
+    "hist_wjet1_pt",
+    "hist_wjet1_eta",
+    "hist_wjet1_phi",
+    "hist_wjet1_energy",
+    "hist_wjet1_btag_score",
+    "hist_wjet1_diphoton_deltaR",
+    "hist_wjet1_lepton_deltaR",
+    "hist_wjet2_pt",
+    "hist_wjet2_eta",
+    "hist_wjet2_phi",
+    "hist_wjet2_energy",
+    "hist_wjet2_btag_score",
+    "hist_wjet2_diphoton_deltaR",
+    "hist_wjet2_lepton_deltaR",
+    "hist_jetq_pt",
+    "hist_jetq_eta",
+    "hist_jetq_phi",
+    "hist_jetq_energy",
+    "hist_jetq_btag_score",
+    "hist_jetq_diphoton_deltaR",
+    "hist_jetq_lepton_deltaR",
     "hist_leading_bjet_pt",
     "hist_leading_bjet_eta",
     "hist_leading_bjet_phi",
     "hist_leading_bjet_energy",
-    "hist_chosen_bjet_pt",
-    "hist_chosen_bjet_eta",
-    "hist_chosen_bjet_phi",
-    "hist_chosen_bjet_energy",
-    //------------------------
-    "hist_inv_mass_dijet",
-    "hist_inv_mass_diphoton",
-    "hist_inv_mass_tbw"
+    "hist_deltaR_top_top",
+    "hist_deltaR_jet1_jet2",
+    "hist_deltaR_wjet1_wjet2",
+    "hist_deltaR_photon_photon",
+    "hist_deltaR_qH",
+    "hist_deltaR_bW",
+    "hist_deltaR_HW",
+    "hist_deltaR_tH",
+    "hist_w_candidate_pt",
+    "hist_w_candidate_eta",
+    "hist_w_candidate_mass",
+    "hist_top_tbw_pt",
+    "hist_top_tbw_eta",
+    "hist_top_tbw_mass",
+    "hist_top_tqh_pt",
+    "hist_top_tqh_eta",
+    "hist_top_tqh_mass"
 };
 int histNbins[totalHistNum]{
     100,//hist_EvtInfo_NPu
@@ -178,7 +224,6 @@ int histNbins[totalHistNum]{
     50,//hist_EvtInfo_NVtx
     50,//hist_EvtInfo_NVtx_wopu
     100,//hist_EvtInfo_genweight
-    //------------------------
     40,//hist_DiPhoInfo_mass
     40,//hist_DiPhoInfo_pt
     40,//hist_DiPhoInfo_eta
@@ -196,12 +241,11 @@ int histNbins[totalHistNum]{
     40,//hist_DiPhoInfo_subleadE
     50,//hist_DiPhoInfo_subleadhoe
     50,//hist_DiPhoInfo_subleadIDMVA
-    //------------------------
     10,//hist_ElecInfo_Size
     10,//hist_MuonInfo_Size
-    10,//hist_num_leptons// # of selected objects.
-    10,//hist_num_electrons// # of selected objects.
-    10,//hist_num_muons// # of selected objects.
+    10,//hist_num_leptons
+    10,//hist_num_electrons
+    10,//hist_num_muons
     40,//hist_ElecInfo_electron_pt
     40,//hist_ElecInfo_electron_eta
     40,//hist_ElecInfo_electron_phi
@@ -212,7 +256,6 @@ int histNbins[totalHistNum]{
     40,//hist_MuonInfo_muon_phi
     40,//hist_MuonInfo_muon_energy
     40,//hist_MuonInfo_muon_diphoton_deltaR
-    //------------------------
     10,//hist_jets_size
     10,//hist_num_jets
     40,//hist_JetInfo_jet_pt
@@ -220,41 +263,67 @@ int histNbins[totalHistNum]{
     40,//hist_JetInfo_jet_phi
     40,//hist_JetInfo_jet_energy
     40,//hist_JetInfo_jet_diphoton_deltaR
-    //------------------------
-    //Define in selection stage
-    //------------------------
     40,//hist_lepton_pt
     40,//hist_lepton_eta
     40,//hist_lepton_phi
     40,//hist_lepton_energy
     40,//hist_lepton_diphoton_deltaR
-    //------------------------
     40,//hist_jet1_pt
     40,//hist_jet1_eta
     40,//hist_jet1_phi
     40,//hist_jet1_energy
+    10,//hist_jet1_btag_score
     40,//hist_jet1_diphoton_deltaR
+    40,//hist_jet1_lepton_deltaR
     40,//hist_jet2_pt
     40,//hist_jet2_eta
     40,//hist_jet2_phi
     40,//hist_jet2_energy
+    10,//hist_jet2_btag_score
     40,//hist_jet2_diphoton_deltaR
-    //------------------------
-    40,//hist_jet1_lepton_deltaR
     40,//hist_jet2_lepton_deltaR
-    //------------------------
+    40,//hist_wjet1_pt
+    40,//hist_wjet1_eta
+    40,//hist_wjet1_phi
+    40,//hist_wjet1_energy
+    10,//hist_wjet1_btag_score
+    40,//hist_wjet1_diphoton_deltaR
+    40,//hist_wjet1_lepton_deltaR
+    40,//hist_wjet2_pt
+    40,//hist_wjet2_eta
+    40,//hist_wjet2_phi
+    40,//hist_wjet2_energy
+    10,//hist_wjet2_btag_score
+    40,//hist_wjet2_diphoton_deltaR
+    40,//hist_wjet2_lepton_deltaR
+    40,//hist_jetq_pt
+    40,//hist_jetq_eta
+    40,//hist_jetq_phi
+    40,//hist_jetq_energy
+    10,//hist_jetq_btag_score
+    40,//hist_jetq_diphoton_deltaR
+    40,//hist_jetq_lepton_deltaR
     40,//hist_leading_bjet_pt
     40,//hist_leading_bjet_eta
     40,//hist_leading_bjet_phi
     40,//hist_leading_bjet_energy
-    40,//hist_chosen_bjet_pt
-    40,//hist_chosen_bjet_eta
-    40,//hist_chosen_bjet_phi
-    40,//hist_chosen_bjet_energy
-    //------------------------
-    50,//hist_inv_mass_dijet
-    50,//hist_inv_mass_diphoton
-    50//hist_inv_mass_tbw
+    40,//hist_deltaR_top_top
+    40,//hist_deltaR_jet1_jet2
+    40,//hist_deltaR_wjet1_wjet2
+    40,//hist_deltaR_photon_photon
+    40,//hist_deltaR_qH
+    40,//hist_deltaR_bW
+    40,//hist_deltaR_HW
+    40,//hist_deltaR_tH
+    40,//hist_w_candidate_pt
+    40,//hist_w_candidate_eta
+    50,//hist_w_candidate_mass
+    40,//hist_top_tbw_pt
+    40,//hist_top_tbw_eta
+    70,//hist_top_tbw_mass
+    40,//hist_top_tqh_pt
+    40,//hist_top_tqh_eta
+    70//hist_top_tqh_mass
 };
 double histBinLow[totalHistNum]{
     0,//hist_EvtInfo_NPu
@@ -262,12 +331,11 @@ double histBinLow[totalHistNum]{
     0,//hist_EvtInfo_NVtx
     0,//hist_EvtInfo_NVtx_wopu
     0,//hist_EvtInfo_genweight
-    //------------------------
     100,//hist_DiPhoInfo_mass
     0,//hist_DiPhoInfo_pt
     -2.5,//hist_DiPhoInfo_eta
     -3.0,//hist_DiPhoInfo_phi
-    100,//hist_DiPhoInfo_energy
+    0,//hist_DiPhoInfo_energy
     0,//hist_DiPhoInfo_leadPt
     -2.5,//hist_DiPhoInfo_leadEta
     -3.0,//hist_DiPhoInfo_leadPhi
@@ -280,12 +348,11 @@ double histBinLow[totalHistNum]{
     0,//hist_DiPhoInfo_subleadE
     0,//hist_DiPhoInfo_subleadhoe
     -1.,//hist_DiPhoInfo_subleadIDMVA
-    //------------------------
     0,//hist_ElecInfo_Size
     0,//hist_MuonInfo_Size
-    0,//hist_num_leptons// # of selected objects.
-    0,//hist_num_electrons// # of selected objects.
-    0,//hist_num_muons// # of selected objects.
+    0,//hist_num_leptons
+    0,//hist_num_electrons
+    0,//hist_num_muons
     0,//hist_ElecInfo_electron_pt
     -2.5,//hist_ElecInfo_electron_eta
     -3.0,//hist_ElecInfo_electron_phi
@@ -296,7 +363,6 @@ double histBinLow[totalHistNum]{
     -3.0,//hist_MuonInfo_muon_phi
     0,//hist_MuonInfo_muon_energy
     0,//hist_MuonInfo_muon_diphoton_deltaR
-    //------------------------
     0,//hist_jets_size
     0,//hist_num_jets
     0,//hist_JetInfo_jet_pt
@@ -304,41 +370,67 @@ double histBinLow[totalHistNum]{
     -3.0,//hist_JetInfo_jet_phi
     0,//hist_JetInfo_jet_energy
     0,//hist_JetInfo_jet_diphoton_deltaR
-    //------------------------
-    //Define in selection stage
-    //------------------------
     0,//hist_lepton_pt
     -2.5,//hist_lepton_eta
     -3.0,//hist_lepton_phi
     0,//hist_lepton_energy
     0,//hist_lepton_diphoton_deltaR
-    //------------------------
     0,//hist_jet1_pt
     -2.5,//hist_jet1_eta
     -3.0,//hist_jet1_phi
     0,//hist_jet1_energy
+    0,//hist_jet1_btag_score
     0,//hist_jet1_diphoton_deltaR
+    0,//hist_jet1_lepton_deltaR
     0,//hist_jet2_pt
     -2.5,//hist_jet2_eta
     -3.0,//hist_jet2_phi
     0,//hist_jet2_energy
+    0,//hist_jet2_btag_score
     0,//hist_jet2_diphoton_deltaR
-    //------------------------
-    0,//hist_jet1_lepton_deltaR
     0,//hist_jet2_lepton_deltaR
-    //------------------------
+    0,//hist_wjet1_pt
+    -2.5,//hist_wjet1_eta
+    -3.0,//hist_wjet1_phi
+    0,//hist_wjet1_energy
+    0,//hist_wjet1_btag_score
+    0,//hist_wjet1_diphoton_deltaR
+    0,//hist_wjet1_lepton_deltaR
+    0,//hist_wjet2_pt
+    -2.5,//hist_wjet2_eta
+    -3.0,//hist_wjet2_phi
+    0,//hist_wjet2_energy
+    0,//hist_wjet2_btag_score
+    0,//hist_wjet2_diphoton_deltaR
+    0,//hist_wjet2_lepton_deltaR
+    0,//hist_jetq_pt
+    -2.5,//hist_jetq_eta
+    -3.0,//hist_jetq_phi
+    0,//hist_jetq_energy
+    0,//hist_jetq_btag_score
+    0,//hist_jetq_diphoton_deltaR
+    0,//hist_jetq_lepton_deltaR
     0,//hist_leading_bjet_pt
     -2.5,//hist_leading_bjet_eta
     -3.0,//hist_leading_bjet_phi
     0,//hist_leading_bjet_energy
-    0,//hist_chosen_bjet_pt
-    -2.5,//hist_chosen_bjet_eta
-    -3.0,//hist_chosen_bjet_phi
-    0,//hist_chosen_bjet_energy
-    //------------------------
-    55,//hist_inv_mass_dijet
-    100,//hist_inv_mass_diphoton
-    0//hist_inv_mass_tbw
+    0,//hist_deltaR_top_top
+    0,//hist_deltaR_jet1_jet2
+    0,//hist_deltaR_wjet1_wjet2
+    0,//hist_deltaR_photon_photon
+    0,//hist_deltaR_qH
+    0,//hist_deltaR_bW
+    0,//hist_deltaR_HW
+    0,//hist_deltaR_tH
+    0,//hist_w_candidate_pt
+    -2.5,//hist_w_candidate_eta
+    0,//hist_w_candidate_mass
+    0,//hist_top_tbw_pt
+    -2.5,//hist_top_tbw_eta
+    0,//hist_top_tbw_mass
+    0,//hist_top_tqh_pt
+    -2.5,//hist_top_tqh_eta
+    0//hist_top_tqh_mass
 };
 double histBinHigh[totalHistNum]{
     100,//hist_EvtInfo_NPu
@@ -346,12 +438,11 @@ double histBinHigh[totalHistNum]{
     100,//hist_EvtInfo_NVtx
     100,//hist_EvtInfo_NVtx_wopu
     100,//hist_EvtInfo_genweight
-    //------------------------
     180,//hist_DiPhoInfo_mass
     200,//hist_DiPhoInfo_pt
     2.5,//hist_DiPhoInfo_eta
     3.0,//hist_DiPhoInfo_phi
-    300,//hist_DiPhoInfo_energy
+    500,//hist_DiPhoInfo_energy
     200,//hist_DiPhoInfo_leadPt
     2.5,//hist_DiPhoInfo_leadEta
     3.0,//hist_DiPhoInfo_leadPhi
@@ -364,12 +455,11 @@ double histBinHigh[totalHistNum]{
     200,//hist_DiPhoInfo_subleadE
     0.10,//hist_DiPhoInfo_subleadhoe
     1.,//hist_DiPhoInfo_subleadIDMVA
-    //------------------------
     10,//hist_ElecInfo_Size
     10,//hist_MuonInfo_Size
-    10,//hist_num_leptons// # of selected objects.
-    10,//hist_num_electrons// # of selected objects.
-    10,//hist_num_muons// # of selected objects.
+    10,//hist_num_leptons
+    10,//hist_num_electrons
+    10,//hist_num_muons
     200,//hist_ElecInfo_electron_pt
     2.5,//hist_ElecInfo_electron_eta
     3.0,//hist_ElecInfo_electron_phi
@@ -380,7 +470,6 @@ double histBinHigh[totalHistNum]{
     3.0,//hist_MuonInfo_muon_phi
     200,//hist_MuonInfo_muon_energy
     6,//hist_MuonInfo_muon_diphoton_deltaR
-    //------------------------
     10,//hist_jets_size
     10,//hist_num_jets
     200,//hist_JetInfo_jet_pt
@@ -388,124 +477,66 @@ double histBinHigh[totalHistNum]{
     3.0,//hist_JetInfo_jet_phi
     200,//hist_JetInfo_jet_energy
     6,//hist_JetInfo_jet_diphoton_deltaR
-    //------------------------
-    //Define in selection stage
-    //------------------------
     200,//hist_lepton_pt
     2.5,//hist_lepton_eta
     3.0,//hist_lepton_phi
     200,//hist_lepton_energy
     6,//hist_lepton_diphoton_deltaR
-    //------------------------
     200,//hist_jet1_pt
     2.5,//hist_jet1_eta
     3.0,//hist_jet1_phi
     200,//hist_jet1_energy
+    1,//hist_jet1_btag_score
     6,//hist_jet1_diphoton_deltaR
+    6,//hist_jet1_lepton_deltaR
     200,//hist_jet2_pt
     2.5,//hist_jet2_eta
     3.0,//hist_jet2_phi
     200,//hist_jet2_energy
+    1,//hist_jet2_btag_score
     6,//hist_jet2_diphoton_deltaR
-    //------------------------
-    6,//hist_jet1_lepton_deltaR
     6,//hist_jet2_lepton_deltaR
-    //------------------------
+    200,//hist_wjet1_pt
+    2.5,//hist_wjet1_eta
+    3.0,//hist_wjet1_phi
+    200,//hist_wjet1_energy
+    1,//hist_wjet1_btag_score
+    6,//hist_wjet1_diphoton_deltaR
+    6,//hist_wjet1_lepton_deltaR
+    200,//hist_wjet2_pt
+    2.5,//hist_wjet2_eta
+    3.0,//hist_wjet2_phi
+    200,//hist_wjet2_energy
+    1,//hist_wjet2_btag_score
+    6,//hist_wjet2_diphoton_deltaR
+    6,//hist_wjet2_lepton_deltaR
+    200,//hist_jetq_pt
+    2.5,//hist_jetq_eta
+    3.0,//hist_jetq_phi
+    200,//hist_jetq_energy
+    1,//hist_jetq_btag_score
+    6,//hist_jetq_diphoton_deltaR
+    6,//hist_jetq_lepton_deltaR
     200,//hist_leading_bjet_pt
     2.5,//hist_leading_bjet_eta
     3.0,//hist_leading_bjet_phi
     200,//hist_leading_bjet_energy
-    200,//hist_chosen_bjet_pt
-    2.5,//hist_chosen_bjet_eta
-    3.0,//hist_chosen_bjet_phi
-    200,//hist_chosen_bjet_energy
-    //------------------------
-    105,//hist_inv_mass_dijet
-    150,//hist_inv_mass_diphoton
-    500//hist_inv_mass_tbw
+    6,//hist_deltaR_top_top
+    6,//hist_deltaR_jet1_jet2
+    6,//hist_deltaR_wjet1_wjet2
+    6,//hist_deltaR_photon_photon
+    6,//hist_deltaR_qH
+    6,//hist_deltaR_bW
+    6,//hist_deltaR_HW
+    6,//hist_deltaR_tH
+    200,//hist_w_candidate_pt
+    2.5,//hist_w_candidate_eta
+    150,//hist_w_candidate_mass
+    400,//hist_top_tbw_pt
+    2.5,//hist_top_tbw_eta
+    350,//hist_top_tbw_mass
+    400,//hist_top_tqh_pt
+    2.5,//hist_top_tqh_eta
+    350//hist_top_tqh_mass
 };
 #endif
-/*
-    TH1D *hist_EvtInfo_NPu = new TH1D("hist_EvtInfo_NPu", "", 100, 0, 100);
-    TH1D *hist_EvtInfo_Rho = new TH1D("hist_EvtInfo_Rho", "", 50, 0, 1000);
-    TH1D *hist_EvtInfo_NVtx = new TH1D("hist_EvtInfo_NVtx", "", 100, 0, 100);
-    TH1D *hist_EvtInfo_NVtx_wopu = new TH1D("hist_EvtInfo_NVtx_wopu", "", 100, 0, 100);
-    TH1D *hist_EvtInfo_genweight = new TH1D("hist_EvtInfo_genweight", "", 100, 0, 100);
-    //------------------------
-    TH1D *hist_DiPhoInfo_mass = new TH1D("hist_DiPhoInfo_mass", "", 40, 100, 180);
-    TH1D *hist_DiPhoInfo_pt = new TH1D("hist_DiPhoInfo_pt", "", 30, 0, 600);
-    TH1D *hist_DiPhoInfo_eta = new TH1D("hist_DiPhoInfo_eta", "", 40, -2.5, 2.5);
-    TH1D *hist_DiPhoInfo_phi = new TH1D("hist_DiPhoInfo_phi", "", 40, -3.0, 3.0);
-    TH1D *hist_DiPhoInfo_energy = new TH1D("hist_DiPhoInfo_energy", "", 40, 0, 200);
-    TH1D *hist_DiPhoInfo_leadPt = new TH1D("hist_DiPhoInfo_leadPt", "", 30, 0, 600);
-    TH1D *hist_DiPhoInfo_leadEta = new TH1D("hist_DiPhoInfo_leadEta", "", 40, -2.5, 2.5);
-    TH1D *hist_DiPhoInfo_leadPhi = new TH1D("hist_DiPhoInfo_leadPhi", "", 40, -3.0, 3.0);
-    TH1D *hist_DiPhoInfo_leadE = new TH1D("hist_DiPhoInfo_leadE", "", 40, 0, 200);
-    TH1D *hist_DiPhoInfo_leadhoe = new TH1D("hist_DiPhoInfo_leadhoe", "", 50, 0, 0.25);
-    TH1D *hist_DiPhoInfo_leadIDMVA = new TH1D("hist_DiPhoInfo_leadIDMVA", "", 50, -1., 1.);
-    TH1D *hist_DiPhoInfo_subleadPt = new TH1D("hist_DiPhoInfo_subleadPt", "", 30, 0, 600);
-    TH1D *hist_DiPhoInfo_subleadEta = new TH1D("hist_DiPhoInfo_subleadEta", "", 40, -2.5, 2.5);
-    TH1D *hist_DiPhoInfo_subleadPhi = new TH1D("hist_DiPhoInfo_subleadPhi", "", 40, -3.0, 3.0);
-    TH1D *hist_DiPhoInfo_subleadE = new TH1D("hist_DiPhoInfo_subleadE", "", 40, 0, 200);
-    TH1D *hist_DiPhoInfo_subleadhoe = new TH1D("hist_DiPhoInfo_subleadhoe", "", 50, 0, 0.25);
-    TH1D *hist_DiPhoInfo_subleadIDMVA = new TH1D("hist_DiPhoInfo_subleadIDMVA", "", 50, -1., 1.);
-    //------------------------
-    TH1D *hist_ElecInfo_Size = new TH1D("hist_ElecInfo_Size", "", 10, 0, 10);
-    TH1D *hist_MuonInfo_Size = new TH1D("hist_MuonInfo_Size", "", 10, 0, 10);
-    TH1D *hist_num_leptons = new TH1D("hist_num_leptons", "", 10, 0, 10);// # of selected objects.
-    TH1D *hist_num_electrons = new TH1D("hist_num_electrons", "", 10, 0, 10);// # of selected objects.
-    TH1D *hist_num_muons = new TH1D("hist_num_muons", "", 10, 0, 10);// # of selected objects.
-    TH1D *hist_ElecInfo_electron_pt = new TH1D("hist_ElecInfo_electron_pt", "", 50, 0, 1000);
-    TH1D *hist_ElecInfo_electron_eta = new TH1D("hist_ElecInfo_electron_eta", "", 40, -2.5, 2.5);
-    TH1D *hist_ElecInfo_electron_phi = new TH1D("hist_ElecInfo_electron_phi", "", 40, -3.0, 3.0);
-    TH1D *hist_ElecInfo_electron_energy = new TH1D("hist_ElecInfo_electron_energy", "", 40, 0, 1000);
-    TH1D *hist_ElecInfo_electron_diphoton_deltaR = new TH1D("hist_ElecInfo_electron_diphoton_deltaR", "", 60, 0, 60);
-    TH1D *hist_MuonInfo_muon_pt = new TH1D("hist_MuonInfo_muon_pt", "", 50, 0, 1000);
-    TH1D *hist_MuonInfo_muon_eta = new TH1D("hist_MuonInfo_muon_eta", "", 40, -2.5, 2.5);
-    TH1D *hist_MuonInfo_muon_phi = new TH1D("hist_MuonInfo_muon_phi", "", 40, -3.0, 3.0);
-    TH1D *hist_MuonInfo_muon_energy = new TH1D("hist_MuonInfo_muon_energy", "", 40, 0, 1000);
-    TH1D *hist_MuonInfo_muon_diphoton_deltaR = new TH1D("hist_MuonInfo_muon_diphoton_deltaR", "", 60, 0, 60);
-    //------------------------
-    TH1D *hist_jets_size = new TH1D("hist_jets_size", "", 10, 0, 10);
-    TH1D *hist_num_jets = new TH1D("hist_num_jets", "", 10, 0, 10);
-    TH1D *hist_JetInfo_jet_pt = new TH1D("hist_JetInfo_jet_pt", "", 50, 0, 1000);
-    TH1D *hist_JetInfo_jet_eta = new TH1D("hist_JetInfo_jet_eta", "", 40, -2.5, 2.5);
-    TH1D *hist_JetInfo_jet_phi = new TH1D("hist_JetInfo_jet_phi", "", 40, -3.0, 3.0);
-    TH1D *hist_JetInfo_jet_energy = new TH1D("hist_JetInfo_jet_energy", "", 40, 0, 1000);
-    TH1D *hist_JetInfo_jet_diphoton_deltaR = new TH1D("hist_JetInfo_jet_diphoton_deltaR", "", 60, 0, 60);
-    //------------------------
-    //Define in selection stage
-    //------------------------
-    TH1D *hist_lepton_pt = new TH1D("hist_lepton_pt", "", 50, 0, 1000);
-    TH1D *hist_lepton_eta = new TH1D("hist_lepton_eta", "", 40, -2.5, 2.5);
-    TH1D *hist_lepton_phi = new TH1D("hist_lepton_phi", "", 40, -3.0, 3.0);
-    TH1D *hist_lepton_energy = new TH1D("hist_lepton_energy", "", 40, 0, 1000);
-    TH1D *hist_lepton_diphoton_deltaR = new TH1D("hist_lepton_diphoton_deltaR", "", 60, 0, 60);
-    //------------------------
-    TH1D *hist_jet1_diphoton_deltaR = new TH1D("hist_jet1_diphoton_deltaR", "", 60, 0, 60);
-    TH1D *hist_jet2_diphoton_deltaR = new TH1D("hist_jet2_diphoton_deltaR", "", 60, 0, 60);
-    TH1D *hist_jet1_lepton_deltaR = new TH1D("hist_jet1_lepton_deltaR", "", 60, 0, 60);
-    TH1D *hist_jet2_lepton_deltaR = new TH1D("hist_jet2_lepton_deltaR", "", 60, 0, 60);
-    //------------------------
-    TH1D *hist_jet1_pt = new TH1D("hist_jet1_pt", "", 50, 0, 1000);
-    TH1D *hist_jet1_eta = new TH1D("hist_jet1_eta", "", 40, -2.5, 2.5);
-    TH1D *hist_jet1_phi = new TH1D("hist_jet1_phi", "", 40, -3.0, 3.0);
-    TH1D *hist_jet1_energy = new TH1D("hist_jet1_energy", "", 40, 0, 1000);
-    TH1D *hist_jet2_pt = new TH1D("hist_jet2_pt", "", 50, 0, 1000);
-    TH1D *hist_jet2_eta = new TH1D("hist_jet2_eta", "", 40, -2.5, 2.5);
-    TH1D *hist_jet2_phi = new TH1D("hist_jet2_phi", "", 40, -3.0, 3.0);
-    TH1D *hist_jet2_energy = new TH1D("hist_jet2_energy", "", 40, 0, 1000);
-    //------------------------
-    TH1D  *hist_leading_bjet_pt = new TH1D("hist_leading_bjet_pt", "hist_leading_bjet_pt", 50, 0, 1000);
-    TH1D  *hist_leading_bjet_eta = new TH1D("hist_leading_bjet_eta", "hist_leading_bjet_eta", 40, -2.5, 2.5);
-    TH1D  *hist_leading_bjet_phi = new TH1D("hist_leading_bjet_phi", "hist_leading_bjet_phi", 40, -3.0, 3.0);
-    TH1D  *hist_leading_bjet_energy = new TH1D("hist_leading_bjet_energy", "hist_leading_bjet_energy", 40, 0, 1000);
-    TH1D  *hist_chosen_bjet_pt = new TH1D("hist_chosen_bjet_pt", "hist_chosen_bjet_pt", 50, 0, 1000);
-    TH1D  *hist_chosen_bjet_eta = new TH1D("hist_chosen_bjet_eta", "hist_chosen_bjet_eta", 40, -2.5, 2.5);
-    TH1D  *hist_chosen_bjet_phi = new TH1D("hist_chosen_bjet_phi", "hist_chosen_bjet_phi", 40, -3.0, 3.0);
-    TH1D  *hist_chosen_bjet_energy = new TH1D("hist_chosen_bjet_energy", "hist_chosen_bjet_energy", 40, 0, 1000);
-    //------------------------
-    TH1D  *hist_inv_mass_dijet = new TH1D("hist_inv_mass_dijet", "hist_inv_mass_dijet", 50, 55, 105);
-    TH1D  *hist_inv_mass_diphoton = new TH1D("hist_inv_mass_diphoton", "hist_inv_mass_diphoton", 50, 100, 150);
-    TH1D  *hist_inv_mass_tbw = new TH1D("hist_inv_mass_tbw", "hist_inv_mass_tbw", 50, 0, 500);
-*/

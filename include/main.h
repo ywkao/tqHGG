@@ -27,6 +27,16 @@ public:
     flashggStdTreeParameters();
     ~flashggStdTreeParameters();
     //------------------------
+    Int_t           GenPartInfo_size;
+    std::vector<float>   *GenPartInfo_Pt;
+    std::vector<float>   *GenPartInfo_Eta;
+    std::vector<float>   *GenPartInfo_Phi;
+    std::vector<float>   *GenPartInfo_Mass;
+    std::vector<int>     *GenPartInfo_PdgID;
+    std::vector<int>     *GenPartInfo_Status;
+    std::vector<int>     *GenPartInfo_nMo;
+    std::vector<int>     *GenPartInfo_nDa;
+    //------------------------
     bool  EvtInfo_passTrigger;
     Int_t EvtInfo_NPu;
     //float EvtInfo_NPu;//New MC samples
@@ -118,6 +128,15 @@ public:
     float DiPhoInfo_phi;
     float DiPhoInfo_energy;
     //------------------------
+    std::vector<float>   GenPartInfo_gen_Pt;
+    std::vector<float>   GenPartInfo_gen_Eta;
+    std::vector<float>   GenPartInfo_gen_Phi;
+    std::vector<float>   GenPartInfo_gen_Mass;
+    std::vector<int>     GenPartInfo_gen_PdgID;
+    std::vector<int>     GenPartInfo_gen_Status;
+    std::vector<int>     GenPartInfo_gen_nMo;
+    std::vector<int>     GenPartInfo_gen_nDa;
+    //------------------------
     Int_t num_jets;// # of selected objects.
     std::vector<float> JetInfo_jet_pt;
     std::vector<float> JetInfo_jet_eta;
@@ -128,6 +147,11 @@ public:
     std::vector<float> JetInfo_jet_subleadingPhoton_deltaR;
     std::vector<float> JetInfo_jet_pfDeepCSVJetTags_probb;
     std::vector<float> JetInfo_jet_pfDeepCSVJetTags_probbb;
+    Int_t num_bjets;// # of selected objects.
+    std::vector<float> JetInfo_leading_bjet_pt;
+    std::vector<float> JetInfo_leading_bjet_eta;
+    std::vector<float> JetInfo_leading_bjet_phi;
+    std::vector<float> JetInfo_leading_bjet_energy;
     //------------------------
     Int_t num_leptons;// # of selected objects.
     Int_t num_electrons;// # of selected objects.
@@ -164,6 +188,15 @@ public:
     //------------------------
     //containers used in selection stage
     //------------------------
+    std::vector<float>   *GenPartInfo_gen_Pt_selection;
+    std::vector<float>   *GenPartInfo_gen_Eta_selection;
+    std::vector<float>   *GenPartInfo_gen_Phi_selection;
+    std::vector<float>   *GenPartInfo_gen_Mass_selection;
+    std::vector<int>     *GenPartInfo_gen_PdgID_selection;
+    std::vector<int>     *GenPartInfo_gen_Status_selection;
+    std::vector<int>     *GenPartInfo_gen_nMo_selection;
+    std::vector<int>     *GenPartInfo_gen_nDa_selection;
+    //------------------------
     std::vector<float> *JetInfo_jet_pt_selection;
     std::vector<float> *JetInfo_jet_eta_selection;
     std::vector<float> *JetInfo_jet_phi_selection;
@@ -173,6 +206,12 @@ public:
     std::vector<float> *JetInfo_jet_subleadingPhoton_deltaR_selection;
     std::vector<float> *JetInfo_jet_pfDeepCSVJetTags_probb_selection;
     std::vector<float> *JetInfo_jet_pfDeepCSVJetTags_probbb_selection;
+    //-----
+    std::vector<float> *JetInfo_leading_bjet_pt_selection;
+    std::vector<float> *JetInfo_leading_bjet_eta_selection;
+    std::vector<float> *JetInfo_leading_bjet_phi_selection;
+    std::vector<float> *JetInfo_leading_bjet_energy_selection;
+    //-----
     std::vector<float> *ElecInfo_electron_pt_selection;
     std::vector<float> *ElecInfo_electron_eta_selection;
     std::vector<float> *ElecInfo_electron_phi_selection;

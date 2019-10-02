@@ -27,7 +27,7 @@ void stackHist(const char* channel){
     MakeStackHist("hist_EvtInfo_Rho");
     MakeStackHist("hist_EvtInfo_NVtx");
     MakeStackHist("hist_EvtInfo_NVtx_wopu");
-    //------------------------
+    MakeStackHist("hist_EvtInfo_genweight");
     MakeStackHist("hist_DiPhoInfo_mass");
     MakeStackHist("hist_DiPhoInfo_pt");
     MakeStackHist("hist_DiPhoInfo_eta");
@@ -45,12 +45,11 @@ void stackHist(const char* channel){
     MakeStackHist("hist_DiPhoInfo_subleadE");
     MakeStackHist("hist_DiPhoInfo_subleadhoe");
     MakeStackHist("hist_DiPhoInfo_subleadIDMVA");
-    //------------------------
     MakeStackHist("hist_ElecInfo_Size");
     MakeStackHist("hist_MuonInfo_Size");
-    MakeStackHist("hist_num_leptons");// # of selected objects.
-    MakeStackHist("hist_num_electrons");// # of selected objects.
-    MakeStackHist("hist_num_muons");// # of selected objects.
+    MakeStackHist("hist_num_leptons");
+    MakeStackHist("hist_num_electrons");
+    MakeStackHist("hist_num_muons");
     MakeStackHist("hist_ElecInfo_electron_pt");
     MakeStackHist("hist_ElecInfo_electron_eta");
     MakeStackHist("hist_ElecInfo_electron_phi");
@@ -61,7 +60,6 @@ void stackHist(const char* channel){
     MakeStackHist("hist_MuonInfo_muon_phi");
     MakeStackHist("hist_MuonInfo_muon_energy");
     MakeStackHist("hist_MuonInfo_muon_diphoton_deltaR");
-    //------------------------
     MakeStackHist("hist_jets_size");
     MakeStackHist("hist_num_jets");
     MakeStackHist("hist_JetInfo_jet_pt");
@@ -69,43 +67,72 @@ void stackHist(const char* channel){
     MakeStackHist("hist_JetInfo_jet_phi");
     MakeStackHist("hist_JetInfo_jet_energy");
     MakeStackHist("hist_JetInfo_jet_diphoton_deltaR");
-    //------------------------
     MakeStackHist("hist_lepton_pt");
     MakeStackHist("hist_lepton_eta");
     MakeStackHist("hist_lepton_phi");
     MakeStackHist("hist_lepton_energy");
     MakeStackHist("hist_lepton_diphoton_deltaR");
-    //------------------------
-    MakeStackHist("hist_jet1_diphoton_deltaR");
-    MakeStackHist("hist_jet2_diphoton_deltaR");
-    MakeStackHist("hist_jet1_lepton_deltaR");
-    MakeStackHist("hist_jet2_lepton_deltaR");
-    //------------------------
     MakeStackHist("hist_jet1_pt");
     MakeStackHist("hist_jet1_eta");
     MakeStackHist("hist_jet1_phi");
     MakeStackHist("hist_jet1_energy");
+    MakeStackHist("hist_jet1_btag_score");
+    MakeStackHist("hist_jet1_diphoton_deltaR");
+    MakeStackHist("hist_jet1_lepton_deltaR");
     MakeStackHist("hist_jet2_pt");
     MakeStackHist("hist_jet2_eta");
     MakeStackHist("hist_jet2_phi");
     MakeStackHist("hist_jet2_energy");
-    //------------------------
+    MakeStackHist("hist_jet2_btag_score");
+    MakeStackHist("hist_jet2_diphoton_deltaR");
+    MakeStackHist("hist_jet2_lepton_deltaR");
+    MakeStackHist("hist_wjet1_pt");
+    MakeStackHist("hist_wjet1_eta");
+    MakeStackHist("hist_wjet1_phi");
+    MakeStackHist("hist_wjet1_energy");
+    MakeStackHist("hist_wjet1_btag_score");
+    MakeStackHist("hist_wjet1_diphoton_deltaR");
+    MakeStackHist("hist_wjet1_lepton_deltaR");
+    MakeStackHist("hist_wjet2_pt");
+    MakeStackHist("hist_wjet2_eta");
+    MakeStackHist("hist_wjet2_phi");
+    MakeStackHist("hist_wjet2_energy");
+    MakeStackHist("hist_wjet2_btag_score");
+    MakeStackHist("hist_wjet2_diphoton_deltaR");
+    MakeStackHist("hist_wjet2_lepton_deltaR");
+    MakeStackHist("hist_jetq_pt");
+    MakeStackHist("hist_jetq_eta");
+    MakeStackHist("hist_jetq_phi");
+    MakeStackHist("hist_jetq_energy");
+    MakeStackHist("hist_jetq_btag_score");
+    MakeStackHist("hist_jetq_diphoton_deltaR");
+    MakeStackHist("hist_jetq_lepton_deltaR");
     MakeStackHist("hist_leading_bjet_pt");
     MakeStackHist("hist_leading_bjet_eta");
     MakeStackHist("hist_leading_bjet_phi");
     MakeStackHist("hist_leading_bjet_energy");
-    MakeStackHist("hist_chosen_bjet_pt");
-    MakeStackHist("hist_chosen_bjet_eta");
-    MakeStackHist("hist_chosen_bjet_phi");
-    MakeStackHist("hist_chosen_bjet_energy");
-    //------------------------
-    MakeStackHist("hist_inv_mass_dijet");
-    MakeStackHist("hist_inv_mass_diphoton");
-    MakeStackHist("hist_inv_mass_tbw");
+    MakeStackHist("hist_deltaR_top_top");
+    MakeStackHist("hist_deltaR_jet1_jet2");
+    MakeStackHist("hist_deltaR_wjet1_wjet2");
+    MakeStackHist("hist_deltaR_photon_photon");
+    MakeStackHist("hist_deltaR_qH");
+    MakeStackHist("hist_deltaR_bW");
+    MakeStackHist("hist_deltaR_HW");
+    MakeStackHist("hist_deltaR_tH");
+    MakeStackHist("hist_w_candidate_pt");
+    MakeStackHist("hist_w_candidate_eta");
+    MakeStackHist("hist_w_candidate_mass");
+    MakeStackHist("hist_top_tbw_pt");
+    MakeStackHist("hist_top_tbw_eta");
+    MakeStackHist("hist_top_tbw_mass");
+    MakeStackHist("hist_top_tqh_pt");
+    MakeStackHist("hist_top_tqh_eta");
+    MakeStackHist("hist_top_tqh_mass");
     //}}}
 }
 void MakeStackHist(const char* histName){
-    if((string)histName == "hist_EvtInfo_NVtx" || (string)histName == "hist_EvtInfo_NVtx_wopu") PrintTexStyle = true; else PrintTexStyle = false;
+    if((string)histName == "hist_EvtInfo_NVtx") PrintTexStyle = true; else PrintTexStyle = false;
+    //if((string)histName == "hist_EvtInfo_NVtx" || (string)histName == "hist_EvtInfo_NVtx_wopu") PrintTexStyle = true; else PrintTexStyle = false;
     //TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
     TCanvas *c1 = new TCanvas("c1", "c1", 1000, 800);
     THStack *stackHist = new THStack("stackHist", "");//If setting titles here, the x(y)-title will NOT be able to set later.
@@ -279,12 +306,12 @@ void MakeStackHist(const char* histName){
     hist_tqh_TTJets -> SetLineColor(kViolet+1);
     hist_tqh_DYJetsToLL -> SetFillColor(kBlue);
     hist_tqh_DYJetsToLL -> SetLineColor(kBlue);
-    hist_tqh_WJetsToLNu -> SetFillColor(kBlue-4);
-    hist_tqh_WJetsToLNu -> SetLineColor(kBlue-4);
+    hist_tqh_WJetsToLNu -> SetFillColor(kCyan);
+    hist_tqh_WJetsToLNu -> SetLineColor(kCyan);
     hist_tqh_VG -> SetFillColor(kBlue-7);
     hist_tqh_VG -> SetLineColor(kBlue-7);
-    hist_tqh_VV -> SetFillColor(kBlue-9);
-    hist_tqh_VV -> SetLineColor(kBlue-9);
+    hist_tqh_VV -> SetFillColor(kCyan-10);
+    hist_tqh_VV -> SetLineColor(kCyan-10);
     hist_tqh_QCD->SetFillColor(kOrange);
     hist_tqh_QCD->SetLineColor(kOrange);
     //}}}
@@ -312,7 +339,6 @@ void MakeStackHist(const char* histName){
         printf("===========================================================================\n");
         CalculateHistYields("DiPhotonJetsBox", hist_tqh_DiPhotonJetsBox);
         CalculateHistYields("GJet\t\t", hist_tqh_GJet);
-        CalculateHistYields("QCD\t\t", hist_tqh_QCD);
         CalculateHistYields("TGJets\t\t", hist_tqh_TGJets);
         CalculateHistYields("TTGJets\t\t", hist_tqh_TTGJets);
         CalculateHistYields("TTGG\t\t", hist_tqh_TTGG);
@@ -322,6 +348,7 @@ void MakeStackHist(const char* histName){
         CalculateHistYields("VG\t\t", hist_tqh_VG );
         CalculateHistYields("VV\t\t", hist_tqh_VV );
         CalculateHistYields("Higgs\t\t", hist_tqh_Higgs);
+        CalculateHistYields("QCD\t\t", hist_tqh_QCD);
         printf("---------------------------------------------------------------------------\n");
         CalculateHistYields("MC bkg\t\t", hist_tqh_mc_wosig);
         CalculateHistYields("Data\t\t", hist_tqh_data[NUM_data]);
@@ -332,7 +359,6 @@ void MakeStackHist(const char* histName){
         printf("\\hline\\hline\n");
         CalculateHistYields("DiPhotonJetsBox", hist_tqh_DiPhotonJetsBox);
         CalculateHistYields("GJet\t\t", hist_tqh_GJet);
-        CalculateHistYields("QCD\t\t", hist_tqh_QCD);
         CalculateHistYields("TGJets\t\t", hist_tqh_TGJets);
         CalculateHistYields("TTGJets\t\t", hist_tqh_TTGJets);
         CalculateHistYields("TTGG\t\t", hist_tqh_TTGG);
@@ -342,6 +368,7 @@ void MakeStackHist(const char* histName){
         CalculateHistYields("VG\t\t", hist_tqh_VG );
         CalculateHistYields("VV\t\t", hist_tqh_VV );
         CalculateHistYields("Higgs\t\t", hist_tqh_Higgs);
+        CalculateHistYields("QCD\t\t", hist_tqh_QCD);
         printf("\\hline\n");
         CalculateHistYields("MC background\t\t", hist_tqh_mc_wosig);
         CalculateHistYields("Data\t\t", hist_tqh_data[NUM_data]);
@@ -413,6 +440,12 @@ void MakeStackHist(const char* histName){
     hist_sig_tt->SetLineColor(kRed);
     hist_sig_st->SetLineColor(kPink);
     hist_sig_st->SetLineStyle(2);
+    //--- normalize to total entries of data ---//
+    double scale_sig;//scale up to # of data events
+    double total_entries_data = hist_tqh_data[NUM_data]->Integral();
+    scale_sig = total_entries_data / hist_sig_tt->Integral() ; hist_sig_tt->Scale(scale_sig);
+    scale_sig = total_entries_data / hist_sig_st->Integral() ; hist_sig_st->Scale(scale_sig);
+
     //}}}
     //### Draw upper plots{{{ 
     //============================//
@@ -432,27 +465,17 @@ void MakeStackHist(const char* histName){
     hist_tqh_mc_wosig->SetFillStyle(3001);
     //--------------------
     stackHist->SetMinimum(0);
-    double scale = 1.5;
-    //double scale = 2.5;
-    double max_stack = stackHist->GetMaximum();
-    double max_data = hist_tqh_data[NUM_data]->GetMaximum();
-    if(max_stack > max_data){
-        stackHist->Draw("hist");
-        hist_sig_tt->Draw("hist,same");
-        hist_sig_st->Draw("hist,same");
-        hist_tqh_mc_wosig->Draw("E2,same");
-        hist_tqh_data[NUM_data]->Draw("p,E1,same");
-        stackHist->SetMaximum(max_stack*scale);
-    } else{
-        hist_tqh_data[NUM_data]->SetStats(0);
-        hist_tqh_data[NUM_data]->Draw("p,E1");
-        stackHist->Draw("hist,same");
-        hist_sig_tt->Draw("hist,same");
-        hist_sig_st->Draw("hist,same");
-        hist_tqh_mc_wosig->Draw("E2,same");
-        hist_tqh_data[NUM_data]->Draw("p,E1,same");
-        hist_tqh_data[NUM_data]->SetMaximum(max_data*scale);
-    }
+    double scale = 1.2;
+
+    double max_scope = GetMaxScope( stackHist, hist_sig_tt, hist_sig_st, hist_tqh_mc_wosig, hist_tqh_data[NUM_data] );
+
+    stackHist->Draw("hist");
+    hist_sig_tt->Draw("hist,same");
+    hist_sig_st->Draw("hist,same");
+    hist_tqh_mc_wosig->Draw("E2,same");
+    hist_tqh_data[NUM_data]->Draw("p,E1,same");
+    stackHist->SetMaximum(max_scope*scale);
+
     //##### SetTitles{{{
     //--------------------
     double BinWidth = hist_tqh_data[NUM_data]->GetXaxis()->GetBinWidth(1);//Take the width of the first bin as a representative.
@@ -478,7 +501,7 @@ void MakeStackHist(const char* histName){
     legend->AddEntry(hist_tqh_TTJets, "t#bar{t} + jets", "f");
     legend->AddEntry(hist_tqh_DYJetsToLL, "DY + jets", "f");
     legend->AddEntry(hist_tqh_WJetsToLNu, "W + jets", "f");
-    legend->AddEntry(hist_tqh_VG, "VG", "f");
+    legend->AddEntry(hist_tqh_VG, "V#gamma", "f");
     legend->AddEntry(hist_tqh_VV, "VV", "f");
     legend->AddEntry(hist_tqh_Higgs, "Higgs", "f");
     if(considerQCD) legend->AddEntry(hist_tqh_QCD, "QCD", "f");
@@ -862,5 +885,13 @@ double SumErrors(TH1D* hist){
     }
     totalError = sqrt(totalError);
     return totalError;
+}
+
+double GetMaxScope(THStack* h1, TH1D* h2, TH1D* h3, TH1D* h4, TH1D* h5){
+    double values[] = {h1->GetMaximum(), h2->GetMaximum(), h3->GetMaximum(), h4->GetMaximum() + h4->GetBinError(h4->GetMaximumBin()), h5->GetMaximum()};
+    double max = *std::max_element(std::begin(values), std::end(values));
+    //for(int i=0; i<5; i++) printf("[check-scope] value_%d = %.2f\n", i, values[i]);
+    //printf("[validatation] max = %f\n\n", max);
+    return max;
 }
 //}}}
