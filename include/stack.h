@@ -4,7 +4,9 @@
 using namespace std;
 
 
+//const char TARGET_DIR[128] = "/wk_cms/ykao/tqHGG/ntuples_skimmed_npustudy";
 const char TARGET_DIR[128] = "plots";
+
 //const char TARGET_DIR[128] = "plots_leptonic/plots_noBtag";
 //const char TARGET_DIR[128] = "plots_leptonic/plots_Btag_pu";
 //const char TARGET_DIR[128] = "plots_leptonic/plots_Btag";
@@ -23,6 +25,7 @@ void MakeStackHist(const char* histName);
 void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false);
 void CalculateHistYields(const char *process, TH1D* hist);
 double SumErrors(TH1D* hist);
+double GetMaxScope(THStack* h1, std::vector<TH1D*> vec_hists);
 string GetXtitleAccordingToHistName(const char* histName);
 string GetYtitleAccordingToHistName(const char* histName, double BinWidth);
 bool isThisIDMVA(const char* histName);

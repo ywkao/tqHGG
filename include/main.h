@@ -116,6 +116,11 @@ public:
     std::vector<float>   *MuonInfo_GenEta;
     std::vector<float>   *MuonInfo_GenPhi;
     //------------------------
+    float         MetInfo_Pt;
+    float         MetInfo_Phi;
+    float         MetInfo_Px;
+    float         MetInfo_Py;
+    float         MetInfo_SumET;
 };
 class myParameters{
 public:
@@ -156,6 +161,7 @@ public:
     Int_t num_leptons;// # of selected objects.
     Int_t num_electrons;// # of selected objects.
     Int_t num_muons;// # of selected objects.
+    std::vector<int>   ElecInfo_electron_charge;
     std::vector<float> ElecInfo_electron_pt;
     std::vector<float> ElecInfo_electron_eta;
     std::vector<float> ElecInfo_electron_phi;
@@ -163,6 +169,7 @@ public:
     std::vector<float> ElecInfo_electron_diphoton_deltaR;
     std::vector<float> ElecInfo_electron_leadingPhoton_deltaR;
     std::vector<float> ElecInfo_electron_subleadingPhoton_deltaR;
+    std::vector<float> MuonInfo_muon_charge;
     std::vector<float> MuonInfo_muon_pt;
     std::vector<float> MuonInfo_muon_eta;
     std::vector<float> MuonInfo_muon_phi;
@@ -212,6 +219,7 @@ public:
     std::vector<float> *JetInfo_leading_bjet_phi_selection;
     std::vector<float> *JetInfo_leading_bjet_energy_selection;
     //-----
+    std::vector<int> *ElecInfo_electron_charge_selection;
     std::vector<float> *ElecInfo_electron_pt_selection;
     std::vector<float> *ElecInfo_electron_eta_selection;
     std::vector<float> *ElecInfo_electron_phi_selection;
@@ -219,6 +227,7 @@ public:
     std::vector<float> *ElecInfo_electron_diphoton_deltaR_selection;
     std::vector<float> *ElecInfo_electron_leadingPhoton_deltaR_selection;
     std::vector<float> *ElecInfo_electron_subleadingPhoton_deltaR_selection;
+    std::vector<int> *MuonInfo_muon_charge_selection;
     std::vector<float> *MuonInfo_muon_pt_selection;
     std::vector<float> *MuonInfo_muon_eta_selection;
     std::vector<float> *MuonInfo_muon_phi_selection;

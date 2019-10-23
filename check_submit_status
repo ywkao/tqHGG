@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
-grep submit log/stdout.log
+#log='log/stdout.log'
+log='log/stdout_selection.log'
+grep submit ${log}
 NUM=`cat ListRootFiles | grep -v "#" | nl | cut -f 1 | tail -n1 | tr -d " "`
-echo "[CHECK] Finished files: `grep -ic end log/stdout.log` / ${NUM}"
+echo "[CHECK] Finished files: `grep -c end ${log}` / ${NUM}"
 
 

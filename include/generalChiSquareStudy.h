@@ -16,10 +16,14 @@ double top_quark_width = 16.3;//GeV
 //---  Class & Function  ---//
 //==========================//
 double GetM1M2_ratio(double M1, double M2);
-double GetBestM1(int num_jets, int index_bjet, std::vector<int> index_jet, TLorentzVector diphoton, std::vector<TLorentzVector> Jets);
+//double GetBestM1(int num_jets, int index_bjet, std::vector<int> index_jet, TLorentzVector diphoton, std::vector<TLorentzVector> Jets);
+TLorentzVector GetBestM1(double &M1, int num_jets, int index_bjet, std::vector<int> index_jet, TLorentzVector diphoton, std::vector<TLorentzVector> Jets, int &index_q, TLorentzVector &jet_q);
+bool is_this_tqh_quark(TLorentzVector jet, Int_t GenPartInfo_size, std::vector<int> *GenPartInfo_MomPdgID, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID);
+bool isMatched_with_Gen_tbw(std::vector<int> *GenPartInfo_MomPdgID, int index_bjet, int index_jet1, int index_jet2);
 bool isMatched_with_Gen_W_Boson(TLorentzVector gen_w_sel, TH1D *&hist, Int_t GenPartInfo_size, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_PdgID);
 
-bool CheckBJetID(TLorentzVector jet, Int_t GenPartInfo_size, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID);
+bool CheckBJetID(TLorentzVector jet, Int_t GenPartInfo_size, std::vector<int> *GenPartInfo_MomPdgID, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID);
+//bool CheckBJetID(TLorentzVector jet, Int_t GenPartInfo_size, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID);
 TLorentzVector GetGenParticle(TLorentzVector jet, Int_t GenPartInfo_size, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID, std::vector<int> &index_GenParticles, int &genParticle_PdgID);
 
 bool checkAvailability(int index, std::vector<int> ID_IsChosen);
@@ -35,6 +39,8 @@ bool isThisDataOrNot(char* dataset);
 bool isThisMultiFile(char* dataset);
 bool isThisMCsignal(char* dataset);
 
+void print_matched_gen_info(TLorentzVector jet, Int_t GenPartInfo_size, std::vector<int> *GenPartInfo_MomPdgID, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID);
+
 class flashggStdTreeParameters{
 public:
     flashggStdTreeParameters();
@@ -49,6 +55,16 @@ public:
     std::vector<int>     *GenPartInfo_Status;
     std::vector<int>     *GenPartInfo_nMo;
     std::vector<int>     *GenPartInfo_nDa;
+    std::vector<bool>    *GenPartInfo_isHardProcess;
+    std::vector<bool>    *GenPartInfo_fromHardProcessFinalState;
+    std::vector<bool>    *GenPartInfo_isPromptFinalState;
+    std::vector<bool>    *GenPartInfo_isDirectPromptTauDecayProductFinalState;
+    std::vector<int>     *GenPartInfo_MomPdgID;
+    std::vector<int>     *GenPartInfo_MomStatus;
+    std::vector<float>   *GenPartInfo_MomPt;
+    std::vector<float>   *GenPartInfo_MomEta;
+    std::vector<float>   *GenPartInfo_MomPhi;
+    std::vector<float>   *GenPartInfo_MomMass;
     //------------------------
     bool  EvtInfo_passTrigger;
     Int_t EvtInfo_NPu;
@@ -97,7 +113,7 @@ public:
     std::vector<bool>    *ElecInfo_EGMCutBasedIDMedium;
     std::vector<bool>    *ElecInfo_EGMCutBasedIDTight;
     std::vector<bool>    *ElecInfo_fggPhoVeto;
-    std::vector<bool>    *ElecInfo_tmpPhoVeto;
+    //std::vector<bool>    *ElecInfo_tmpPhoVeto;
     std::vector<float>   *ElecInfo_EnergyCorrFactor;
     std::vector<float>   *ElecInfo_EnergyPostCorrErr;
     std::vector<float>   *ElecInfo_EnergyPostCorrScaleUp;

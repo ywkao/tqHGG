@@ -7,7 +7,8 @@
 //
 //***************************************************************************
 TH1D *hist_EvtInfo_NPu = new TH1D("hist_EvtInfo_NPu", "", 100, 0, 100);
-TH1D *hist_EvtInfo_Rho = new TH1D("hist_EvtInfo_Rho", "", 50, 0, 200);
+TH1D *hist_EvtInfo_Rho = new TH1D("hist_EvtInfo_Rho", "", 40, 0, 80);
+TH1D *hist_EvtInfo_Rho_wopu = new TH1D("hist_EvtInfo_Rho_wopu", "", 40, 0, 80);
 TH1D *hist_EvtInfo_NVtx = new TH1D("hist_EvtInfo_NVtx", "", 50, 0, 100);
 TH1D *hist_EvtInfo_NVtx_wopu = new TH1D("hist_EvtInfo_NVtx_wopu", "", 50, 0, 100);
 TH1D *hist_EvtInfo_genweight = new TH1D("hist_EvtInfo_genweight", "", 100, 0, 100);
@@ -35,11 +36,13 @@ TH1D *hist_MuonInfo_Size = new TH1D("hist_MuonInfo_Size", "", 10, 0, 10);
 TH1D *hist_num_leptons = new TH1D("hist_num_leptons", "", 10, 0, 10);
 TH1D *hist_num_electrons = new TH1D("hist_num_electrons", "", 10, 0, 10);
 TH1D *hist_num_muons = new TH1D("hist_num_muons", "", 10, 0, 10);
+TH1D *hist_ElecInfo_electron_charge = new TH1D("hist_ElecInfo_electron_charge", "", 2, -2, 2);
 TH1D *hist_ElecInfo_electron_pt = new TH1D("hist_ElecInfo_electron_pt", "", 40, 0, 200);
 TH1D *hist_ElecInfo_electron_eta = new TH1D("hist_ElecInfo_electron_eta", "", 40, -2.5, 2.5);
 TH1D *hist_ElecInfo_electron_phi = new TH1D("hist_ElecInfo_electron_phi", "", 40, -3.0, 3.0);
 TH1D *hist_ElecInfo_electron_energy = new TH1D("hist_ElecInfo_electron_energy", "", 40, 0, 200);
 TH1D *hist_ElecInfo_electron_diphoton_deltaR = new TH1D("hist_ElecInfo_electron_diphoton_deltaR", "", 40, 0, 6);
+TH1D *hist_MuonInfo_muon_charge = new TH1D("hist_MuonInfo_muon_charge", "", 2, -2, 2);
 TH1D *hist_MuonInfo_muon_pt = new TH1D("hist_MuonInfo_muon_pt", "", 40, 0, 200);
 TH1D *hist_MuonInfo_muon_eta = new TH1D("hist_MuonInfo_muon_eta", "", 40, -2.5, 2.5);
 TH1D *hist_MuonInfo_muon_phi = new TH1D("hist_MuonInfo_muon_phi", "", 40, -3.0, 3.0);
@@ -47,15 +50,29 @@ TH1D *hist_MuonInfo_muon_energy = new TH1D("hist_MuonInfo_muon_energy", "", 40, 
 TH1D *hist_MuonInfo_muon_diphoton_deltaR = new TH1D("hist_MuonInfo_muon_diphoton_deltaR", "", 40, 0, 6);
 //------------------------
 TH1D *hist_jets_size = new TH1D("hist_jets_size", "", 10, 0, 10);
-TH1D *hist_num_jets = new TH1D("hist_num_jets", "", 10, 0, 10);
+TH1D *hist_num_jets = new TH1D("hist_num_jets", "", 15, 0, 15);
 TH1D *hist_JetInfo_jet_pt = new TH1D("hist_JetInfo_jet_pt", "", 40, 0, 200);
 TH1D *hist_JetInfo_jet_eta = new TH1D("hist_JetInfo_jet_eta", "", 40, -2.5, 2.5);
 TH1D *hist_JetInfo_jet_phi = new TH1D("hist_JetInfo_jet_phi", "", 40, -3.0, 3.0);
 TH1D *hist_JetInfo_jet_energy = new TH1D("hist_JetInfo_jet_energy", "", 40, 0, 200);
 TH1D *hist_JetInfo_jet_diphoton_deltaR = new TH1D("hist_JetInfo_jet_diphoton_deltaR", "", 40, 0, 6);
 //------------------------
+TH1D *hist_MetInfo_Pt = new TH1D("hist_MetInfo_Pt", "", 40, 0, 200);
+TH1D *hist_MetInfo_Phi = new TH1D("hist_MetInfo_Phi", "", 40, -3.0, 3.0);
+TH1D *hist_MetInfo_Px = new TH1D("hist_MetInfo_Px", "", 40, -200, 200);
+TH1D *hist_MetInfo_Py = new TH1D("hist_MetInfo_Py", "", 40, -200, 200);
+TH1D *hist_MetInfo_SumET = new TH1D("hist_MetInfo_SumET", "", 40, 0, 200);
+TH1D *hist_MetInfo_Pz_solution_1 = new TH1D("hist_MetInfo_Pz_solution_1", "", 40, -200, 200);
+TH1D *hist_MetInfo_Pz_solution_2 = new TH1D("hist_MetInfo_Pz_solution_2", "", 40, -200, 200);
+//TH1D *hist_MetInfo_coeff_D = new TH1D("hist_MetInfo_coeff_D", "", 40, -1.e+6, 1e+6);
+TH1D *hist_MetInfo_coeff_D = new TH1D("hist_MetInfo_coeff_D", "", 40, -1000, 1000);
+TH1D *hist_MetInfo_coeff_A = new TH1D("hist_MetInfo_coeff_A", "", 40, -1000., 1000.);
+TH1D *hist_MetInfo_coeff_B2A = new TH1D("hist_MetInfo_coeff_B2A", "", 40, -600, 600);
+TH1D *hist_MetInfo_coeff_D2A = new TH1D("hist_MetInfo_coeff_D2A", "", 40, -600, 600);
+//------------------------
 //Define in selection stage
 //------------------------
+TH1D *hist_lepton_charge = new TH1D("hist_lepton_charge", "", 2, -2, 2);
 TH1D *hist_lepton_pt = new TH1D("hist_lepton_pt", "", 40, 0, 200);
 TH1D *hist_lepton_eta = new TH1D("hist_lepton_eta", "", 40, -2.5, 2.5);
 TH1D *hist_lepton_phi = new TH1D("hist_lepton_phi", "", 40, -3.0, 3.0);
@@ -113,23 +130,41 @@ TH1D  *hist_leading_bjet_phi = new TH1D("hist_leading_bjet_phi", "hist_leading_b
 TH1D  *hist_leading_bjet_energy = new TH1D("hist_leading_bjet_energy", "hist_leading_bjet_energy", 40, 0, 200);
 //------------------------
 TH1D *hist_deltaR_top_top = new TH1D("hist_deltaR_top_top", "", 40, 0, 6);
-TH1D *hist_deltaR_jet1_jet2 = new TH1D("hist_deltaR_jet1_jet2", "", 40, 0, 6);
-TH1D *hist_deltaR_wjet1_wjet2 = new TH1D("hist_deltaR_wjet1_wjet2", "", 40, 0, 6);
-TH1D *hist_deltaR_photon_photon = new TH1D("hist_deltaR_photon_photon", "", 40, 0, 6);
 TH1D *hist_deltaR_qH = new TH1D("hist_deltaR_qH", "", 40, 0, 6);
+TH1D *hist_deltaR_photon_photon = new TH1D("hist_deltaR_photon_photon", "", 40, 0, 6);
+//---
 TH1D *hist_deltaR_bW = new TH1D("hist_deltaR_bW", "", 40, 0, 6);
 TH1D *hist_deltaR_HW = new TH1D("hist_deltaR_HW", "", 40, 0, 6);
 TH1D *hist_deltaR_tH = new TH1D("hist_deltaR_tH", "", 40, 0, 6);
+//---
+TH1D *hist_deltaR_lep_met = new TH1D("hist_deltaR_lep_met", "", 40, 0, 6);
+TH1D *hist_deltaR_jet1_jet2 = new TH1D("hist_deltaR_jet1_jet2", "", 40, 0, 6);
+TH1D *hist_deltaR_wjet1_wjet2 = new TH1D("hist_deltaR_wjet1_wjet2", "", 40, 0, 6);
 //------------------------
-TH1D *hist_w_candidate_pt = new TH1D("hist_w_candidate_pt", "", 40, 0, 200);
-TH1D *hist_w_candidate_eta = new TH1D("hist_w_candidate_eta", "", 40, -2.5, 2.5);
-TH1D *hist_w_candidate_mass = new TH1D("hist_w_candidate_mass", "", 50, 0, 150);
-TH1D *hist_top_tbw_pt = new TH1D("hist_top_tbw_pt", "", 40, 0, 400);
-TH1D *hist_top_tbw_eta = new TH1D("hist_top_tbw_eta", "", 40, -2.5, 2.5);
-TH1D *hist_top_tbw_mass = new TH1D("hist_top_tbw_mass", "", 70, 0, 350);
 TH1D *hist_top_tqh_pt = new TH1D("hist_top_tqh_pt", "", 40, 0, 400);
 TH1D *hist_top_tqh_eta = new TH1D("hist_top_tqh_eta", "", 40, -2.5, 2.5);
 TH1D *hist_top_tqh_mass = new TH1D("hist_top_tqh_mass", "", 70, 0, 350);
+//---
+TH1D *hist_hadronic_w_candidate_pt = new TH1D("hist_hadronic_w_candidate_pt", "", 40, 0, 200);
+TH1D *hist_hadronic_w_candidate_eta = new TH1D("hist_hadronic_w_candidate_eta", "", 40, -2.5, 2.5);
+TH1D *hist_hadronic_w_candidate_mass = new TH1D("hist_hadronic_w_candidate_mass", "", 50, 0, 150);
+TH1D *hist_hadronic_top_tbw_pt = new TH1D("hist_hadronic_top_tbw_pt", "", 40, 0, 400);
+TH1D *hist_hadronic_top_tbw_eta = new TH1D("hist_hadronic_top_tbw_eta", "", 40, -2.5, 2.5);
+TH1D *hist_hadronic_top_tbw_mass = new TH1D("hist_hadronic_top_tbw_mass", "", 70, 0, 350);
+//---
+TH1D *hist_leptonic_w_candidate_solution1_pt = new TH1D("hist_leptonic_w_candidate_solution1_pt", "", 40, 0, 200);
+TH1D *hist_leptonic_w_candidate_solution1_eta = new TH1D("hist_leptonic_w_candidate_solution1_eta", "", 40, -2.5, 2.5);
+TH1D *hist_leptonic_w_candidate_solution1_mass = new TH1D("hist_leptonic_w_candidate_solution1_mass", "", 50, 0, 150);
+TH1D *hist_leptonic_top_tbw_solution1_pt = new TH1D("hist_leptonic_top_tbw_solution1_pt", "", 40, 0, 400);
+TH1D *hist_leptonic_top_tbw_solution1_eta = new TH1D("hist_leptonic_top_tbw_solution1_eta", "", 40, -2.5, 2.5);
+TH1D *hist_leptonic_top_tbw_solution1_mass = new TH1D("hist_leptonic_top_tbw_solution1_mass", "", 70, 0, 350);
+//---
+TH1D *hist_leptonic_w_candidate_solution2_pt = new TH1D("hist_leptonic_w_candidate_solution2_pt", "", 40, 0, 200);
+TH1D *hist_leptonic_w_candidate_solution2_eta = new TH1D("hist_leptonic_w_candidate_solution2_eta", "", 40, -2.5, 2.5);
+TH1D *hist_leptonic_w_candidate_solution2_mass = new TH1D("hist_leptonic_w_candidate_solution2_mass", "", 50, 0, 150);
+TH1D *hist_leptonic_top_tbw_solution2_pt = new TH1D("hist_leptonic_top_tbw_solution2_pt", "", 40, 0, 400);
+TH1D *hist_leptonic_top_tbw_solution2_eta = new TH1D("hist_leptonic_top_tbw_solution2_eta", "", 40, -2.5, 2.5);
+TH1D *hist_leptonic_top_tbw_solution2_mass = new TH1D("hist_leptonic_top_tbw_solution2_mass", "", 70, 0, 350);
 //------------------------
 //TH1D  *hist_mass_w_candidate = new TH1D("hist_mass_w_candidate", "hist_mass_w_candidate", 50, 0, 150);
 //TH1D  *hist_mass_top_candidate = new TH1D("hist_mass_top_candidate", "hist_mass_top_candidate", 70, 0, 350);

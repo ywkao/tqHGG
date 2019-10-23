@@ -17,6 +17,7 @@ TARGET0  := bin/covarianceMatrixStudy
 TARGET1  := bin/preselection
 TARGET2  := bin/selection
 TARGET3  := bin/generalChiSquareStudy
+TARGET4  := bin/preselection_npustudy
 
 SRCEXT   := cpp
 SOURCES  := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -26,7 +27,7 @@ LIB      := $(shell root-config --libs) -lMinuit
 INC      := -I include
 
 #all: ${TARGET1} ${TARGET2}
-all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2} $(TARGET3)
+all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2} $(TARGET3) $(TARGET4)
 
 
 
@@ -53,6 +54,10 @@ $(TARGET3): build/generalChiSquareStudy.o
 	@echo " Linking for generalChiSquareStudy cpp..."
 	@echo " $(CC) $^ -o $(TARGET3) $(LIB)"; $(CC) $^ -o $(TARGET3) $(LIB)
 
+$(TARGET4): build/preselection_npustudy.o
+	@echo " Linking for preselection_npustudy cpp..."
+	@echo " $(CC) $^ -o $(TARGET4) $(LIB)"; $(CC) $^ -o $(TARGET4) $(LIB)
+
 
 
 #$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
@@ -76,9 +81,13 @@ build/generalChiSquareStudy.o: src/generalChiSquareStudy.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
+build/preselection_npustudy.o: src/preselection_npustudy.cpp
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
 clean:
 	@echo " Cleaning..."; 
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3)"; $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3)
+	@echo " $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4)"; $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET4)
 
 
 

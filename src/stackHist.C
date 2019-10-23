@@ -10,7 +10,7 @@
 using namespace std;
 
 bool bool_isHadronic;
-bool bool_isHut = true;
+bool bool_isLeptonic;
 const double TunableSigBranchingFraction = 0.05; //The branching fraction of signal MC = 5%
 //const double TunableSigBranchingFraction = 2.0; //The branching fraction of signal MC = 2001%
 //const double TunableSigBranchingFraction = 0.001; //The branching fraction of signal MC = 0.1%
@@ -18,13 +18,20 @@ bool PrintHistInfo = false;
 bool PrintTexStyle;
 
 void stackHist(const char* channel){
+    //### bool hadronic/leptonic channel{{{
     if((string)channel == "hadronic") bool_isHadronic = true; else bool_isHadronic = false;
+    bool_isLeptonic = !bool_isHadronic;
     if(bool_isHadronic) printf("[CHECK] from macro src/stackHist.C: isHadronic!\n");
-    if(!bool_isHadronic) printf("[CHECK] from macro src/stackHist.C: isLeptonic!\n");
-    //------------------------
+    if(bool_isLeptonic) printf("[CHECK] from macro src/stackHist.C: isLeptonic!\n");
+    //}}}
     //### MakeStackHist{{{
+    //MakeStackHist("hist_EvtInfo_NVtx");
+    //MakeStackHist("hist_EvtInfo_NVtx_wopu");
+    //MakeStackHist("hist_EvtInfo_Rho");
+    //MakeStackHist("hist_EvtInfo_Rho_wopu");
     MakeStackHist("hist_EvtInfo_NPu");
     MakeStackHist("hist_EvtInfo_Rho");
+    MakeStackHist("hist_EvtInfo_Rho_wopu");
     MakeStackHist("hist_EvtInfo_NVtx");
     MakeStackHist("hist_EvtInfo_NVtx_wopu");
     MakeStackHist("hist_EvtInfo_genweight");
@@ -50,11 +57,13 @@ void stackHist(const char* channel){
     MakeStackHist("hist_num_leptons");
     MakeStackHist("hist_num_electrons");
     MakeStackHist("hist_num_muons");
+    MakeStackHist("hist_ElecInfo_electron_charge");
     MakeStackHist("hist_ElecInfo_electron_pt");
     MakeStackHist("hist_ElecInfo_electron_eta");
     MakeStackHist("hist_ElecInfo_electron_phi");
     MakeStackHist("hist_ElecInfo_electron_energy");
     MakeStackHist("hist_ElecInfo_electron_diphoton_deltaR");
+    MakeStackHist("hist_MuonInfo_muon_charge");
     MakeStackHist("hist_MuonInfo_muon_pt");
     MakeStackHist("hist_MuonInfo_muon_eta");
     MakeStackHist("hist_MuonInfo_muon_phi");
@@ -67,6 +76,18 @@ void stackHist(const char* channel){
     MakeStackHist("hist_JetInfo_jet_phi");
     MakeStackHist("hist_JetInfo_jet_energy");
     MakeStackHist("hist_JetInfo_jet_diphoton_deltaR");
+    MakeStackHist("hist_MetInfo_Pt");
+    MakeStackHist("hist_MetInfo_Phi");
+    MakeStackHist("hist_MetInfo_Px");
+    MakeStackHist("hist_MetInfo_Py");
+    MakeStackHist("hist_MetInfo_SumET");
+    MakeStackHist("hist_MetInfo_Pz_solution_1");
+    MakeStackHist("hist_MetInfo_Pz_solution_2");
+    MakeStackHist("hist_MetInfo_coeff_D");
+    MakeStackHist("hist_MetInfo_coeff_A");
+    MakeStackHist("hist_MetInfo_coeff_B2A");
+    MakeStackHist("hist_MetInfo_coeff_D2A");
+    MakeStackHist("hist_lepton_charge");
     MakeStackHist("hist_lepton_pt");
     MakeStackHist("hist_lepton_eta");
     MakeStackHist("hist_lepton_phi");
@@ -112,28 +133,39 @@ void stackHist(const char* channel){
     MakeStackHist("hist_leading_bjet_phi");
     MakeStackHist("hist_leading_bjet_energy");
     MakeStackHist("hist_deltaR_top_top");
-    MakeStackHist("hist_deltaR_jet1_jet2");
-    MakeStackHist("hist_deltaR_wjet1_wjet2");
-    MakeStackHist("hist_deltaR_photon_photon");
     MakeStackHist("hist_deltaR_qH");
+    MakeStackHist("hist_deltaR_photon_photon");
     MakeStackHist("hist_deltaR_bW");
     MakeStackHist("hist_deltaR_HW");
     MakeStackHist("hist_deltaR_tH");
-    MakeStackHist("hist_w_candidate_pt");
-    MakeStackHist("hist_w_candidate_eta");
-    MakeStackHist("hist_w_candidate_mass");
-    MakeStackHist("hist_top_tbw_pt");
-    MakeStackHist("hist_top_tbw_eta");
-    MakeStackHist("hist_top_tbw_mass");
+    MakeStackHist("hist_deltaR_lep_met");
+    MakeStackHist("hist_deltaR_jet1_jet2");
+    MakeStackHist("hist_deltaR_wjet1_wjet2");
     MakeStackHist("hist_top_tqh_pt");
     MakeStackHist("hist_top_tqh_eta");
     MakeStackHist("hist_top_tqh_mass");
+    MakeStackHist("hist_hadronic_w_candidate_pt");
+    MakeStackHist("hist_hadronic_w_candidate_eta");
+    MakeStackHist("hist_hadronic_w_candidate_mass");
+    MakeStackHist("hist_hadronic_top_tbw_pt");
+    MakeStackHist("hist_hadronic_top_tbw_eta");
+    MakeStackHist("hist_hadronic_top_tbw_mass");
+    MakeStackHist("hist_leptonic_w_candidate_solution1_pt");
+    MakeStackHist("hist_leptonic_w_candidate_solution1_eta");
+    MakeStackHist("hist_leptonic_w_candidate_solution1_mass");
+    MakeStackHist("hist_leptonic_top_tbw_solution1_pt");
+    MakeStackHist("hist_leptonic_top_tbw_solution1_eta");
+    MakeStackHist("hist_leptonic_top_tbw_solution1_mass");
+    MakeStackHist("hist_leptonic_w_candidate_solution2_pt");
+    MakeStackHist("hist_leptonic_w_candidate_solution2_eta");
+    MakeStackHist("hist_leptonic_w_candidate_solution2_mass");
+    MakeStackHist("hist_leptonic_top_tbw_solution2_pt");
+    MakeStackHist("hist_leptonic_top_tbw_solution2_eta");
+    MakeStackHist("hist_leptonic_top_tbw_solution2_mass");
     //}}}
 }
 void MakeStackHist(const char* histName){
     if((string)histName == "hist_EvtInfo_NVtx") PrintTexStyle = true; else PrintTexStyle = false;
-    //if((string)histName == "hist_EvtInfo_NVtx" || (string)histName == "hist_EvtInfo_NVtx_wopu") PrintTexStyle = true; else PrintTexStyle = false;
-    //TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
     TCanvas *c1 = new TCanvas("c1", "c1", 1000, 800);
     THStack *stackHist = new THStack("stackHist", "");//If setting titles here, the x(y)-title will NOT be able to set later.
     //### Set up boolean{{{
@@ -422,30 +454,31 @@ void MakeStackHist(const char* histName){
     //================================================//
     //===== Choose proper signal hist to present =====//
     //================================================//
-    TH1D *hist_sig_tt, *hist_sig_st;
-    if(bool_isHadronic && bool_isHut){
-        hist_sig_tt = (TH1D*) hist_tqh_sig_tt_hadronic_hut->Clone(); 
-        hist_sig_st = (TH1D*) hist_tqh_sig_st_hadronic_hut->Clone(); 
-    } else if(bool_isHadronic && !bool_isHut){
-        hist_sig_tt = (TH1D*) hist_tqh_sig_tt_hadronic_hct->Clone(); 
-        hist_sig_st = (TH1D*) hist_tqh_sig_st_hadronic_hct->Clone(); 
-    } else if(!bool_isHadronic && bool_isHut){
-        hist_sig_tt = (TH1D*) hist_tqh_sig_tt_leptonic_hut->Clone(); 
-        hist_sig_st = (TH1D*) hist_tqh_sig_st_leptonic_hut->Clone(); 
+    TH1D *hist_sig_tt_hut, *hist_sig_st_hut;
+    TH1D *hist_sig_tt_hct, *hist_sig_st_hct;
+    //--------------------
+    if(bool_isHadronic){
+        hist_sig_tt_hut = (TH1D*) hist_tqh_sig_tt_hadronic_hut->Clone(); 
+        hist_sig_tt_hct = (TH1D*) hist_tqh_sig_tt_hadronic_hct->Clone(); 
+        hist_sig_st_hut = (TH1D*) hist_tqh_sig_st_hadronic_hut->Clone(); 
+        hist_sig_st_hct = (TH1D*) hist_tqh_sig_st_hadronic_hct->Clone(); 
     } else{
-        hist_sig_tt = (TH1D*) hist_tqh_sig_tt_leptonic_hct->Clone(); 
-        hist_sig_st = (TH1D*) hist_tqh_sig_st_leptonic_hct->Clone(); 
+        hist_sig_tt_hut = (TH1D*) hist_tqh_sig_tt_leptonic_hut->Clone(); 
+        hist_sig_tt_hct = (TH1D*) hist_tqh_sig_tt_leptonic_hct->Clone(); 
+        hist_sig_st_hut = (TH1D*) hist_tqh_sig_st_leptonic_hut->Clone(); 
+        hist_sig_st_hct = (TH1D*) hist_tqh_sig_st_leptonic_hct->Clone(); 
     }
     //--------------------
-    hist_sig_tt->SetLineColor(kRed);
-    hist_sig_st->SetLineColor(kPink);
-    hist_sig_st->SetLineStyle(2);
+    hist_sig_tt_hut->SetLineColor(kPink+1);
+    hist_sig_st_hut->SetLineColor(kPink+1); hist_sig_st_hut->SetLineStyle(2);
+    hist_sig_tt_hct->SetLineColor(kRed);
+    hist_sig_st_hct->SetLineColor(kRed); hist_sig_st_hct->SetLineStyle(2);
     //--- normalize to total entries of data ---//
-    double scale_sig;//scale up to # of data events
     double total_entries_data = hist_tqh_data[NUM_data]->Integral();
-    scale_sig = total_entries_data / hist_sig_tt->Integral() ; hist_sig_tt->Scale(scale_sig);
-    scale_sig = total_entries_data / hist_sig_st->Integral() ; hist_sig_st->Scale(scale_sig);
-
+    double scale_sig_tt_hut = total_entries_data / hist_sig_tt_hut->Integral() ; hist_sig_tt_hut->Scale(scale_sig_tt_hut);
+    double scale_sig_st_hut = total_entries_data / hist_sig_st_hut->Integral() ; hist_sig_st_hut->Scale(scale_sig_st_hut);
+    double scale_sig_tt_hct = total_entries_data / hist_sig_tt_hct->Integral() ; hist_sig_tt_hct->Scale(scale_sig_tt_hct);
+    double scale_sig_st_hct = total_entries_data / hist_sig_st_hct->Integral() ; hist_sig_st_hct->Scale(scale_sig_st_hct);
     //}}}
     //### Draw upper plots{{{ 
     //============================//
@@ -467,11 +500,20 @@ void MakeStackHist(const char* histName){
     stackHist->SetMinimum(0);
     double scale = 1.2;
 
-    double max_scope = GetMaxScope( stackHist, hist_sig_tt, hist_sig_st, hist_tqh_mc_wosig, hist_tqh_data[NUM_data] );
+    std::vector<TH1D*> histograms_plotted;
+    histograms_plotted.push_back(hist_sig_tt_hut);
+    histograms_plotted.push_back(hist_sig_st_hut);
+    histograms_plotted.push_back(hist_sig_tt_hct);
+    histograms_plotted.push_back(hist_sig_st_hct);
+    histograms_plotted.push_back(hist_tqh_data[NUM_data]);
+    histograms_plotted.push_back(hist_tqh_mc_wosig);
+    double max_scope = GetMaxScope( stackHist, histograms_plotted );
 
     stackHist->Draw("hist");
-    hist_sig_tt->Draw("hist,same");
-    hist_sig_st->Draw("hist,same");
+    hist_sig_tt_hut->Draw("hist,same");
+    hist_sig_st_hut->Draw("hist,same");
+    hist_sig_tt_hct->Draw("hist,same");
+    hist_sig_st_hct->Draw("hist,same");
     hist_tqh_mc_wosig->Draw("E2,same");
     hist_tqh_data[NUM_data]->Draw("p,E1,same");
     stackHist->SetMaximum(max_scope*scale);
@@ -506,20 +548,17 @@ void MakeStackHist(const char* histName){
     legend->AddEntry(hist_tqh_Higgs, "Higgs", "f");
     if(considerQCD) legend->AddEntry(hist_tqh_QCD, "QCD", "f");
     legend->AddEntry(hist_tqh_mc_wosig, "Bkg uncertainty", "f");
-    if(bool_isHadronic && bool_isHut)       legend->AddEntry(hist_sig_tt, Form("TT Hut (Had., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
-    else if(!bool_isHadronic && bool_isHut) legend->AddEntry(hist_sig_tt, Form("TT Hut (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
-    else if(bool_isHadronic && !bool_isHut) legend->AddEntry(hist_sig_tt, Form("TT Hct (Had., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
-    else                                    legend->AddEntry(hist_sig_tt, Form("TT Hct (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
-    if(bool_isHadronic && bool_isHut)       legend->AddEntry(hist_sig_st, Form("ST Hut (Had., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
-    else if(!bool_isHadronic && bool_isHut) legend->AddEntry(hist_sig_st, Form("ST Hut (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
-    else if(bool_isHadronic && !bool_isHut) legend->AddEntry(hist_sig_st, Form("ST Hct (Had., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
-    else                                    legend->AddEntry(hist_sig_st, Form("ST Hct (Lep., BF=%.2f%%)", TunableSigBranchingFraction*100), "f");
+    //already determined which channel
+    legend->AddEntry(hist_sig_tt_hut, Form("TT Hut #times %.0f (BF=%.2f%%)", scale_sig_tt_hut, TunableSigBranchingFraction*100), "f");
+    legend->AddEntry(hist_sig_st_hut, Form("ST Hut #times %.0f (BF=%.2f%%)", scale_sig_st_hut, TunableSigBranchingFraction*100), "f");
+    legend->AddEntry(hist_sig_tt_hct, Form("TT Hct #times %.0f (BF=%.2f%%)", scale_sig_tt_hct, TunableSigBranchingFraction*100), "f");
+    legend->AddEntry(hist_sig_st_hct, Form("ST Hct #times %.0f (BF=%.2f%%)", scale_sig_st_hct, TunableSigBranchingFraction*100), "f");
     legend->SetLineColor(0);
     legend->Draw("same");
     //}}}
     //##### TLatex{{{
     //--------------------
-    TLatex latex, latex_lumi;
+    TLatex latex;
     latex.SetNDC(kTRUE);
     latex.SetTextFont(43);
     latex.SetTextSize(22);
@@ -528,6 +567,15 @@ void MakeStackHist(const char* histName){
     //latex.DrawLatex(0.14, 0.84, "#bf{CMS}");
     //latex.DrawLatex(0.14, 0.78, "#it{Preliminary}");
     //--------------------
+    TLatex latex_channel;
+    latex_channel.SetNDC(kTRUE);
+    latex_channel.SetTextFont(43);
+    latex_channel.SetTextSize(26);
+    latex_channel.SetTextAlign(13);
+    if(bool_isHadronic) latex_channel.DrawLatex(0.50, 0.85, "#bf{Hadronic Channel}");
+    if(bool_isLeptonic) latex_channel.DrawLatex(0.50, 0.85, "#bf{Leptonic Channel}");
+    //--------------------
+    TLatex latex_lumi;
     latex_lumi.SetNDC(kTRUE);
     latex_lumi.SetTextFont(43);
     latex_lumi.SetTextSize(22);
@@ -681,6 +729,7 @@ bool isThisEtaPhi(const char* histName){
 string GetXtitleAccordingToHistName(const char* histName){
     if((string)histName == "hist_EvtInfo_NPu") return "Number of pile up";
     if((string)histName == "hist_EvtInfo_Rho") return "Rho";
+    if((string)histName == "hist_EvtInfo_Rho_wopu") return "Rho (w/o pu)";
     if((string)histName == "hist_EvtInfo_NVtx") return "Number of vertices";
     if((string)histName == "hist_EvtInfo_NVtx_wopu") return "Number of vertices (w/o pu)";
     //----------------------------------------------------------------------
@@ -887,11 +936,18 @@ double SumErrors(TH1D* hist){
     return totalError;
 }
 
-double GetMaxScope(THStack* h1, TH1D* h2, TH1D* h3, TH1D* h4, TH1D* h5){
-    double values[] = {h1->GetMaximum(), h2->GetMaximum(), h3->GetMaximum(), h4->GetMaximum() + h4->GetBinError(h4->GetMaximumBin()), h5->GetMaximum()};
-    double max = *std::max_element(std::begin(values), std::end(values));
-    //for(int i=0; i<5; i++) printf("[check-scope] value_%d = %.2f\n", i, values[i]);
-    //printf("[validatation] max = %f\n\n", max);
+double GetMaxScope(THStack* h1, std::vector<TH1D*> vec_hists){
+    std::vector<double> values;
+    values.push_back(h1->GetMaximum());
+    for(int i=0; i<vec_hists.size(); ++i) values.push_back(vec_hists[i]->GetMaximum());
+    TH1D* h = vec_hists[vec_hists.size()-1];//hist_tqh_mc_wosig
+    values.push_back(  h->GetMaximum() + h->GetBinError(h->GetMaximumBin())  );
+    double max = *std::max_element(values.begin(), values.end());
+
+    //double values[] = {h1->GetMaximum(), h2->GetMaximum(), h3->GetMaximum(), h4->GetMaximum() + h4->GetBinError(h4->GetMaximumBin()), h5->GetMaximum()};
+    //double max = *std::max_element(std::begin(values), std::end(values));
+    ////for(int i=0; i<5; i++) printf("[check-scope] value_%d = %.2f\n", i, values[i]);
+    ////printf("[validatation] max = %f\n\n", max);
     return max;
 }
 //}}}

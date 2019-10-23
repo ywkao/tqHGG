@@ -2,6 +2,9 @@
 set -e
 
 #=== Preselection ===#
+function Preselection_npustudy(){
+    time ./fireBatchJobs -npustudy > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
+}
 function Preselection(){
     time ./fireBatchJobs -p > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
 }
@@ -15,18 +18,24 @@ function Intermission(){
 #=== Selection ===#
 function Selection(){
     CHANNEL=$1
-    time ./fireBatchJobs -s ${CHANNEL} > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
-    sleep 1m; sleep 30s # Depends on the condition of ntugrid5 computers...
+    time ./fireBatchJobs -s ${CHANNEL} > >(tee log/stdout_selection.log) 2> >(tee log/stderr_selection.log >&2)
+    sleep 1m; # Depends on the condition of ntugrid5 computers...
+    NUM=`cat ListRootFiles | grep -v "#" | nl | cut -f 1 | tail -n1 | tr -d " "`
+    while [ `grep -ic end log/stdout_selection.log` != ${NUM} ]
+    do
+        echo "[INFO-execution] Wait another 10 sec.."
+        sleep 10s;
+    done
     ./check_submit_status | tee -a log/stdout.log
 }
 function AfterSelection(){
     CHANNEL=$1
     ./run_macro_stackPlots ${CHANNEL}
     ./script/resetPlotsChannels plots_${CHANNEL}
-    cp -p log/stdout.log plots_${CHANNEL}/stdout_${CHANNEL}.log
-    cp -p log/stderr.log plots_${CHANNEL}/stderr_${CHANNEL}.log
-    mv log/stdout.log log/stdout_${CHANNEL}.log
-    mv log/stderr.log log/stderr_${CHANNEL}.log
+    cp -p log/stdout_selection.log plots_${CHANNEL}/stdout_${CHANNEL}.log
+    cp -p log/stderr_selection.log plots_${CHANNEL}/stderr_${CHANNEL}.log
+    mv log/stdout_selection.log log/stdout_${CHANNEL}.log
+    mv log/stderr_selection.log log/stderr_${CHANNEL}.log
     mv log/info_stack_plots_${CHANNEL} plots_${CHANNEL}
 }
 function ReRunStackPlotsOnly(){
@@ -40,13 +49,22 @@ function ReRunStackPlotsOnly(){
 }
 
 #=== Main Conduction ===#
+#./script/prepareExeForNewMC_npu_float "preselection_npustudy"
+#Preselection_npustudy
+#./run_macro_stackPlots "hadronic"
+
+#./script/prepareExeForNewMC_npu_float "preselection"
 #Preselection
 #Intermission
 
-Selection "hadronic" #selection and make plots for hadronic channel
-AfterSelection "hadronic" 
-Selection "leptonic" #selection and make plots for leptonic channel
-AfterSelection "leptonic" 
+
+./script/prepareExeForNewMC_npu_float "selection"
+./script/exe_selection_batch TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root "leptonic"
+
+#Selection "hadronic" #selection and make plots for hadronic channel
+#AfterSelection "hadronic" 
+#Selection "leptonic" #selection and make plots for leptonic channel
+#AfterSelection "leptonic" 
 
 #ReRunStackPlotsOnly "hadronic"
 #ReRunStackPlotsOnly "leptonic"

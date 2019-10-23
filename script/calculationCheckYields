@@ -2,30 +2,79 @@
 set -e
 
 log=reviewEntries/log_calculation
-echo "\"\"\"=== Result of data ===\"\"\"" | tee ${log}
-for type in "Individual" "Successive"
+#final=reviewEntries/final_result.txt
+final=reviewEntries/tmp.txt
+
+# dataset{{{
+array=(\
+#DYJetsToLL \
+#DiPhotonJetsBox \
+DoubleEG \
+#GJet \
+#GluGluHToGG \
+#QCD \
+#TGJets \
+#TTGG \
+#TTGJets \
+#TTJets \
+#TT \
+#VBFHToGG \
+#VHToGG \
+#WGToLNuG \
+#WJetsToLNu \
+#WW \
+#WZTo2L2Q \
+#ZGToLLG \
+#ZZTo2L2Q \
+#ttHJetToGG \
+)
+#}}}
+
+#echo ${#array[@]} #number of elements in an array
+
+function summary(){
+    dataset=$1
+    parameter=$2
+    output=$3
+    number=$4
+    echo "${parameter} = \\" >> ${output}
+    cat reviewEntries/log_${dataset}* | grep ${type} | grep ${number}| grep ${case} | awk '{print $6" +\\"}' >> ${output}
+    echo "0" >> ${output}
+    if [ ${number} == "Entries" ]; then echo "print \"${parameter} = %.0f\" % ${parameter}" >> ${output}; fi
+    if [ ${number} == "Yields" ];  then echo "print \"${parameter} = %.3f\" % ${parameter}" >> ${output}; fi
+}
+
+
+for dataset in `echo "${array[*]}"`;
 do
-    for number in "Entries" "Yields"
+    output=${log}_${dataset}
+    echo "\"\"\"=== Result of ${dataset} ===\"\"\"" > ${output}
+    echo "print \"| ${dataset} | NTU | NTU \"" >> ${output}
+    for type in "Individual" "Successive"
     do
-        for case in "NoCut" "Cut00" "Cut01" "Cut02" "Cut03" "Cut04" "Cut05"
+        for number in "Entries" "Yields"
         do
-            parameter="${type}_${number}_${case}";
-            #------- data -------#
-            #cat reviewEntries/log_check_? | grep ${type} | grep ${number}| grep ${case} | awk '{print "'${parameter}'_"NR"="$6}' | tee -a ${log}
-            #echo "${parameter}_sum=\$((${parameter}_1 + ${parameter}_2 + ${parameter}_3 + ${parameter}_4 + ${parameter}_5))" | tee -a ${log}
-            #echo "echo ${parameter}=\$${parameter}_sum" | tee -a ${log}
-            #echo "" | tee -a ${log}
-            #------- QCD -------#
-            #for file in `ls reviewEntries/log_check_QCD_*`; do $((count+1)); echo ${file} $count; done
-            echo "${parameter} = \\" | tee -a ${log}
-            cat reviewEntries/log_check_QCD_* | grep ${type} | grep ${number}| grep ${case} | awk '{print $6" +\\"}' | tee -a ${log}
-            echo "0" | tee -a ${log}
-            echo "print \"${parameter} = %f\" % ${parameter}" | tee -a ${log}
-            #echo "echo ${parameter}=\$${parameter}_sum" | tee -a ${log}
-            #echo "" | tee -a ${log}
+            for case in "NoCut" "Cut00" "Cut01" "Cut02" "Cut03" "Cut04" "Cut05"
+            do
+                parameter="${type}_${number}_${case}"
+                summary ${dataset} ${parameter} ${output} ${number}
+            done
+            chmod +x ${output}
         done
     done
 done
 
-chmod +x ${log}
-python ${log}
+echo "" > ${final}
+for type in "Individual" "Successive"
+do
+    for number in "Entries" "Yields"
+    do
+        echo ${type} " | " ${number} | tee -a ${final}
+        for dataset in `echo "${array[*]}"`;
+        #for script in `ls ${log}_*` 
+        do
+            script=${log}_${dataset} 
+            python ${script} | egrep "NTU|${type}" | egrep "NTU|${number}" | awk '{if(NR==1) print $0; else if(NR==8) print "| " $3 " |"; else print "| "$3;}' | xargs | tee -a ${final}
+        done
+    done
+done

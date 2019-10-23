@@ -6,6 +6,7 @@ using namespace std;
 enum histList {
     hist_EvtInfo_NPu,
     hist_EvtInfo_Rho,
+    hist_EvtInfo_Rho_wopu,
     hist_EvtInfo_NVtx,
     hist_EvtInfo_NVtx_wopu,
     hist_EvtInfo_genweight,
@@ -31,11 +32,13 @@ enum histList {
     hist_num_leptons,
     hist_num_electrons,
     hist_num_muons,
+    hist_ElecInfo_electron_charge,
     hist_ElecInfo_electron_pt,
     hist_ElecInfo_electron_eta,
     hist_ElecInfo_electron_phi,
     hist_ElecInfo_electron_energy,
     hist_ElecInfo_electron_diphoton_deltaR,
+    hist_MuonInfo_muon_charge,
     hist_MuonInfo_muon_pt,
     hist_MuonInfo_muon_eta,
     hist_MuonInfo_muon_phi,
@@ -48,6 +51,18 @@ enum histList {
     hist_JetInfo_jet_phi,
     hist_JetInfo_jet_energy,
     hist_JetInfo_jet_diphoton_deltaR,
+    hist_MetInfo_Pt,
+    hist_MetInfo_Phi,
+    hist_MetInfo_Px,
+    hist_MetInfo_Py,
+    hist_MetInfo_SumET,
+    hist_MetInfo_Pz_solution_1,
+    hist_MetInfo_Pz_solution_2,
+    hist_MetInfo_coeff_D,
+    hist_MetInfo_coeff_A,
+    hist_MetInfo_coeff_B2A,
+    hist_MetInfo_coeff_D2A,
+    hist_lepton_charge,
     hist_lepton_pt,
     hist_lepton_eta,
     hist_lepton_phi,
@@ -93,27 +108,41 @@ enum histList {
     hist_leading_bjet_phi,
     hist_leading_bjet_energy,
     hist_deltaR_top_top,
-    hist_deltaR_jet1_jet2,
-    hist_deltaR_wjet1_wjet2,
-    hist_deltaR_photon_photon,
     hist_deltaR_qH,
+    hist_deltaR_photon_photon,
     hist_deltaR_bW,
     hist_deltaR_HW,
     hist_deltaR_tH,
-    hist_w_candidate_pt,
-    hist_w_candidate_eta,
-    hist_w_candidate_mass,
-    hist_top_tbw_pt,
-    hist_top_tbw_eta,
-    hist_top_tbw_mass,
+    hist_deltaR_lep_met,
+    hist_deltaR_jet1_jet2,
+    hist_deltaR_wjet1_wjet2,
     hist_top_tqh_pt,
     hist_top_tqh_eta,
     hist_top_tqh_mass,
+    hist_hadronic_w_candidate_pt,
+    hist_hadronic_w_candidate_eta,
+    hist_hadronic_w_candidate_mass,
+    hist_hadronic_top_tbw_pt,
+    hist_hadronic_top_tbw_eta,
+    hist_hadronic_top_tbw_mass,
+    hist_leptonic_w_candidate_solution1_pt,
+    hist_leptonic_w_candidate_solution1_eta,
+    hist_leptonic_w_candidate_solution1_mass,
+    hist_leptonic_top_tbw_solution1_pt,
+    hist_leptonic_top_tbw_solution1_eta,
+    hist_leptonic_top_tbw_solution1_mass,
+    hist_leptonic_w_candidate_solution2_pt,
+    hist_leptonic_w_candidate_solution2_eta,
+    hist_leptonic_w_candidate_solution2_mass,
+    hist_leptonic_top_tbw_solution2_pt,
+    hist_leptonic_top_tbw_solution2_eta,
+    hist_leptonic_top_tbw_solution2_mass,
     totalHistNum
 };
 std::string histNames[totalHistNum]{
     "hist_EvtInfo_NPu",
     "hist_EvtInfo_Rho",
+    "hist_EvtInfo_Rho_wopu",
     "hist_EvtInfo_NVtx",
     "hist_EvtInfo_NVtx_wopu",
     "hist_EvtInfo_genweight",
@@ -139,11 +168,13 @@ std::string histNames[totalHistNum]{
     "hist_num_leptons",
     "hist_num_electrons",
     "hist_num_muons",
+    "hist_ElecInfo_electron_charge",
     "hist_ElecInfo_electron_pt",
     "hist_ElecInfo_electron_eta",
     "hist_ElecInfo_electron_phi",
     "hist_ElecInfo_electron_energy",
     "hist_ElecInfo_electron_diphoton_deltaR",
+    "hist_MuonInfo_muon_charge",
     "hist_MuonInfo_muon_pt",
     "hist_MuonInfo_muon_eta",
     "hist_MuonInfo_muon_phi",
@@ -156,6 +187,18 @@ std::string histNames[totalHistNum]{
     "hist_JetInfo_jet_phi",
     "hist_JetInfo_jet_energy",
     "hist_JetInfo_jet_diphoton_deltaR",
+    "hist_MetInfo_Pt",
+    "hist_MetInfo_Phi",
+    "hist_MetInfo_Px",
+    "hist_MetInfo_Py",
+    "hist_MetInfo_SumET",
+    "hist_MetInfo_Pz_solution_1",
+    "hist_MetInfo_Pz_solution_2",
+    "hist_MetInfo_coeff_D",
+    "hist_MetInfo_coeff_A",
+    "hist_MetInfo_coeff_B2A",
+    "hist_MetInfo_coeff_D2A",
+    "hist_lepton_charge",
     "hist_lepton_pt",
     "hist_lepton_eta",
     "hist_lepton_phi",
@@ -201,26 +244,40 @@ std::string histNames[totalHistNum]{
     "hist_leading_bjet_phi",
     "hist_leading_bjet_energy",
     "hist_deltaR_top_top",
-    "hist_deltaR_jet1_jet2",
-    "hist_deltaR_wjet1_wjet2",
-    "hist_deltaR_photon_photon",
     "hist_deltaR_qH",
+    "hist_deltaR_photon_photon",
     "hist_deltaR_bW",
     "hist_deltaR_HW",
     "hist_deltaR_tH",
-    "hist_w_candidate_pt",
-    "hist_w_candidate_eta",
-    "hist_w_candidate_mass",
-    "hist_top_tbw_pt",
-    "hist_top_tbw_eta",
-    "hist_top_tbw_mass",
+    "hist_deltaR_lep_met",
+    "hist_deltaR_jet1_jet2",
+    "hist_deltaR_wjet1_wjet2",
     "hist_top_tqh_pt",
     "hist_top_tqh_eta",
-    "hist_top_tqh_mass"
+    "hist_top_tqh_mass",
+    "hist_hadronic_w_candidate_pt",
+    "hist_hadronic_w_candidate_eta",
+    "hist_hadronic_w_candidate_mass",
+    "hist_hadronic_top_tbw_pt",
+    "hist_hadronic_top_tbw_eta",
+    "hist_hadronic_top_tbw_mass",
+    "hist_leptonic_w_candidate_solution1_pt",
+    "hist_leptonic_w_candidate_solution1_eta",
+    "hist_leptonic_w_candidate_solution1_mass",
+    "hist_leptonic_top_tbw_solution1_pt",
+    "hist_leptonic_top_tbw_solution1_eta",
+    "hist_leptonic_top_tbw_solution1_mass",
+    "hist_leptonic_w_candidate_solution2_pt",
+    "hist_leptonic_w_candidate_solution2_eta",
+    "hist_leptonic_w_candidate_solution2_mass",
+    "hist_leptonic_top_tbw_solution2_pt",
+    "hist_leptonic_top_tbw_solution2_eta",
+    "hist_leptonic_top_tbw_solution2_mass"
 };
 int histNbins[totalHistNum]{
     100,//hist_EvtInfo_NPu
-    50,//hist_EvtInfo_Rho
+    40,//hist_EvtInfo_Rho
+    40,//hist_EvtInfo_Rho_wopu
     50,//hist_EvtInfo_NVtx
     50,//hist_EvtInfo_NVtx_wopu
     100,//hist_EvtInfo_genweight
@@ -246,23 +303,37 @@ int histNbins[totalHistNum]{
     10,//hist_num_leptons
     10,//hist_num_electrons
     10,//hist_num_muons
+    2,//hist_ElecInfo_electron_charge
     40,//hist_ElecInfo_electron_pt
     40,//hist_ElecInfo_electron_eta
     40,//hist_ElecInfo_electron_phi
     40,//hist_ElecInfo_electron_energy
     40,//hist_ElecInfo_electron_diphoton_deltaR
+    2,//hist_MuonInfo_muon_charge
     40,//hist_MuonInfo_muon_pt
     40,//hist_MuonInfo_muon_eta
     40,//hist_MuonInfo_muon_phi
     40,//hist_MuonInfo_muon_energy
     40,//hist_MuonInfo_muon_diphoton_deltaR
     10,//hist_jets_size
-    10,//hist_num_jets
+    15,//hist_num_jets
     40,//hist_JetInfo_jet_pt
     40,//hist_JetInfo_jet_eta
     40,//hist_JetInfo_jet_phi
     40,//hist_JetInfo_jet_energy
     40,//hist_JetInfo_jet_diphoton_deltaR
+    40,//hist_MetInfo_Pt
+    40,//hist_MetInfo_Phi
+    40,//hist_MetInfo_Px
+    40,//hist_MetInfo_Py
+    40,//hist_MetInfo_SumET
+    40,//hist_MetInfo_Pz_solution_1
+    40,//hist_MetInfo_Pz_solution_2
+    40,//hist_MetInfo_coeff_D
+    40,//hist_MetInfo_coeff_A
+    40,//hist_MetInfo_coeff_B2A
+    40,//hist_MetInfo_coeff_D2A
+    2,//hist_lepton_charge
     40,//hist_lepton_pt
     40,//hist_lepton_eta
     40,//hist_lepton_phi
@@ -308,26 +379,40 @@ int histNbins[totalHistNum]{
     40,//hist_leading_bjet_phi
     40,//hist_leading_bjet_energy
     40,//hist_deltaR_top_top
-    40,//hist_deltaR_jet1_jet2
-    40,//hist_deltaR_wjet1_wjet2
-    40,//hist_deltaR_photon_photon
     40,//hist_deltaR_qH
+    40,//hist_deltaR_photon_photon
     40,//hist_deltaR_bW
     40,//hist_deltaR_HW
     40,//hist_deltaR_tH
-    40,//hist_w_candidate_pt
-    40,//hist_w_candidate_eta
-    50,//hist_w_candidate_mass
-    40,//hist_top_tbw_pt
-    40,//hist_top_tbw_eta
-    70,//hist_top_tbw_mass
+    40,//hist_deltaR_lep_met
+    40,//hist_deltaR_jet1_jet2
+    40,//hist_deltaR_wjet1_wjet2
     40,//hist_top_tqh_pt
     40,//hist_top_tqh_eta
-    70//hist_top_tqh_mass
+    70,//hist_top_tqh_mass
+    40,//hist_hadronic_w_candidate_pt
+    40,//hist_hadronic_w_candidate_eta
+    50,//hist_hadronic_w_candidate_mass
+    40,//hist_hadronic_top_tbw_pt
+    40,//hist_hadronic_top_tbw_eta
+    70,//hist_hadronic_top_tbw_mass
+    40,//hist_leptonic_w_candidate_solution1_pt
+    40,//hist_leptonic_w_candidate_solution1_eta
+    50,//hist_leptonic_w_candidate_solution1_mass
+    40,//hist_leptonic_top_tbw_solution1_pt
+    40,//hist_leptonic_top_tbw_solution1_eta
+    70,//hist_leptonic_top_tbw_solution1_mass
+    40,//hist_leptonic_w_candidate_solution2_pt
+    40,//hist_leptonic_w_candidate_solution2_eta
+    50,//hist_leptonic_w_candidate_solution2_mass
+    40,//hist_leptonic_top_tbw_solution2_pt
+    40,//hist_leptonic_top_tbw_solution2_eta
+    70//hist_leptonic_top_tbw_solution2_mass
 };
 double histBinLow[totalHistNum]{
     0,//hist_EvtInfo_NPu
     0,//hist_EvtInfo_Rho
+    0,//hist_EvtInfo_Rho_wopu
     0,//hist_EvtInfo_NVtx
     0,//hist_EvtInfo_NVtx_wopu
     0,//hist_EvtInfo_genweight
@@ -353,11 +438,13 @@ double histBinLow[totalHistNum]{
     0,//hist_num_leptons
     0,//hist_num_electrons
     0,//hist_num_muons
+    -2,//hist_ElecInfo_electron_charge
     0,//hist_ElecInfo_electron_pt
     -2.5,//hist_ElecInfo_electron_eta
     -3.0,//hist_ElecInfo_electron_phi
     0,//hist_ElecInfo_electron_energy
     0,//hist_ElecInfo_electron_diphoton_deltaR
+    -2,//hist_MuonInfo_muon_charge
     0,//hist_MuonInfo_muon_pt
     -2.5,//hist_MuonInfo_muon_eta
     -3.0,//hist_MuonInfo_muon_phi
@@ -370,6 +457,18 @@ double histBinLow[totalHistNum]{
     -3.0,//hist_JetInfo_jet_phi
     0,//hist_JetInfo_jet_energy
     0,//hist_JetInfo_jet_diphoton_deltaR
+    0,//hist_MetInfo_Pt
+    -3.0,//hist_MetInfo_Phi
+    -200,//hist_MetInfo_Px
+    -200,//hist_MetInfo_Py
+    0,//hist_MetInfo_SumET
+    -200,//hist_MetInfo_Pz_solution_1
+    -200,//hist_MetInfo_Pz_solution_2
+    -1000,//hist_MetInfo_coeff_D
+    -1000.,//hist_MetInfo_coeff_A
+    -600,//hist_MetInfo_coeff_B2A
+    -600,//hist_MetInfo_coeff_D2A
+    -2,//hist_lepton_charge
     0,//hist_lepton_pt
     -2.5,//hist_lepton_eta
     -3.0,//hist_lepton_phi
@@ -415,26 +514,40 @@ double histBinLow[totalHistNum]{
     -3.0,//hist_leading_bjet_phi
     0,//hist_leading_bjet_energy
     0,//hist_deltaR_top_top
-    0,//hist_deltaR_jet1_jet2
-    0,//hist_deltaR_wjet1_wjet2
-    0,//hist_deltaR_photon_photon
     0,//hist_deltaR_qH
+    0,//hist_deltaR_photon_photon
     0,//hist_deltaR_bW
     0,//hist_deltaR_HW
     0,//hist_deltaR_tH
-    0,//hist_w_candidate_pt
-    -2.5,//hist_w_candidate_eta
-    0,//hist_w_candidate_mass
-    0,//hist_top_tbw_pt
-    -2.5,//hist_top_tbw_eta
-    0,//hist_top_tbw_mass
+    0,//hist_deltaR_lep_met
+    0,//hist_deltaR_jet1_jet2
+    0,//hist_deltaR_wjet1_wjet2
     0,//hist_top_tqh_pt
     -2.5,//hist_top_tqh_eta
-    0//hist_top_tqh_mass
+    0,//hist_top_tqh_mass
+    0,//hist_hadronic_w_candidate_pt
+    -2.5,//hist_hadronic_w_candidate_eta
+    0,//hist_hadronic_w_candidate_mass
+    0,//hist_hadronic_top_tbw_pt
+    -2.5,//hist_hadronic_top_tbw_eta
+    0,//hist_hadronic_top_tbw_mass
+    0,//hist_leptonic_w_candidate_solution1_pt
+    -2.5,//hist_leptonic_w_candidate_solution1_eta
+    0,//hist_leptonic_w_candidate_solution1_mass
+    0,//hist_leptonic_top_tbw_solution1_pt
+    -2.5,//hist_leptonic_top_tbw_solution1_eta
+    0,//hist_leptonic_top_tbw_solution1_mass
+    0,//hist_leptonic_w_candidate_solution2_pt
+    -2.5,//hist_leptonic_w_candidate_solution2_eta
+    0,//hist_leptonic_w_candidate_solution2_mass
+    0,//hist_leptonic_top_tbw_solution2_pt
+    -2.5,//hist_leptonic_top_tbw_solution2_eta
+    0//hist_leptonic_top_tbw_solution2_mass
 };
 double histBinHigh[totalHistNum]{
     100,//hist_EvtInfo_NPu
-    200,//hist_EvtInfo_Rho
+    80,//hist_EvtInfo_Rho
+    80,//hist_EvtInfo_Rho_wopu
     100,//hist_EvtInfo_NVtx
     100,//hist_EvtInfo_NVtx_wopu
     100,//hist_EvtInfo_genweight
@@ -460,23 +573,37 @@ double histBinHigh[totalHistNum]{
     10,//hist_num_leptons
     10,//hist_num_electrons
     10,//hist_num_muons
+    2,//hist_ElecInfo_electron_charge
     200,//hist_ElecInfo_electron_pt
     2.5,//hist_ElecInfo_electron_eta
     3.0,//hist_ElecInfo_electron_phi
     200,//hist_ElecInfo_electron_energy
     6,//hist_ElecInfo_electron_diphoton_deltaR
+    2,//hist_MuonInfo_muon_charge
     200,//hist_MuonInfo_muon_pt
     2.5,//hist_MuonInfo_muon_eta
     3.0,//hist_MuonInfo_muon_phi
     200,//hist_MuonInfo_muon_energy
     6,//hist_MuonInfo_muon_diphoton_deltaR
     10,//hist_jets_size
-    10,//hist_num_jets
+    15,//hist_num_jets
     200,//hist_JetInfo_jet_pt
     2.5,//hist_JetInfo_jet_eta
     3.0,//hist_JetInfo_jet_phi
     200,//hist_JetInfo_jet_energy
     6,//hist_JetInfo_jet_diphoton_deltaR
+    200,//hist_MetInfo_Pt
+    3.0,//hist_MetInfo_Phi
+    200,//hist_MetInfo_Px
+    200,//hist_MetInfo_Py
+    200,//hist_MetInfo_SumET
+    200,//hist_MetInfo_Pz_solution_1
+    200,//hist_MetInfo_Pz_solution_2
+    1000,//hist_MetInfo_coeff_D
+    1000.,//hist_MetInfo_coeff_A
+    600,//hist_MetInfo_coeff_B2A
+    600,//hist_MetInfo_coeff_D2A
+    2,//hist_lepton_charge
     200,//hist_lepton_pt
     2.5,//hist_lepton_eta
     3.0,//hist_lepton_phi
@@ -522,21 +649,34 @@ double histBinHigh[totalHistNum]{
     3.0,//hist_leading_bjet_phi
     200,//hist_leading_bjet_energy
     6,//hist_deltaR_top_top
-    6,//hist_deltaR_jet1_jet2
-    6,//hist_deltaR_wjet1_wjet2
-    6,//hist_deltaR_photon_photon
     6,//hist_deltaR_qH
+    6,//hist_deltaR_photon_photon
     6,//hist_deltaR_bW
     6,//hist_deltaR_HW
     6,//hist_deltaR_tH
-    200,//hist_w_candidate_pt
-    2.5,//hist_w_candidate_eta
-    150,//hist_w_candidate_mass
-    400,//hist_top_tbw_pt
-    2.5,//hist_top_tbw_eta
-    350,//hist_top_tbw_mass
+    6,//hist_deltaR_lep_met
+    6,//hist_deltaR_jet1_jet2
+    6,//hist_deltaR_wjet1_wjet2
     400,//hist_top_tqh_pt
     2.5,//hist_top_tqh_eta
-    350//hist_top_tqh_mass
+    350,//hist_top_tqh_mass
+    200,//hist_hadronic_w_candidate_pt
+    2.5,//hist_hadronic_w_candidate_eta
+    150,//hist_hadronic_w_candidate_mass
+    400,//hist_hadronic_top_tbw_pt
+    2.5,//hist_hadronic_top_tbw_eta
+    350,//hist_hadronic_top_tbw_mass
+    200,//hist_leptonic_w_candidate_solution1_pt
+    2.5,//hist_leptonic_w_candidate_solution1_eta
+    150,//hist_leptonic_w_candidate_solution1_mass
+    400,//hist_leptonic_top_tbw_solution1_pt
+    2.5,//hist_leptonic_top_tbw_solution1_eta
+    350,//hist_leptonic_top_tbw_solution1_mass
+    200,//hist_leptonic_w_candidate_solution2_pt
+    2.5,//hist_leptonic_w_candidate_solution2_eta
+    150,//hist_leptonic_w_candidate_solution2_mass
+    400,//hist_leptonic_top_tbw_solution2_pt
+    2.5,//hist_leptonic_top_tbw_solution2_eta
+    350//hist_leptonic_top_tbw_solution2_mass
 };
 #endif

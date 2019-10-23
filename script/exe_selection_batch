@@ -2,7 +2,9 @@
 #ref of command awk: https://ubuntuforums.org/showthread.php?t=840054
 set -e
 
-INPUTDIR="ntuples_skimmed"
+#INPUTDIR="ntuples_skimmed"
+#INPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed_trigger_pustudy"
+INPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed"
 OUTPUTDIR="plots"
 EXECUTABLE=./bin/selection
 EXECUTABLE_npu=./bin/selection_npu_float

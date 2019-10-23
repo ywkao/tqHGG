@@ -4,7 +4,9 @@ set -e
 
 INPUTDIR="/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0"
 INPUTDIR_ywk="/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0"
-OUTPUTDIR="ntuples_skimmed"
+#OUTPUTDIR="ntuples_skimmed"
+OUTPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed"
+#OUTPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed_trigger_pustudy"
 EXECUTABLE=./bin/preselection
 EXECUTABLE_npu=./bin/preselection_npu_float
 
@@ -45,6 +47,7 @@ ExeAnalysis_singletop(){
 if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
     #ExeAnalysis ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root
     ExeAnalysis GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8.root
+    #ExeAnalysis_npu_float 'WW_TuneCP5_13TeV-pythia8';
     echo "[MESSAGE] This is the end of dryRun execution." && exit 0
 fi
 
@@ -66,6 +69,7 @@ elif [[
       $FILE == 'ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8' ||
       $FILE == 'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8'
    ]]; then
+    echo "[check-script] ExeAnalysis_npu_float"
     ExeAnalysis_npu_float $FILE;
     echo "[MESSAGE] This is the end of $FILE" && exit 0
 elif [[
