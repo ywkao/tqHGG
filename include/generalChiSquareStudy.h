@@ -34,6 +34,7 @@ void hist_report(TH1D *hist, const char* chi2_type);
 double Chi2_calculator_simple(double w_mass, double t_mass);
 double Chi2_calculator_modified(double w_mass, double t_mass);
 void MakePlots(TCanvas *c1, TH1D* hist, const char* title, const char* outputFile);
+void MakeTwoPlots(TCanvas *c1, TH1D* hist_gen, TH1D* hist_reco, TLegend *legend, const char* name);
 void MakeFinalPlots(TCanvas *c1, TH1D* hist_simple, TH1D* hist_modified, TH1D*hist_yfyj, TLegend *legend, const char* name);
 bool isThisDataOrNot(char* dataset);
 bool isThisMultiFile(char* dataset);
@@ -145,6 +146,11 @@ public:
     std::vector<float>   *MuonInfo_GenEta;
     std::vector<float>   *MuonInfo_GenPhi;
     //------------------------
+    float         MetInfo_Pt;
+    float         MetInfo_Phi;
+    float         MetInfo_Px;
+    float         MetInfo_Py;
+    float         MetInfo_SumET;
 };
 class myParameters{
 public:

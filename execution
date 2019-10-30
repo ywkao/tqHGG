@@ -48,18 +48,20 @@ function ReRunStackPlotsOnly(){
     mv log/info_stack_plots_${CHANNEL} plots_${CHANNEL}
 }
 
-#=== Main Conduction ===#
+#=== Test Section ===#
 #./script/prepareExeForNewMC_npu_float "preselection_npustudy"
 #Preselection_npustudy
 #./run_macro_stackPlots "hadronic"
 
+make && time ./script/exe_generalChiSquareStudy "TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root"
+
+#=== Main Conduction ===#
 #./script/prepareExeForNewMC_npu_float "preselection"
 #Preselection
 #Intermission
 
-
-./script/prepareExeForNewMC_npu_float "selection"
-./script/exe_selection_batch TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root "leptonic"
+#./script/prepareExeForNewMC_npu_float "selection"
+#./script/exe_selection_batch TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root "leptonic"
 
 #Selection "hadronic" #selection and make plots for hadronic channel
 #AfterSelection "hadronic" 
