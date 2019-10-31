@@ -121,6 +121,9 @@ int main(int argc, char *argv[]){
     //}}}
     //### hist leptonic{{{
     TH1D *hist_mass_gen_wboson_leptonic = new TH1D("hist_mass_gen_wboson_leptonic", ";Mass [GeV/c^{2}];Entries", 32, 0, 160);
+    TH1D *hist_mass_gen_topquark_leptonic = new TH1D("hist_mass_gen_topquark_leptonic", ";Mass [GeV/c^{2}];Entries", 34, 0, 340);
+    TH1D *hist_deltaR_reco_top_higgs_leptonic = new TH1D("hist_deltaR_reco_top_higgs_leptonic", "", 40, 0, 6);
+
     TH1D *hist_deltaR_gen_reco_chargedLepton = new TH1D("hist_deltaR_gen_reco_chargedLepton", "", 40, 0, 0.1);
     TH1D *hist_deltaR_gen_reco_neutrino_sol0 = new TH1D("hist_deltaR_gen_reco_neutrino_sol0", "", 40, 0, 6);
     TH1D *hist_deltaR_gen_reco_wboson_sol0 = new TH1D("hist_deltaR_gen_reco_wboson_sol0", "", 40, 0, 6);
@@ -169,6 +172,7 @@ int main(int argc, char *argv[]){
     TH1D *hist_leptonic_top_tbw_solution1_pt = new TH1D("hist_leptonic_top_tbw_solution1_pt", "", 40, 0, 400);
     TH1D *hist_leptonic_top_tbw_solution1_eta = new TH1D("hist_leptonic_top_tbw_solution1_eta", "", 40, -2.5, 2.5);
     TH1D *hist_leptonic_top_tbw_solution1_mass = new TH1D("hist_leptonic_top_tbw_solution1_mass", ";Mass [GeV/c^{2}];Entries", 70, 0, 350);
+    TH1D *hist_leptonic_top_tbw_solution1_mass_negativeD = new TH1D("hist_leptonic_top_tbw_solution1_mass_negativeD", ";Mass [GeV/c^{2}];Entries", 70, 0, 350);
     //---
     TH1D *hist_leptonic_w_candidate_solution2_pt = new TH1D("hist_leptonic_w_candidate_solution2_pt", "", 40, 0, 200);
     TH1D *hist_leptonic_w_candidate_solution2_eta = new TH1D("hist_leptonic_w_candidate_solution2_eta", "", 40, -2.5, 2.5);
@@ -177,6 +181,7 @@ int main(int argc, char *argv[]){
     TH1D *hist_leptonic_top_tbw_solution2_pt = new TH1D("hist_leptonic_top_tbw_solution2_pt", "", 40, 0, 400);
     TH1D *hist_leptonic_top_tbw_solution2_eta = new TH1D("hist_leptonic_top_tbw_solution2_eta", "", 40, -2.5, 2.5);
     TH1D *hist_leptonic_top_tbw_solution2_mass = new TH1D("hist_leptonic_top_tbw_solution2_mass", ";Mass [GeV/c^{2}];Entries", 70, 0, 350);
+    TH1D *hist_leptonic_top_tbw_solution2_mass_negativeD = new TH1D("hist_leptonic_top_tbw_solution2_mass_negativeD", ";Mass [GeV/c^{2}];Entries", 70, 0, 350);
 
     //}}}
 
@@ -526,7 +531,6 @@ int main(int argc, char *argv[]){
         //bjet = bjets_medium[0];
         //### }}}
         
-
         /*
         // Check GenInfo{{{
         //if(num_bquark>1){
@@ -538,10 +542,12 @@ int main(int argc, char *argv[]){
             bool isNeutrino = (abs(pdgID) == 12 || abs(pdgID) == 14 || abs(pdgID) == 16) && isPromptFinalState;
             bool isChargedLepton = (abs(pdgID) == 11 || abs(pdgID) == 13 || abs(pdgID) == 15) && isPromptFinalState;
             bool isWboson = (abs(pdgID) == 24);
+            bool isTop = (abs(pdgID) == 6);
 
             //if(isNeutrino){
             //if(isChargedLepton){
-            if(isWboson){
+            //if(isWboson){
+            if(isTop){
             printf("Status = %3d, ", treeReader.GenPartInfo_Status->at(i));
             printf("PdgID = %3d, ", treeReader.GenPartInfo_PdgID->at(i));
             printf("Pt = %6.2f, ", treeReader.GenPartInfo_Pt->at(i));
@@ -557,15 +563,18 @@ int main(int argc, char *argv[]){
         //}
         //}}}
         */
+
         // LEPTONIC Channel
         // geninfo{{{
-        TLorentzVector chargedLepton, neutrino, wboson;
+        TLorentzVector chargedLepton, neutrino, wboson, bquark, topquark;
         for(int i=0; i<treeReader.GenPartInfo_size; i++){
             int pdgID = treeReader.GenPartInfo_PdgID->at(i);
+            int mom_pdgID = treeReader.GenPartInfo_MomPdgID->at(i);
             bool isPromptFinalState = treeReader.GenPartInfo_isPromptFinalState->at(i);
             bool isNeutrino = (abs(pdgID) == 12 || abs(pdgID) == 14 || abs(pdgID) == 16) && isPromptFinalState;
             bool isChargedLepton = (abs(pdgID) == 11 || abs(pdgID) == 13 || abs(pdgID) == 15) && isPromptFinalState;
             bool isWboson = (abs(pdgID) == 24);
+            bool isbquark = (abs(pdgID) == 5 && abs(mom_pdgID) == 6);
             if(isNeutrino){
                 neutrino.SetPtEtaPhiM(treeReader.GenPartInfo_Pt->at(i), treeReader.GenPartInfo_Eta->at(i), treeReader.GenPartInfo_Phi->at(i), treeReader.GenPartInfo_Mass->at(i));
                 //kinematics_info("v", neutrino);
@@ -574,10 +583,17 @@ int main(int argc, char *argv[]){
                 chargedLepton.SetPtEtaPhiM(treeReader.GenPartInfo_Pt->at(i), treeReader.GenPartInfo_Eta->at(i), treeReader.GenPartInfo_Phi->at(i), treeReader.GenPartInfo_Mass->at(i));
                 //kinematics_info("l", chargedLepton);
             }
+            if(isbquark){
+                bquark.SetPtEtaPhiM(treeReader.GenPartInfo_Pt->at(i), treeReader.GenPartInfo_Eta->at(i), treeReader.GenPartInfo_Phi->at(i), treeReader.GenPartInfo_Mass->at(i));
+                //kinematics_info("b", bquark);
+            }
             if(isWboson){
                 wboson.SetPtEtaPhiM(treeReader.GenPartInfo_Pt->at(i), treeReader.GenPartInfo_Eta->at(i), treeReader.GenPartInfo_Phi->at(i), treeReader.GenPartInfo_Mass->at(i));
                 //kinematics_info("w", wboson);
+                topquark = wboson + bquark;
+                //kinematics_info("t", topquark);
                 hist_mass_gen_wboson_leptonic->Fill(wboson.M());
+                hist_mass_gen_topquark_leptonic->Fill(topquark.M());
             }
         }
         //TLorentzVector wboson_check = neutrino + chargedLepton;
@@ -670,6 +686,7 @@ int main(int argc, char *argv[]){
         hist_leptonic_top_tbw_solution1_pt->Fill(L_bw_lep[0].Pt(), isData ? 1. : NormalizationFactor);
         hist_leptonic_top_tbw_solution1_eta->Fill(L_bw_lep[0].Eta(), isData ? 1. : NormalizationFactor);
         hist_leptonic_top_tbw_solution1_mass->Fill(L_bw_lep[0].M(), isData ? 1. : NormalizationFactor);
+        if(coefficient_D<0) hist_leptonic_top_tbw_solution1_mass_negativeD->Fill(L_bw_lep[0].M(), isData ? 1. : NormalizationFactor);
 
         hist_leptonic_w_candidate_solution2_pt->Fill(L_w_lep[1].Pt(), isData ? 1. : NormalizationFactor);
         hist_leptonic_w_candidate_solution2_eta->Fill(L_w_lep[1].Eta(), isData ? 1. : NormalizationFactor);
@@ -678,6 +695,7 @@ int main(int argc, char *argv[]){
         hist_leptonic_top_tbw_solution2_pt->Fill(L_bw_lep[1].Pt(), isData ? 1. : NormalizationFactor);
         hist_leptonic_top_tbw_solution2_eta->Fill(L_bw_lep[1].Eta(), isData ? 1. : NormalizationFactor);
         hist_leptonic_top_tbw_solution2_mass->Fill(L_bw_lep[1].M(), isData ? 1. : NormalizationFactor);
+        if(coefficient_D<0) hist_leptonic_top_tbw_solution2_mass_negativeD->Fill(L_bw_lep[1].M(), isData ? 1. : NormalizationFactor);
 
         //## comments: further MC truth study is needed
         /*
@@ -704,6 +722,7 @@ int main(int argc, char *argv[]){
 
         //### deltaR(gen, reco)
         double deltaR;
+        deltaR = diphoton.DeltaR(L_bw_lep[1])                             ; hist_deltaR_reco_top_higgs_leptonic->Fill(deltaR)   ;
         deltaR = chargedLepton.DeltaR(lepton)                             ; hist_deltaR_gen_reco_chargedLepton->Fill(deltaR)   ;
         deltaR = neutrino.DeltaR(L_met_lep[0])                            ; hist_deltaR_gen_reco_neutrino_sol0->Fill(deltaR)   ;
         deltaR = neutrino.DeltaR(L_met_lep[1])                            ; hist_deltaR_gen_reco_neutrino_sol1->Fill(deltaR)   ;
@@ -1266,6 +1285,8 @@ int main(int argc, char *argv[]){
 
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
     hist_mass_gen_wboson_leptonic -> Draw("hist")               ; c1->SaveAs("ntuples_skimmed/hist_mass_gen_wboson_leptonic.png")               ;
+    hist_mass_gen_topquark_leptonic -> Draw("hist")               ; c1->SaveAs("ntuples_skimmed/hist_mass_gen_topquark_leptonic.png")               ;
+    hist_deltaR_reco_top_higgs_leptonic -> Draw("hist")          ; c1->SaveAs("ntuples_skimmed/hist_deltaR_reco_top_higgs_leptonic.png")          ;
     hist_deltaR_gen_reco_chargedLepton -> Draw("hist")          ; c1->SaveAs("ntuples_skimmed/hist_deltaR_gen_reco_chargedLepton.png")          ;
     hist_deltaR_gen_reco_neutrino_sol0 -> Draw("hist")          ; c1->SaveAs("ntuples_skimmed/hist_deltaR_gen_reco_neutrino_sol0.png")          ;
     hist_deltaR_gen_reco_wboson_sol0 -> Draw("hist")            ; c1->SaveAs("ntuples_skimmed/hist_deltaR_gen_reco_wboson_sol0.png")            ;
@@ -1340,6 +1361,35 @@ int main(int argc, char *argv[]){
     legend->SetLineColor(0);
     legend->Draw("same");
     c1->SaveAs("ntuples_skimmed/hist_leptonic_w_candidate_solution2_mass_negativeD.png")    ;
+
+    //---
+    hist_leptonic_top_tbw_solution1_mass -> SetStats(0)    ;
+    hist_leptonic_top_tbw_solution1_mass -> SetLineWidth(2)    ;
+    hist_leptonic_top_tbw_solution1_mass -> Draw("hist")    ;
+    hist_leptonic_top_tbw_solution1_mass_negativeD -> Draw("hist;same")    ;
+    hist_leptonic_top_tbw_solution1_mass_negativeD -> SetLineWidth(0)    ;
+    hist_leptonic_top_tbw_solution1_mass_negativeD -> SetFillStyle(3001)    ;
+    hist_leptonic_top_tbw_solution1_mass_negativeD -> SetFillColor(kRed)    ;
+    legend->Clear();
+    legend->AddEntry(hist_leptonic_top_tbw_solution1_mass,  "Every reco. top quark", "l");
+    legend->AddEntry(hist_leptonic_top_tbw_solution1_mass_negativeD,  "D < 0", "f");
+    legend->SetLineColor(0);
+    legend->Draw("same");
+    c1->SaveAs("ntuples_skimmed/hist_leptonic_top_tbw_solution1_mass_negativeD.png")    ;
+
+    hist_leptonic_top_tbw_solution2_mass -> SetStats(0)    ;
+    hist_leptonic_top_tbw_solution2_mass -> SetLineWidth(2)    ;
+    hist_leptonic_top_tbw_solution2_mass -> Draw("hist")    ;
+    hist_leptonic_top_tbw_solution2_mass_negativeD -> Draw("hist;same")    ;
+    hist_leptonic_top_tbw_solution2_mass_negativeD -> SetLineWidth(0)    ;
+    hist_leptonic_top_tbw_solution2_mass_negativeD -> SetFillStyle(3001)    ;
+    hist_leptonic_top_tbw_solution2_mass_negativeD -> SetFillColor(kRed)    ;
+    legend->Clear();
+    legend->AddEntry(hist_leptonic_top_tbw_solution2_mass,  "Every reco. top quark", "l");
+    legend->AddEntry(hist_leptonic_top_tbw_solution2_mass_negativeD,  "D < 0", "f");
+    legend->SetLineColor(0);
+    legend->Draw("same");
+    c1->SaveAs("ntuples_skimmed/hist_leptonic_top_tbw_solution2_mass_negativeD.png")    ;
 
 //void MakeTwoPlots(TCanvas *c1, TH1D* hist_gen, TH1D* hist_reco, TLegend *legend, const char* name){
     TLegend *legend_sol = new TLegend(0.15,0.65,0.45,0.85);
