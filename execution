@@ -62,6 +62,7 @@ make && time ./script/exe_generalChiSquareStudy "TT_FCNC-aTtoHJ_Tleptonic_HToaa_
 
 #./script/prepareExeForNewMC_npu_float "selection"
 #./script/exe_selection_batch TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root "leptonic"
+#time ./script/exe_selection_batch "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8" "leptonic"
 
 #Selection "hadronic" #selection and make plots for hadronic channel
 #AfterSelection "hadronic" 
