@@ -13,11 +13,14 @@
 #include <TCanvas.h>
 #include <TChain.h>
 #include <TCanvas.h>
+#include <TColor.h>
 #include <TFile.h>
 #include <TH1D.h>
+#include <TH2D.h>
 #include <TLorentzVector.h>
 #include <TLegend.h>
 #include <TVectorD.h>
+#include <TStyle.h>
 #include <TMatrixD.h>
 #include <TTree.h>
 #include <vector>
@@ -136,10 +139,10 @@ int main(int argc, char *argv[]){
     TH1D *hist_deltaPz_gen_reco_wboson_sol0 = new TH1D("hist_deltaPz_gen_reco_wboson_sol0", "", 40, -100, 100);
     TH1D *hist_deltaPz_gen_reco_wboson_sol1 = new TH1D("hist_deltaPz_gen_reco_wboson_sol1", "", 40, -100, 100);
     //TH1D *hist_deltaPz_gen_reco_chargedLepton = new TH1D("hist_deltaPz_gen_reco_chargedLepton", "", 40, -1, 1);
-    //TH1D *hist_deltaPz_gen_reco_neutrino_sol0 = new TH1D("hist_deltaPz_gen_reco_neutrino_sol0", "", 40, -2, 2);
-    //TH1D *hist_deltaPz_gen_reco_neutrino_sol1 = new TH1D("hist_deltaPz_gen_reco_neutrino_sol1", "", 40, -2, 2);
-    //TH1D *hist_deltaPz_gen_reco_wboson_sol0 = new TH1D("hist_deltaPz_gen_reco_wboson_sol0", "", 40, -1, 1);
-    //TH1D *hist_deltaPz_gen_reco_wboson_sol1 = new TH1D("hist_deltaPz_gen_reco_wboson_sol1", "", 40, -1, 1);
+    TH1D *hist_deltaPzRatio_gen_reco_neutrino_sol0 = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_sol0", "", 40, -2, 2);
+    TH1D *hist_deltaPzRatio_gen_reco_neutrino_sol1 = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_sol1", "", 40, -2, 2);
+    TH1D *hist_deltaPzRatio_gen_reco_wboson_sol0 = new TH1D("hist_deltaPzRatio_gen_reco_wboson_sol0", "", 40, -1, 1);
+    TH1D *hist_deltaPzRatio_gen_reco_wboson_sol1 = new TH1D("hist_deltaPzRatio_gen_reco_wboson_sol1", "", 40, -1, 1);
     //---
     TH1D *hist_deltaPT_gen_reco_chargedLepton = new TH1D("hist_deltaPT_gen_reco_chargedLepton", "", 40, -1, 1);
     TH1D *hist_deltaPT_gen_reco_neutrino_sol0 = new TH1D("hist_deltaPT_gen_reco_neutrino_sol0", "", 40, -1, 1);
@@ -150,6 +153,10 @@ int main(int argc, char *argv[]){
     TH1D *hist_deltaPT_reco_neutrino_sol0_doubleCheck = new TH1D("hist_deltaPT_gen_reco_neutrino_sol0_doubleCheck", "", 40, -1, 1);
     TH1D *hist_deltaPT_reco_neutrino_sol1_doubleCheck = new TH1D("hist_deltaPT_gen_reco_neutrino_sol1_doubleCheck", "", 40, -1, 1);
     //---
+    TH2D *hist_reco_Pz_gen_Pz = new TH2D("hist_reco_Pz_gen_Pz", ";Gen-level Pz [GeV/c];Reco Pz [GeV/c]", 40, -200, 200, 40, -200, 200);
+    TH2D *hist_reco_Pz_gen_Pz_negativeD = new TH2D("hist_reco_Pz_gen_Pz_negativeD", ";Gen-level Pz [GeV/c];Reco Pz [GeV/c]", 40, -200, 200, 40, -200, 200);
+    TH2D *hist_reco_Pz_gen_Pz_positiveD = new TH2D("hist_reco_Pz_gen_Pz_positiveD", ";Gen-level Pz [GeV/c];Reco Pz [GeV/c]", 40, -200, 200, 40, -200, 200);
+
     TH1D *hist_MetInfo_Pz_solution_1 = new TH1D("hist_MetInfo_Pz_solution_1", "", 40, -200, 200);
     TH1D *hist_MetInfo_Pz_solution_2 = new TH1D("hist_MetInfo_Pz_solution_2", "", 40, -200, 200);
     TH1D *hist_MetInfo_Pz_solution_1_negativeD = new TH1D("hist_MetInfo_Pz_solution_1_negativeD", "", 40, -200, 200);
@@ -160,6 +167,7 @@ int main(int argc, char *argv[]){
     TH1D *hist_MetInfo_coeff_B = new TH1D("hist_MetInfo_coeff_B", "", 40, -1000, 1000);
     TH1D *hist_MetInfo_coeff_C = new TH1D("hist_MetInfo_coeff_C", "", 40, -1000, 1000);
     TH1D *hist_MetInfo_coeff_D = new TH1D("hist_MetInfo_coeff_D", "", 40, -1000, 1000);
+    TH1D *hist_MetInfo_coeff_D_gen = new TH1D("hist_MetInfo_coeff_D_gen", "", 40, -1000, 1000);
     TH1D *hist_MetInfo_coeff_B2A = new TH1D("hist_MetInfo_coeff_B2A", "", 40, -600, 600);
     TH1D *hist_MetInfo_coeff_D2A = new TH1D("hist_MetInfo_coeff_D2A", "", 40, -600, 600);
     //---
@@ -191,7 +199,9 @@ int main(int argc, char *argv[]){
     // Goal: leptons, jets, diphoton; t->b+W(jj), 1 bjet + 2 chi2 jets 
     //### Counters{{{
     int counter_coeff_D = 0;
+    int counter_coeff_D_gen = 0;
     int counter_coeff_D_isNegative = 0;
+    int counter_coeff_D_isNegative_gen = 0;
     int Nevents_pass_selection = 0;
     int check_num_bquak_is_one = 0;
     int check_num_bquak_is_two = 0;
@@ -655,6 +665,9 @@ int main(int argc, char *argv[]){
         met_pz_solution_1 = larger_pz;
         met_pz_solution_2 = smaller_pz;
         
+        hist_reco_Pz_gen_Pz -> Fill(neutrino.Pz(), met_pz_solution_2, isData ? 1. : NormalizationFactor);
+        if(coefficient_D<0) hist_reco_Pz_gen_Pz_negativeD -> Fill(neutrino.Pz(), met_pz_solution_2, isData ? 1. : NormalizationFactor);
+        if(coefficient_D>0) hist_reco_Pz_gen_Pz_positiveD -> Fill(neutrino.Pz(), met_pz_solution_2, isData ? 1. : NormalizationFactor);
         hist_MetInfo_Pz_solution_1 -> Fill(met_pz_solution_1, isData ? 1. : NormalizationFactor);
         hist_MetInfo_Pz_solution_2 -> Fill(met_pz_solution_2, isData ? 1. : NormalizationFactor);
         if(coefficient_D>0) hist_MetInfo_Pz_solution_1_positiveD -> Fill(met_pz_solution_1, isData ? 1. : NormalizationFactor);
@@ -718,6 +731,32 @@ int main(int argc, char *argv[]){
         */
         //}}}
 
+        //--- solve met_pz (gen study){{{
+        TLorentzVector gen_lepton = chargedLepton; // leading gen_lepton
+        TLorentzVector gen_neutrino = neutrino; // neutrino
+        float gen_lepton_px = gen_lepton.Px();
+        float gen_lepton_py = gen_lepton.Py();
+        float gen_lepton_pz = gen_lepton.Pz();
+        float gen_lepton_energy = gen_lepton.E();
+
+        float gen_met_pt = gen_neutrino.Pt();
+        float gen_met_phi = gen_neutrino.Phi();
+        float gen_met_px = gen_neutrino.Px();
+        float gen_met_py = gen_neutrino.Py();
+        float gen_coefficient_factor = ( wboson.M()*wboson.M() + 2.*gen_lepton_px*gen_met_px + 2.*gen_lepton_py*gen_met_py ) / (2.*gen_lepton_energy);
+        float gen_coefficient_A = 1. - (gen_lepton_pz*gen_lepton_pz)/(gen_lepton_energy*gen_lepton_energy);
+        float gen_coefficient_B = 2.*gen_coefficient_factor*gen_lepton_pz/gen_lepton_energy;
+        float gen_coefficient_C = gen_met_pt*gen_met_pt - gen_coefficient_factor*gen_coefficient_factor;
+        float gen_coefficient_D = gen_coefficient_B*gen_coefficient_B - 4.*gen_coefficient_A*gen_coefficient_C;
+        counter_coeff_D_gen += 1;
+        if(gen_coefficient_D < 0){
+            counter_coeff_D_isNegative_gen += 1;
+            hist_MetInfo_coeff_D_gen -> Fill(-sqrt(-gen_coefficient_D), isData ? 1. : NormalizationFactor);//keep tracking negative value
+        } else{
+            hist_MetInfo_coeff_D_gen -> Fill(sqrt(gen_coefficient_D), isData ? 1. : NormalizationFactor);
+        }
+        //}}}
+
         hist_gen_neutrino_pz->Fill(neutrino.Pz());
 
         //### deltaR(gen, reco)
@@ -735,10 +774,10 @@ int main(int argc, char *argv[]){
         deltaPz = (wboson.Pz() - L_w_lep[0].Pz()) ; hist_deltaPz_gen_reco_wboson_sol0->Fill(deltaPz)   ;
         deltaPz = (wboson.Pz() - L_w_lep[1].Pz()) ; hist_deltaPz_gen_reco_wboson_sol1->Fill(deltaPz)   ;
         //deltaPz = (chargedLepton.Pz() - lepton.Pz()) / chargedLepton.Pz() ; hist_deltaPz_gen_reco_chargedLepton->Fill(deltaPz) ;
-        //deltaPz = (neutrino.Pz() - L_met_lep[0].Pz()) / neutrino.Pz()     ; hist_deltaPz_gen_reco_neutrino_sol0->Fill(deltaPz) ;
-        //deltaPz = (neutrino.Pz() - L_met_lep[1].Pz()) / neutrino.Pz()     ; hist_deltaPz_gen_reco_neutrino_sol1->Fill(deltaPz) ;
-        //deltaPz = (wboson.Pz() - L_w_lep[0].Pz()) / wboson.Pz()           ; hist_deltaPz_gen_reco_wboson_sol0->Fill(deltaPz)   ;
-        //deltaPz = (wboson.Pz() - L_w_lep[1].Pz()) / wboson.Pz()           ; hist_deltaPz_gen_reco_wboson_sol1->Fill(deltaPz)   ;
+        deltaPz = (neutrino.Pz() - L_met_lep[0].Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol0->Fill(deltaPz) ;
+        deltaPz = (neutrino.Pz() - L_met_lep[1].Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol1->Fill(deltaPz) ;
+        deltaPz = (wboson.Pz() - L_w_lep[0].Pz()) / wboson.Pz()           ; hist_deltaPzRatio_gen_reco_wboson_sol0->Fill(deltaPz)   ;
+        deltaPz = (wboson.Pz() - L_w_lep[1].Pz()) / wboson.Pz()           ; hist_deltaPzRatio_gen_reco_wboson_sol1->Fill(deltaPz)   ;
         double deltaPT;
         deltaPT = (chargedLepton.Pt() - lepton.Pt()) / chargedLepton.Pt() ; hist_deltaPT_gen_reco_chargedLepton->Fill(deltaPT) ;
         deltaPT = (neutrino.Pt() - L_met_lep[0].Pt()) / neutrino.Pt()     ; hist_deltaPT_gen_reco_neutrino_sol0->Fill(deltaPT) ;
@@ -1281,7 +1320,11 @@ int main(int argc, char *argv[]){
     //}}}
     */
 
+    printf("[INFO] correlation factor all = %f\n", hist_reco_Pz_gen_Pz->GetCorrelationFactor());
+    printf("[INFO] correlation factor positive D = %f\n", hist_reco_Pz_gen_Pz_positiveD->GetCorrelationFactor());
+    printf("[INFO] correlation factor negative D = %f\n", hist_reco_Pz_gen_Pz_negativeD->GetCorrelationFactor());
     printf("[CHECK] number of counter_coeff_D_isNegative = %d / %d\n", counter_coeff_D_isNegative, counter_coeff_D);
+    printf("[CHECK] number of counter_coeff_D_isNegative_gen = %d / %d\n", counter_coeff_D_isNegative_gen, counter_coeff_D_gen);
 
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
     hist_mass_gen_wboson_leptonic -> Draw("hist")               ; c1->SaveAs("ntuples_skimmed/hist_mass_gen_wboson_leptonic.png")               ;
@@ -1299,6 +1342,11 @@ int main(int argc, char *argv[]){
     hist_deltaPz_gen_reco_neutrino_sol1 -> Draw("hist")         ; c1->SaveAs("ntuples_skimmed/hist_deltaPz_gen_reco_neutrino_sol1.png")         ;
     hist_deltaPz_gen_reco_wboson_sol1 -> Draw("hist")           ; c1->SaveAs("ntuples_skimmed/hist_deltaPz_gen_reco_wboson_sol1.png")           ;
     //---
+    hist_deltaPzRatio_gen_reco_neutrino_sol0 -> Draw("hist")         ; c1->SaveAs("ntuples_skimmed/hist_deltaPzRatio_gen_reco_neutrino_sol0.png")         ;
+    hist_deltaPzRatio_gen_reco_wboson_sol0 -> Draw("hist")           ; c1->SaveAs("ntuples_skimmed/hist_deltaPzRatio_gen_reco_wboson_sol0.png")           ;
+    hist_deltaPzRatio_gen_reco_neutrino_sol1 -> Draw("hist")         ; c1->SaveAs("ntuples_skimmed/hist_deltaPzRatio_gen_reco_neutrino_sol1.png")         ;
+    hist_deltaPzRatio_gen_reco_wboson_sol1 -> Draw("hist")           ; c1->SaveAs("ntuples_skimmed/hist_deltaPzRatio_gen_reco_wboson_sol1.png")           ;
+    //---
     hist_deltaPT_gen_reco_chargedLepton -> Draw("hist")         ; c1->SaveAs("ntuples_skimmed/hist_deltaPT_gen_reco_chargedLepton.png")         ;
     hist_deltaPT_gen_reco_neutrino_sol0 -> Draw("hist")         ; c1->SaveAs("ntuples_skimmed/hist_deltaPT_gen_reco_neutrino_sol0.png")         ;
     hist_deltaPT_gen_reco_wboson_sol0 -> Draw("hist")           ; c1->SaveAs("ntuples_skimmed/hist_deltaPT_gen_reco_wboson_sol0.png")           ;
@@ -1315,6 +1363,7 @@ int main(int argc, char *argv[]){
     hist_MetInfo_coeff_B -> Draw("hist"); c1->SaveAs("ntuples_skimmed/hist_MetInfo_coeff_B.png");
     hist_MetInfo_coeff_C -> Draw("hist"); c1->SaveAs("ntuples_skimmed/hist_MetInfo_coeff_C.png");
     hist_MetInfo_coeff_D -> Draw("hist")                        ; c1->SaveAs("ntuples_skimmed/hist_MetInfo_coeff_D.png")                        ;
+    hist_MetInfo_coeff_D_gen -> Draw("hist")                        ; c1->SaveAs("ntuples_skimmed/hist_MetInfo_coeff_D_gen.png")                        ;
     hist_MetInfo_coeff_B2A -> Draw("hist")                      ; c1->SaveAs("ntuples_skimmed/hist_MetInfo_coeff_B2A.png")                      ;
     hist_MetInfo_coeff_D2A -> Draw("hist")                      ; c1->SaveAs("ntuples_skimmed/hist_MetInfo_coeff_D2A.png")                      ;
     //---
@@ -1334,6 +1383,28 @@ int main(int argc, char *argv[]){
 
     //---
     TLegend *legend = new TLegend(0.60,0.65,0.85,0.85);
+    double max;
+    double scale = 1.2;
+    double max_01 = hist_MetInfo_coeff_D -> GetMaximum();
+    double max_02 = hist_MetInfo_coeff_D_gen  -> GetMaximum();
+    max = (max_01 > max_02) ? max_01 : max_02;
+
+    hist_MetInfo_coeff_D -> SetStats(0)    ;
+    hist_MetInfo_coeff_D -> SetMaximum(max*scale);
+    hist_MetInfo_coeff_D -> SetLineWidth(2)    ;
+    hist_MetInfo_coeff_D -> Draw("hist")    ;
+    hist_MetInfo_coeff_D_gen -> Draw("hist;same")    ;
+    hist_MetInfo_coeff_D_gen -> SetLineWidth(0)    ;
+    hist_MetInfo_coeff_D_gen -> SetFillStyle(3001)    ;
+    hist_MetInfo_coeff_D_gen -> SetFillColor(kRed)    ;
+    hist_MetInfo_coeff_D -> Draw("hist;same")    ;
+    legend->Clear();
+    legend->AddEntry(hist_MetInfo_coeff_D,  "Reco.", "l");
+    legend->AddEntry(hist_MetInfo_coeff_D_gen,  "Gen-level", "f");
+    legend->SetLineColor(0);
+    legend->Draw("same");
+    c1->SaveAs("ntuples_skimmed/hist_MetInfo_coeff_D_gen.png")    ;
+
     hist_leptonic_w_candidate_solution1_mass -> SetStats(0)    ;
     hist_leptonic_w_candidate_solution1_mass -> SetLineWidth(2)    ;
     hist_leptonic_w_candidate_solution1_mass -> Draw("hist")    ;
@@ -1424,6 +1495,43 @@ int main(int argc, char *argv[]){
     legend_sol->Draw("same");
     c1->SaveAs("ntuples_skimmed/hist_MetInfo_Pz_solution_2_positiveD.png")                  ;
 
+    //---
+    hist_reco_Pz_gen_Pz -> SetStats(0);
+    hist_reco_Pz_gen_Pz_negativeD -> SetStats(0);
+    hist_reco_Pz_gen_Pz_positiveD -> SetStats(0);
+    //---
+    hist_reco_Pz_gen_Pz -> Draw("COLZ")           ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz.png")           ;
+    hist_reco_Pz_gen_Pz_negativeD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_negativeD.png") ;
+    hist_reco_Pz_gen_Pz_positiveD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_positiveD.png") ;
+    gStyle->SetPalette(kRainBow);
+    hist_reco_Pz_gen_Pz -> Draw("COLZ")           ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_kRainBow.png")           ;
+    hist_reco_Pz_gen_Pz_negativeD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_negativeD_kRainBow.png") ;
+    hist_reco_Pz_gen_Pz_positiveD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_positiveD_kRainBow.png") ;
+    gStyle->SetPalette(kVisibleSpectrum);
+    hist_reco_Pz_gen_Pz -> Draw("COLZ")           ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_kVisibleSpectrum.png")           ;
+    hist_reco_Pz_gen_Pz_negativeD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_negativeD_kVisibleSpectrum.png") ;
+    hist_reco_Pz_gen_Pz_positiveD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_positiveD_kVisibleSpectrum.png") ;
+    gStyle->SetPalette(kInvertedDarkBodyRadiator);
+    hist_reco_Pz_gen_Pz -> Draw("COLZ")           ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_kInvertedDarkBodyRadiator.png")           ;
+    hist_reco_Pz_gen_Pz_negativeD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_negativeD_kInvertedDarkBodyRadiator.png") ;
+    hist_reco_Pz_gen_Pz_positiveD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_positiveD_kInvertedDarkBodyRadiator.png") ;
+    gStyle->SetPalette(kGistEarth);
+    hist_reco_Pz_gen_Pz -> Draw("COLZ")           ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_kGistEarth.png")           ;
+    hist_reco_Pz_gen_Pz_negativeD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_negativeD_kGistEarth.png") ;
+    hist_reco_Pz_gen_Pz_positiveD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_positiveD_kGistEarth.png") ;
+    gStyle->SetPalette(kCherry)                   ;
+    hist_reco_Pz_gen_Pz -> Draw("COLZ")           ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_kCherry.png")              ;
+    hist_reco_Pz_gen_Pz_negativeD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_negativeD_kCherry.png") ;
+    hist_reco_Pz_gen_Pz_positiveD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_positiveD_kCherry.png") ;
+    gStyle->SetPalette(kViridis)                  ;
+    hist_reco_Pz_gen_Pz -> Draw("COLZ")           ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_kViridis.png")             ;
+    hist_reco_Pz_gen_Pz_negativeD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_negativeD_kViridis.png") ;
+    hist_reco_Pz_gen_Pz_positiveD -> Draw("COLZ") ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_positiveD_kViridis.png") ;
+    //gStyle->SetPalette(kOcean);
+    //TColor::InvertPalette();
+    //TColor::InvertPalette();
+    //hist_reco_Pz_gen_Pz -> Draw("COLZ")                  ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_kOcean_inverted.png")                  ;
+    //---
     printf("End!!");
     fout->Write();
     fout->Close();
