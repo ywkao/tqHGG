@@ -73,6 +73,8 @@ enum histList {
     hist_jet1_phi,
     hist_jet1_energy,
     hist_jet1_btag_score,
+    hist_jet1_CvsL_score,
+    hist_jet1_CvsB_score,
     hist_jet1_diphoton_deltaR,
     hist_jet1_lepton_deltaR,
     hist_jet2_pt,
@@ -80,6 +82,8 @@ enum histList {
     hist_jet2_phi,
     hist_jet2_energy,
     hist_jet2_btag_score,
+    hist_jet2_CvsL_score,
+    hist_jet2_CvsB_score,
     hist_jet2_diphoton_deltaR,
     hist_jet2_lepton_deltaR,
     hist_wjet1_pt,
@@ -87,6 +91,8 @@ enum histList {
     hist_wjet1_phi,
     hist_wjet1_energy,
     hist_wjet1_btag_score,
+    hist_wjet1_CvsL_score,
+    hist_wjet1_CvsB_score,
     hist_wjet1_diphoton_deltaR,
     hist_wjet1_lepton_deltaR,
     hist_wjet2_pt,
@@ -94,6 +100,8 @@ enum histList {
     hist_wjet2_phi,
     hist_wjet2_energy,
     hist_wjet2_btag_score,
+    hist_wjet2_CvsL_score,
+    hist_wjet2_CvsB_score,
     hist_wjet2_diphoton_deltaR,
     hist_wjet2_lepton_deltaR,
     hist_jetq_pt,
@@ -101,12 +109,17 @@ enum histList {
     hist_jetq_phi,
     hist_jetq_energy,
     hist_jetq_btag_score,
+    hist_jetq_CvsL_score,
+    hist_jetq_CvsB_score,
     hist_jetq_diphoton_deltaR,
     hist_jetq_lepton_deltaR,
     hist_leading_bjet_pt,
     hist_leading_bjet_eta,
     hist_leading_bjet_phi,
     hist_leading_bjet_energy,
+    hist_leading_bjet_btag_score,
+    hist_leading_bjet_CvsL_score,
+    hist_leading_bjet_CvsB_score,
     hist_deltaR_top_top,
     hist_deltaR_qH,
     hist_deltaR_photon_photon,
@@ -209,6 +222,8 @@ std::string histNames[totalHistNum]{
     "hist_jet1_phi",
     "hist_jet1_energy",
     "hist_jet1_btag_score",
+    "hist_jet1_CvsL_score",
+    "hist_jet1_CvsB_score",
     "hist_jet1_diphoton_deltaR",
     "hist_jet1_lepton_deltaR",
     "hist_jet2_pt",
@@ -216,6 +231,8 @@ std::string histNames[totalHistNum]{
     "hist_jet2_phi",
     "hist_jet2_energy",
     "hist_jet2_btag_score",
+    "hist_jet2_CvsL_score",
+    "hist_jet2_CvsB_score",
     "hist_jet2_diphoton_deltaR",
     "hist_jet2_lepton_deltaR",
     "hist_wjet1_pt",
@@ -223,6 +240,8 @@ std::string histNames[totalHistNum]{
     "hist_wjet1_phi",
     "hist_wjet1_energy",
     "hist_wjet1_btag_score",
+    "hist_wjet1_CvsL_score",
+    "hist_wjet1_CvsB_score",
     "hist_wjet1_diphoton_deltaR",
     "hist_wjet1_lepton_deltaR",
     "hist_wjet2_pt",
@@ -230,6 +249,8 @@ std::string histNames[totalHistNum]{
     "hist_wjet2_phi",
     "hist_wjet2_energy",
     "hist_wjet2_btag_score",
+    "hist_wjet2_CvsL_score",
+    "hist_wjet2_CvsB_score",
     "hist_wjet2_diphoton_deltaR",
     "hist_wjet2_lepton_deltaR",
     "hist_jetq_pt",
@@ -237,12 +258,17 @@ std::string histNames[totalHistNum]{
     "hist_jetq_phi",
     "hist_jetq_energy",
     "hist_jetq_btag_score",
+    "hist_jetq_CvsL_score",
+    "hist_jetq_CvsB_score",
     "hist_jetq_diphoton_deltaR",
     "hist_jetq_lepton_deltaR",
     "hist_leading_bjet_pt",
     "hist_leading_bjet_eta",
     "hist_leading_bjet_phi",
     "hist_leading_bjet_energy",
+    "hist_leading_bjet_btag_score",
+    "hist_leading_bjet_CvsL_score",
+    "hist_leading_bjet_CvsB_score",
     "hist_deltaR_top_top",
     "hist_deltaR_qH",
     "hist_deltaR_photon_photon",
@@ -344,6 +370,8 @@ int histNbins[totalHistNum]{
     40,//hist_jet1_phi
     40,//hist_jet1_energy
     10,//hist_jet1_btag_score
+    10,//hist_jet1_CvsL_score
+    10,//hist_jet1_CvsB_score
     40,//hist_jet1_diphoton_deltaR
     40,//hist_jet1_lepton_deltaR
     40,//hist_jet2_pt
@@ -351,6 +379,8 @@ int histNbins[totalHistNum]{
     40,//hist_jet2_phi
     40,//hist_jet2_energy
     10,//hist_jet2_btag_score
+    10,//hist_jet2_CvsL_score
+    10,//hist_jet2_CvsB_score
     40,//hist_jet2_diphoton_deltaR
     40,//hist_jet2_lepton_deltaR
     40,//hist_wjet1_pt
@@ -358,6 +388,8 @@ int histNbins[totalHistNum]{
     40,//hist_wjet1_phi
     40,//hist_wjet1_energy
     10,//hist_wjet1_btag_score
+    10,//hist_wjet1_CvsL_score
+    10,//hist_wjet1_CvsB_score
     40,//hist_wjet1_diphoton_deltaR
     40,//hist_wjet1_lepton_deltaR
     40,//hist_wjet2_pt
@@ -365,6 +397,8 @@ int histNbins[totalHistNum]{
     40,//hist_wjet2_phi
     40,//hist_wjet2_energy
     10,//hist_wjet2_btag_score
+    10,//hist_wjet2_CvsL_score
+    10,//hist_wjet2_CvsB_score
     40,//hist_wjet2_diphoton_deltaR
     40,//hist_wjet2_lepton_deltaR
     40,//hist_jetq_pt
@@ -372,12 +406,17 @@ int histNbins[totalHistNum]{
     40,//hist_jetq_phi
     40,//hist_jetq_energy
     10,//hist_jetq_btag_score
+    10,//hist_jetq_CvsL_score
+    10,//hist_jetq_CvsB_score
     40,//hist_jetq_diphoton_deltaR
     40,//hist_jetq_lepton_deltaR
     40,//hist_leading_bjet_pt
     40,//hist_leading_bjet_eta
     40,//hist_leading_bjet_phi
     40,//hist_leading_bjet_energy
+    10,//hist_leading_bjet_btag_score
+    10,//hist_leading_bjet_CvsL_score
+    10,//hist_leading_bjet_CvsB_score
     40,//hist_deltaR_top_top
     40,//hist_deltaR_qH
     40,//hist_deltaR_photon_photon
@@ -389,25 +428,25 @@ int histNbins[totalHistNum]{
     40,//hist_deltaR_wjet1_wjet2
     40,//hist_top_tqh_pt
     40,//hist_top_tqh_eta
-    70,//hist_top_tqh_mass
+    40,//hist_top_tqh_mass
     40,//hist_hadronic_w_candidate_pt
     40,//hist_hadronic_w_candidate_eta
     50,//hist_hadronic_w_candidate_mass
     40,//hist_hadronic_top_tbw_pt
     40,//hist_hadronic_top_tbw_eta
-    70,//hist_hadronic_top_tbw_mass
+    40,//hist_hadronic_top_tbw_mass
     40,//hist_leptonic_w_candidate_solution1_pt
     40,//hist_leptonic_w_candidate_solution1_eta
     50,//hist_leptonic_w_candidate_solution1_mass
     40,//hist_leptonic_top_tbw_solution1_pt
     40,//hist_leptonic_top_tbw_solution1_eta
-    70,//hist_leptonic_top_tbw_solution1_mass
+    40,//hist_leptonic_top_tbw_solution1_mass
     40,//hist_leptonic_w_candidate_solution2_pt
     40,//hist_leptonic_w_candidate_solution2_eta
     50,//hist_leptonic_w_candidate_solution2_mass
     40,//hist_leptonic_top_tbw_solution2_pt
     40,//hist_leptonic_top_tbw_solution2_eta
-    70//hist_leptonic_top_tbw_solution2_mass
+    40//hist_leptonic_top_tbw_solution2_mass
 };
 double histBinLow[totalHistNum]{
     0,//hist_EvtInfo_NPu
@@ -479,6 +518,8 @@ double histBinLow[totalHistNum]{
     -3.0,//hist_jet1_phi
     0,//hist_jet1_energy
     0,//hist_jet1_btag_score
+    0,//hist_jet1_CvsL_score
+    0,//hist_jet1_CvsB_score
     0,//hist_jet1_diphoton_deltaR
     0,//hist_jet1_lepton_deltaR
     0,//hist_jet2_pt
@@ -486,6 +527,8 @@ double histBinLow[totalHistNum]{
     -3.0,//hist_jet2_phi
     0,//hist_jet2_energy
     0,//hist_jet2_btag_score
+    0,//hist_jet2_CvsL_score
+    0,//hist_jet2_CvsB_score
     0,//hist_jet2_diphoton_deltaR
     0,//hist_jet2_lepton_deltaR
     0,//hist_wjet1_pt
@@ -493,6 +536,8 @@ double histBinLow[totalHistNum]{
     -3.0,//hist_wjet1_phi
     0,//hist_wjet1_energy
     0,//hist_wjet1_btag_score
+    0,//hist_wjet1_CvsL_score
+    0,//hist_wjet1_CvsB_score
     0,//hist_wjet1_diphoton_deltaR
     0,//hist_wjet1_lepton_deltaR
     0,//hist_wjet2_pt
@@ -500,6 +545,8 @@ double histBinLow[totalHistNum]{
     -3.0,//hist_wjet2_phi
     0,//hist_wjet2_energy
     0,//hist_wjet2_btag_score
+    0,//hist_wjet2_CvsL_score
+    0,//hist_wjet2_CvsB_score
     0,//hist_wjet2_diphoton_deltaR
     0,//hist_wjet2_lepton_deltaR
     0,//hist_jetq_pt
@@ -507,12 +554,17 @@ double histBinLow[totalHistNum]{
     -3.0,//hist_jetq_phi
     0,//hist_jetq_energy
     0,//hist_jetq_btag_score
+    0,//hist_jetq_CvsL_score
+    0,//hist_jetq_CvsB_score
     0,//hist_jetq_diphoton_deltaR
     0,//hist_jetq_lepton_deltaR
     0,//hist_leading_bjet_pt
     -2.5,//hist_leading_bjet_eta
     -3.0,//hist_leading_bjet_phi
     0,//hist_leading_bjet_energy
+    0,//hist_leading_bjet_btag_score
+    0,//hist_leading_bjet_CvsL_score
+    0,//hist_leading_bjet_CvsB_score
     0,//hist_deltaR_top_top
     0,//hist_deltaR_qH
     0,//hist_deltaR_photon_photon
@@ -614,6 +666,8 @@ double histBinHigh[totalHistNum]{
     3.0,//hist_jet1_phi
     200,//hist_jet1_energy
     1,//hist_jet1_btag_score
+    1,//hist_jet1_CvsL_score
+    1,//hist_jet1_CvsB_score
     6,//hist_jet1_diphoton_deltaR
     6,//hist_jet1_lepton_deltaR
     200,//hist_jet2_pt
@@ -621,6 +675,8 @@ double histBinHigh[totalHistNum]{
     3.0,//hist_jet2_phi
     200,//hist_jet2_energy
     1,//hist_jet2_btag_score
+    1,//hist_jet2_CvsL_score
+    1,//hist_jet2_CvsB_score
     6,//hist_jet2_diphoton_deltaR
     6,//hist_jet2_lepton_deltaR
     200,//hist_wjet1_pt
@@ -628,6 +684,8 @@ double histBinHigh[totalHistNum]{
     3.0,//hist_wjet1_phi
     200,//hist_wjet1_energy
     1,//hist_wjet1_btag_score
+    1,//hist_wjet1_CvsL_score
+    1,//hist_wjet1_CvsB_score
     6,//hist_wjet1_diphoton_deltaR
     6,//hist_wjet1_lepton_deltaR
     200,//hist_wjet2_pt
@@ -635,6 +693,8 @@ double histBinHigh[totalHistNum]{
     3.0,//hist_wjet2_phi
     200,//hist_wjet2_energy
     1,//hist_wjet2_btag_score
+    1,//hist_wjet2_CvsL_score
+    1,//hist_wjet2_CvsB_score
     6,//hist_wjet2_diphoton_deltaR
     6,//hist_wjet2_lepton_deltaR
     200,//hist_jetq_pt
@@ -642,12 +702,17 @@ double histBinHigh[totalHistNum]{
     3.0,//hist_jetq_phi
     200,//hist_jetq_energy
     1,//hist_jetq_btag_score
+    1,//hist_jetq_CvsL_score
+    1,//hist_jetq_CvsB_score
     6,//hist_jetq_diphoton_deltaR
     6,//hist_jetq_lepton_deltaR
     200,//hist_leading_bjet_pt
     2.5,//hist_leading_bjet_eta
     3.0,//hist_leading_bjet_phi
     200,//hist_leading_bjet_energy
+    1,//hist_leading_bjet_btag_score
+    1,//hist_leading_bjet_CvsL_score
+    1,//hist_leading_bjet_CvsB_score
     6,//hist_deltaR_top_top
     6,//hist_deltaR_qH
     6,//hist_deltaR_photon_photon
@@ -659,24 +724,24 @@ double histBinHigh[totalHistNum]{
     6,//hist_deltaR_wjet1_wjet2
     400,//hist_top_tqh_pt
     2.5,//hist_top_tqh_eta
-    350,//hist_top_tqh_mass
+    400,//hist_top_tqh_mass
     200,//hist_hadronic_w_candidate_pt
     2.5,//hist_hadronic_w_candidate_eta
     150,//hist_hadronic_w_candidate_mass
     400,//hist_hadronic_top_tbw_pt
     2.5,//hist_hadronic_top_tbw_eta
-    350,//hist_hadronic_top_tbw_mass
+    400,//hist_hadronic_top_tbw_mass
     200,//hist_leptonic_w_candidate_solution1_pt
     2.5,//hist_leptonic_w_candidate_solution1_eta
     150,//hist_leptonic_w_candidate_solution1_mass
     400,//hist_leptonic_top_tbw_solution1_pt
     2.5,//hist_leptonic_top_tbw_solution1_eta
-    350,//hist_leptonic_top_tbw_solution1_mass
+    400,//hist_leptonic_top_tbw_solution1_mass
     200,//hist_leptonic_w_candidate_solution2_pt
     2.5,//hist_leptonic_w_candidate_solution2_eta
     150,//hist_leptonic_w_candidate_solution2_mass
     400,//hist_leptonic_top_tbw_solution2_pt
     2.5,//hist_leptonic_top_tbw_solution2_eta
-    350//hist_leptonic_top_tbw_solution2_mass
+    400//hist_leptonic_top_tbw_solution2_mass
 };
 #endif

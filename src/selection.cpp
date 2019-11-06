@@ -128,42 +128,96 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         if(!passEvent) continue;
         //--------- check bjets ---------//
         TLorentzVector bjet, jet;
+        double bjet_btag_score, bjet_CvsL_score, bjet_CvsB_score;
         int num_bjets = 0, index_bjet = -999;
 
         std::vector<TLorentzVector> bjets_tight, bjets_loose, bjets_medium;
+        std::vector<double> btag_score_tight, btag_score_loose, btag_score_medium;
+        std::vector<double> CvsL_score_tight, CvsL_score_loose, CvsL_score_medium;
+        std::vector<double> CvsB_score_tight, CvsB_score_loose, CvsB_score_medium;
         int num_bjets_tight = 0, num_bjets_loose = 0, num_bjets_medium = 0;
         int index_leading_bjet_tight = -999, index_leading_bjet_loose = -999, index_leading_bjet_medium = -999;
 
+        //categorize bjet according to deepCSV score{{{
         if(!(treeReader.num_jets<1)){
             for(int i=0; i<treeReader.num_jets; ++i){
                 jet.SetPtEtaPhiE(treeReader.JetInfo_jet_pt_selection->at(i),treeReader.JetInfo_jet_eta_selection->at(i),treeReader.JetInfo_jet_phi_selection->at(i),treeReader.JetInfo_jet_energy_selection->at(i));
-                if(treeReader.JetInfo_jet_pfDeepCSVJetTags_probb_selection->at(i)+treeReader.JetInfo_jet_pfDeepCSVJetTags_probbb_selection->at(i) >= pfDeepCSVJetTags_loose){
+                double btag_score = treeReader.JetInfo_jet_pfDeepCSVJetTags_probb_selection->at(i)+treeReader.JetInfo_jet_pfDeepCSVJetTags_probbb_selection->at(i);
+                //---
+                double ctag_probc = treeReader.JetInfo_jet_pfDeepCSVJetTags_probc_selection->at(i);
+                double CvsL_score = ctag_probc / ( ctag_probc + treeReader.JetInfo_jet_pfDeepCSVJetTags_probudsg_selection->at(i) );
+                double CvsB_score = ctag_probc / ( ctag_probc + btag_score );
+
+                if(btag_score >= pfDeepCSVJetTags_loose){
                     num_bjets_loose += 1;
                     bjets_loose.push_back(jet);
+                    btag_score_loose.push_back(btag_score);
+                    CvsL_score_loose.push_back(CvsL_score);
+                    CvsB_score_loose.push_back(CvsB_score);
                     if(num_bjets_loose == 1) index_leading_bjet_loose = i;
                 }
-                if(treeReader.JetInfo_jet_pfDeepCSVJetTags_probb_selection->at(i)+treeReader.JetInfo_jet_pfDeepCSVJetTags_probbb_selection->at(i) >= pfDeepCSVJetTags_medium){
+                if(btag_score >= pfDeepCSVJetTags_medium){
                     num_bjets_medium += 1;
                     bjets_medium.push_back(jet);
+                    btag_score_medium.push_back(btag_score);
+                    CvsL_score_medium.push_back(CvsL_score);
+                    CvsB_score_medium.push_back(CvsB_score);
                     if(num_bjets_medium == 1) index_leading_bjet_medium = i;
                 }
-                if(treeReader.JetInfo_jet_pfDeepCSVJetTags_probb_selection->at(i)+treeReader.JetInfo_jet_pfDeepCSVJetTags_probbb_selection->at(i) >= pfDeepCSVJetTags_tight){
+                if(btag_score >= pfDeepCSVJetTags_tight){
                     num_bjets_tight += 1;
                     bjets_tight.push_back(jet);
+                    btag_score_tight.push_back(btag_score);
+                    CvsL_score_tight.push_back(CvsL_score);
+                    CvsB_score_tight.push_back(CvsB_score);
                     if(num_bjets_tight == 1) index_leading_bjet_tight = i;
                 }
             }//end of looping jets
         }
-        if(bool_bjet_is_loose)  { index_bjet = index_leading_bjet_loose  ; if(index_bjet != -999){ bjet = bjets_loose[0]  ; num_bjets = num_bjets_loose  ;} }
-        if(bool_bjet_is_medium) { index_bjet = index_leading_bjet_medium ; if(index_bjet != -999){ bjet = bjets_medium[0] ; num_bjets = num_bjets_medium ;} }
-        if(bool_bjet_is_tight)  { index_bjet = index_leading_bjet_tight  ; if(index_bjet != -999){ bjet = bjets_tight[0]  ; num_bjets = num_bjets_tight  ;} }
-
+        //}}}
+        //determine leading bjet according to chosen WP{{{
+        if(bool_bjet_is_loose){
+            index_bjet = index_leading_bjet_loose;
+            if(index_bjet != -999){
+                bjet = bjets_loose[0];
+                bjet_btag_score = btag_score_loose[0];
+                bjet_CvsL_score = CvsL_score_loose[0];
+                bjet_CvsB_score = CvsB_score_loose[0];
+                num_bjets = num_bjets_loose;
+            }
+        }
+        if(bool_bjet_is_medium){
+            index_bjet = index_leading_bjet_medium;
+            if(index_bjet != -999){
+                bjet = bjets_medium[0];
+                bjet_btag_score = btag_score_medium[0];
+                bjet_CvsL_score = CvsL_score_medium[0];
+                bjet_CvsB_score = CvsB_score_medium[0];
+                num_bjets = num_bjets_medium;
+            }
+        }
+        if(bool_bjet_is_tight){
+            index_bjet = index_leading_bjet_tight;
+            if(index_bjet != -999){
+                bjet = bjets_tight[0];
+                bjet_btag_score = btag_score_tight[0];
+                bjet_CvsL_score = CvsL_score_tight[0];
+                bjet_CvsB_score = CvsB_score_tight[0];
+                num_bjets = num_bjets_tight;
+            }
+        }
+        //}}}
+        //store leading bjet info{{{
         if(index_bjet != -999){//at least one bjet!
             h[hist_leading_bjet_pt] -> Fill(bjet.Pt(), isData ? 1. : NormalizationFactor);
             h[hist_leading_bjet_eta] -> Fill(bjet.Eta(), isData ? 1. : NormalizationFactor);
             h[hist_leading_bjet_phi] -> Fill(bjet.Phi(), isData ? 1. : NormalizationFactor);
             h[hist_leading_bjet_energy] -> Fill(bjet.E(), isData ? 1. : NormalizationFactor);
+            h[hist_leading_bjet_btag_score] -> Fill(bjet_btag_score, isData ? 1. : NormalizationFactor);
+            h[hist_leading_bjet_CvsL_score] -> Fill(bjet_CvsL_score, isData ? 1. : NormalizationFactor);
+            h[hist_leading_bjet_CvsB_score] -> Fill(bjet_CvsB_score, isData ? 1. : NormalizationFactor);
         }
+        //}}}
         bool pass_bjets_multiplicity_selection;
         if(bool_num_bjets_is_exactly_one) pass_bjets_multiplicity_selection = num_bjets == 1;
         if(bool_num_bjets_is_atleast_one) pass_bjets_multiplicity_selection = num_bjets >= 1;
@@ -309,7 +363,7 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         //### Jets{{{
         //--------- Jets ---------//
         std::vector<TLorentzVector> Jets;
-        std::vector<double> Jets_btag_score;
+        std::vector<double> Jets_btag_score, Jets_CvsL_score, Jets_CvsB_score;
         h[hist_jets_size] -> Fill(treeReader.jets_size, isData ? 1. : NormalizationFactor);
         h[hist_num_jets] -> Fill(treeReader.num_jets, isData ? 1. : NormalizationFactor);
         if(treeReader.num_jets>0){
@@ -321,14 +375,21 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
                 h[hist_JetInfo_jet_diphoton_deltaR] -> Fill(treeReader.JetInfo_jet_diphoton_deltaR_selection->at(i), isData ? 1. : NormalizationFactor);
                 TLorentzVector jet; jet.SetPtEtaPhiE(treeReader.JetInfo_jet_pt_selection->at(i),treeReader.JetInfo_jet_eta_selection->at(i),treeReader.JetInfo_jet_phi_selection->at(i),treeReader.JetInfo_jet_energy_selection->at(i));
                 Jets.push_back(jet);
+                double ctag_probc = treeReader.JetInfo_jet_pfDeepCSVJetTags_probc_selection->at(i);
                 double btag_score = treeReader.JetInfo_jet_pfDeepCSVJetTags_probb_selection->at(i)+treeReader.JetInfo_jet_pfDeepCSVJetTags_probbb_selection->at(i);
+                double CvsL_score = ctag_probc / ( ctag_probc + treeReader.JetInfo_jet_pfDeepCSVJetTags_probudsg_selection->at(i) );
+                double CvsB_score = ctag_probc / ( ctag_probc + btag_score );
                 Jets_btag_score.push_back(btag_score);
+                Jets_CvsL_score.push_back(CvsL_score);
+                Jets_CvsB_score.push_back(CvsB_score);
                 if(i==0){//leading jet
                     h[hist_jet1_pt] -> Fill(treeReader.JetInfo_jet_pt_selection->at(i), isData ? 1. : NormalizationFactor);
                     h[hist_jet1_eta] -> Fill(treeReader.JetInfo_jet_eta_selection->at(i), isData ? 1. : NormalizationFactor);
                     h[hist_jet1_phi] -> Fill(treeReader.JetInfo_jet_phi_selection->at(i), isData ? 1. : NormalizationFactor);
                     h[hist_jet1_energy] -> Fill(treeReader.JetInfo_jet_energy_selection->at(i), isData ? 1. : NormalizationFactor);
                     h[hist_jet1_btag_score] -> Fill(btag_score, isData ? 1. : NormalizationFactor);
+                    h[hist_jet1_CvsL_score] -> Fill(CvsL_score, isData ? 1. : NormalizationFactor);
+                    h[hist_jet1_CvsB_score] -> Fill(CvsB_score, isData ? 1. : NormalizationFactor);
                     h[hist_jet1_diphoton_deltaR] -> Fill(treeReader.JetInfo_jet_diphoton_deltaR_selection->at(i), isData ? 1. : NormalizationFactor);
                     if(treeReader.num_leptons>0){
                         for(int i=0; i<treeReader.num_leptons; ++i){
@@ -343,6 +404,8 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
                     h[hist_jet2_phi] -> Fill(treeReader.JetInfo_jet_phi_selection->at(i), isData ? 1. : NormalizationFactor);
                     h[hist_jet2_energy] -> Fill(treeReader.JetInfo_jet_energy_selection->at(i), isData ? 1. : NormalizationFactor);
                     h[hist_jet2_btag_score] -> Fill(btag_score, isData ? 1. : NormalizationFactor);
+                    h[hist_jet2_CvsL_score] -> Fill(CvsL_score, isData ? 1. : NormalizationFactor);
+                    h[hist_jet2_CvsB_score] -> Fill(CvsB_score, isData ? 1. : NormalizationFactor);
                     h[hist_jet2_diphoton_deltaR] -> Fill(treeReader.JetInfo_jet_diphoton_deltaR_selection->at(i), isData ? 1. : NormalizationFactor);
                     if(treeReader.num_leptons>0){
                         for(int i=0; i<treeReader.num_leptons; ++i){
@@ -361,6 +424,7 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         h[hist_MetInfo_Py] -> Fill(treeReader.MetInfo_Py, isData ? 1. : NormalizationFactor);
         h[hist_MetInfo_SumET] -> Fill(treeReader.MetInfo_SumET, isData ? 1. : NormalizationFactor);
         //}}}
+        /*
         //### top reconstruction{{{
         //================================================//
         //-----------   top reconstruction     -----------//
@@ -396,6 +460,8 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
                 h[hist_wjet1_phi] -> Fill(jet_chi2_modified[0].Phi(), isData ? 1. : NormalizationFactor);
                 h[hist_wjet1_energy] -> Fill(jet_chi2_modified[0].E(), isData ? 1. : NormalizationFactor);
                 h[hist_wjet1_btag_score] -> Fill(Jets_btag_score[index_jet_chi2_modified[0]], isData ? 1. : NormalizationFactor);
+                h[hist_wjet1_CvsL_score] -> Fill(Jets_CvsL_score[index_jet_chi2_modified[0]], isData ? 1. : NormalizationFactor);
+                h[hist_wjet1_CvsB_score] -> Fill(Jets_CvsB_score[index_jet_chi2_modified[0]], isData ? 1. : NormalizationFactor);
                 h[hist_wjet1_diphoton_deltaR] -> Fill(jet_chi2_modified[0].DeltaR(diphoton), isData ? 1. : NormalizationFactor);
                 if(treeReader.num_leptons>0){
                     for(int i=0; i<treeReader.num_leptons; ++i){
@@ -409,6 +475,8 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
                 h[hist_wjet2_phi] -> Fill(jet_chi2_modified[1].Phi(), isData ? 1. : NormalizationFactor);
                 h[hist_wjet2_energy] -> Fill(jet_chi2_modified[1].E(), isData ? 1. : NormalizationFactor);
                 h[hist_wjet2_btag_score] -> Fill(Jets_btag_score[index_jet_chi2_modified[0]], isData ? 1. : NormalizationFactor);
+                h[hist_wjet2_CvsL_score] -> Fill(Jets_CvsL_score[index_jet_chi2_modified[0]], isData ? 1. : NormalizationFactor);
+                h[hist_wjet2_CvsB_score] -> Fill(Jets_CvsB_score[index_jet_chi2_modified[0]], isData ? 1. : NormalizationFactor);
                 h[hist_wjet2_diphoton_deltaR] -> Fill(jet_chi2_modified[1].DeltaR(diphoton), isData ? 1. : NormalizationFactor);
                 if(treeReader.num_leptons>0){
                     for(int i=0; i<treeReader.num_leptons; ++i){
@@ -441,6 +509,8 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
                 h[hist_jetq_phi] -> Fill(jet_q.Phi(), isData ? 1. : NormalizationFactor);
                 h[hist_jetq_energy] -> Fill(jet_q.E(), isData ? 1. : NormalizationFactor);
                 h[hist_jetq_btag_score] -> Fill(Jets_btag_score[index_q], isData ? 1. : NormalizationFactor);
+                h[hist_jetq_CvsL_score] -> Fill(Jets_CvsL_score[index_q], isData ? 1. : NormalizationFactor);
+                h[hist_jetq_CvsB_score] -> Fill(Jets_CvsB_score[index_q], isData ? 1. : NormalizationFactor);
                 h[hist_jetq_diphoton_deltaR] -> Fill(jet_q.DeltaR(diphoton), isData ? 1. : NormalizationFactor);
                 if(treeReader.num_leptons>0){
                     for(int i=0; i<treeReader.num_leptons; ++i){
@@ -495,18 +565,23 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         if(coefficient_D < 0){
             counter_coeff_D_isNegative += 1;
             //printf("[check] coefficient_D = %f\n", coefficient_D);
-            //met_pz_solution_1 = coefficient_B / (2.*coefficient_A);
-            //met_pz_solution_2 = coefficient_B / (2.*coefficient_A);
-            met_pz_solution_1 = sqrt( coefficient_C / coefficient_A);
-            met_pz_solution_2 = sqrt( coefficient_C / coefficient_A);
+            met_pz_solution_1 = coefficient_B / (2.*coefficient_A);
+            met_pz_solution_2 = coefficient_B / (2.*coefficient_A);
+            //met_pz_solution_1 = sqrt( coefficient_C / coefficient_A);
+            //met_pz_solution_2 = sqrt( coefficient_C / coefficient_A);
             h[hist_MetInfo_coeff_D] -> Fill(-sqrt(-coefficient_D), isData ? 1. : NormalizationFactor);//keep tracking negative value
-            h[hist_MetInfo_coeff_D2A] -> Fill(sqrt(-coefficient_D) / (2*coefficient_A), isData ? 1. : NormalizationFactor);
+            h[hist_MetInfo_coeff_D2A] -> Fill(-sqrt(-coefficient_D) / (2*coefficient_A), isData ? 1. : NormalizationFactor);
         } else{
             met_pz_solution_1 = (coefficient_B + TMath::Sqrt(coefficient_D))/(2.*coefficient_A);
             met_pz_solution_2 = (coefficient_B - TMath::Sqrt(coefficient_D))/(2.*coefficient_A);
             h[hist_MetInfo_coeff_D] -> Fill(sqrt(coefficient_D), isData ? 1. : NormalizationFactor);
             h[hist_MetInfo_coeff_D2A] -> Fill(sqrt(coefficient_D) / (2*coefficient_A), isData ? 1. : NormalizationFactor);
         }
+        float larger_pz  = (abs(met_pz_solution_1) > abs(met_pz_solution_2) ) ? met_pz_solution_1 : met_pz_solution_2;
+        float smaller_pz = (abs(met_pz_solution_1) < abs(met_pz_solution_2) ) ? met_pz_solution_1 : met_pz_solution_2;
+        met_pz_solution_1 = larger_pz;
+        met_pz_solution_2 = smaller_pz;
+
         h[hist_MetInfo_Pz_solution_1] -> Fill(met_pz_solution_1, isData ? 1. : NormalizationFactor);
         h[hist_MetInfo_Pz_solution_2] -> Fill(met_pz_solution_2, isData ? 1. : NormalizationFactor);
         //}}}
@@ -540,24 +615,26 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         h[hist_leptonic_top_tbw_solution2_pt]->Fill(L_bw_lep[1].Pt(), isData ? 1. : NormalizationFactor);
         h[hist_leptonic_top_tbw_solution2_eta]->Fill(L_bw_lep[1].Eta(), isData ? 1. : NormalizationFactor);
         h[hist_leptonic_top_tbw_solution2_mass]->Fill(L_bw_lep[1].M(), isData ? 1. : NormalizationFactor);
-
-        //## comments: further MC truth study is needed
-        if(L_w_lep[1].M()>90){
-            printf("[check - wboson] mass = %f\n", L_w_lep[1].M());
-            printf("[check - wboson] coefficient_D = %f\n", coefficient_D);
-            printf("[check - wboson] lepton px = %6.2f, ", lepton.Px());
-            printf("py = %6.2f, ", lepton.Py());
-            printf("pz = %6.2f, ", lepton.Pz());
-            printf("energy = %6.2f\n", lepton.E());
-            printf("[check - wboson] metinf px = %6.2f, ", met_px);
-            printf("py = %6.2f, ", met_py);
-            printf("pz = %6.2f, ", met_pz_solution_2);
-            printf("energy = %6.2f\n", met_energy_solution_2);
-            printf("[check - wboson] wboson px = %6.2f, ", L_w_lep[1].Px());
-            printf("py = %6.2f, ", L_w_lep[1].Py());
-            printf("pz = %6.2f, ", L_w_lep[1].Pz());
-            printf("energy = %6.2f\n", L_w_lep[1].E());
-        }
+//
+//        //## comments: further MC truth study is needed{{{
+//        if(L_w_lep[1].M()>90){
+//            printf("[check - wboson] mass = %f\n", L_w_lep[1].M());
+//            printf("[check - wboson] coefficient_D = %f\n", coefficient_D);
+//            printf("[check - wboson] lepton px = %6.2f, ", lepton.Px());
+//            printf("py = %6.2f, ", lepton.Py());
+//            printf("pz = %6.2f, ", lepton.Pz());
+//            printf("energy = %6.2f\n", lepton.E());
+//            printf("[check - wboson] metinf px = %6.2f, ", met_px);
+//            printf("py = %6.2f, ", met_py);
+//            printf("pz = %6.2f, ", met_pz_solution_2);
+//            printf("energy = %6.2f\n", met_energy_solution_2);
+//            printf("[check - wboson] wboson px = %6.2f, ", L_w_lep[1].Px());
+//            printf("py = %6.2f, ", L_w_lep[1].Py());
+//            printf("pz = %6.2f, ", L_w_lep[1].Pz());
+//            printf("energy = %6.2f\n", L_w_lep[1].E());
+//        }
+//        //}}}
+//
         //}}}
         //--- M1{{{
         double M1;
@@ -575,6 +652,8 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
             h[hist_jetq_phi] -> Fill(jet_q.Phi(), isData ? 1. : NormalizationFactor);
             h[hist_jetq_energy] -> Fill(jet_q.E(), isData ? 1. : NormalizationFactor);
             h[hist_jetq_btag_score] -> Fill(Jets_btag_score[index_q], isData ? 1. : NormalizationFactor);
+            h[hist_jetq_CvsL_score] -> Fill(Jets_CvsL_score[index_q], isData ? 1. : NormalizationFactor);
+            h[hist_jetq_CvsB_score] -> Fill(Jets_CvsB_score[index_q], isData ? 1. : NormalizationFactor);
             h[hist_jetq_diphoton_deltaR] -> Fill(jet_q.DeltaR(diphoton), isData ? 1. : NormalizationFactor);
             if(treeReader.num_leptons>0){
                 for(int i=0; i<treeReader.num_leptons; ++i){
@@ -590,16 +669,17 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         double deltaR;
         if(M1 != -999){ deltaR = diphoton.DeltaR(jet_q)                       ; h[hist_deltaR_qH] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ; }
         deltaR = leading_photon.DeltaR(subleading_photon)                     ; h[hist_deltaR_photon_photon] -> Fill(deltaR, isData ? 1. : NormalizationFactor) ;
-        //if(M1 != -999){ deltaR = top_candidate_chi2_modified.DeltaR(top_fcnh) ; h[hist_deltaR_top_top] -> Fill(deltaR, isData ? 1. : NormalizationFactor)       ; }
-        //deltaR = bjet.DeltaR(w_candidate_chi2_modified)                       ; h[hist_deltaR_bW] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
-        //deltaR = diphoton.DeltaR(w_candidate_chi2_modified)                   ; h[hist_deltaR_HW] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
-        //deltaR = diphoton.DeltaR(top_candidate_chi2_modified)                 ; h[hist_deltaR_tH] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
+        if(M1 != -999){ deltaR = top_fcnh.DeltaR(L_bw_lep[1])                 ; h[hist_deltaR_top_top] -> Fill(deltaR, isData ? 1. : NormalizationFactor)       ; }
+        deltaR = diphoton.DeltaR(L_bw_lep[1])                                 ; h[hist_deltaR_tH] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
+        deltaR = diphoton.DeltaR(L_w_lep[1])                                  ; h[hist_deltaR_HW] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
+        deltaR = bjet.DeltaR(L_w_lep[1])                                      ; h[hist_deltaR_bW] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
 
         //deltaR = Jets[0].DeltaR(Jets[1])                                      ; h[hist_deltaR_jet1_jet2] -> Fill(deltaR, isData ? 1. : NormalizationFactor)     ;
 
         //}}}
-        }
+        } // end of else
         //}}}
+        */
 
         counter_selected_events += 1;
     }//end of event loop
@@ -789,6 +869,8 @@ void myTreeClass::SetBranchAddresses(){
     mytree -> SetBranchAddress("JetInfo_jet_diphoton_deltaR", &JetInfo_jet_diphoton_deltaR_selection);
     mytree -> SetBranchAddress("JetInfo_jet_pfDeepCSVJetTags_probb", &JetInfo_jet_pfDeepCSVJetTags_probb_selection);
     mytree -> SetBranchAddress("JetInfo_jet_pfDeepCSVJetTags_probbb", &JetInfo_jet_pfDeepCSVJetTags_probbb_selection);
+    mytree -> SetBranchAddress("JetInfo_jet_pfDeepCSVJetTags_probc", &JetInfo_jet_pfDeepCSVJetTags_probc_selection);
+    mytree -> SetBranchAddress("JetInfo_jet_pfDeepCSVJetTags_probudsg", &JetInfo_jet_pfDeepCSVJetTags_probudsg_selection);
     //------------------------
     mytree -> SetBranchAddress("num_bjets", &num_bjets);// # of selected objects.
     mytree -> SetBranchAddress("JetInfo_leading_bjet_pt", &JetInfo_leading_bjet_pt_selection);
@@ -820,6 +902,8 @@ myParameters::myParameters(){
     JetInfo_jet_diphoton_deltaR_selection = new std::vector<float>;
     JetInfo_jet_pfDeepCSVJetTags_probb_selection = new std::vector<float>;
     JetInfo_jet_pfDeepCSVJetTags_probbb_selection = new std::vector<float>;
+    JetInfo_jet_pfDeepCSVJetTags_probc_selection = new std::vector<float>;
+    JetInfo_jet_pfDeepCSVJetTags_probudsg_selection = new std::vector<float>;
     JetInfo_leading_bjet_pt_selection = new std::vector<float>;
     JetInfo_leading_bjet_eta_selection = new std::vector<float>;
     JetInfo_leading_bjet_phi_selection = new std::vector<float>;
@@ -853,6 +937,8 @@ myParameters::~myParameters(){
     delete JetInfo_jet_diphoton_deltaR_selection;
     delete JetInfo_jet_pfDeepCSVJetTags_probb_selection;
     delete JetInfo_jet_pfDeepCSVJetTags_probbb_selection;
+    delete JetInfo_jet_pfDeepCSVJetTags_probc_selection;
+    delete JetInfo_jet_pfDeepCSVJetTags_probudsg_selection;
     delete JetInfo_leading_bjet_pt_selection;
     delete JetInfo_leading_bjet_eta_selection;
     delete JetInfo_leading_bjet_phi_selection;
@@ -878,6 +964,8 @@ flashggStdTreeParameters::flashggStdTreeParameters(){
     JetInfo_Energy = new std::vector<float>;
     JetInfo_pfDeepCSVJetTags_probb = new std::vector<float>;
     JetInfo_pfDeepCSVJetTags_probbb = new std::vector<float>;
+    JetInfo_pfDeepCSVJetTags_probc = new std::vector<float>;
+    JetInfo_pfDeepCSVJetTags_probudsg = new std::vector<float>;
     //------------------------
     ElecInfo_Charge = new std::vector<int>;
     ElecInfo_Pt = new std::vector<float>;
@@ -933,6 +1021,8 @@ flashggStdTreeParameters::~flashggStdTreeParameters(){
     delete JetInfo_Energy;
     delete JetInfo_pfDeepCSVJetTags_probb;
     delete JetInfo_pfDeepCSVJetTags_probbb;
+    delete JetInfo_pfDeepCSVJetTags_probc;
+    delete JetInfo_pfDeepCSVJetTags_probudsg;
     //------------------------
     delete ElecInfo_Charge;
     delete ElecInfo_Pt;

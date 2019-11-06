@@ -89,6 +89,8 @@ TH1D *hist_jet1_eta = new TH1D("hist_jet1_eta", "", 40, -2.5, 2.5);
 TH1D *hist_jet1_phi = new TH1D("hist_jet1_phi", "", 40, -3.0, 3.0);
 TH1D *hist_jet1_energy = new TH1D("hist_jet1_energy", "", 40, 0, 200);
 TH1D *hist_jet1_btag_score = new TH1D("hist_jet1_btag_score", "", 10, 0, 1);
+TH1D *hist_jet1_CvsL_score = new TH1D("hist_jet1_CvsL_score", "", 10, 0, 1);
+TH1D *hist_jet1_CvsB_score = new TH1D("hist_jet1_CvsB_score", "", 10, 0, 1);
 TH1D *hist_jet1_diphoton_deltaR = new TH1D("hist_jet1_diphoton_deltaR", "", 40, 0, 6);
 TH1D *hist_jet1_lepton_deltaR = new TH1D("hist_jet1_lepton_deltaR", "", 40, 0, 6);
 //---
@@ -97,6 +99,8 @@ TH1D *hist_jet2_eta = new TH1D("hist_jet2_eta", "", 40, -2.5, 2.5);
 TH1D *hist_jet2_phi = new TH1D("hist_jet2_phi", "", 40, -3.0, 3.0);
 TH1D *hist_jet2_energy = new TH1D("hist_jet2_energy", "", 40, 0, 200);
 TH1D *hist_jet2_btag_score = new TH1D("hist_jet2_btag_score", "", 10, 0, 1);
+TH1D *hist_jet2_CvsL_score = new TH1D("hist_jet2_CvsL_score", "", 10, 0, 1);
+TH1D *hist_jet2_CvsB_score = new TH1D("hist_jet2_CvsB_score", "", 10, 0, 1);
 TH1D *hist_jet2_diphoton_deltaR = new TH1D("hist_jet2_diphoton_deltaR", "", 40, 0, 6);
 TH1D *hist_jet2_lepton_deltaR = new TH1D("hist_jet2_lepton_deltaR", "", 40, 0, 6);
 //---
@@ -105,6 +109,8 @@ TH1D *hist_wjet1_eta = new TH1D("hist_wjet1_eta", "", 40, -2.5, 2.5);
 TH1D *hist_wjet1_phi = new TH1D("hist_wjet1_phi", "", 40, -3.0, 3.0);
 TH1D *hist_wjet1_energy = new TH1D("hist_wjet1_energy", "", 40, 0, 200);
 TH1D *hist_wjet1_btag_score = new TH1D("hist_wjet1_btag_score", "", 10, 0, 1);
+TH1D *hist_wjet1_CvsL_score = new TH1D("hist_wjet1_CvsL_score", "", 10, 0, 1);
+TH1D *hist_wjet1_CvsB_score = new TH1D("hist_wjet1_CvsB_score", "", 10, 0, 1);
 TH1D *hist_wjet1_diphoton_deltaR = new TH1D("hist_wjet1_diphoton_deltaR", "", 40, 0, 6);
 TH1D *hist_wjet1_lepton_deltaR = new TH1D("hist_wjet1_lepton_deltaR", "", 40, 0, 6);
 //---
@@ -113,6 +119,8 @@ TH1D *hist_wjet2_eta = new TH1D("hist_wjet2_eta", "", 40, -2.5, 2.5);
 TH1D *hist_wjet2_phi = new TH1D("hist_wjet2_phi", "", 40, -3.0, 3.0);
 TH1D *hist_wjet2_energy = new TH1D("hist_wjet2_energy", "", 40, 0, 200);
 TH1D *hist_wjet2_btag_score = new TH1D("hist_wjet2_btag_score", "", 10, 0, 1);
+TH1D *hist_wjet2_CvsL_score = new TH1D("hist_wjet2_CvsL_score", "", 10, 0, 1);
+TH1D *hist_wjet2_CvsB_score = new TH1D("hist_wjet2_CvsB_score", "", 10, 0, 1);
 TH1D *hist_wjet2_diphoton_deltaR = new TH1D("hist_wjet2_diphoton_deltaR", "", 40, 0, 6);
 TH1D *hist_wjet2_lepton_deltaR = new TH1D("hist_wjet2_lepton_deltaR", "", 40, 0, 6);
 //---
@@ -121,6 +129,8 @@ TH1D *hist_jetq_eta = new TH1D("hist_jetq_eta", "", 40, -2.5, 2.5);
 TH1D *hist_jetq_phi = new TH1D("hist_jetq_phi", "", 40, -3.0, 3.0);
 TH1D *hist_jetq_energy = new TH1D("hist_jetq_energy", "", 40, 0, 200);
 TH1D *hist_jetq_btag_score = new TH1D("hist_jetq_btag_score", "", 10, 0, 1);
+TH1D *hist_jetq_CvsL_score = new TH1D("hist_jetq_CvsL_score", "", 10, 0, 1);
+TH1D *hist_jetq_CvsB_score = new TH1D("hist_jetq_CvsB_score", "", 10, 0, 1);
 TH1D *hist_jetq_diphoton_deltaR = new TH1D("hist_jetq_diphoton_deltaR", "", 40, 0, 6);
 TH1D *hist_jetq_lepton_deltaR = new TH1D("hist_jetq_lepton_deltaR", "", 40, 0, 6);
 //------------------------
@@ -128,6 +138,9 @@ TH1D  *hist_leading_bjet_pt = new TH1D("hist_leading_bjet_pt", "hist_leading_bje
 TH1D  *hist_leading_bjet_eta = new TH1D("hist_leading_bjet_eta", "hist_leading_bjet_eta", 40, -2.5, 2.5);
 TH1D  *hist_leading_bjet_phi = new TH1D("hist_leading_bjet_phi", "hist_leading_bjet_phi", 40, -3.0, 3.0);
 TH1D  *hist_leading_bjet_energy = new TH1D("hist_leading_bjet_energy", "hist_leading_bjet_energy", 40, 0, 200);
+TH1D  *hist_leading_bjet_btag_score = new TH1D("hist_leading_bjet_btag_score", "", 10, 0, 1);
+TH1D  *hist_leading_bjet_CvsL_score = new TH1D("hist_leading_bjet_CvsL_score", "", 10, 0, 1);
+TH1D  *hist_leading_bjet_CvsB_score = new TH1D("hist_leading_bjet_CvsB_score", "", 10, 0, 1);
 //------------------------
 TH1D *hist_deltaR_top_top = new TH1D("hist_deltaR_top_top", "", 40, 0, 6);
 TH1D *hist_deltaR_qH = new TH1D("hist_deltaR_qH", "", 40, 0, 6);
@@ -143,29 +156,29 @@ TH1D *hist_deltaR_wjet1_wjet2 = new TH1D("hist_deltaR_wjet1_wjet2", "", 40, 0, 6
 //------------------------
 TH1D *hist_top_tqh_pt = new TH1D("hist_top_tqh_pt", "", 40, 0, 400);
 TH1D *hist_top_tqh_eta = new TH1D("hist_top_tqh_eta", "", 40, -2.5, 2.5);
-TH1D *hist_top_tqh_mass = new TH1D("hist_top_tqh_mass", "", 70, 0, 350);
+TH1D *hist_top_tqh_mass = new TH1D("hist_top_tqh_mass", "", 40, 0, 400);
 //---
 TH1D *hist_hadronic_w_candidate_pt = new TH1D("hist_hadronic_w_candidate_pt", "", 40, 0, 200);
 TH1D *hist_hadronic_w_candidate_eta = new TH1D("hist_hadronic_w_candidate_eta", "", 40, -2.5, 2.5);
 TH1D *hist_hadronic_w_candidate_mass = new TH1D("hist_hadronic_w_candidate_mass", "", 50, 0, 150);
 TH1D *hist_hadronic_top_tbw_pt = new TH1D("hist_hadronic_top_tbw_pt", "", 40, 0, 400);
 TH1D *hist_hadronic_top_tbw_eta = new TH1D("hist_hadronic_top_tbw_eta", "", 40, -2.5, 2.5);
-TH1D *hist_hadronic_top_tbw_mass = new TH1D("hist_hadronic_top_tbw_mass", "", 70, 0, 350);
+TH1D *hist_hadronic_top_tbw_mass = new TH1D("hist_hadronic_top_tbw_mass", "", 40, 0, 400);
 //---
 TH1D *hist_leptonic_w_candidate_solution1_pt = new TH1D("hist_leptonic_w_candidate_solution1_pt", "", 40, 0, 200);
 TH1D *hist_leptonic_w_candidate_solution1_eta = new TH1D("hist_leptonic_w_candidate_solution1_eta", "", 40, -2.5, 2.5);
 TH1D *hist_leptonic_w_candidate_solution1_mass = new TH1D("hist_leptonic_w_candidate_solution1_mass", "", 50, 0, 150);
 TH1D *hist_leptonic_top_tbw_solution1_pt = new TH1D("hist_leptonic_top_tbw_solution1_pt", "", 40, 0, 400);
 TH1D *hist_leptonic_top_tbw_solution1_eta = new TH1D("hist_leptonic_top_tbw_solution1_eta", "", 40, -2.5, 2.5);
-TH1D *hist_leptonic_top_tbw_solution1_mass = new TH1D("hist_leptonic_top_tbw_solution1_mass", "", 70, 0, 350);
+TH1D *hist_leptonic_top_tbw_solution1_mass = new TH1D("hist_leptonic_top_tbw_solution1_mass", "", 40, 0, 400);
 //---
 TH1D *hist_leptonic_w_candidate_solution2_pt = new TH1D("hist_leptonic_w_candidate_solution2_pt", "", 40, 0, 200);
 TH1D *hist_leptonic_w_candidate_solution2_eta = new TH1D("hist_leptonic_w_candidate_solution2_eta", "", 40, -2.5, 2.5);
 TH1D *hist_leptonic_w_candidate_solution2_mass = new TH1D("hist_leptonic_w_candidate_solution2_mass", "", 50, 0, 150);
 TH1D *hist_leptonic_top_tbw_solution2_pt = new TH1D("hist_leptonic_top_tbw_solution2_pt", "", 40, 0, 400);
 TH1D *hist_leptonic_top_tbw_solution2_eta = new TH1D("hist_leptonic_top_tbw_solution2_eta", "", 40, -2.5, 2.5);
-TH1D *hist_leptonic_top_tbw_solution2_mass = new TH1D("hist_leptonic_top_tbw_solution2_mass", "", 70, 0, 350);
+TH1D *hist_leptonic_top_tbw_solution2_mass = new TH1D("hist_leptonic_top_tbw_solution2_mass", "", 40, 0, 400);
 //------------------------
 //TH1D  *hist_mass_w_candidate = new TH1D("hist_mass_w_candidate", "hist_mass_w_candidate", 50, 0, 150);
-//TH1D  *hist_mass_top_candidate = new TH1D("hist_mass_top_candidate", "hist_mass_top_candidate", 70, 0, 350);
-//TH1D  *hist_mass_top_fcnh_candidate = new TH1D("hist_mass_top_fcnh_candidate", "hist_mass_top_fcnh_candidate", 70, 0, 350);
+//TH1D  *hist_mass_top_candidate = new TH1D("hist_mass_top_candidate", "hist_mass_top_candidate", 40, 0, 400);
+//TH1D  *hist_mass_top_fcnh_candidate = new TH1D("hist_mass_top_fcnh_candidate", "hist_mass_top_fcnh_candidate", 40, 0, 400);

@@ -68,6 +68,8 @@ public:
     std::vector<float> *JetInfo_Energy;
     std::vector<float> *JetInfo_pfDeepCSVJetTags_probb;
     std::vector<float> *JetInfo_pfDeepCSVJetTags_probbb;
+    std::vector<float> *JetInfo_pfDeepCSVJetTags_probc;
+    std::vector<float> *JetInfo_pfDeepCSVJetTags_probudsg;
     //------------------------
     Int_t           ElecInfo_Size;
     std::vector<int>     *ElecInfo_Charge;
@@ -152,6 +154,8 @@ public:
     std::vector<float> JetInfo_jet_subleadingPhoton_deltaR;
     std::vector<float> JetInfo_jet_pfDeepCSVJetTags_probb;
     std::vector<float> JetInfo_jet_pfDeepCSVJetTags_probbb;
+    std::vector<float> JetInfo_jet_pfDeepCSVJetTags_probc;
+    std::vector<float> JetInfo_jet_pfDeepCSVJetTags_probudsg;
     Int_t num_bjets;// # of selected objects.
     std::vector<float> JetInfo_leading_bjet_pt;
     std::vector<float> JetInfo_leading_bjet_eta;
@@ -213,6 +217,8 @@ public:
     std::vector<float> *JetInfo_jet_subleadingPhoton_deltaR_selection;
     std::vector<float> *JetInfo_jet_pfDeepCSVJetTags_probb_selection;
     std::vector<float> *JetInfo_jet_pfDeepCSVJetTags_probbb_selection;
+    std::vector<float> *JetInfo_jet_pfDeepCSVJetTags_probc_selection;
+    std::vector<float> *JetInfo_jet_pfDeepCSVJetTags_probudsg_selection;
     //-----
     std::vector<float> *JetInfo_leading_bjet_pt_selection;
     std::vector<float> *JetInfo_leading_bjet_eta_selection;

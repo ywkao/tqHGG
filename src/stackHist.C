@@ -98,6 +98,8 @@ void stackHist(const char* channel){
     MakeStackHist("hist_jet1_phi");
     MakeStackHist("hist_jet1_energy");
     MakeStackHist("hist_jet1_btag_score");
+    MakeStackHist("hist_jet1_CvsL_score");
+    MakeStackHist("hist_jet1_CvsB_score");
     MakeStackHist("hist_jet1_diphoton_deltaR");
     MakeStackHist("hist_jet1_lepton_deltaR");
     MakeStackHist("hist_jet2_pt");
@@ -105,6 +107,8 @@ void stackHist(const char* channel){
     MakeStackHist("hist_jet2_phi");
     MakeStackHist("hist_jet2_energy");
     MakeStackHist("hist_jet2_btag_score");
+    MakeStackHist("hist_jet2_CvsL_score");
+    MakeStackHist("hist_jet2_CvsB_score");
     MakeStackHist("hist_jet2_diphoton_deltaR");
     MakeStackHist("hist_jet2_lepton_deltaR");
     MakeStackHist("hist_wjet1_pt");
@@ -112,6 +116,8 @@ void stackHist(const char* channel){
     MakeStackHist("hist_wjet1_phi");
     MakeStackHist("hist_wjet1_energy");
     MakeStackHist("hist_wjet1_btag_score");
+    MakeStackHist("hist_wjet1_CvsL_score");
+    MakeStackHist("hist_wjet1_CvsB_score");
     MakeStackHist("hist_wjet1_diphoton_deltaR");
     MakeStackHist("hist_wjet1_lepton_deltaR");
     MakeStackHist("hist_wjet2_pt");
@@ -119,6 +125,8 @@ void stackHist(const char* channel){
     MakeStackHist("hist_wjet2_phi");
     MakeStackHist("hist_wjet2_energy");
     MakeStackHist("hist_wjet2_btag_score");
+    MakeStackHist("hist_wjet2_CvsL_score");
+    MakeStackHist("hist_wjet2_CvsB_score");
     MakeStackHist("hist_wjet2_diphoton_deltaR");
     MakeStackHist("hist_wjet2_lepton_deltaR");
     MakeStackHist("hist_jetq_pt");
@@ -126,12 +134,17 @@ void stackHist(const char* channel){
     MakeStackHist("hist_jetq_phi");
     MakeStackHist("hist_jetq_energy");
     MakeStackHist("hist_jetq_btag_score");
+    MakeStackHist("hist_jetq_CvsL_score");
+    MakeStackHist("hist_jetq_CvsB_score");
     MakeStackHist("hist_jetq_diphoton_deltaR");
     MakeStackHist("hist_jetq_lepton_deltaR");
     MakeStackHist("hist_leading_bjet_pt");
     MakeStackHist("hist_leading_bjet_eta");
     MakeStackHist("hist_leading_bjet_phi");
     MakeStackHist("hist_leading_bjet_energy");
+    MakeStackHist("hist_leading_bjet_btag_score");
+    MakeStackHist("hist_leading_bjet_CvsL_score");
+    MakeStackHist("hist_leading_bjet_CvsB_score");
     MakeStackHist("hist_deltaR_top_top");
     MakeStackHist("hist_deltaR_qH");
     MakeStackHist("hist_deltaR_photon_photon");
@@ -491,6 +504,7 @@ void MakeStackHist(const char* histName){
     pad1->Draw();
     pad1->cd(); //pad1 becomes current pad
     gPad->SetTicks(1,1);
+    gPad->SetGrid();
     //--------------------
     hist_tqh_mc_wosig->SetLineWidth(0);
     hist_tqh_mc_wosig->SetMarkerColor(kGray+2);
@@ -517,6 +531,7 @@ void MakeStackHist(const char* histName){
     hist_tqh_mc_wosig->Draw("E2,same");
     hist_tqh_data[NUM_data]->Draw("p,E1,same");
     stackHist->SetMaximum(max_scope*scale);
+    stackHist->SetMaximum(15000);
 
     //##### SetTitles{{{
     //--------------------
@@ -598,11 +613,13 @@ void MakeStackHist(const char* histName){
     pad2->Draw();
     pad2->cd(); //pad2 becomes current pad
     gPad->SetTicks(1,1);
+    gPad->SetGrid();
     //--------------------
-    hist_tqh_ratio->SetMaximum(1.75);
-    hist_tqh_ratio->SetMinimum(0.5);
+    hist_tqh_ratio->SetMaximum(2.0);
+    hist_tqh_ratio->SetMinimum(0);
+    //hist_tqh_ratio->SetMaximum(1.75);
+    //hist_tqh_ratio->SetMinimum(0.5);
     //hist_tqh_ratio->SetMaximum(2.25);
-    //hist_tqh_ratio->SetMinimum(0);
     hist_tqh_ratio->SetTitle("");
     hist_tqh_ratio->SetStats(0); //No statistics on lower plot
     hist_tqh_ratio->Draw("p,E1");
@@ -612,7 +629,8 @@ void MakeStackHist(const char* histName){
     hist_tqh_ratio->Draw("p,E1,same");
     //--------------------
     hist_tqh_ratio->GetYaxis()->SetTitle("Obs/Exp");
-    hist_tqh_ratio->GetYaxis()->SetNdivisions(5);
+    hist_tqh_ratio->GetYaxis()->SetNdivisions(510);
+    //hist_tqh_ratio->GetYaxis()->SetNdivisions(5);
     hist_tqh_ratio->GetYaxis()->SetTitleSize(20);
     hist_tqh_ratio->GetYaxis()->SetTitleFont(43);
     hist_tqh_ratio->GetYaxis()->SetTitleOffset(1.2);
@@ -631,10 +649,10 @@ void MakeStackHist(const char* histName){
     c1->Update();//update the value of pad2->GetUxmax().
     TLine line;
     line.SetLineStyle(2);
-    line.DrawLine(pad2->GetUxmin(),0.5,pad2->GetUxmax(),0.5);
+    //line.DrawLine(pad2->GetUxmin(),0.5,pad2->GetUxmax(),0.5);
     line.DrawLine(pad2->GetUxmin(),1.0,pad2->GetUxmax(),1.0);
-    line.DrawLine(pad2->GetUxmin(),1.5,pad2->GetUxmax(),1.5);
-    line.DrawLine(pad2->GetUxmin(),2.0,pad2->GetUxmax(),2.0);
+    //line.DrawLine(pad2->GetUxmin(),1.5,pad2->GetUxmax(),1.5);
+    //line.DrawLine(pad2->GetUxmin(),2.0,pad2->GetUxmax(),2.0);
     c1->SaveAs(Form("%s/stack_%s.pdf", TARGET_DIR, histName));
     //c1->SaveAs(Form("%s/stack_%s.root", TARGET_DIR, histName));
     //}}}

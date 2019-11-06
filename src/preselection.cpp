@@ -319,6 +319,8 @@ int main(int argc, char *argv[]){
                 
                 mytree.JetInfo_jet_pfDeepCSVJetTags_probb.push_back(treeReader.JetInfo_pfDeepCSVJetTags_probb->at(i));
                 mytree.JetInfo_jet_pfDeepCSVJetTags_probbb.push_back(treeReader.JetInfo_pfDeepCSVJetTags_probbb->at(i));
+                mytree.JetInfo_jet_pfDeepCSVJetTags_probc.push_back(treeReader.JetInfo_pfDeepCSVJetTags_probc->at(i));
+                mytree.JetInfo_jet_pfDeepCSVJetTags_probudsg.push_back(treeReader.JetInfo_pfDeepCSVJetTags_probudsg->at(i));
                 mytree.num_jets+=1;
                 Jets.push_back(jet);
             }
@@ -506,6 +508,8 @@ flashggStdTreeParameters::flashggStdTreeParameters(){
     JetInfo_Energy = new std::vector<float>;
     JetInfo_pfDeepCSVJetTags_probb = new std::vector<float>;
     JetInfo_pfDeepCSVJetTags_probbb = new std::vector<float>;
+    JetInfo_pfDeepCSVJetTags_probc = new std::vector<float>;
+    JetInfo_pfDeepCSVJetTags_probudsg = new std::vector<float>;
     //------------------------
     ElecInfo_Charge = new std::vector<int>;
     ElecInfo_Pt = new std::vector<float>;
@@ -570,6 +574,8 @@ flashggStdTreeParameters::~flashggStdTreeParameters(){
     delete JetInfo_Energy;
     delete JetInfo_pfDeepCSVJetTags_probb;
     delete JetInfo_pfDeepCSVJetTags_probbb;
+    delete JetInfo_pfDeepCSVJetTags_probc;
+    delete JetInfo_pfDeepCSVJetTags_probudsg;
     //------------------------
     delete ElecInfo_Charge;
     delete ElecInfo_Pt;
@@ -683,6 +689,8 @@ void flashggStdTreeReader::SetBranchAddresses(){
     flashggStdTree->SetBranchAddress("JetInfo.Energy", &JetInfo_Energy);
     flashggStdTree->SetBranchAddress("JetInfo.pfDeepCSVJetTags_probb", &JetInfo_pfDeepCSVJetTags_probb);
     flashggStdTree->SetBranchAddress("JetInfo.pfDeepCSVJetTags_probbb", &JetInfo_pfDeepCSVJetTags_probbb);
+    flashggStdTree->SetBranchAddress("JetInfo.pfDeepCSVJetTags_probc", &JetInfo_pfDeepCSVJetTags_probc);
+    flashggStdTree->SetBranchAddress("JetInfo.pfDeepCSVJetTags_probudsg", &JetInfo_pfDeepCSVJetTags_probudsg);
     //------------------------
     flashggStdTree->SetBranchAddress("ElecInfo.Size", &ElecInfo_Size);
     flashggStdTree->SetBranchAddress("ElecInfo.Charge", &ElecInfo_Charge);
@@ -760,6 +768,8 @@ myParameters::myParameters(){
     JetInfo_jet_subleadingPhoton_deltaR_selection = new std::vector<float>;
     JetInfo_jet_pfDeepCSVJetTags_probb_selection = new std::vector<float>;
     JetInfo_jet_pfDeepCSVJetTags_probbb_selection = new std::vector<float>;
+    JetInfo_jet_pfDeepCSVJetTags_probc_selection = new std::vector<float>;
+    JetInfo_jet_pfDeepCSVJetTags_probudsg_selection = new std::vector<float>;
     ElecInfo_electron_charge_selection = new std::vector<int>;
     ElecInfo_electron_pt_selection = new std::vector<float>;
     ElecInfo_electron_eta_selection = new std::vector<float>;
@@ -796,6 +806,8 @@ myParameters::~myParameters(){
     delete JetInfo_jet_subleadingPhoton_deltaR_selection;
     delete JetInfo_jet_pfDeepCSVJetTags_probb_selection;
     delete JetInfo_jet_pfDeepCSVJetTags_probbb_selection;
+    delete JetInfo_jet_pfDeepCSVJetTags_probc_selection;
+    delete JetInfo_jet_pfDeepCSVJetTags_probudsg_selection;
     delete ElecInfo_electron_charge_selection;
     delete ElecInfo_electron_pt_selection;
     delete ElecInfo_electron_eta_selection;
@@ -886,6 +898,8 @@ void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("JetInfo_jet_subleadingPhoton_deltaR", &JetInfo_jet_subleadingPhoton_deltaR);
     mytree -> Branch("JetInfo_jet_pfDeepCSVJetTags_probb", &JetInfo_jet_pfDeepCSVJetTags_probb);
     mytree -> Branch("JetInfo_jet_pfDeepCSVJetTags_probbb", &JetInfo_jet_pfDeepCSVJetTags_probbb);
+    mytree -> Branch("JetInfo_jet_pfDeepCSVJetTags_probc", &JetInfo_jet_pfDeepCSVJetTags_probc);
+    mytree -> Branch("JetInfo_jet_pfDeepCSVJetTags_probudsg", &JetInfo_jet_pfDeepCSVJetTags_probudsg);
     mytree -> Branch("num_bjets", &num_bjets, "num_bjets/I");
     mytree -> Branch("JetInfo_leading_bjet_pt", &JetInfo_leading_bjet_pt);
     mytree -> Branch("JetInfo_leading_bjet_eta", &JetInfo_leading_bjet_eta);
@@ -926,6 +940,8 @@ void myParameters::Clear(){
     JetInfo_jet_subleadingPhoton_deltaR.clear();
     JetInfo_jet_pfDeepCSVJetTags_probb.clear();
     JetInfo_jet_pfDeepCSVJetTags_probbb.clear();
+    JetInfo_jet_pfDeepCSVJetTags_probc.clear();
+    JetInfo_jet_pfDeepCSVJetTags_probudsg.clear();
     num_bjets = 0;// # of selected objects.
     JetInfo_leading_bjet_pt.clear();
     JetInfo_leading_bjet_eta.clear();
