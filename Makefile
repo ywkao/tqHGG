@@ -18,6 +18,7 @@ TARGET1  := bin/preselection
 TARGET2  := bin/selection
 TARGET3  := bin/generalChiSquareStudy
 TARGET4  := bin/preselection_npustudy
+TARGET5  := bin/myKinFit
 
 SRCEXT   := cpp
 SOURCES  := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -27,7 +28,8 @@ LIB      := $(shell root-config --libs) -lMinuit
 INC      := -I include
 
 #all: ${TARGET1} ${TARGET2}
-all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2} $(TARGET3) $(TARGET4)
+all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2} $(TARGET3) $(TARGET4) $(TARGET5)
+#all: ${TARGET} ${TARGET1} ${TARGET2} $(TARGET3) $(TARGET4)
 
 
 
@@ -58,6 +60,10 @@ $(TARGET4): build/preselection_npustudy.o
 	@echo " Linking for preselection_npustudy cpp..."
 	@echo " $(CC) $^ -o $(TARGET4) $(LIB)"; $(CC) $^ -o $(TARGET4) $(LIB)
 
+$(TARGET5): build/myKinFit.o
+	@echo " Linking for myKinFit cpp..."
+	@echo " $(CC) $^ -o $(TARGET5) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET5) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB) 
+
 
 
 #$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
@@ -85,9 +91,13 @@ build/preselection_npustudy.o: src/preselection_npustudy.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
+build/myKinFit.o: src/myKinFit.cpp
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<
+
 clean:
 	@echo " Cleaning..."; 
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4)"; $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET4)
+	@echo " $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5)"; $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET4) $(TARGET5)
 
 
 
