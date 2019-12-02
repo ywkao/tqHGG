@@ -5,7 +5,8 @@ set -e
 function GetNumber(){
     number=0
     #while [ $number -eq 0 ] # make sure no node00 occurs
-    while [[ $number -eq 0 || $number -eq 6 || $number -eq 9 || $number -eq 10 || $number -eq 15 || $number -eq 17 ]] # make sure no node00 occurs
+    #while [[ $number -eq 0 || $number -eq 2 || $number -eq 3 || $number -eq 4 || $number -eq 6 || $number -eq 9 || $number -eq 10 || $number -eq 15 || $number -eq 17 ]] # make sure no node00 occurs
+    while [[ $number -eq 0 || $number -eq 2 || $number -eq 3 || $number -eq 4 || $number -eq 9 ]] # make sure no node00 occurs
     do 
         number=$((RANDOM%20))
     done
@@ -45,8 +46,8 @@ if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
     number=$(GetNumber)
     echo "[MESSAGE] ssh node${number}"
     #ssh node${number} "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval `scramv1 runtime -sh` time echo \"Hello World!\"" &
-    #ssh node${number} "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_preselection_batch -d" &
-    ssh node${number} "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_selection_batch -d" &
+    ssh node${number} "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_preselection_batch.sh -d" &
+    #ssh node${number} "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_selection_batch.sh -d" &
     #ssh node${number} "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_preselection_npustudy_batch -d" &
     #ssh node${number} "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/doCheckYields \"ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root\"" &
     #ssh node${number} "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval $(scramv1 runtime -sh) time ./script/doCheckYields \"ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root\"" &
@@ -62,7 +63,7 @@ if [[ $1 == '-d' || $1 == '--dryRun' ]]; then
 #    do
 #        echo "[MESSAGE] ssh node$(GetNumber) dataset=${dataset}"
 #        ssh node$(GetNumber) "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd;\
-#        eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch ${dataset}" &
+#        eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch.sh ${dataset}" &
 #    done
 #--------------------------------------#
 elif [[ $1 == '-c' ]]; then
@@ -93,7 +94,7 @@ elif [[ $1 == '-p' ]]; then
         number=$(GetNumber)
         echo "[MESSAGE] ssh node${number} dataset=${dataset}"
         ssh node${number} "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd;\
-        eval `scramv1 runtime -sh` time ./script/exe_preselection_batch ${dataset}" &
+        eval `scramv1 runtime -sh` time ./script/exe_preselection_batch.sh ${dataset}" &
     done
 #--------------------------------------#
 elif [[ $1 == '-s' ]]; then
@@ -104,11 +105,11 @@ elif [[ $1 == '-s' ]]; then
         number=$(GetNumber)
         echo "[MESSAGE] ssh node${number} dataset=${dataset}"
         ssh node${number} "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd;\
-        eval `scramv1 runtime -sh` time ./script/exe_selection_batch ${dataset} ${CHANNEL}" &
+        eval `scramv1 runtime -sh` time ./script/exe_selection_batch.sh ${dataset} ${CHANNEL}" &
     done
 else
     echo "[WARNNING] Unknown parameters."
 fi
 
-#ssh node01 "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch -d" &
+#ssh node01 "source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval `scramv1 runtime -sh` time ./script/exe_pustudy_batch.sh -d" &
 ##seq 1 4 | xargs -I{} -n1 -P4 ssh node01 "cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG && time ./script/exePreselection_batch_0{} -d" #problematic
