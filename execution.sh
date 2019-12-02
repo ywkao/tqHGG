@@ -31,7 +31,7 @@ function Selection(){
 function AfterSelection(){
     CHANNEL=$1
     ./script/run_macro_stackPlots.sh ${CHANNEL}
-    ./script/resetPlotsChannels plots_${CHANNEL}
+    ./script/resetPlotsChannels.sh plots_${CHANNEL}
     cp -p log/stdout_selection.log plots_${CHANNEL}/log/stdout_${CHANNEL}.log
     cp -p log/stderr_selection.log plots_${CHANNEL}/log/stderr_${CHANNEL}.log
     cp -p log/info_stack_plots_${CHANNEL} plots_${CHANNEL}/log
@@ -44,14 +44,13 @@ function ReRunStackPlotsOnly(){
     else echo "[WARNNING] dir plots exists! (abort)"; exit 1;
     fi
     ./script/run_macro_stackPlots.sh ${CHANNEL}
-    ./script/resetPlotsChannels plots_${CHANNEL}
+    ./script/resetPlotsChannels.sh plots_${CHANNEL}
     cp -p log/info_stack_plots_${CHANNEL} plots_${CHANNEL}
 }
 
 
-#----------------------------------------------------------------------#
-#=== Test Section ===#
-#./script/prepareExeForNewMC_npu_float "preselection_npustudy"
+#------------------------------ Test Section ------------------------------#
+#./script/prepareExeForNewMC_npu_float.sh "preselection_npustudy"
 #Preselection_npustudy
 #./script/run_macro_stackPlots.sh "hadronic"
 
@@ -61,19 +60,18 @@ function ReRunStackPlotsOnly(){
 
 #make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root"
 
-
-#----------------------------------------------------------------------#
-#=== Main Conduction ===#
-#./script/prepareExeForNewMC_npu_float "preselection"
-#Preselection
-#Intermission
-
-#./script/prepareExeForNewMC_npu_float "selection"
-
+#./script/prepareExeForNewMC_npu_float.sh "selection"
 #./script/exe_selection_batch.sh TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root "leptonic"
 #time ./script/exe_selection_batch.sh "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8" "leptonic"
 #time ./script/exe_selection_batch.sh "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8" "hadronic"
 
+
+#------------------------- Main Exe Section -------------------------#
+#./script/prepareExeForNewMC_npu_float.sh "preselection"
+#Preselection
+#Intermission
+
+#./script/prepareExeForNewMC_npu_float.sh "selection"
 #Selection "hadronic" #selection and make plots for hadronic channel
 #AfterSelection "hadronic" 
 #Selection "leptonic" #selection and make plots for leptonic channel

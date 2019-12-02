@@ -25,7 +25,7 @@ fi
 #}}}
 # Setup {{{
 #--------------- Setup ---------------#
-echo "[MESSAGE] Check directories for plots..." && ./script/mkplotdir
+echo "[MESSAGE] Check directories for plots..." && ./script/mkplotdir.sh
 echo "[MESSAGE] Check executable..." && make
 echo "[MESSAGE] Ready!"
 #}}}
