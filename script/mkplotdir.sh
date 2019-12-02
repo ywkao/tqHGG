@@ -16,6 +16,14 @@ if [ ! -d plots/log_scale ]; then
     mkdir plots/log_scale;
 fi
 
+if [ ! -d plots/mva ]; then
+    mkdir plots/mva;
+fi
+
+if [ ! -d plots/log ]; then
+    mkdir plots/log;
+fi
+
 for file in `cat ListRootFiles | grep -v "#"`
 do
     DIRECTORY=plots/"`echo $file | awk -F "." '{print $1}'`"
