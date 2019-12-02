@@ -10,7 +10,7 @@ The main computing resouces are the nodes on ntugrid5.
 
 ## Usage
 All the actions are written in execution.sh :
-```javascript=69
+```cpp
 #------------------------- Main Exe Section -------------------------#
 #./script/prepareExeForNewMC_npu_float.sh "preselection"
 #Preselection
@@ -28,7 +28,7 @@ ReRunStackPlotsOnly "hadronic"
 ```
 
 One can uncomment the commands and execute it.
-```javascript=
+```cpp
 $ cmsenv # in order to use ROOT
 $ ./execution.sh
 ```
@@ -37,7 +37,7 @@ $ ./execution.sh
 1. Preselection stage (~ 3 hrs)
     * Purpose: reduce information of the ntuples from the flashgg package
     * Action: uncomment the lines in exection.sh:
-```javascript=70
+```cpp
 ./script/prepareExeForNewMC_npu_float.sh "preselection"
 Preselection
 Intermission
@@ -46,7 +46,7 @@ Intermission
 2. Selection stage (~ 5 mins)
     * Purpose: apply selection condition & top reconstruction & stack plots
     * Action: uncomment the lines in exection.sh:
-```javascript=74
+```cpp
 ./script/prepareExeForNewMC_npu_float.sh "selection"
 Selection "hadronic" #selection and make plots for hadronic channel
 AfterSelection "hadronic" 
@@ -58,7 +58,7 @@ AfterSelection "leptonic"
 3. Re-make the stack plots (~ 2 mins)
     * Purpose: performed only when modifying stack plots ( src/stackHist.C )
     * Action: uncomment the lines in exection.sh:
-```javascript=81
+```cpp
 ReRunStackPlotsOnly "hadronic"
 ReRunStackPlotsOnly "leptonic"
 ```
@@ -66,7 +66,7 @@ ReRunStackPlotsOnly "leptonic"
 
 ## Pileup related
 The pu reweighting factor can be calculated by a python script.
-```javascript
+```cpp
 $ ./makePUweight.py -x 69200 #Produce rootfile of pileup reweighting factor (~ 5 mins)
 ```
 
