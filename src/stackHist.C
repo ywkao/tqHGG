@@ -380,7 +380,7 @@ void MakeStackHist(const char* histName){
     //=====================================================//
     if(PrintHistInfo){
         printf("===========================================================================\n");
-        printf("Process \t\t\t Yields \t\t   Error \n");
+        printf("Process \t\t\t Entries \t\t Yields \t\t   Error \n");
         printf("===========================================================================\n");
         CalculateHistYields("DiPhotonJetsBox", hist_tqh_DiPhotonJetsBox);
         CalculateHistYields("GJet\t\t", hist_tqh_GJet);
@@ -388,8 +388,8 @@ void MakeStackHist(const char* histName){
         CalculateHistYields("TTGJets\t\t", hist_tqh_TTGJets);
         CalculateHistYields("TTGG\t\t", hist_tqh_TTGG);
         CalculateHistYields("TTJets\t\t", hist_tqh_TTJets );
-        CalculateHistYields("DYJetsToLL\t\t", hist_tqh_DYJetsToLL );
-        CalculateHistYields("WJetsToLNu\t\t", hist_tqh_WJetsToLNu );
+        CalculateHistYields("DYJetsToLL\t", hist_tqh_DYJetsToLL );
+        CalculateHistYields("WJetsToLNu\t", hist_tqh_WJetsToLNu );
         CalculateHistYields("VG\t\t", hist_tqh_VG );
         CalculateHistYields("VV\t\t", hist_tqh_VV );
         CalculateHistYields("Higgs\t\t", hist_tqh_Higgs);
@@ -400,22 +400,22 @@ void MakeStackHist(const char* histName){
         printf("\n\n");
     }
     if(PrintTexStyle){
-        printf("Processes & \\multicolumn{2}{c}{Yields}\\\\ \n");
+        printf("Processes & Entries & \\multicolumn{2}{c}{Yields}\\\\ \n");
         printf("\\hline\\hline\n");
-        CalculateHistYields("DiPhotonJetsBox", hist_tqh_DiPhotonJetsBox);
+        CalculateHistYields("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox);
         CalculateHistYields("GJet\t\t", hist_tqh_GJet);
         CalculateHistYields("TGJets\t\t", hist_tqh_TGJets);
         CalculateHistYields("TTGJets\t\t", hist_tqh_TTGJets);
         CalculateHistYields("TTGG\t\t", hist_tqh_TTGG);
         CalculateHistYields("TTJets\t\t", hist_tqh_TTJets );
-        CalculateHistYields("DYJetsToLL\t\t", hist_tqh_DYJetsToLL );
-        CalculateHistYields("WJetsToLNu\t\t", hist_tqh_WJetsToLNu );
+        CalculateHistYields("DYJetsToLL\t", hist_tqh_DYJetsToLL );
+        CalculateHistYields("WJetsToLNu\t", hist_tqh_WJetsToLNu );
         CalculateHistYields("VG\t\t", hist_tqh_VG );
         CalculateHistYields("VV\t\t", hist_tqh_VV );
         CalculateHistYields("Higgs\t\t", hist_tqh_Higgs);
         CalculateHistYields("QCD\t\t", hist_tqh_QCD);
         printf("\\hline\n");
-        CalculateHistYields("MC background\t\t", hist_tqh_mc_wosig);
+        CalculateHistYields("MC background\t", hist_tqh_mc_wosig);
         CalculateHistYields("Data\t\t", hist_tqh_data[NUM_data]);
         printf("\n\n");
     }
@@ -487,11 +487,15 @@ void MakeStackHist(const char* histName){
     hist_sig_tt_hct->SetLineColor(kRed);
     hist_sig_st_hct->SetLineColor(kRed); hist_sig_st_hct->SetLineStyle(2);
     //--- normalize to total entries of data ---//
-    double total_entries_data = hist_tqh_data[NUM_data]->Integral();
-    double scale_sig_tt_hut = total_entries_data / hist_sig_tt_hut->Integral() ; hist_sig_tt_hut->Scale(scale_sig_tt_hut);
-    double scale_sig_st_hut = total_entries_data / hist_sig_st_hut->Integral() ; hist_sig_st_hut->Scale(scale_sig_st_hut);
-    double scale_sig_tt_hct = total_entries_data / hist_sig_tt_hct->Integral() ; hist_sig_tt_hct->Scale(scale_sig_tt_hct);
-    double scale_sig_st_hct = total_entries_data / hist_sig_st_hct->Integral() ; hist_sig_st_hct->Scale(scale_sig_st_hct);
+    //double total_entries_data = hist_tqh_data[NUM_data]->Integral();
+    //double scale_sig_tt_hut = total_entries_data / hist_sig_tt_hut->Integral() ; hist_sig_tt_hut->Scale(scale_sig_tt_hut);
+    //double scale_sig_st_hut = total_entries_data / hist_sig_st_hut->Integral() ; hist_sig_st_hut->Scale(scale_sig_st_hut);
+    //double scale_sig_tt_hct = total_entries_data / hist_sig_tt_hct->Integral() ; hist_sig_tt_hct->Scale(scale_sig_tt_hct);
+    //double scale_sig_st_hct = total_entries_data / hist_sig_st_hct->Integral() ; hist_sig_st_hct->Scale(scale_sig_st_hct);
+    double scale_sig_tt_hut = 1;
+    double scale_sig_st_hut = 1;
+    double scale_sig_tt_hct = 1;
+    double scale_sig_st_hct = 1;
     //}}}
     //### Draw upper plots{{{ 
     //============================//
@@ -531,7 +535,7 @@ void MakeStackHist(const char* histName){
     hist_tqh_mc_wosig->Draw("E2,same");
     hist_tqh_data[NUM_data]->Draw("p,E1,same");
     stackHist->SetMaximum(max_scope*scale);
-    stackHist->SetMaximum(15000);
+    //stackHist->SetMaximum(15000);
 
     //##### SetTitles{{{
     //--------------------
@@ -616,9 +620,9 @@ void MakeStackHist(const char* histName){
     gPad->SetGrid();
     //--------------------
     hist_tqh_ratio->SetMaximum(2.0);
-    hist_tqh_ratio->SetMinimum(0);
+    //hist_tqh_ratio->SetMinimum(0);
     //hist_tqh_ratio->SetMaximum(1.75);
-    //hist_tqh_ratio->SetMinimum(0.5);
+    hist_tqh_ratio->SetMinimum(0.5);
     //hist_tqh_ratio->SetMaximum(2.25);
     hist_tqh_ratio->SetTitle("");
     hist_tqh_ratio->SetStats(0); //No statistics on lower plot
@@ -648,9 +652,11 @@ void MakeStackHist(const char* histName){
     //--------------------
     c1->Update();//update the value of pad2->GetUxmax().
     TLine line;
-    line.SetLineStyle(2);
-    //line.DrawLine(pad2->GetUxmin(),0.5,pad2->GetUxmax(),0.5);
+    line.SetLineStyle(1);
     line.DrawLine(pad2->GetUxmin(),1.0,pad2->GetUxmax(),1.0);
+    //line.SetLineStyle(2);
+    //line.DrawLine(pad2->GetUxmin(),0.5,pad2->GetUxmax(),0.5);
+    //line.DrawLine(pad2->GetUxmin(),1.0,pad2->GetUxmax(),1.0);
     //line.DrawLine(pad2->GetUxmin(),1.5,pad2->GetUxmax(),1.5);
     //line.DrawLine(pad2->GetUxmin(),2.0,pad2->GetUxmax(),2.0);
     c1->SaveAs(Form("%s/stack_%s.pdf", TARGET_DIR, histName));
@@ -938,9 +944,10 @@ void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const ch
 }
 
 void CalculateHistYields(const char *process, TH1D* hist){
+    int totalEntries = hist->GetEntries();
     double totalYields = hist->Integral();
     double totalError = SumErrors(hist);
-    if(PrintTexStyle) printf("%s & \t %15.2f & $\\pm$ \t %10.2f\\\\\n", process, totalYields, totalError);
+    if(PrintTexStyle) printf("%s & \t %15d & \t %15.2f & $\\pm$ \t %10.2f\\\\\n", process, totalEntries, totalYields, totalError);
     else printf("%s \t %15.2f \t %15.2f\n", process, totalYields, totalError);
 }
 
