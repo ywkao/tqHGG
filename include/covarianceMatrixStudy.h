@@ -31,6 +31,16 @@ public:
     std::vector<int>     *GenPartInfo_Status;
     std::vector<int>     *GenPartInfo_nMo;
     std::vector<int>     *GenPartInfo_nDa;
+    std::vector<bool>    *GenPartInfo_isHardProcess;
+    std::vector<bool>    *GenPartInfo_fromHardProcessFinalState;
+    std::vector<bool>    *GenPartInfo_isPromptFinalState;
+    std::vector<bool>    *GenPartInfo_isDirectPromptTauDecayProductFinalState;
+    std::vector<int>     *GenPartInfo_MomPdgID;
+    std::vector<int>     *GenPartInfo_MomStatus;
+    std::vector<float>   *GenPartInfo_MomPt;
+    std::vector<float>   *GenPartInfo_MomEta;
+    std::vector<float>   *GenPartInfo_MomPhi;
+    std::vector<float>   *GenPartInfo_MomMass;
     //------------------------
     bool  EvtInfo_passTrigger;
     Int_t EvtInfo_NPu;
@@ -78,7 +88,7 @@ public:
     std::vector<bool>    *ElecInfo_EGMCutBasedIDMedium;
     std::vector<bool>    *ElecInfo_EGMCutBasedIDTight;
     std::vector<bool>    *ElecInfo_fggPhoVeto;
-    std::vector<bool>    *ElecInfo_tmpPhoVeto;
+    //std::vector<bool>    *ElecInfo_tmpPhoVeto;
     std::vector<float>   *ElecInfo_EnergyCorrFactor;
     std::vector<float>   *ElecInfo_EnergyPostCorrErr;
     std::vector<float>   *ElecInfo_EnergyPostCorrScaleUp;

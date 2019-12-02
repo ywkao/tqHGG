@@ -33,6 +33,7 @@ void hist_bin_fraction(TH1D *hist, const char* title, int entries_in_bin2);
 void hist_report(TH1D *hist, const char* chi2_type);
 double Chi2_calculator_simple(double w_mass, double t_mass);
 double Chi2_calculator_modified(double w_mass, double t_mass);
+double Chi2_calculator_improved(double w_mass, double t_mass, double fcnc_top_mass);
 void MakePlots(TCanvas *c1, TH1D* hist, const char* title, const char* outputFile);
 void MakeTwoPlots(TCanvas *c1, TH1D* hist_gen, TH1D* hist_reco, TLegend *legend, const char* name);
 void MakeFinalPlots(TCanvas *c1, TH1D* hist_simple, TH1D* hist_modified, TH1D*hist_yfyj, TLegend *legend, const char* name);
