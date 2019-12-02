@@ -33,7 +33,8 @@ $ cmsenv # in order to use ROOT
 $ ./execution.sh
 ```
 
-<p><b>Steps</b></p>
+<p><h3>Steps</h3></p>
+
 1. Preselection stage (~ 3 hrs)
     * Purpose: reduce information of the ntuples from the flashgg package
     * Action: uncomment the lines in exection.sh:
