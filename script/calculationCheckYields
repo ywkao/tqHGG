@@ -59,9 +59,9 @@ do
                 parameter="${type}_${number}_${case}"
                 summary ${dataset} ${parameter} ${output} ${number}
             done
-            chmod +x ${output}
         done
     done
+    chmod +x ${output}
 done
 
 echo "" > ${final}

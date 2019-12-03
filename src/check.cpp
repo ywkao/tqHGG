@@ -242,9 +242,16 @@ int main(int argc, char *argv[]){
         //==============================//
         //-----  Store PhotonInfo  -----//
         //==============================//
-        bool pass_leadingPhotonPT = DiPhoInfo_leadPt > DiPhoInfo_mass / 2.;
-        bool pass_subleadingPhotonPT = DiPhoInfo_subleadPt > DiPhoInfo_mass / 4.;
-        bool pass_photon_criteria = pass_leadingPhotonPT && pass_subleadingPhotonPT;
+        //bool pass_leadingPhotonPT = DiPhoInfo_leadPt > DiPhoInfo_mass / 2.;
+        //bool pass_subleadingPhotonPT = DiPhoInfo_subleadPt > DiPhoInfo_mass / 4.;
+        bool pass_leadingPhotonPT = DiPhoInfo_leadPt > 35.;
+        bool pass_subleadingPhotonPT = DiPhoInfo_subleadPt > 25.;
+        bool pass_photon_criteria_pt = pass_leadingPhotonPT && pass_subleadingPhotonPT;
+        bool pass_leadingPhotonEta =  (DiPhoInfo_leadEta < 1.4442) || (DiPhoInfo_leadEta > 1.566 && DiPhoInfo_leadEta < 2.5);
+        bool pass_subleadingPhotonEta = (DiPhoInfo_subleadEta < 1.4442) || (DiPhoInfo_subleadEta > 1.566 && DiPhoInfo_subleadEta < 2.5);
+        bool pass_photon_criteria_eta = pass_leadingPhotonEta && pass_subleadingPhotonEta;
+        bool pass_photon_criteria = pass_photon_criteria_pt && pass_photon_criteria_eta;
+
         TLorentzVector leading_photon, subleading_photon, diphoton;
         leading_photon.SetPtEtaPhiE(DiPhoInfo_leadPt, DiPhoInfo_leadEta, DiPhoInfo_leadPhi, DiPhoInfo_leadE);
         subleading_photon.SetPtEtaPhiE(DiPhoInfo_subleadPt, DiPhoInfo_subleadEta, DiPhoInfo_subleadPhi, DiPhoInfo_subleadE);
