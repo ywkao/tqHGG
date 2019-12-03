@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-#=== Preselection ===#
+#===== Preselection =====#
 function Preselection_npustudy(){
     time ./fireBatchJobs.sh -npustudy > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
 }
@@ -15,7 +15,7 @@ function Intermission(){
     mv log/stderr.log log/stderr_pre.log
 }
 
-#=== Selection ===#
+#===== Selection =====#
 function Selection(){
     CHANNEL=$1
     time ./fireBatchJobs.sh -s ${CHANNEL} > >(tee log/stdout_selection.log) 2> >(tee log/stderr_selection.log >&2)
@@ -45,7 +45,7 @@ function ReRunStackPlotsOnly(){
     fi
     ./script/run_macro_stackPlots.sh ${CHANNEL}
     ./script/resetPlotsChannels.sh plots_${CHANNEL}
-    cp -p log/info_stack_plots_${CHANNEL} plots_${CHANNEL}
+    cp -p log/info_stack_plots_${CHANNEL} plots_${CHANNEL}/log
 }
 
 
@@ -54,11 +54,10 @@ function ReRunStackPlotsOnly(){
 #Preselection_npustudy
 #./script/run_macro_stackPlots.sh "hadronic"
 
-#export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
+export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
 #make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root"
-#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root"
-
-#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root"
+#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root" "hadronic"
+make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root" "leptonic"
 
 #./script/prepareExeForNewMC_npu_float.sh "selection"
 #./script/exe_selection_batch.sh TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root "leptonic"
@@ -76,7 +75,8 @@ function ReRunStackPlotsOnly(){
 #AfterSelection "hadronic" 
 #Selection "leptonic" #selection and make plots for leptonic channel
 #AfterSelection "leptonic" 
-#./check_errors.sh
+#./script/check_errors.sh
+#./script/tableMaker.sh
 
-ReRunStackPlotsOnly "hadronic"
+#ReRunStackPlotsOnly "hadronic"
 #ReRunStackPlotsOnly "leptonic"

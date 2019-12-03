@@ -7,6 +7,7 @@
 // Author      : Yu-Wei Kao [ykao@cern.ch]
 //
 //***************************************************************************
+//### include & bool (channel, bjet selection){{{
 #include <typeinfo>
 #include <iostream>
 #include <stdio.h>
@@ -23,6 +24,7 @@
 using namespace std;
 
 bool bool_isHadronic;
+bool bool_isLeptonic;
 
 //--- control bjet selection ---//
 bool bool_bjet_is_loose  = false;
@@ -30,14 +32,19 @@ bool bool_bjet_is_medium = true;
 bool bool_bjet_is_tight  = false;
 bool bool_num_bjets_is_exactly_one = false;
 bool bool_num_bjets_is_atleast_one = true;
+//}}}
 
-void Selection(char* input_file, char* output_file, char* dataset, char* output_dir, char* channel){
+void Selection(char* input_file, char* output_file, char* output_tree, char* dataset, char* output_dir, char* channel){
     bool isData = isThisDataOrNot(dataset);
     bool isMCsignal = isThisMCsignal(dataset);
-    //### I/O, histograms{{{
+
+    //### bool hadronic / leptonic{{{
     if((string)channel == "hadronic") bool_isHadronic = true; else bool_isHadronic = false;
+    bool_isLeptonic = !bool_isHadronic;
     if(bool_isHadronic) printf("[CHECK] isHadronic!\n");
-    if(!bool_isHadronic) printf("[CHECK] isLeptonic!\n");
+    if(bool_isLeptonic) printf("[CHECK] isLeptonic!\n");
+    //}}}
+    //### I/O, histograms{{{
     //============================//
     //----- Input file names -----//
     //============================//
@@ -62,7 +69,90 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         h[i] -> Sumw2();
     }
     //}}}
+    //### I/O, tree{{{
+    TFile *f_tree = new TFile(output_tree, "RECREATE");
+    TTree *myAnalysisTree = new TTree("myAnalysisTree", "myAnalysisTree");
+    float tree_event_weight;
+    float tree_leadingPhoton_pt;
+    float tree_leadingPhoton_eta;
+    float tree_leadingPhoton_IDMVA;
+    float tree_subleadingPhoton_pt;
+    float tree_subleadingPhoton_eta;
+    float tree_subleadingPhoton_IDMVA;
+    float tree_diphoton_pt;
+    float tree_diphoton_eta;
+    float tree_diphoton_deltaR;
+    float tree_lepton_pt;
+    float tree_lepton_eta;
+    int   tree_lepton_charge;
+    float tree_jet1_pt;
+    float tree_jet1_eta;
+    float tree_jet1_btag;
+    float tree_jet1_CvsL;
+    float tree_jet1_CvsB;
+    float tree_jet2_pt;
+    float tree_jet2_eta;
+    float tree_jet2_btag;
+    float tree_jet2_CvsL;
+    float tree_jet2_CvsB;
+    float tree_jet3_pt;
+    float tree_jet3_eta;
+    float tree_jet3_btag;
+    float tree_jet3_CvsL;
+    float tree_jet3_CvsB;
+    float tree_jet4_pt;
+    float tree_jet4_eta;
+    float tree_jet4_btag;
+    float tree_jet4_CvsL;
+    float tree_jet4_CvsB;
+    float tree_neutrino_pz;
+    float tree_top_mass;
+    float tree_top_pt;
+    float tree_top_eta;
+    float tree_tH_deltaR;
+    //-----
+    myAnalysisTree->Branch("tree_event_weight", &tree_event_weight, "tree_event_weight/F");
+    myAnalysisTree->Branch("tree_leadingPhoton_pt", &tree_leadingPhoton_pt, "tree_leadingPhoton_pt/F");
+    myAnalysisTree->Branch("tree_leadingPhoton_eta", &tree_leadingPhoton_eta, "tree_leadingPhoton_eta/F");
+    myAnalysisTree->Branch("tree_leadingPhoton_IDMVA", &tree_leadingPhoton_IDMVA, "tree_leadingPhoton_IDMVA/F");
+    myAnalysisTree->Branch("tree_subleadingPhoton_pt", &tree_subleadingPhoton_pt, "tree_subleadingPhoton_pt/F");
+    myAnalysisTree->Branch("tree_subleadingPhoton_eta", &tree_subleadingPhoton_eta, "tree_subleadingPhoton_eta/F");
+    myAnalysisTree->Branch("tree_subleadingPhoton_IDMVA", &tree_subleadingPhoton_IDMVA, "tree_subleadingPhoton_IDMVA/F");
+    myAnalysisTree->Branch("tree_diphoton_pt", &tree_diphoton_pt, "tree_diphoton_pt/F");
+    myAnalysisTree->Branch("tree_diphoton_eta", &tree_diphoton_eta, "tree_diphoton_eta/F");
+    myAnalysisTree->Branch("tree_diphoton_deltaR", &tree_diphoton_deltaR, "tree_diphoton_deltaR/F");
+    myAnalysisTree->Branch("tree_lepton_pt", &tree_lepton_pt, "tree_lepton_pt/F");
+    myAnalysisTree->Branch("tree_lepton_eta", &tree_lepton_eta, "tree_lepton_eta/F");
+    myAnalysisTree->Branch("tree_lepton_charge", &tree_lepton_charge, "tree_lepton_charge/I");
+    myAnalysisTree->Branch("tree_jet1_pt", &tree_jet1_pt, "tree_jet1_pt/F");
+    myAnalysisTree->Branch("tree_jet1_eta", &tree_jet1_eta, "tree_jet1_eta/F");
+    myAnalysisTree->Branch("tree_jet1_btag", &tree_jet1_btag, "tree_jet1_btag/F");
+    myAnalysisTree->Branch("tree_jet1_CvsL", &tree_jet1_CvsL, "tree_jet1_CvsL/F");
+    myAnalysisTree->Branch("tree_jet1_CvsB", &tree_jet1_CvsB, "tree_jet1_CvsB/F");
+    myAnalysisTree->Branch("tree_jet2_pt", &tree_jet2_pt, "tree_jet2_pt/F");
+    myAnalysisTree->Branch("tree_jet2_eta", &tree_jet2_eta, "tree_jet2_eta/F");
+    myAnalysisTree->Branch("tree_jet2_btag", &tree_jet2_btag, "tree_jet2_btag/F");
+    myAnalysisTree->Branch("tree_jet2_CvsL", &tree_jet2_CvsL, "tree_jet2_CvsL/F");
+    myAnalysisTree->Branch("tree_jet2_CvsB", &tree_jet2_CvsB, "tree_jet2_CvsB/F");
+    myAnalysisTree->Branch("tree_jet3_pt", &tree_jet3_pt, "tree_jet3_pt/F");
+    myAnalysisTree->Branch("tree_jet3_eta", &tree_jet3_eta, "tree_jet3_eta/F");
+    myAnalysisTree->Branch("tree_jet3_btag", &tree_jet3_btag, "tree_jet3_btag/F");
+    myAnalysisTree->Branch("tree_jet3_CvsL", &tree_jet3_CvsL, "tree_jet3_CvsL/F");
+    myAnalysisTree->Branch("tree_jet3_CvsB", &tree_jet3_CvsB, "tree_jet3_CvsB/F");
+    myAnalysisTree->Branch("tree_jet4_pt", &tree_jet4_pt, "tree_jet4_pt/F");
+    myAnalysisTree->Branch("tree_jet4_eta", &tree_jet4_eta, "tree_jet4_eta/F");
+    myAnalysisTree->Branch("tree_jet4_btag", &tree_jet4_btag, "tree_jet4_btag/F");
+    myAnalysisTree->Branch("tree_jet4_CvsL", &tree_jet4_CvsL, "tree_jet4_CvsL/F");
+    myAnalysisTree->Branch("tree_jet4_CvsB", &tree_jet4_CvsB, "tree_jet4_CvsB/F");
+    myAnalysisTree->Branch("tree_neutrino_pz", &tree_neutrino_pz, "tree_neutrino_pz/F");
+    myAnalysisTree->Branch("tree_top_mass", &tree_top_mass, "tree_top_mass/F");
+    myAnalysisTree->Branch("tree_top_pt", &tree_top_pt, "tree_top_pt/F");
+    myAnalysisTree->Branch("tree_top_eta", &tree_top_eta, "tree_top_eta/F");
+    myAnalysisTree->Branch("tree_tH_deltaR", &tree_tH_deltaR, "tree_tH_deltaR/F");
+    //}}}
 
+    int counter_M1_exists_hadronic = 0;
+    int counter_M1_exists_leptonic = 0;
     int counter_selected_events = 0;
     int counter_coeff_D_isNegative = 0;
     //==================================================//
@@ -71,19 +161,62 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
     int counter_bjet_is_bquark = 0;
     int nentries = treeReader.GetEntries();
     for(int ientry=0; ientry<nentries; ientry++){
-        TTree* tmp = treeReader.GetTTree();
-        tmp->GetEntry(ientry);
-        if(ientry==0) printf("[INFO] N_entries = %d/%d\n", nentries, treeReader.EvtInfo_totalEntry_before_preselection);
-        if((ientry+1)%10000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
+        TTree* tmp = treeReader.GetTTree(); tmp->GetEntry(ientry);
+        if(ientry==0){
+            printf("[INFO] total entry before preselection = %d\n", treeReader.EvtInfo_totalEntry_before_preselection);
+            printf("[INFO] total entry after  preselection = %d\n", nentries);
+        }
+        //if((ientry+1)%10000==0)  printf("ientry = %d\r", ientry);
+        //if((ientry+1)==nentries) printf("ientry = %d\r", ientry);
+        //### InitTree{{{
+        tree_event_weight = -999;
+        tree_leadingPhoton_pt = -999;
+        tree_leadingPhoton_eta = -999;
+        tree_leadingPhoton_IDMVA = -999;
+        tree_subleadingPhoton_pt = -999;
+        tree_subleadingPhoton_eta = -999;
+        tree_subleadingPhoton_IDMVA = -999;
+        tree_diphoton_pt = -999;
+        tree_diphoton_eta = -999;
+        tree_diphoton_deltaR = -999;
+        tree_lepton_pt = -999;
+        tree_lepton_eta = -999;
+        tree_lepton_charge = -999;
+        tree_jet1_pt = -999;
+        tree_jet1_eta = -999;
+        tree_jet1_btag = -999;
+        tree_jet1_CvsL = -999;
+        tree_jet1_CvsB = -999;
+        tree_jet2_pt = -999;
+        tree_jet2_eta = -999;
+        tree_jet2_btag = -999;
+        tree_jet2_CvsL = -999;
+        tree_jet2_CvsB = -999;
+        tree_jet3_pt = -999;
+        tree_jet3_eta = -999;
+        tree_jet3_btag = -999;
+        tree_jet3_CvsL = -999;
+        tree_jet3_CvsB = -999;
+        tree_jet4_pt = -999;
+        tree_jet4_eta = -999;
+        tree_jet4_btag = -999;
+        tree_jet4_CvsL = -999;
+        tree_jet4_CvsB = -999;
+        tree_neutrino_pz = -999;
+        tree_top_mass = -999;
+        tree_top_pt = -999;
+        tree_top_eta = -999;
+        tree_tH_deltaR = -999;
+        //}}}
         //### PU reweighting{{{
         //========= PU Reweighting =========//
         bool apply_PU_reweighting = true;
         double PU_reweighting_factor = apply_PU_reweighting ? h_pu_reweighting_factor->GetBinContent((int)treeReader.EvtInfo_NPu+1) : 1.;
         double NormalizationFactor = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi * PU_reweighting_factor;
         double NormalizationFactor_wopu = treeReader.EvtInfo_genweight * treeReader.EvtInfo_NormalizationFactor_lumi;
+        tree_event_weight = NormalizationFactor;
         //Reminder: EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
         //}}}
-        
         /*
         //=== pu study only ==={{{
         //--- pu study only ---//
@@ -111,19 +244,17 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         h[hist_EvtInfo_NVtx_wopu] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor_wopu);
         //}}}
         */
-
         //### Event selection{{{
-        //========= Event Selections =========//
         bool passEvent=true;
-        //--- Leptonic Channel ---//
-        if(!bool_isHadronic){
-            if(treeReader.num_leptons<1) passEvent = false;
-            if(treeReader.num_jets<1) passEvent = false;
-        //--- Hadronic Channel ---//
-        } else{
+        //--------- Hadronic Channel ---------//
+        if(bool_isHadronic){
             if(treeReader.num_leptons>0) passEvent = false;
             //if(treeReader.num_jets<3) passEvent = false;
             if(treeReader.num_jets<4) passEvent = false;
+        //--------- Leptonic Channel ---------//
+        } else{ // bool_isLeptonic == true
+            if(treeReader.num_leptons<1) passEvent = false;
+            if(treeReader.num_jets<1) passEvent = false;
         }
         if(!passEvent) continue;
         //--------- check bjets ---------//
@@ -207,6 +338,12 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
             }
         }
         //}}}
+
+        bool pass_bjets_multiplicity_selection;
+        if(bool_num_bjets_is_exactly_one) pass_bjets_multiplicity_selection = num_bjets == 1;
+        if(bool_num_bjets_is_atleast_one) pass_bjets_multiplicity_selection = num_bjets >= 1;
+        //if(!pass_bjets_multiplicity_selection) continue;
+
         //store leading bjet info{{{
         if(index_bjet != -999){//at least one bjet!
             h[hist_leading_bjet_pt] -> Fill(bjet.Pt(), isData ? 1. : NormalizationFactor);
@@ -216,12 +353,14 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
             h[hist_leading_bjet_btag_score] -> Fill(bjet_btag_score, isData ? 1. : NormalizationFactor);
             h[hist_leading_bjet_CvsL_score] -> Fill(bjet_CvsL_score, isData ? 1. : NormalizationFactor);
             h[hist_leading_bjet_CvsB_score] -> Fill(bjet_CvsB_score, isData ? 1. : NormalizationFactor);
+
+            tree_jet1_pt = bjet.Pt();
+            tree_jet1_eta = bjet.Eta();
+            tree_jet1_btag = bjet_btag_score;
+            tree_jet1_CvsL = bjet_CvsL_score;
+            tree_jet1_CvsB = bjet_CvsB_score;
         }
         //}}}
-        bool pass_bjets_multiplicity_selection;
-        if(bool_num_bjets_is_exactly_one) pass_bjets_multiplicity_selection = num_bjets == 1;
-        if(bool_num_bjets_is_atleast_one) pass_bjets_multiplicity_selection = num_bjets >= 1;
-        if(!pass_bjets_multiplicity_selection) continue;
 
         //To be modified later...{{{
         //if(num_bjets != 1) continue;// exactly one
@@ -274,10 +413,24 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         leading_photon.SetPtEtaPhiE(treeReader.DiPhoInfo_leadPt, treeReader.DiPhoInfo_leadEta, treeReader.DiPhoInfo_leadPhi, treeReader.DiPhoInfo_leadE);
         subleading_photon.SetPtEtaPhiE(treeReader.DiPhoInfo_subleadPt, treeReader.DiPhoInfo_subleadEta, treeReader.DiPhoInfo_subleadPhi, treeReader.DiPhoInfo_subleadE);
         diphoton.SetPtEtaPhiE(treeReader.DiPhoInfo_pt, treeReader.DiPhoInfo_eta, treeReader.DiPhoInfo_phi, treeReader.DiPhoInfo_energy);
+
+        h[hist_deltaR_photon_photon] -> Fill(leading_photon.DeltaR(subleading_photon), isData ? 1. : NormalizationFactor) ;
+
+        tree_leadingPhoton_pt = treeReader.DiPhoInfo_leadPt;
+        tree_leadingPhoton_eta = treeReader.DiPhoInfo_leadEta;
+        tree_leadingPhoton_IDMVA = treeReader.DiPhoInfo_leadIDMVA;
+        tree_subleadingPhoton_pt = treeReader.DiPhoInfo_subleadPt;
+        tree_subleadingPhoton_eta = treeReader.DiPhoInfo_subleadEta;
+        tree_subleadingPhoton_IDMVA = treeReader.DiPhoInfo_subleadIDMVA;
+        tree_diphoton_pt = treeReader.DiPhoInfo_pt;
+        tree_diphoton_eta = treeReader.DiPhoInfo_eta;
+        tree_diphoton_deltaR = leading_photon.DeltaR(subleading_photon);
+
         //}}}
         //### Leptons{{{
         //--------- Leptons ---------//
         std::vector<TLorentzVector> Leptons;
+        std::vector<int> Leptons_charge;
         h[hist_ElecInfo_Size] -> Fill(treeReader.ElecInfo_Size, isData ? 1. : NormalizationFactor);
         h[hist_MuonInfo_Size] -> Fill(treeReader.MuonInfo_Size, isData ? 1. : NormalizationFactor);
         h[hist_num_leptons] -> Fill(treeReader.num_leptons, isData ? 1. : NormalizationFactor);// # of selected objects.
@@ -301,6 +454,7 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
                 //------------------------
                 TLorentzVector electron; electron.SetPtEtaPhiE(treeReader.ElecInfo_electron_pt_selection->at(i), treeReader.ElecInfo_electron_eta_selection->at(i), treeReader.ElecInfo_electron_phi_selection->at(i), treeReader.ElecInfo_electron_energy_selection->at(i));
                 Leptons.push_back(electron);
+                Leptons_charge.push_back(treeReader.ElecInfo_electron_charge_selection->at(i));
 
                 //printf("[Check-ele] ");
                 //printf("pt = %6.2f, ", treeReader.ElecInfo_electron_pt_selection->at(i));
@@ -357,7 +511,15 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
                 //------------------------
                 TLorentzVector muon; muon.SetPtEtaPhiE(treeReader.MuonInfo_muon_pt_selection->at(i), treeReader.MuonInfo_muon_eta_selection->at(i), treeReader.MuonInfo_muon_phi_selection->at(i), treeReader.MuonInfo_muon_energy_selection->at(i));
                 Leptons.push_back(muon);
+                Leptons_charge.push_back(treeReader.MuonInfo_muon_charge_selection->at(i));
             }
+        }
+
+        // less than 0.3% events have more than one charged lepton.
+        if(bool_isLeptonic){
+            tree_lepton_pt = Leptons[0].Pt();
+            tree_lepton_eta = Leptons[0].Eta();
+            tree_lepton_charge = Leptons_charge[0];
         }
         //}}}
         //### Jets{{{
@@ -424,7 +586,6 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         h[hist_MetInfo_Py] -> Fill(treeReader.MetInfo_Py, isData ? 1. : NormalizationFactor);
         h[hist_MetInfo_SumET] -> Fill(treeReader.MetInfo_SumET, isData ? 1. : NormalizationFactor);
         //}}}
-        /*
         //### top reconstruction{{{
         //================================================//
         //-----------   top reconstruction     -----------//
@@ -484,6 +645,18 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
                         h[hist_wjet2_lepton_deltaR] -> Fill(delta_R, isData ? 1. : NormalizationFactor);
                     }
                 }
+            
+                tree_jet3_pt   = jet_chi2_modified[0].Pt();
+                tree_jet3_eta  = jet_chi2_modified[0].Eta();
+                tree_jet3_btag = Jets_btag_score[index_jet_chi2_modified[0]];
+                tree_jet3_CvsL = Jets_CvsL_score[index_jet_chi2_modified[0]];
+                tree_jet3_CvsB = Jets_CvsB_score[index_jet_chi2_modified[0]];
+
+                tree_jet4_pt   = jet_chi2_modified[1].Pt();
+                tree_jet4_eta  = jet_chi2_modified[1].Eta();
+                tree_jet4_btag = Jets_btag_score[index_jet_chi2_modified[1]];
+                tree_jet4_CvsL = Jets_CvsL_score[index_jet_chi2_modified[1]];
+                tree_jet4_CvsB = Jets_CvsB_score[index_jet_chi2_modified[1]];
             }
             //}}}
             //### Reconstruct Mass (W, M2, M1){{{
@@ -500,6 +673,7 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
             TLorentzVector jet_q;
             TLorentzVector top_fcnh = GetBestM1(M1, treeReader.num_jets, index_bjet, index_jet_chi2_modified, diphoton, Jets, index_q, jet_q);
             if(M1 != -999){
+                counter_M1_exists_hadronic += 1;
                 h[hist_top_tqh_pt]->Fill(top_fcnh.Pt(), isData ? 1. : NormalizationFactor);//exclude event without suitable candidate
                 h[hist_top_tqh_eta]->Fill(top_fcnh.Eta(), isData ? 1. : NormalizationFactor);//exclude event without suitable candidate
                 h[hist_top_tqh_mass]->Fill(top_fcnh.M(), isData ? 1. : NormalizationFactor);//exclude event without suitable candidate
@@ -518,6 +692,12 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
                         h[hist_jetq_lepton_deltaR] -> Fill(delta_R, isData ? 1. : NormalizationFactor);
                     }
                 }
+
+                tree_jet2_pt   = jet_q.Pt();
+                tree_jet2_eta  = jet_q.Eta();
+                tree_jet2_btag = Jets_btag_score[index_q];
+                tree_jet2_CvsL = Jets_CvsL_score[index_q];
+                tree_jet2_CvsB = Jets_CvsB_score[index_q];
             }
             //}}}
             //### deltaR{{{
@@ -526,20 +706,23 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
             if(M1 != -999){ deltaR = diphoton.DeltaR(jet_q)                       ; h[hist_deltaR_qH] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ; }
             deltaR = Jets[0].DeltaR(Jets[1])                                      ; h[hist_deltaR_jet1_jet2] -> Fill(deltaR, isData ? 1. : NormalizationFactor)     ;
             deltaR = jet_chi2_modified[0].DeltaR(jet_chi2_modified[1])            ; h[hist_deltaR_wjet1_wjet2] -> Fill(deltaR, isData ? 1. : NormalizationFactor)   ;
-            deltaR = leading_photon.DeltaR(subleading_photon)                     ; h[hist_deltaR_photon_photon] -> Fill(deltaR, isData ? 1. : NormalizationFactor) ;
             deltaR = bjet.DeltaR(w_candidate_chi2_modified)                       ; h[hist_deltaR_bW] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
             deltaR = diphoton.DeltaR(w_candidate_chi2_modified)                   ; h[hist_deltaR_HW] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
             deltaR = diphoton.DeltaR(top_candidate_chi2_modified)                 ; h[hist_deltaR_tH] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
             //}}}
-        } else{
-        //### Reconstruct Mass (W, M2, M1){{{
+
+            tree_top_pt = top_candidate_chi2_modified.Pt();
+            tree_top_eta = top_candidate_chi2_modified.Eta();
+            tree_top_mass = top_candidate_chi2_modified.M();
+            tree_tH_deltaR = diphoton.DeltaR(top_candidate_chi2_modified);
+
+        } else{ // bool_isLeptonic == true
+        //--- solve met_pz{{{
         float met_pt = treeReader.MetInfo_Pt;
         float met_phi = treeReader.MetInfo_Phi;
         float met_px = treeReader.MetInfo_Px;
         float met_py = treeReader.MetInfo_Py;
         float met_sumET = treeReader.MetInfo_SumET;
-
-        //--- solve met_pz{{{
         TLorentzVector lepton = Leptons[0]; // leading lepton
         float lepton_px = lepton.Px();
         float lepton_py = lepton.Py();
@@ -642,6 +825,7 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         TLorentzVector jet_q;
         TLorentzVector top_fcnh = GetBestM1(M1, treeReader.num_jets, index_bjet, index_jet_chi2_modified, diphoton, Jets, index_q, jet_q);
         if(M1 != -999){
+            counter_M1_exists_leptonic += 1;
             //-----
             h[hist_top_tqh_pt]->Fill(top_fcnh.Pt(), isData ? 1. : NormalizationFactor);//exclude event without suitable candidate
             h[hist_top_tqh_eta]->Fill(top_fcnh.Eta(), isData ? 1. : NormalizationFactor);//exclude event without suitable candidate
@@ -661,11 +845,15 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
                     h[hist_jetq_lepton_deltaR] -> Fill(delta_R, isData ? 1. : NormalizationFactor);
                 }
             }
+            tree_jet2_pt   = jet_q.Pt();
+            tree_jet2_eta  = jet_q.Eta();
+            tree_jet2_btag = Jets_btag_score[index_q];
+            tree_jet2_CvsL = Jets_CvsL_score[index_q];
+            tree_jet2_CvsB = Jets_CvsB_score[index_q];
         }
 
         //}}}
-
-        //deltaR 
+        //deltaR {{{
         double deltaR;
         if(M1 != -999){ deltaR = diphoton.DeltaR(jet_q)                       ; h[hist_deltaR_qH] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ; }
         deltaR = leading_photon.DeltaR(subleading_photon)                     ; h[hist_deltaR_photon_photon] -> Fill(deltaR, isData ? 1. : NormalizationFactor) ;
@@ -673,19 +861,29 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
         deltaR = diphoton.DeltaR(L_bw_lep[1])                                 ; h[hist_deltaR_tH] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
         deltaR = diphoton.DeltaR(L_w_lep[1])                                  ; h[hist_deltaR_HW] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
         deltaR = bjet.DeltaR(L_w_lep[1])                                      ; h[hist_deltaR_bW] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
-
         //deltaR = Jets[0].DeltaR(Jets[1])                                      ; h[hist_deltaR_jet1_jet2] -> Fill(deltaR, isData ? 1. : NormalizationFactor)     ;
-
         //}}}
+
+        tree_neutrino_pz = met_pz_solution_2;
+        tree_top_pt = L_bw_lep[1].Pt();
+        tree_top_eta = L_bw_lep[1].Eta();
+        tree_top_mass = L_bw_lep[1].M();
+        tree_tH_deltaR = diphoton.DeltaR(L_bw_lep[1]);
+
         } // end of else
         //}}}
-        */
-
         counter_selected_events += 1;
+        myAnalysisTree->Fill();
     }//end of event loop
 
-    printf("[INFO] num of negative coeff D = %d / %d \n", counter_coeff_D_isNegative, counter_selected_events);
-    //### yields, plots, close{{{
+    //### counters, yields, plots, close{{{
+    printf("[INFO] total entry after  selection    = %d\n", counter_selected_events);
+    if(bool_isHadronic)
+        printf("[INFO] num of events with an existing M1 (hadronic) = %d / %d \n", counter_M1_exists_hadronic, counter_selected_events);
+    if(bool_isLeptonic){
+        printf("[INFO] num of events with an existing M1 (leptonic) = %d / %d \n", counter_M1_exists_leptonic, counter_selected_events);
+        printf("[INFO] num of negative coeff D = %d / %d \n", counter_coeff_D_isNegative, counter_selected_events);
+    }
     //==================================================//
     //---------------------  Yields  -------------------//
     //==================================================//
@@ -694,27 +892,33 @@ void Selection(char* input_file, char* output_file, char* dataset, char* output_
     //==================================================//
     //--------------------- MakePlot -------------------//
     //==================================================//
+    // Write/Close hist file
+    fout -> cd();
     TCanvas *c1 = new TCanvas("c1", "c1", 700, 800);
-    for(int i=0; i<totalHistNum; ++i){
-        MakePlots(c1, h[i], Form("%s/%s.png", output_dir, histNames[i].c_str()));
-    }
-    //=================================================//
-    //---------------------  Close  -------------------//
-    //=================================================//
+    for(int i=0; i<totalHistNum; ++i) MakePlots(c1, h[i], Form("%s/%s.png", output_dir, histNames[i].c_str()));
     fout -> Close();
+
+    // Write/Close tree file
+    f_tree -> cd();
+    myAnalysisTree -> Write();
+    f_tree -> Close();
+
+    // Close input file
     f_mcpu -> Close();
     fin  -> Close();
     //}}}
+
 }
 
 //### Main function{{{
 int main(int argc, char *argv[]){
     char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
     char output_file[512]; sprintf(output_file, "%s", argv[2]); printf("[INFO] output_file = %s\n", output_file);
-    char dataset[512]; sprintf(dataset, "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset);
-    char output_dir[512];  sprintf(output_dir, "%s", argv[4]); printf("[INFO] output_dir  = %s\n", output_dir);
-    char channel[512];  sprintf(channel, "%s", argv[5]); printf("[INFO] channel     = %s\n", channel);
-    Selection(input_file, output_file, dataset, output_dir, channel);
+    char output_tree[512]; sprintf(output_tree, "%s", argv[3]); printf("[INFO] output_tree = %s\n", output_tree);
+    char dataset[512]; sprintf(dataset, "%s", argv[4]); printf("[INFO] dataset     = %s\n", dataset);
+    char output_dir[512];  sprintf(output_dir, "%s", argv[5]); printf("[INFO] output_dir  = %s\n", output_dir);
+    char channel[512];  sprintf(channel, "%s", argv[6]); printf("[INFO] channel     = %s\n", channel);
+    Selection(input_file, output_file, output_tree, dataset, output_dir, channel);
     return 1;
 }
 //}}}

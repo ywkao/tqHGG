@@ -17,3 +17,5 @@ ntuples_skimmed
 # Ignore any logs and test files
 log/*
 test/*
+data
+*.swp

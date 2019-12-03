@@ -108,10 +108,10 @@ int main(int argc, char *argv[]){
         //==================================================//
         //--------------   Basic Selectoin   ---------------//
         //==================================================//
-        //bool pass_leadingPhotonPT = treeReader.DiPhoInfo_leadPt > treeReader.DiPhoInfo_mass / 2.;
-        //bool pass_subleadingPhotonPT = treeReader.DiPhoInfo_subleadPt > treeReader.DiPhoInfo_mass / 4.;
-        bool pass_leadingPhotonPT = treeReader.DiPhoInfo_leadPt > 35.;
-        bool pass_subleadingPhotonPT = treeReader.DiPhoInfo_subleadPt > 25.;
+        bool pass_leadingPhotonPT = treeReader.DiPhoInfo_leadPt > treeReader.DiPhoInfo_mass / 2.;
+        bool pass_subleadingPhotonPT = treeReader.DiPhoInfo_subleadPt > treeReader.DiPhoInfo_mass / 4.;
+        //bool pass_leadingPhotonPT = treeReader.DiPhoInfo_leadPt > 35.;
+        //bool pass_subleadingPhotonPT = treeReader.DiPhoInfo_subleadPt > 25.;
         bool pass_photon_criteria_pt = pass_leadingPhotonPT && pass_subleadingPhotonPT;
 
         bool pass_leadingPhotonEta =  (treeReader.DiPhoInfo_leadEta < 1.4442) || (treeReader.DiPhoInfo_leadEta > 1.566 && treeReader.DiPhoInfo_leadEta < 2.5);

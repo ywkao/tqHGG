@@ -4,7 +4,8 @@ set -e
 
 #INPUTDIR="ntuples_skimmed"
 #INPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed_trigger_pustudy"
-INPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed"
+#INPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed"
+INPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed_mgg_tighter"
 OUTPUTDIR="plots"
 EXECUTABLE=./bin/selection
 EXECUTABLE_npu=./bin/selection_npu_float
@@ -13,21 +14,23 @@ EXECUTABLE_npu=./bin/selection_npu_float
 function ExeAnalysis(){
     file=$1
     channel=$2
-    log=log/log_skimmed_ntuple_${file}.txt
+    log=log/log_skimmed_ntuple_${file}_${channel}.txt
     echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
-    echo $file | awk -F "." '{print "'$INPUTDIR'""/ntuple_"$1".root", "'$OUTPUTDIR'""/"$1"/hist_"$1".root", $1, "'$OUTPUTDIR'""/"$1, "'$channel'"}' |\
-    xargs -n5 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
-    # REMARK: input_file / output_file / datasets / output_dir
+    echo $file | awk -F "." '{print "'$INPUTDIR'""/ntuple_"$1".root", "'$OUTPUTDIR'""/"$1"/hist_"$1".root", "'$OUTPUTDIR'""/mva/tree_"$1".root", $1, "'$OUTPUTDIR'""/"$1, "'$channel'"}' |\
+    xargs -n6 ${EXECUTABLE} | tee -a ${log}
+    # REMARK: input_file / output_file / output_tree / datasets / output_dir
+    cp -p ${log} ${OUTPUTDIR}/log
 }
 
 function ExeAnalysis_npu_float(){
     file=$1
     channel=$2
-    log=log/log_skimmed_ntuple_${file}.txt
+    log=log/log_skimmed_ntuple_${file}_${channel}.txt
     echo "[MESSAGE_npu] Start to analyze ${file}" | tee ${log} 
-    echo $file | awk -F "." '{print "'$INPUTDIR'""/ntuple_"$1".root", "'$OUTPUTDIR'""/"$1"/hist_"$1".root", $1, "'$OUTPUTDIR'""/"$1, "'$channel'"}' |\
-    xargs -n5 ${EXECUTABLE_npu} | grep -v ientry | tee -a ${log}
-    # REMARK: input_file / output_file / datasets / output_dir
+    echo $file | awk -F "." '{print "'$INPUTDIR'""/ntuple_"$1".root", "'$OUTPUTDIR'""/"$1"/hist_"$1".root", "'$OUTPUTDIR'""/mva/tree_"$1".root", $1, "'$OUTPUTDIR'""/"$1, "'$channel'"}' |\
+    xargs -n6 ${EXECUTABLE_npu} | tee -a ${log}
+    # REMARK: input_file / output_file / output_tree / datasets / output_dir
+    cp -p ${log} ${OUTPUTDIR}/log
 }
 #--------------- DryRun ---------------#
 if [[ $1 == '-d' || $1 == '--dryRun' ]]; then

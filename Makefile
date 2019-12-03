@@ -17,6 +17,7 @@ TARGET0  := bin/covarianceMatrixStudy
 TARGET1  := bin/preselection
 TARGET2  := bin/selection
 TARGET3  := bin/generalChiSquareStudy
+TARGET3b := bin/generalChiSquareStudy_leptonic
 TARGET4  := bin/preselection_npustudy
 TARGET5  := bin/myKinFit
 
@@ -27,9 +28,8 @@ CFLAGS   := $(shell root-config --cflags) -g -O3 #-Wno-write-strings -D_FILE_OFF
 LIB      := $(shell root-config --libs) -lMinuit
 INC      := -I include
 
-#all: ${TARGET1} ${TARGET2}
-all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2} $(TARGET3) $(TARGET4) $(TARGET5)
-#all: ${TARGET} ${TARGET1} ${TARGET2} $(TARGET3) $(TARGET4)
+all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2} $(TARGET3) $(TARGET3b) $(TARGET4)
+#all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2} $(TARGET3) $(TARGET4) $(TARGET5)
 
 
 
@@ -54,7 +54,11 @@ $(TARGET2): build/selection.o
 
 $(TARGET3): build/generalChiSquareStudy.o
 	@echo " Linking for generalChiSquareStudy cpp..."
-	@echo " $(CC) $^ -o $(TARGET3) $(LIB)"; $(CC) $^ -o $(TARGET3) $(LIB)
+	@echo " $(CC) $^ -o $(TARGET3) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET3) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)
+
+$(TARGET3b): build/generalChiSquareStudy_leptonic.o
+	@echo " Linking for generalChiSquareStudy_leptonic cpp..."
+	@echo " $(CC) $^ -o $(TARGET3b) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET3b) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)
 
 $(TARGET4): build/preselection_npustudy.o
 	@echo " Linking for preselection_npustudy cpp..."
@@ -85,7 +89,11 @@ build/selection.o: src/selection.cpp
 
 build/generalChiSquareStudy.o: src/generalChiSquareStudy.cpp
 	@mkdir -p $(BUILDDIR)
-	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+	@echo " $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<
+
+build/generalChiSquareStudy_leptonic.o: src/generalChiSquareStudy_leptonic.cpp
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<
 
 build/preselection_npustudy.o: src/preselection_npustudy.cpp
 	@mkdir -p $(BUILDDIR)
@@ -97,7 +105,8 @@ build/myKinFit.o: src/myKinFit.cpp
 
 clean:
 	@echo " Cleaning..."; 
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5)"; $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET4) $(TARGET5)
+	@echo " $(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET3b) $(TARGET4) $(TARGET5)"
+	$(RM) -r $(BUILDDIR) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET3b) $(TARGET4) $(TARGET5)
 
 
 
