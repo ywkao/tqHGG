@@ -26,11 +26,20 @@
 #include <vector>
 #include <string>
 #include "../include/generalChiSquareStudy.h"
+#include "../include/generalChiSquareStudy.C"
 #include "../include/cross_section.h"
 #include "../../TopKinFit/kinfit.h"
 #include "../../TopKinFit/TopLep.h"
 using namespace std;
 //}}}
+//bool printSelectedJetsInfo = true;
+bool printSelectedJetsInfo = false;
+//--- control bjet selection ---//
+bool bool_bjet_is_loose  = false;
+bool bool_bjet_is_medium = false;
+bool bool_bjet_is_tight  = true;
+bool bool_num_bjets_is_exactly_one = true;
+bool bool_num_bjets_is_atleast_one = false;
 
 int main(int argc, char *argv[]){
     //### I/O and event info{{{
@@ -93,8 +102,9 @@ int main(int argc, char *argv[]){
     TH1D *hist_num_bjets_tight_matched = new TH1D("hist_num_bjets_tight_matched", ";Number of tight b-tagged jets;Entries", 10, 0, 10);
     TH1D *hist_num_bjets_medium_matched = new TH1D("hist_num_bjets_medium_matched", ";Number of medium b-tagged jets;Entries", 10, 0, 10);
     TH1D *hist_num_bjets_loose_matched = new TH1D("hist_num_bjets_loose_matched", ";Number of loose b-tagged jets;Entries", 10, 0, 10);
-    TH1D *hist_num_gen_bquark = new TH1D("hist_num_gen_bquark", ";Number of b quark (gen-level);Entries", 10, 0, 10);
+    TH1D *hist_num_gen_bquark = new TH1D("hist_num_gen_bquark", ";Number of b quarks (gen-level);Entries", 10, 0, 10);
     TH1D *hist_num_gen_light_quark = new TH1D("hist_num_gen_light_quark", ";Number of light quarks (gen-level);Entries", 10, 0, 10);
+    TH1D *hist_num_gen_quarks = new TH1D("hist_num_gen_quarks", ";Number of quarks (gen-level);Entries", 10, 0, 10);
     TH1D *hist_num_selected_jets = new TH1D("hist_num_selected_jets", ";Number of selected jets;Entries", 10, 0, 10);
     TH1D *hist_deltaR_W_genW_simple = new TH1D("hist_deltaR_W_genW_simple", ";deltaR;Entries", 20, 0, 0.01);
     TH1D *hist_deltaR_W_genW_modified = new TH1D("hist_deltaR_W_genW_modified", ";deltaR;Entries", 20, 0, 0.01);
@@ -126,7 +136,8 @@ int main(int argc, char *argv[]){
     TH1D *hist_mass_conditioned_gen_w_candidate_chi2_modified   = new TH1D("hist_mass_conditioned_gen_w_candidate_chi2_modified", ";Mass [GeV/c^2];Entries", 50, 0, 150);
     TH1D *hist_mass_conditioned_gen_top_candidate_chi2_modified = new TH1D("hist_mass_conditioned_gen_top_candidate_chi2_modified", ";Mass [GeV/c^2];Entries", 70, 0, 350);
     //}}}
-    //### hist leptonic{{{
+    //### hist leptonic (skipped){{{
+    /*
     TH1D *hist_mass_gen_wboson_leptonic = new TH1D("hist_mass_gen_wboson_leptonic", ";Mass [GeV/c^{2}];Entries", 32, 0, 160);
     TH1D *hist_mass_gen_topquark_leptonic = new TH1D("hist_mass_gen_topquark_leptonic", ";Mass [GeV/c^{2}];Entries", 34, 0, 340);
     TH1D *hist_deltaR_reco_top_higgs_leptonic = new TH1D("hist_deltaR_reco_top_higgs_leptonic", "", 40, 0, 6);
@@ -199,6 +210,7 @@ int main(int argc, char *argv[]){
     TH1D *hist_leptonic_top_tbw_solution2_mass = new TH1D("hist_leptonic_top_tbw_solution2_mass", ";Mass [GeV/c^{2}];Entries", 70, 0, 350);
     TH1D *hist_leptonic_top_tbw_solution2_mass_negativeD = new TH1D("hist_leptonic_top_tbw_solution2_mass_negativeD", ";Mass [GeV/c^{2}];Entries", 70, 0, 350);
 
+    */
     //}}}
     //### Counters{{{
     int counter_irregular_disc = 0;
@@ -224,6 +236,26 @@ int main(int argc, char *argv[]){
     double accuracy_tbw_chi2_simple = 0, accuracy_tbw_chi2_modified = 0, accuracy_tbw_chi2_improved = 0, accuracy_tbw_yfyj = 0;
     double accuracy_tqh_chi2_simple = 0, accuracy_tqh_chi2_modified = 0, accuracy_tqh_chi2_improved = 0, accuracy_tqh_yfyj = 0;
     //}}}
+    int counter_selectedJets_tbwCanBeReconstructed = 0;
+    int counter_selectedJets_tqhCanBeReconstructed = 0;
+    int counter_selectedJets_sigCanBeReconstructed = 0;
+    int counter_tbwIsCorrectlyMatched_yfyj = 0;
+    int counter_tbwIsCorrectlyMatched_simple = 0;
+    int counter_tbwIsCorrectlyMatched_modified = 0;
+    int counter_tbwIsCorrectlyMatched_improved = 0;
+    int counter_tqhIsCorrectlyMatched_yfyj = 0;
+    int counter_tqhIsCorrectlyMatched_simple = 0;
+    int counter_tqhIsCorrectlyMatched_modified = 0;
+    int counter_tqhIsCorrectlyMatched_improved = 0;
+    int counter_sigIsCorrectlyReco_yfyj = 0;
+    int counter_sigIsCorrectlyReco_simple = 0;
+    int counter_sigIsCorrectlyReco_modified = 0;
+    int counter_sigIsCorrectlyReco_improved = 0;
+    int counter_mismatched = 0;
+    int counter_intersection = 0;
+    int counter_M_notC = 0;
+    int counter_notM_C = 0;
+    int counter_notM_notC = 0;
     
     //##################################################//
     //#########    Event Loop [Selection]    ###########//
@@ -262,9 +294,9 @@ int main(int argc, char *argv[]){
     //}}}
     for(int ientry=0; ientry<nentries; ientry++){
         treeReader.flashggStdTree->GetEntry(ientry);//load data
-        if((ientry+1)%1000==0) printf("ientry = %d/%d\r", ientry+1, nentries+1);
-        if((ientry+1)==nentries) printf("ientry = %d/%d\n", ientry+1, nentries+1);
         //# Pre-process{{{
+        //if((ientry+1)%1000==0) printf("ientry = %d/%d\r", ientry+1, nentries+1);
+        //if((ientry+1)==nentries) printf("ientry = %d/%d\n", ientry+1, nentries+1);
         //### reset, selection, Normalization factor{{{ 
         //==================================================//
         //-------------   Reset Parameters   ---------------//
@@ -454,7 +486,7 @@ int main(int argc, char *argv[]){
                 mytree.JetInfo_jet_pt.push_back(treeReader.JetInfo_Pt->at(i));
                 mytree.JetInfo_jet_eta.push_back(treeReader.JetInfo_Eta->at(i));
                 mytree.JetInfo_jet_phi.push_back(treeReader.JetInfo_Phi->at(i));
-                mytree.JetInfo_jet_energy.push_back(treeReader.JetInfo_Phi->at(i));
+                mytree.JetInfo_jet_energy.push_back(treeReader.JetInfo_Energy->at(i));
                 
                 mytree.JetInfo_jet_pfDeepCSVJetTags_probb.push_back(treeReader.JetInfo_pfDeepCSVJetTags_probb->at(i));
                 mytree.JetInfo_jet_pfDeepCSVJetTags_probbb.push_back(treeReader.JetInfo_pfDeepCSVJetTags_probbb->at(i));
@@ -473,7 +505,8 @@ int main(int argc, char *argv[]){
         //================================================//
         //hadronic condition
         if(mytree.num_leptons>0) continue;
-        if(mytree.num_jets<4) continue;
+        if(mytree.num_jets<4) continue; // TT signal
+        //if(mytree.num_jets<3) continue; // ST signal
         //###}}}
         //### Check b quark info, store diphoton and jets{{{
         int num_bquark=0, num_light_quark=0;
@@ -487,6 +520,7 @@ int main(int argc, char *argv[]){
 
         hist_num_gen_bquark->Fill(num_bquark);
         hist_num_gen_light_quark->Fill(num_light_quark);
+        hist_num_gen_quarks->Fill(num_bquark + num_light_quark);
         hist_num_selected_jets->Fill(mytree.num_jets);
         hist_mass_diphoton->Fill(diphoton.M());
         //}}}
@@ -497,38 +531,43 @@ int main(int argc, char *argv[]){
         //###}}}
         */
         //}}}
-
         //================================================//
         //-----------   top reconstruction     -----------//
         //================================================//
+        
         TLorentzVector bjet;
         TLorentzVector genParticle_bjet;
         //### b-jet{{{
         //----- b-jet -----//
-        int num_bjets_loose = 0, num_bjets_medium = 0;
-        int num_bjets_tight = 0, index_bjet = -999;
-        //TLorentzVector bjet_tight, bjet_loose, bjet_medium;
+        int num_bjets = 0, index_bjet = -999;
+        int num_bjets_tight = 0, num_bjets_loose = 0, num_bjets_medium = 0;
+        int index_leading_bjet_tight = -999, index_leading_bjet_loose = -999, index_leading_bjet_medium = -999;
         std::vector<TLorentzVector> bjets_tight, bjets_loose, bjets_medium;
+        //categorize bjet according to deepCSV score{{{
         for(int i=0; i<mytree.num_jets; ++i){
-            if(mytree.JetInfo_jet_pfDeepCSVJetTags_probb.at(i)+mytree.JetInfo_jet_pfDeepCSVJetTags_probbb.at(i) >= pfDeepCSVJetTags_loose){
+            double btag_score = mytree.JetInfo_jet_pfDeepCSVJetTags_probb.at(i)+mytree.JetInfo_jet_pfDeepCSVJetTags_probbb.at(i);
+
+            if(btag_score >= pfDeepCSVJetTags_loose){
                 num_bjets_loose += 1;
                 bjets_loose.push_back(Jets[i]);
+                if(num_bjets_loose == 1) index_leading_bjet_loose = i;
             }
-            if(mytree.JetInfo_jet_pfDeepCSVJetTags_probb.at(i)+mytree.JetInfo_jet_pfDeepCSVJetTags_probbb.at(i) >= pfDeepCSVJetTags_medium){
+            if(btag_score >= pfDeepCSVJetTags_medium){
                 num_bjets_medium += 1;
                 bjets_medium.push_back(Jets[i]);
+                if(num_bjets_medium == 1) index_leading_bjet_medium = i;
             }
-            if(mytree.JetInfo_jet_pfDeepCSVJetTags_probb.at(i)+mytree.JetInfo_jet_pfDeepCSVJetTags_probbb.at(i) >= pfDeepCSVJetTags_tight){
+            if(btag_score >= pfDeepCSVJetTags_tight){
                 num_bjets_tight += 1;
                 bjets_tight.push_back(Jets[i]);
-                index_bjet = i;
+                if(num_bjets_tight == 1) index_leading_bjet_tight = i;
             }
         }//end of looping jets
+        //}}}
         hist_num_bjets_loose->Fill(num_bjets_loose);
         hist_num_bjets_medium->Fill(num_bjets_medium);
         hist_num_bjets_tight->Fill(num_bjets_tight);
-
-        //--- counting correct rate in when num_bjet==1 ---//
+        //counting correct rate in when num_bjet==1 {{{
         if(num_bjets_loose==1){
             bool is_b_quark = CheckBJetID(bjets_loose[0], treeReader.GenPartInfo_size,\
                               treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
@@ -556,40 +595,161 @@ int main(int argc, char *argv[]){
                 hist_num_bjets_tight_matched -> Fill(num_bjets_tight);
             }
         }
-
-        //if(num_bjets_loose != 1) continue;//exactly 1 loose bjet candidate
-        //if(num_bjets_loose < 1) continue;//at least 1 loose bjet candidate
-        //bjet = bjets_loose[0];
-
-        if(num_bjets_tight != 1) continue;//exactly 1 tight bjet candidate
-        //if(num_bjets_tight < 1) continue;//at least 1 tight bjet candidate
-        bjet = bjets_tight[0];
-        
-        //if(num_bjets_medium != 1) continue;//exactly 1 medium bjet candidate
-        //if(num_bjets_medium < 1) continue;//at least 1 medium bjet candidate
-        //bjet = bjets_medium[0];
+        //}}}
+        //determine leading bjet according to chosen WP{{{
+        if(bool_bjet_is_loose){
+            index_bjet = index_leading_bjet_loose;
+            if(index_bjet != -999){
+                bjet = bjets_loose[0];
+                num_bjets = num_bjets_loose;
+            }
+        }
+        if(bool_bjet_is_medium){
+            index_bjet = index_leading_bjet_medium;
+            if(index_bjet != -999){
+                bjet = bjets_medium[0];
+                num_bjets = num_bjets_medium;
+            }
+        }
+        if(bool_bjet_is_tight){
+            index_bjet = index_leading_bjet_tight;
+            if(index_bjet != -999){
+                bjet = bjets_tight[0];
+                num_bjets = num_bjets_tight;
+            }
+        }
+        //}}}
+        bool pass_bjets_multiplicity_selection;
+        if(bool_num_bjets_is_exactly_one) pass_bjets_multiplicity_selection = num_bjets == 1;
+        if(bool_num_bjets_is_atleast_one) pass_bjets_multiplicity_selection = num_bjets >= 1;
+        if(!pass_bjets_multiplicity_selection) continue;
         //### }}}
-        //# HADRONIC chi-2 Study{{{
+        // check gen of jets{{{
+        if(printSelectedJetsInfo){
+            printf("\nientry = %d/%d\n", ientry+1, nentries+1);
+            printf("[CHECK] num_jets = %d\n", mytree.num_jets);
+        }
+        int counter_momPdgID_is_wboson = 0;
+        int counter_is_bquarkFromSMtop = 0;
+        int counter_is_quarkFromFCNtop = 0;
+
+        int jetIndex_is_bquarkFromSMtop = -999;
+        int jetIndex_is_quarkFromFCNtop = -999;
+        std::vector<int> jetIndex_momPdgID_is_wboson(2, -999);
+        
+        std::vector<int> jetIndex_is_bquarkFromSMtop_moreThanOne(2, -999);
+        std::vector<int> jetIndex_is_quarkFromFCNtop_moreThanOne(2, -999);
+        std::vector<int> genIndex_is_quarkFromWboson(2, -999);
+        for(int i=0; i<mytree.num_jets; ++i){
+            //get matched ID
+            int index_gen, Matched_PdgID, Matched_MomPdgID;
+            if(printSelectedJetsInfo) kinematics_info("jet", Jets[i], i);
+            obtain_gen_matched_ID(printSelectedJetsInfo, Jets[i], index_gen, Matched_PdgID, Matched_MomPdgID, treeReader.GenPartInfo_size,\
+                                  treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
+                                  treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
+            //counting
+            if( abs(Matched_MomPdgID)==24 ) counter_momPdgID_is_wboson += 1;
+            if( abs(Matched_PdgID)==5 && abs(Matched_MomPdgID)==6 ) counter_is_bquarkFromSMtop += 1;
+            if( abs(Matched_PdgID)!=5 && abs(Matched_MomPdgID)==6 ) counter_is_quarkFromFCNtop += 1;
+
+            //index
+            if( abs(Matched_MomPdgID)==24 ){
+                if(counter_momPdgID_is_wboson==1) jetIndex_momPdgID_is_wboson[0] = i;
+                if(counter_momPdgID_is_wboson==2) jetIndex_momPdgID_is_wboson[1] = i;
+            }
+            if( abs(Matched_PdgID)==5 && abs(Matched_MomPdgID)==6 ) jetIndex_is_bquarkFromSMtop = i;
+            if( abs(Matched_PdgID)!=5 && abs(Matched_MomPdgID)==6 ) jetIndex_is_quarkFromFCNtop = i;
+
+            // fix bug when w quark is matched twice
+            if( abs(Matched_MomPdgID)==24 ){
+                if(counter_momPdgID_is_wboson==1) genIndex_is_quarkFromWboson[0] = index_gen;
+                if(counter_momPdgID_is_wboson==2) genIndex_is_quarkFromWboson[1] = index_gen;
+            }
+
+            // fix bug when bquark is matched twice
+            if( abs(Matched_PdgID)==5 && abs(Matched_MomPdgID)==6 ){
+                if(counter_is_bquarkFromSMtop==1) jetIndex_is_bquarkFromSMtop_moreThanOne[0] = i;
+                if(counter_is_bquarkFromSMtop==2) jetIndex_is_bquarkFromSMtop_moreThanOne[1] = i;
+            }
+
+            // fix bug when q-tqh is matched twice
+            if( abs(Matched_PdgID)!=5 && abs(Matched_MomPdgID)==6 ){
+                if(counter_is_quarkFromFCNtop==1) jetIndex_is_quarkFromFCNtop_moreThanOne[0] = i;
+                if(counter_is_quarkFromFCNtop==2) jetIndex_is_quarkFromFCNtop_moreThanOne[1] = i;
+            }
+        }
+        //--------------------------------------------------
+        // fix bug when w quark is matched twice{{{
+        bool w_quark_is_matched_twice = genIndex_is_quarkFromWboson[0] == genIndex_is_quarkFromWboson[1];
+        //}}}
+        // fix bug when bquark is matched twice{{{
+        double deltaR_jet_bquark[2] = {0};
+        if( counter_is_bquarkFromSMtop == 2 ){ 
+            //pick the jet with smaller deltaR (jet, bquark)
+            int Matched_PdgID, Matched_MomPdgID;
+            deltaR_jet_bquark[0] = obtain_deltaR(printSelectedJetsInfo, Jets[jetIndex_is_bquarkFromSMtop_moreThanOne[0]],\
+                                  Matched_PdgID, Matched_MomPdgID, treeReader.GenPartInfo_size,\
+                                  treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
+                                  treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
+            deltaR_jet_bquark[1] = obtain_deltaR(printSelectedJetsInfo, Jets[jetIndex_is_bquarkFromSMtop_moreThanOne[1]],\
+                                  Matched_PdgID, Matched_MomPdgID, treeReader.GenPartInfo_size,\
+                                  treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
+                                  treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
+            jetIndex_is_bquarkFromSMtop = (deltaR_jet_bquark[0] < deltaR_jet_bquark[1]) ? jetIndex_is_bquarkFromSMtop_moreThanOne[0] : jetIndex_is_bquarkFromSMtop_moreThanOne[1];
+            //printf("[check] chosen correct index of bjet: %d\n", jetIndex_is_bquarkFromSMtop);
+            //jetIndex_is_bquarkFromSMtop = -999;
+        }
+        //}}}
+        // fix bug when q-tqh is matched twice{{{
+        double deltaR_jet_tqh_quark[2] = {0};
+        if( counter_is_quarkFromFCNtop == 2 ){ 
+            //pick the jet with smaller deltaR (jet, bquark)
+            int Matched_PdgID, Matched_MomPdgID;
+            deltaR_jet_tqh_quark[0] = obtain_deltaR(printSelectedJetsInfo, Jets[jetIndex_is_quarkFromFCNtop_moreThanOne[0]],\
+                                  Matched_PdgID, Matched_MomPdgID, treeReader.GenPartInfo_size,\
+                                  treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
+                                  treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
+            deltaR_jet_tqh_quark[1] = obtain_deltaR(printSelectedJetsInfo, Jets[jetIndex_is_quarkFromFCNtop_moreThanOne[1]],\
+                                  Matched_PdgID, Matched_MomPdgID, treeReader.GenPartInfo_size,\
+                                  treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
+                                  treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
+            jetIndex_is_quarkFromFCNtop = (deltaR_jet_tqh_quark[0] < deltaR_jet_tqh_quark[1]) ? jetIndex_is_quarkFromFCNtop_moreThanOne[0] : jetIndex_is_quarkFromFCNtop_moreThanOne[1];
+        }
+        //}}}
+
+        bool tbwCanBeReconstructed = (counter_momPdgID_is_wboson >= 2) && (counter_is_bquarkFromSMtop >= 1);
+        if(tbwCanBeReconstructed) counter_selectedJets_tbwCanBeReconstructed += 1;
+        bool tqhCanBeReconstructed = (counter_is_quarkFromFCNtop >= 1);
+        if(tqhCanBeReconstructed) counter_selectedJets_tqhCanBeReconstructed += 1;
+        bool sigCanBeReconstructed = tbwCanBeReconstructed && tqhCanBeReconstructed && !w_quark_is_matched_twice;
+        if(sigCanBeReconstructed) counter_selectedJets_sigCanBeReconstructed += 1;
+        //}}}
+        //# HADRONIC CHANNEL{{{
+        //### chi-2 Study{{{
+        // Define variables{{{
         bool isMatched, is_tqh_quark=false;//boolean used to check matching
         bool isMatched_tbw_simple, is_tqh_quark_simple=false;//boolean used to check matching
         bool isMatched_tbw_modified, is_tqh_quark_modified=false;//boolean used to check matching
         bool isMatched_tbw_improved, is_tqh_quark_improved=false;//boolean used to check matching
         //-------------------------//
-        std::vector<int> id_jet_chi2_simple(2);
-        std::vector<int> index_jet_chi2_simple(2);
-        std::vector<int> index_genParticle_jet_chi2_simple(2);
+        int index_q_simple = -999;
+        std::vector<int> id_jet_chi2_simple(2, -999);
+        std::vector<int> index_jet_chi2_simple(2, -999);
+        std::vector<int> index_genParticle_jet_chi2_simple(2, -999);
         std::vector<TLorentzVector> jet_chi2_simple(2);
         std::vector<TLorentzVector> genParticle_jet_chi2_simple(2);
         //-------------------------//
-        std::vector<int> id_jet_chi2_modified(2);
-        std::vector<int> index_jet_chi2_modified(2);
-        std::vector<int> index_genParticle_jet_chi2_modified(2);
+        int index_q_modified = -999;
+        std::vector<int> id_jet_chi2_modified(2, -999);
+        std::vector<int> index_jet_chi2_modified(2, -999);
+        std::vector<int> index_genParticle_jet_chi2_modified(2, -999);
         std::vector<TLorentzVector> jet_chi2_modified(2);
         std::vector<TLorentzVector> genParticle_jet_chi2_modified(2);
         //-------------------------//
         double chi2_min = 99999;
-        //### simple & modified chi-2 methods{{{
-        //----- chi-2 simple -----//
+        //}}}
+        // simple & modified chi-2 methods{{{
+        // chi-2 simple {{{
         chi2_min = 99999;
         for(int i=0; i<mytree.num_jets; ++i){
             if(i==index_bjet) continue;//bypass bjet
@@ -611,7 +771,8 @@ int main(int argc, char *argv[]){
                 }
             }
         }//end of looping jets
-        //----- chi-2 modified -----//
+        //}}}
+        // chi-2 modified {{{
         chi2_min = 99999;
         for(int i=0; i<mytree.num_jets; ++i){
             if(i==index_bjet) continue;//bypass bjet
@@ -633,16 +794,17 @@ int main(int argc, char *argv[]){
                 }
             }
         }//end of looping jets
-        //### }}}
-        //### GenMatching{{{
+        //}}}
+        // }}}
+        // GenMatching{{{
         //----- MC truth -----//
         //========================================//
         //-----  Start GenMatching for Jets  -----//
         //========================================//
-        //### GenMatching: find the gen particle (MC truth) for each jet (reconstructed). 
-        //### pdgID: (1, 2, 3, 4, 5, 6) = (d, u, s, c, b, t)
-        //### This is the simplest version. Identify the corresponding gen particle by selecting smallest deltaR(gen, jet).
-        //### One can try to print out the info of pt, eta, phi, energy, and deltaR of jet and corresponding gen particle to see if they are matched.
+        // GenMatching: find the gen particle (MC truth) for each jet (reconstructed). 
+        // pdgID: (1, 2, 3, 4, 5, 6) = (d, u, s, c, b, t)
+        // This is the simplest version. Identify the corresponding gen particle by selecting smallest deltaR(gen, jet).
+        // One can try to print out the info of pt, eta, phi, energy, and deltaR of jet and corresponding gen particle to see if they are matched.
         std::vector<int> index_GenParticles;
         int id_genParticle_bjet=-999;
         int id_genParticle_jet_chi2_simple[2]; std::fill_n(id_genParticle_jet_chi2_simple, 2, -999);
@@ -666,8 +828,8 @@ int main(int argc, char *argv[]){
         genParticle_jet_chi2_modified[0] = GetGenParticle(jet_chi2_modified[0], treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_genParticle_jet_chi2_modified[0]);
         //---
         genParticle_jet_chi2_modified[1] = GetGenParticle(jet_chi2_modified[1], treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_genParticle_jet_chi2_modified[1]);
-        //### }}}
-        //### Reconstruct Mass (M2){{{
+        // }}}
+        // Reconstruct Mass (M2){{{
         //----- reco -----//
         TLorentzVector w_candidate_chi2_simple = jet_chi2_simple[0] + jet_chi2_simple[1];
         TLorentzVector top_candidate_chi2_simple = w_candidate_chi2_simple + bjet;
@@ -705,7 +867,7 @@ int main(int argc, char *argv[]){
             }
         }
 
-        isMatched_tbw_simple = isMatched_with_Gen_tbw(treeReader.GenPartInfo_MomPdgID, index_GenParticles[0], index_GenParticles[1], index_GenParticles[2] );//bjet, jet12(simple)
+        isMatched_tbw_simple = isMatched_with_Gen_tbw(treeReader.GenPartInfo_PdgID, treeReader.GenPartInfo_MomPdgID, index_GenParticles[0], index_GenParticles[1], index_GenParticles[2] );//bjet, jet12(simple)
         if( isMatched_tbw_simple ){
             mytree.Mass_gen_w_candidate_chi2_simple = gen_w_candidate_chi2_simple.M();
             mytree.Mass_gen_top_candidate_chi2_simple = gen_top_candidate_chi2_simple.M();
@@ -728,7 +890,7 @@ int main(int argc, char *argv[]){
         hist_mass_gen_w_candidate_chi2_modified->Fill(gen_w_candidate_chi2_modified.M());
         hist_mass_gen_top_candidate_chi2_modified->Fill(gen_top_candidate_chi2_modified.M());
 
-        isMatched_tbw_modified = isMatched_with_Gen_tbw(treeReader.GenPartInfo_MomPdgID, index_GenParticles[0], index_GenParticles[3], index_GenParticles[4] );//bjet, jet12(modified)
+        isMatched_tbw_modified = isMatched_with_Gen_tbw(treeReader.GenPartInfo_PdgID, treeReader.GenPartInfo_MomPdgID, index_GenParticles[0], index_GenParticles[3], index_GenParticles[4] );//bjet, jet12(modified)
         if( isMatched_tbw_modified ){
             mytree.Mass_gen_w_candidate_chi2_modified = gen_w_candidate_chi2_modified.M();
             mytree.Mass_gen_top_candidate_chi2_modified = gen_top_candidate_chi2_modified.M();
@@ -736,42 +898,27 @@ int main(int argc, char *argv[]){
             hist_mass_conditioned_gen_top_candidate_chi2_modified->Fill(gen_top_candidate_chi2_modified.M());
         }
         //--------------------
-        //### }}}
-//        // check gen of rest jets{{{
-//        for(int i=0; i<mytree.num_jets; ++i){
-//            if(i==index_bjet || i==index_jet_chi2_simple[0] || i==index_jet_chi2_simple[1]) continue;//skip the jets for bjj
-//            kinematics_info("jet", Jets[i]);
-//            print_matched_gen_info(Jets[i], treeReader.GenPartInfo_size,\
-//                                   treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
-//                                   treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
-//        }
-//        //}}}
-        //### Reconstruct Mass (M1){{{
-        int index_q = -999;
+        // }}}
+        // Reconstruct Mass (M1){{{
         double M1_simple = -999;
         double M1_modified = -999;
-        TLorentzVector top_fcnh, jet_q;
+        TLorentzVector top_fcnh, jet_q_simple, jet_q_modified;
 
         //--- simple chi2 ---//
-        top_fcnh = GetBestM1(M1_simple, mytree.num_jets, index_bjet, index_jet_chi2_simple, diphoton, Jets, index_q, jet_q);
+        top_fcnh = GetBestM1(M1_simple, mytree.num_jets, index_bjet, index_jet_chi2_simple, diphoton, Jets, index_q_simple, jet_q_simple);
         if(M1_simple != -999 && M1_simple<20) check_M1_20+=1;
-        if(M1_simple != -999){
-            hist_mass_top_fcnh_simple->Fill(M1_simple);
-            is_tqh_quark_simple = is_this_tqh_quark(jet_q, treeReader.GenPartInfo_size,\
-                                treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
-                                treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
-            //if(is_tqh_quark_simple) accuracy_tqh_chi2_simple += 1;
-        }
+        hist_mass_top_fcnh_simple->Fill(M1_simple);
+        is_tqh_quark_simple = is_this_tqh_quark(jet_q_simple, treeReader.GenPartInfo_size,\
+                          treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
+                          treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
         
         //--- modified chi2 ---//
-        top_fcnh = GetBestM1(M1_modified, mytree.num_jets, index_bjet, index_jet_chi2_modified, diphoton, Jets, index_q, jet_q);
-        if(M1_modified != -999){
-            hist_mass_top_fcnh_modified->Fill(M1_modified);
-            is_tqh_quark_modified = is_this_tqh_quark(jet_q, treeReader.GenPartInfo_size,\
-                                treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
-                                treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
-            //if(is_tqh_quark_modified) accuracy_tqh_chi2_modified += 1;
-        }
+        top_fcnh = GetBestM1(M1_modified, mytree.num_jets, index_bjet, index_jet_chi2_modified, diphoton, Jets, index_q_modified, jet_q_modified);
+        hist_mass_top_fcnh_modified->Fill(M1_modified);
+        is_tqh_quark_modified = is_this_tqh_quark(jet_q_modified, treeReader.GenPartInfo_size,\
+                            treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
+                            treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
+
 
         // old code{{{
         ////record all the possible combinations
@@ -791,8 +938,8 @@ int main(int argc, char *argv[]){
         //if(index_min_M1 == -999) continue;
         //hist_mass_top_fcnh->Fill(top_fcnh_candidates[index_min_M1].M());
         //if(top_fcnh_candidates[index_min_M1].M()<20) check_M1_20+=1;
-        ////### Debug section
-        ////### Conclusion: index_min_M1 remaining -999 indicates that no suitable M1 candidate left.
+        //// Debug section
+        //// Conclusion: index_min_M1 remaining -999 indicates that no suitable M1 candidate left.
         ////if(top_fcnh_candidates[index_min_M1].M()<20){
         ////    check_M1_20+=1;
         ////    printf("\n[Check] ientry = %d\n", ientry);
@@ -815,33 +962,30 @@ int main(int argc, char *argv[]){
         ////};
         //}}}
         //}}}
-        //### Yueh-Feng's method{{{
-        //Quick check{{{
-        //printf("ientry=%d\n", ientry);
-        //printf("index_bjet=%d\n", index_bjet);
-        //for(int i=0; i<mytree.num_jets; ++i){
-        //    kinematics_info(Form("jet-%d",i), Jets[i]);
-        //}
         //}}}
+        //### Yueh-Feng's method{{{
         // combinations from leading jets{{{
+        std::vector<int> index_leading_jets(3);// store the correct indices in meta-indices
         std::vector<TLorentzVector> leading_jets(3);
+        // use meta-indices to store the leading-jets info
         if(index_bjet == 0){
-            leading_jets[0] = Jets[1];
-            leading_jets[1] = Jets[2];
-            leading_jets[2] = Jets[3];
+            leading_jets[0] = Jets[1]; index_leading_jets[0] = 1;
+            leading_jets[1] = Jets[2]; index_leading_jets[1] = 2;
+            leading_jets[2] = Jets[3]; index_leading_jets[2] = 3;
         } else if(index_bjet == 1){
-            leading_jets[0] = Jets[0];
-            leading_jets[1] = Jets[2];
-            leading_jets[2] = Jets[3];
+            leading_jets[0] = Jets[0]; index_leading_jets[0] = 0;
+            leading_jets[1] = Jets[2]; index_leading_jets[1] = 2;
+            leading_jets[2] = Jets[3]; index_leading_jets[2] = 3;
         } else if(index_bjet == 2){
-            leading_jets[0] = Jets[0];
-            leading_jets[1] = Jets[1];
-            leading_jets[2] = Jets[3];
+            leading_jets[0] = Jets[0]; index_leading_jets[0] = 0;
+            leading_jets[1] = Jets[1]; index_leading_jets[1] = 1;
+            leading_jets[2] = Jets[3]; index_leading_jets[2] = 3;
         } else{
-            leading_jets[0] = Jets[0];
-            leading_jets[1] = Jets[1];
-            leading_jets[2] = Jets[2];
+            leading_jets[0] = Jets[0]; index_leading_jets[0] = 0;
+            leading_jets[1] = Jets[1]; index_leading_jets[1] = 1;
+            leading_jets[2] = Jets[2]; index_leading_jets[2] = 2;
         }
+        // the meta-index of the jet from tqh coupling is tracked
         std::vector<TLorentzVector> ggj(3);
         std::vector<TLorentzVector> wjj(3);
         std::vector<TLorentzVector> bjj(3);
@@ -869,7 +1013,7 @@ int main(int argc, char *argv[]){
         }
 
         int minimum_index = -999;
-        double minimum_mass_ratio = 999;
+        double minimum_mass_ratio = 9999;
         for(int i=0; i<3; ++i){
             if(M1M2_criteria[i]<minimum_mass_ratio){
                 minimum_mass_ratio = M1M2_criteria[i];
@@ -881,19 +1025,24 @@ int main(int argc, char *argv[]){
         hist_mass_t1_candidate_yfyj->Fill(invm_ggj[minimum_index]);
         hist_mass_t2_candidate_yfyj->Fill(invm_bjj[minimum_index]);
         //}}}
-        //Gen-Matching{{{
-        int id_genParticles[2]; std::fill_n(id_genParticles, 2, -999);
-        std::vector<TLorentzVector> leading_jets_genParticles(2);
-
-        if(minimum_index == 0){
-            leading_jets_genParticles[0] = GetGenParticle(leading_jets[1], treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_genParticles[0]);
-            leading_jets_genParticles[1] = GetGenParticle(leading_jets[2], treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_genParticles[1]);
-        } else if(minimum_index == 1){
-            leading_jets_genParticles[0] = GetGenParticle(leading_jets[0], treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_genParticles[0]);
-            leading_jets_genParticles[1] = GetGenParticle(leading_jets[2], treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_genParticles[1]);
-        } else{
-            leading_jets_genParticles[0] = GetGenParticle(leading_jets[0], treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_genParticles[0]);
-            leading_jets_genParticles[1] = GetGenParticle(leading_jets[1], treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_genParticles[1]);
+        // decode the meta-indices{{{
+        int index_q_yfyj = -999;
+        std::vector<int> index_jet_yfyj(2, -999);
+        // decode the meta-indices to correct indices of jets
+        if     (minimum_index == 0) {
+            index_q_yfyj = index_leading_jets[0];
+            index_jet_yfyj[0] = index_leading_jets[1];
+            index_jet_yfyj[1] = index_leading_jets[2];
+        }
+        else if(minimum_index == 1) {
+            index_q_yfyj = index_leading_jets[1];
+            index_jet_yfyj[0] = index_leading_jets[0];
+            index_jet_yfyj[1] = index_leading_jets[2];
+        }
+        else                        {
+            index_q_yfyj = index_leading_jets[2];
+            index_jet_yfyj[0] = index_leading_jets[0];
+            index_jet_yfyj[1] = index_leading_jets[1];
         }
         //}}}
         //Estimate accuracy{{{
@@ -901,12 +1050,17 @@ int main(int argc, char *argv[]){
         //1. reject candidate with id_genParticle = -999 (soft jet, not from hard process)
         //2. reject candidate with id_genParticle_jet == 5 (w_boson cannot decay to b jet)
         //3. reject candidate with 2 jets having same genParticle
+        int id_gen_wjets_yfyj[2];
+        TLorentzVector leading_jets_genParticles[2];
+        leading_jets_genParticles[0] = GetGenParticle(Jets[index_jet_yfyj[0]], treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_gen_wjets_yfyj[0]);
+        leading_jets_genParticles[1] = GetGenParticle(Jets[index_jet_yfyj[1]], treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_gen_wjets_yfyj[1]);
+
         TLorentzVector gen_w_candidate_yfyj = leading_jets_genParticles[0] + leading_jets_genParticles[1];
         TLorentzVector gen_top_candidate_yfyj = gen_w_candidate_yfyj + genParticle_bjet;
         hist_mass_gen_w_candidate_yfyj->Fill(gen_w_candidate_yfyj.M());
         hist_mass_gen_t2_candidate_yfyj->Fill(gen_top_candidate_yfyj.M());
 
-        isMatched = isMatched_with_Gen_tbw(treeReader.GenPartInfo_MomPdgID, index_GenParticles[0], index_GenParticles[5], index_GenParticles[6] );//bjet, jet12(yfyj)
+        isMatched = isMatched_with_Gen_tbw(treeReader.GenPartInfo_PdgID, treeReader.GenPartInfo_MomPdgID, index_GenParticles[0], index_GenParticles[5], index_GenParticles[6] );//bjet, jet12(yfyj)
         if( isMatched ){
             hist_mass_conditioned_gen_w_candidate_yfyj->Fill(gen_w_candidate_yfyj.M());
             hist_mass_conditioned_gen_t2_candidate_yfyj->Fill(gen_top_candidate_yfyj.M());
@@ -918,26 +1072,11 @@ int main(int argc, char *argv[]){
 
         //}}}
         //}}}
-
-        //# Accuracy counting
-        if( isMatched_tbw_simple ) accuracy_tbw_chi2_simple += 1;
-        if( isMatched_tbw_modified ) accuracy_tbw_chi2_modified += 1;
-        if( is_tqh_quark_simple ) accuracy_tqh_chi2_simple += 1;
-        if( is_tqh_quark_modified ) accuracy_tqh_chi2_modified += 1;
-
-        if(isMatched_tbw_simple && is_tqh_quark_simple) accuracy_chi2_simple += 1.;
-        if(isMatched_tbw_modified && is_tqh_quark_modified) accuracy_chi2_modified += 1.;
-        //if(M1_simple!=-999 && isMatched_tbw_simple && is_tqh_quark_simple) accuracy_chi2_simple += 1.;
-        //if(M1_modified!=-999 && isMatched_tbw_modified && is_tqh_quark_modified) accuracy_chi2_modified += 1.;
-
-        if( isMatched )  accuracy_tbw_yfyj += 1;
-        if(is_tqh_quark) accuracy_tqh_yfyj += 1;
-        if(isMatched && is_tqh_quark) accuracy_yfyj += 1;
-
         //### Improved chi-2 method{{{
         // 1. pick up 3 jets
         // 2. q-jj three combinations 
-        int index_wjets[2], index_tqh_qjet;
+        std::vector<int> index_wjets(2);
+        int index_tqh_qjet;
         TLorentzVector wjets[2], tqh_qjet;
         TLorentzVector w_boson, sm_top, fcnc_top; 
         chi2_min = 99999;
@@ -1029,7 +1168,7 @@ int main(int argc, char *argv[]){
         gen_wjets[1] = GetGenParticle(wjets[1], treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_gen_wjets[1]);
         gen_tqh_qjet = GetGenParticle(tqh_qjet, treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID, index_GenParticles, id_gen_qjet);
         //---
-        isMatched_tbw_improved = isMatched_with_Gen_tbw(treeReader.GenPartInfo_MomPdgID, index_GenParticles[0], index_GenParticles[7], index_GenParticles[8] );
+        isMatched_tbw_improved = isMatched_with_Gen_tbw(treeReader.GenPartInfo_PdgID, treeReader.GenPartInfo_MomPdgID, index_GenParticles[0], index_GenParticles[7], index_GenParticles[8] );
         is_tqh_quark_improved = is_this_tqh_quark(tqh_qjet, treeReader.GenPartInfo_size,\
                             treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
                             treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
@@ -1043,30 +1182,151 @@ int main(int argc, char *argv[]){
         //printf("[Check-imp] jets index = %d, %d, %d\n", index_wjets[0], index_wjets[1], index_tqh_qjet);
 
         //}}}
+        //}}}
+        // Evaluation{{{
+        //### print indices (skipped){{{
+        /*
+        if(sigCanBeReconstructed){
+            int _index_0 = jetIndex_momPdgID_is_wboson[0];
+            int _index_1 = jetIndex_momPdgID_is_wboson[1];
+            printf("[INFO] indices (q, b, j, j) correct  = %2d, %2d, %2d, %2d\n", jetIndex_is_quarkFromFCNtop, jetIndex_is_bquarkFromSMtop, _index_0, _index_1);
+            printf("[INFO] indices (q, b, j, j) yfyj     = %2d, %2d, %2d, %2d\n", index_q_yfyj, index_bjet, index_jet_yfyj[0], index_jet_yfyj[1]);
+            printf("[INFO] indices (q, b, j, j) simple   = %2d, %2d, %2d, %2d\n", index_q_simple, index_bjet, index_jet_chi2_simple[0], index_jet_chi2_simple[1]);
+            printf("[INFO] indices (q, b, j, j) modified = %2d, %2d, %2d, %2d\n", index_q_modified, index_bjet, index_jet_chi2_modified[0], index_jet_chi2_modified[1]);
+            printf("[INFO] indices (q, b, j, j) improved = %2d, %2d, %2d, %2d\n", index_tqh_qjet, index_bjet, index_wjets[0], index_wjets[1]);
+        }
+        */
+        //}}}
+        //### check if indices match
+        bool tbwIsCorrectlyMatched;
+        if(tbwCanBeReconstructed){
+            //bool are_From_W_boson = (  ((index_jet_chi2_modified[0] == jetIndex_momPdgID_is_wboson[0]) && (index_jet_chi2_modified[1] == jetIndex_momPdgID_is_wboson[1]))\
+            //                        || ((index_jet_chi2_modified[0] == jetIndex_momPdgID_is_wboson[1]) && (index_jet_chi2_modified[1] == jetIndex_momPdgID_is_wboson[0])) );
+            //bool tbwIsCorrectlyMatched = (index_bjet == jetIndex_is_bquarkFromSMtop) && are_From_W_boson;
+            tbwIsCorrectlyMatched = check_tbwIsCorrectlyMatched(index_jet_yfyj, jetIndex_momPdgID_is_wboson, index_bjet, jetIndex_is_bquarkFromSMtop);
+            if(tbwIsCorrectlyMatched) counter_tbwIsCorrectlyMatched_yfyj += 1;
+            tbwIsCorrectlyMatched = check_tbwIsCorrectlyMatched(index_jet_chi2_simple, jetIndex_momPdgID_is_wboson, index_bjet, jetIndex_is_bquarkFromSMtop);
+            if(tbwIsCorrectlyMatched) counter_tbwIsCorrectlyMatched_simple += 1;
+            tbwIsCorrectlyMatched = check_tbwIsCorrectlyMatched(index_jet_chi2_modified, jetIndex_momPdgID_is_wboson, index_bjet, jetIndex_is_bquarkFromSMtop);
+            if(tbwIsCorrectlyMatched) counter_tbwIsCorrectlyMatched_modified += 1;
+            tbwIsCorrectlyMatched = check_tbwIsCorrectlyMatched(index_wjets, jetIndex_momPdgID_is_wboson, index_bjet, jetIndex_is_bquarkFromSMtop);
+            if(tbwIsCorrectlyMatched) counter_tbwIsCorrectlyMatched_improved += 1;
+        }
+
+        bool tqhIsCorrectlyMatched;
+        if(tqhCanBeReconstructed){
+            //bool tqhIsCorrectlyMatched = (index_qjet == jetIndex_is_quarkFromFCNtop);
+            tqhIsCorrectlyMatched = check_tqhIsCorrectlyMatched(index_q_yfyj, jetIndex_is_quarkFromFCNtop);
+            if(tqhIsCorrectlyMatched) counter_tqhIsCorrectlyMatched_yfyj += 1;
+            tqhIsCorrectlyMatched = check_tqhIsCorrectlyMatched(index_q_simple, jetIndex_is_quarkFromFCNtop);
+            if(tqhIsCorrectlyMatched) counter_tqhIsCorrectlyMatched_simple += 1;
+            tqhIsCorrectlyMatched = check_tqhIsCorrectlyMatched(index_q_modified, jetIndex_is_quarkFromFCNtop);
+            if(tqhIsCorrectlyMatched) counter_tqhIsCorrectlyMatched_modified += 1;
+            tqhIsCorrectlyMatched = check_tqhIsCorrectlyMatched(index_tqh_qjet, jetIndex_is_quarkFromFCNtop);
+            if(tqhIsCorrectlyMatched) counter_tqhIsCorrectlyMatched_improved += 1;
+        }
+
+        bool sigIsCorrectlyReco;
+        if(tbwCanBeReconstructed && tqhCanBeReconstructed){
+            tbwIsCorrectlyMatched = check_tbwIsCorrectlyMatched(index_jet_yfyj, jetIndex_momPdgID_is_wboson, index_bjet, jetIndex_is_bquarkFromSMtop);
+            tqhIsCorrectlyMatched = check_tqhIsCorrectlyMatched(index_q_yfyj, jetIndex_is_quarkFromFCNtop);
+            sigIsCorrectlyReco = tbwIsCorrectlyMatched && tqhIsCorrectlyMatched;
+            if(sigIsCorrectlyReco) counter_sigIsCorrectlyReco_yfyj += 1;
+
+            tbwIsCorrectlyMatched = check_tbwIsCorrectlyMatched(index_jet_chi2_simple, jetIndex_momPdgID_is_wboson, index_bjet, jetIndex_is_bquarkFromSMtop);
+            tqhIsCorrectlyMatched = check_tqhIsCorrectlyMatched(index_q_simple, jetIndex_is_quarkFromFCNtop);
+            sigIsCorrectlyReco = tbwIsCorrectlyMatched && tqhIsCorrectlyMatched;
+            if(sigIsCorrectlyReco) counter_sigIsCorrectlyReco_simple += 1;
+
+            tbwIsCorrectlyMatched = check_tbwIsCorrectlyMatched(index_jet_chi2_modified, jetIndex_momPdgID_is_wboson, index_bjet, jetIndex_is_bquarkFromSMtop);
+            tqhIsCorrectlyMatched = check_tqhIsCorrectlyMatched(index_q_modified, jetIndex_is_quarkFromFCNtop);
+            sigIsCorrectlyReco = tbwIsCorrectlyMatched && tqhIsCorrectlyMatched;
+            if(sigIsCorrectlyReco) counter_sigIsCorrectlyReco_modified += 1;
+
+            tbwIsCorrectlyMatched = check_tbwIsCorrectlyMatched(index_wjets, jetIndex_momPdgID_is_wboson, index_bjet, jetIndex_is_bquarkFromSMtop);
+            tqhIsCorrectlyMatched = check_tqhIsCorrectlyMatched(index_tqh_qjet, jetIndex_is_quarkFromFCNtop);
+            sigIsCorrectlyReco = tbwIsCorrectlyMatched && tqhIsCorrectlyMatched;
+            if(sigIsCorrectlyReco) counter_sigIsCorrectlyReco_improved += 1;
+        }
+        //}}}
+
+        //# Details of selected quark from tqh{{{
+        /*
+        printf("--------------------------------------------------\n");
+        printf("[debug-tqh] index (true, sim, mod) = (%d, %d, %d) \n", jetIndex_is_quarkFromFCNtop, index_q_simple, index_q_modified);
+        printf("--------------------------------------------------\n");
+        printf("[check] tqh kinematics\n");
+        printf("[sim] ");
+        kinematics_info("", jet_q_simple, index_q_simple);
+        printf("[mod] ");
+        kinematics_info("", jet_q_modified, index_q_modified);
+        printf("[yjy] ");
+        kinematics_info("", leading_jets[minimum_index], index_q_yfyj);
+        printf("[imp] ");
+        kinematics_info("", tqh_qjet, index_tqh_qjet);
+        printf("--------------------------------------------------\n");
+        */
+        //}}}
+
+        //tbwIsCorrectlyMatched = check_tbwIsCorrectlyMatched(index_jet_yfyj, jetIndex_momPdgID_is_wboson, index_bjet, jetIndex_is_bquarkFromSMtop);
+        //tqhIsCorrectlyMatched = check_tqhIsCorrectlyMatched(index_q_yfyj, jetIndex_is_quarkFromFCNtop);
+        tqhIsCorrectlyMatched = check_tqhIsCorrectlyMatched(index_q_simple, jetIndex_is_quarkFromFCNtop);
+        //### print indices{{{
+        //check tbw yfyj
+        if( is_tqh_quark_simple &&  tqhIsCorrectlyMatched) counter_intersection += 1;
+        if( is_tqh_quark_simple && !tqhIsCorrectlyMatched) counter_M_notC += 1;
+        if(!is_tqh_quark_simple &&  tqhIsCorrectlyMatched) counter_notM_C += 1;
+        if(!is_tqh_quark_simple && !tqhIsCorrectlyMatched) counter_notM_notC += 1;
+
+        if(is_tqh_quark_simple && !tqhIsCorrectlyMatched){
+            //if( w_quark_is_matched_twice ) counter_mismatched += 1;
+            counter_mismatched += 1;
+            printf("\nientry = %d/%d\n", ientry+1, nentries+1);
+            printf("[CHECK-debug] counter_is_bquarkFromSMtop = %d\n", counter_is_bquarkFromSMtop);
+            printf("[CHECK-debug] num_jets = %d\n", mytree.num_jets);
+            for(int i=0; i<mytree.num_jets; ++i){
+                int index_gen, Matched_PdgID, Matched_MomPdgID;
+                kinematics_info("jet", Jets[i], i);
+                obtain_gen_matched_ID(true, Jets[i], index_gen, Matched_PdgID, Matched_MomPdgID, treeReader.GenPartInfo_size,\
+                                       treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
+                                       treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
+            }
+            int _index_0 = jetIndex_momPdgID_is_wboson[0];
+            int _index_1 = jetIndex_momPdgID_is_wboson[1];
+            printf("[INFO] indices (q, b, j, j) correct  = %2d, %2d, %2d, %2d\n", jetIndex_is_quarkFromFCNtop, jetIndex_is_bquarkFromSMtop, _index_0, _index_1);
+            printf("[INFO] indices (q, b, j, j) yfyj     = %2d, %2d, %2d, %2d\n", index_q_yfyj, index_bjet, index_jet_yfyj[0], index_jet_yfyj[1]);
+            printf("[INFO] indices (q, b, j, j) simple   = %2d, %2d, %2d, %2d\n", index_q_simple, index_bjet, index_jet_chi2_simple[0], index_jet_chi2_simple[1]);
+            printf("[INFO] indices (q, b, j, j) modified = %2d, %2d, %2d, %2d\n", index_q_modified, index_bjet, index_jet_chi2_modified[0], index_jet_chi2_modified[1]);
+            printf("[INFO] indices (q, b, j, j) improved = %2d, %2d, %2d, %2d\n", index_tqh_qjet, index_bjet, index_wjets[0], index_wjets[1]);
+            printf("[check] chosen correct index of bjet: %d (counter = %d)\n", jetIndex_is_bquarkFromSMtop, counter_is_bquarkFromSMtop);
+            printf("[check]");
+            printf("(%d) deltaR = %5.3f, " , jetIndex_is_bquarkFromSMtop_moreThanOne[0], deltaR_jet_bquark[0]);
+            printf("(%d) deltaR = %5.3f\n", jetIndex_is_bquarkFromSMtop_moreThanOne[1], deltaR_jet_bquark[1]);
+        }
+        //}}}
+
+
+        //# Accuracy counting{{{
+        if( isMatched_tbw_simple ) accuracy_tbw_chi2_simple += 1;
+        if( isMatched_tbw_modified ) accuracy_tbw_chi2_modified += 1;
+        if( is_tqh_quark_simple ) accuracy_tqh_chi2_simple += 1;
+        if( is_tqh_quark_modified ) accuracy_tqh_chi2_modified += 1;
+
+        if(isMatched_tbw_simple && is_tqh_quark_simple) accuracy_chi2_simple += 1.;
+        if(isMatched_tbw_modified && is_tqh_quark_modified) accuracy_chi2_modified += 1.;
+        //if(M1_simple!=-999 && isMatched_tbw_simple && is_tqh_quark_simple) accuracy_chi2_simple += 1.;
+        //if(M1_modified!=-999 && isMatched_tbw_modified && is_tqh_quark_modified) accuracy_chi2_modified += 1.;
+
+        if( isMatched )  accuracy_tbw_yfyj += 1;
+        if(is_tqh_quark) accuracy_tqh_yfyj += 1;
+        if(isMatched && is_tqh_quark) accuracy_yfyj += 1;
+
         if(isMatched_tbw_improved) accuracy_tbw_chi2_improved += 1;
         if(is_tqh_quark_improved) accuracy_tqh_chi2_improved += 1;
         if(isFinalMatched) accuracy_chi2_improved += 1;
-
-        //### Store EventInfo{{{
-        //================================================//
-        //-----------   Store EventPar Info    -----------//
-        //================================================//
-        mytree.EvtInfo_NPu = treeReader.EvtInfo_NPu;
-        mytree.EvtInfo_Rho = treeReader.EvtInfo_Rho;
-        mytree.EvtInfo_NVtx = treeReader.EvtInfo_NVtx;
-        mytree.EvtInfo_genweight = treeReader.EvtInfo_genweight;
         //}}}
-        //### Event Counting{{{
-        //==================================================//
-        //-------------   Event Counting     ---------------//
-        //==================================================//
-        Nevents_pass_selection += 1;
-        mytree.Fill();
-        if(ientry == nentries - 1) printf("[CHECK-1] Nevents_pass_selection = %d\n", Nevents_pass_selection);
-        //}}}
-        //}}}
+        // Check GenInfo (skipped){{{
         /*
-        // Check GenInfo{{{
         //if(num_bquark>1){
         printf("\n");
         printf("[GenCheck] GenPartInfo_size = %d\n", treeReader.GenPartInfo_size);
@@ -1095,8 +1355,10 @@ int main(int argc, char *argv[]){
             }
         }
         //}
+        */
         //}}}
-        //# LEPTONIC Channel{{{
+        //# LEPTONIC Channel (skipped){{{
+        /*
         // geninfo{{{
         TLorentzVector chargedLepton, neutrino, wboson, bquark, topquark;
         for(int i=0; i<treeReader.GenPartInfo_size; i++){
@@ -1432,15 +1694,72 @@ int main(int argc, char *argv[]){
 
         //}}}
         hist_gen_neutrino_pz->Fill(neutrino.Pz());
-        //}}}
         */
+        //}}}
+        //### Store EventInfo{{{
+        //================================================//
+        //-----------   Store EventPar Info    -----------//
+        //================================================//
+        mytree.EvtInfo_NPu = treeReader.EvtInfo_NPu;
+        mytree.EvtInfo_Rho = treeReader.EvtInfo_Rho;
+        mytree.EvtInfo_NVtx = treeReader.EvtInfo_NVtx;
+        mytree.EvtInfo_genweight = treeReader.EvtInfo_genweight;
+        //}}}
+        //### Event Counting{{{
+        //==================================================//
+        //-------------   Event Counting     ---------------//
+        //==================================================//
+        Nevents_pass_selection += 1;
+        mytree.Fill();
+        //}}}
     }// End of event loop.
     //==================================================//
     //---------------------  Report  -------------------//
     //==================================================//
+    // top correct rate{{{
+    printf("--------------------------------------------------\n");
+    printf("[INFO] Nevents_pass_selection = %d / %d (%6.2f%%)\n", Nevents_pass_selection, nentries, 100 * (double)Nevents_pass_selection / (double)nentries);
+    printf("--------------------------------------------------\n");
+    printf("[INFO] Nevents_tbwCanBeReconstructed = %d / %d (%6.2f%%)\n\n", counter_selectedJets_tbwCanBeReconstructed, Nevents_pass_selection, 100 * (double)counter_selectedJets_tbwCanBeReconstructed / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_tbwIsCorrectlyMatched_yfyj = %d / %d (%6.2f%%)\n", counter_tbwIsCorrectlyMatched_yfyj, Nevents_pass_selection, 100 * (double)counter_tbwIsCorrectlyMatched_yfyj / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_tbwIsCorrectlyMatched_simple = %d / %d (%6.2f%%)\n", counter_tbwIsCorrectlyMatched_simple, Nevents_pass_selection, 100 * (double)counter_tbwIsCorrectlyMatched_simple / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_tbwIsCorrectlyMatched_modified = %d / %d (%6.2f%%)\n", counter_tbwIsCorrectlyMatched_modified, Nevents_pass_selection, 100 * (double)counter_tbwIsCorrectlyMatched_modified / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_tbwIsCorrectlyMatched_improved = %d / %d (%6.2f%%)\n", counter_tbwIsCorrectlyMatched_improved, Nevents_pass_selection, 100 * (double)counter_tbwIsCorrectlyMatched_improved / (double)Nevents_pass_selection);
+    printf("--------------------------------------------------\n");
+    printf("[INFO] Nevents_tqhCanBeReconstructed = %d / %d (%6.2f%%)\n\n", counter_selectedJets_tqhCanBeReconstructed, Nevents_pass_selection, 100 * (double)counter_selectedJets_tqhCanBeReconstructed / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_tqhIsCorrectlyMatched_yfyj = %d / %d (%6.2f%%)\n", counter_tqhIsCorrectlyMatched_yfyj, Nevents_pass_selection, 100 * (double)counter_tqhIsCorrectlyMatched_yfyj / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_tqhIsCorrectlyMatched_simple = %d / %d (%6.2f%%)\n", counter_tqhIsCorrectlyMatched_simple, Nevents_pass_selection, 100 * (double)counter_tqhIsCorrectlyMatched_simple / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_tqhIsCorrectlyMatched_modified = %d / %d (%6.2f%%)\n", counter_tqhIsCorrectlyMatched_modified, Nevents_pass_selection, 100 * (double)counter_tqhIsCorrectlyMatched_modified / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_tqhIsCorrectlyMatched_improved = %d / %d (%6.2f%%)\n", counter_tqhIsCorrectlyMatched_improved, Nevents_pass_selection, 100 * (double)counter_tqhIsCorrectlyMatched_improved / (double)Nevents_pass_selection);
+    printf("--------------------------------------------------\n");
+    printf("[INFO] Nevents_sigCanBeReconstructed = %d / %d (%6.2f%%)\n\n", counter_selectedJets_sigCanBeReconstructed, Nevents_pass_selection, 100 * (double)counter_selectedJets_sigCanBeReconstructed / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_sigIsCorrectlyReco_yfyj = %d / %d (%6.2f%%)\n", counter_sigIsCorrectlyReco_yfyj, Nevents_pass_selection, 100 * (double)counter_sigIsCorrectlyReco_yfyj / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_sigIsCorrectlyReco_simple = %d / %d (%6.2f%%)\n", counter_sigIsCorrectlyReco_simple, Nevents_pass_selection, 100 * (double)counter_sigIsCorrectlyReco_simple / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_sigIsCorrectlyReco_modified = %d / %d (%6.2f%%)\n", counter_sigIsCorrectlyReco_modified, Nevents_pass_selection, 100 * (double)counter_sigIsCorrectlyReco_modified / (double)Nevents_pass_selection);
+    printf("[INFO] Nevents_sigIsCorrectlyReco_improved = %d / %d (%6.2f%%)\n", counter_sigIsCorrectlyReco_improved, Nevents_pass_selection, 100 * (double)counter_sigIsCorrectlyReco_improved / (double)Nevents_pass_selection);
+    //}}}
+    // Analyze value with Venn diagram{{{
+    printf("--------------------------------------------------\n");
+    printf("[INFO] counter_mismatched = %d / %d (%6.2f%%)\n", counter_mismatched, Nevents_pass_selection, 100 * (double)counter_mismatched / (double)Nevents_pass_selection);
+    printf("[INFO] counter_intersection = %d / %d (%6.2f%%)\n", counter_intersection, Nevents_pass_selection, 100 * (double)counter_intersection / (double)Nevents_pass_selection);
+    printf("[INFO] counter_M_notC = %d / %d (%6.2f%%)\n", counter_M_notC, Nevents_pass_selection, 100 * (double)counter_M_notC / (double)Nevents_pass_selection);
+    printf("[INFO] counter_notM_C = %d / %d (%6.2f%%)\n", counter_notM_C, Nevents_pass_selection, 100 * (double)counter_notM_C / (double)Nevents_pass_selection);
+    printf("[INFO] counter_notM_notC = %d / %d (%6.2f%%)\n", counter_notM_notC, Nevents_pass_selection, 100 * (double)counter_notM_notC / (double)Nevents_pass_selection);
+    printf("--------------------------------------------------\n");
+    //}}}
+    // bjet correct rate (skipped){{{
+    /*
+    printf("[INFO] bin1 bin2 bin3; correcat rate in bin2; accuracy with exactly one particle cut\n");
+    hist_bin_fraction(hist_num_gen_bquark, "gen_bquark", hist_num_gen_bquark->GetBinContent(2));
+    hist_bin_fraction(hist_num_bjets_loose, "bjets_loose", count_bjet_is_bquark_loose);
+    hist_bin_fraction(hist_num_bjets_medium, "bjets_medium", count_bjet_is_bquark_medium);
+    hist_bin_fraction(hist_num_bjets_tight, "bjets_tight", count_bjet_is_bquark_tight);
+    double percentage_bjet_is_bquark = (double) count_bjet_is_bquark / (double) Nevents_pass_selection;
+    printf("[INFO] percentage_bjet_is_bquark = %f\n", percentage_bjet_is_bquark);
+    */
+    //}}}
+
     //# HADRONIC chi-2 Study{{{
-    //### performance: width, accuracy{{{
-    printf("[CHECK-2] Nevents_pass_selection = %d (%6.2f)\n", Nevents_pass_selection, 100 * (double)Nevents_pass_selection / (double)Nevents_pass_selection);
     // calculate accuracy{{{
     accuracy_chi2_simple /= (double) Nevents_pass_selection;
     accuracy_chi2_modified /= (double) Nevents_pass_selection;
@@ -1455,7 +1774,26 @@ int main(int argc, char *argv[]){
     accuracy_tqh_chi2_modified /= (double) Nevents_pass_selection;
     accuracy_tqh_chi2_improved /= (double) Nevents_pass_selection;
     //}}}
-    double percentage_bjet_is_bquark = (double) count_bjet_is_bquark / (double) Nevents_pass_selection;
+    // print accuracy{{{
+    printf("[INFO] accuracy_tbw_yfyj = %6.4f\n", accuracy_tbw_yfyj);
+    printf("[INFO] accuracy_tbw_chi2_simple = %6.4f\n", accuracy_tbw_chi2_simple);
+    printf("[INFO] accuracy_tbw_chi2_modified = %6.4f\n", accuracy_tbw_chi2_modified);
+    printf("[INFO] accuracy_tbw_chi2_improved = %6.4f\n", accuracy_tbw_chi2_improved);
+    printf("--------------------------------------------------\n");
+    printf("[INFO] accuracy_tqh_yfyj = %6.4f\n", accuracy_tqh_yfyj);
+    printf("[INFO] accuracy_tqh_chi2_simple = %6.4f\n", accuracy_tqh_chi2_simple);
+    printf("[INFO] accuracy_tqh_chi2_modified = %6.4f\n", accuracy_tqh_chi2_modified);
+    printf("[INFO] accuracy_tqh_chi2_improved = %6.4f\n", accuracy_tqh_chi2_improved);
+    printf("--------------------------------------------------\n");
+    printf("[INFO] accuracy_yfyj = %6.4f\n", accuracy_yfyj);
+    printf("[INFO] accuracy_chi2_simple = %6.4f\n", accuracy_chi2_simple);
+    printf("[INFO] accuracy_chi2_modified = %6.4f\n", accuracy_chi2_modified);
+    printf("[INFO] accuracy_chi2_improved = %6.4f\n", accuracy_chi2_improved);
+    printf("--------------------------------------------------\n");
+    //}}}
+    /*
+    //### performance: width, accuracy{{{
+    printf("[CHECK-2] Nevents_pass_selection = %d (%6.2f)\n", Nevents_pass_selection, 100 * (double)Nevents_pass_selection / (double)Nevents_pass_selection);
     int entries_bquark = hist_num_gen_bquark->GetEntries();
     printf("[CHECK] num_bquark = 1 (%6.3f%%)\n", 100*(double)check_num_bquak_is_one/(double)entries_bquark);
     printf("[CHECK] num_bquark = 2 (%6.3f%%)\n", 100*(double)check_num_bquak_is_two/(double)entries_bquark);
@@ -1464,22 +1802,8 @@ int main(int argc, char *argv[]){
     printf("[CHECK] gen id != -999:       %6d (%5.2f %%) (%5.2f %%)\n", check_gen_exclude_id_999, 100 * check_gen_exclude_id_999/(double)Nevents_pass_selection, 100 * (double)check_gen_exclude_id_999/(double)check_M20_simple);
     printf("[CHECK] exclude the same gen: %6d (%5.2f %%) (%5.2f %%)\n", check_gen_exclude_the_same, 100 * check_gen_exclude_the_same/(double)Nevents_pass_selection, 100 * (double)check_gen_exclude_the_same/(double)check_M20_simple);
     printf("[CHECK] M1 < 20: %d\n", check_M1_20);
-    printf("[INFO] percentage_bjet_is_bquark = %f\n", percentage_bjet_is_bquark);
-    printf("[INFO] accuracy_yfyj = %6.4f\n", accuracy_yfyj);
-    printf("[INFO] accuracy_chi2_simple = %6.4f\n", accuracy_chi2_simple);
-    printf("[INFO] accuracy_chi2_modified = %6.4f\n", accuracy_chi2_modified);
-    printf("[INFO] accuracy_chi2_improved = %6.4f\n", accuracy_chi2_improved);
-    printf("//--------------------//\n");
-    printf("[INFO] accuracy_tbw_yfyj = %6.4f\n", accuracy_tbw_yfyj);
-    printf("[INFO] accuracy_tbw_chi2_simple = %6.4f\n", accuracy_tbw_chi2_simple);
-    printf("[INFO] accuracy_tbw_chi2_modified = %6.4f\n", accuracy_tbw_chi2_modified);
-    printf("[INFO] accuracy_tbw_chi2_improved = %6.4f\n", accuracy_tbw_chi2_improved);
-    printf("//--------------------//\n");
-    printf("[INFO] accuracy_tqh_yfyj = %6.4f\n", accuracy_tqh_yfyj);
-    printf("[INFO] accuracy_tqh_chi2_simple = %6.4f\n", accuracy_tqh_chi2_simple);
-    printf("[INFO] accuracy_tqh_chi2_modified = %6.4f\n", accuracy_tqh_chi2_modified);
-    printf("[INFO] accuracy_tqh_chi2_improved = %6.4f\n", accuracy_tqh_chi2_improved);
-    printf("//--------------------//\n");
+    //}}}
+    //# mean, error of hists{{{
     hist_report(hist_mass_w_candidate_yfyj, "w yfyj");
     hist_report(hist_mass_w_candidate_chi2_simple, "w simple");
     hist_report(hist_mass_w_candidate_chi2_modified, "w modified");
@@ -1502,11 +1826,6 @@ int main(int argc, char *argv[]){
     hist_report(hist_mass_conditioned_gen_top_candidate_chi2_modified, "conditioned_gen top modified");
     printf("//--------------------//\n");
     //}}}
-    printf("[INFO-hist] bin1 bin2 bin3; correcat rate in bin2; accuracy with exactly one particle cut\n");
-    hist_bin_fraction(hist_num_gen_bquark, "gen_bquark", hist_num_gen_bquark->GetBinContent(2));
-    hist_bin_fraction(hist_num_bjets_loose, "bjets_loose", count_bjet_is_bquark_loose);
-    hist_bin_fraction(hist_num_bjets_medium, "bjets_medium", count_bjet_is_bquark_medium);
-    hist_bin_fraction(hist_num_bjets_tight, "bjets_tight", count_bjet_is_bquark_tight);
     //### Make plots{{{
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
     TLegend *legend_bjet = new TLegend(0.50,0.55,0.85,0.85);
@@ -1558,6 +1877,8 @@ int main(int argc, char *argv[]){
     //--------------------------------------------------
     hist_num_selected_jets -> Draw();
     c1->SaveAs("ntuples_skimmed/hist_num_selected_jets.png");
+    hist_num_gen_quarks -> Draw();
+    c1->SaveAs("ntuples_skimmed/hist_num_gen_quarks.png");
     hist_num_gen_light_quark -> Draw();
     c1->SaveAs("ntuples_skimmed/hist_num_gen_light_quark.png");
     hist_mass_diphoton -> Draw();
@@ -1575,9 +1896,11 @@ int main(int argc, char *argv[]){
     MakeFinalPlots(c1, hist_mass_top_fcnh_simple, hist_mass_top_fcnh_modified, hist_mass_t1_candidate_yfyj, legend, "chi2_study_top_fcnh.png");
     MakeFinalPlots(c1, hist_deltaR_W_genW_simple, hist_deltaR_W_genW_modified, hist_deltaR_W_genW_yfyj, legend, "chi2_study_deltaR_w_genw.png");
     //###}}}
+    */
     //}}}
+
+    //# LEPTONIC reco study (skipped){{{
     /*
-    //# LEPTONIC reco study{{{
     printf("[INFO] correlation factor all = %f\n", hist_reco_Pz_gen_Pz->GetCorrelationFactor());
     printf("[INFO] correlation factor all (topKinFit) = %f\n", hist_reco_Pz_gen_Pz_topKinFit->GetCorrelationFactor());
     printf("-----\n");
@@ -1806,8 +2129,8 @@ int main(int argc, char *argv[]){
     //TColor::InvertPalette();
     //hist_reco_Pz_gen_Pz -> Draw("COLZ")                  ; c1->SaveAs("ntuples_skimmed/hist_reco_Pz_gen_Pz_kOcean_inverted.png")                  ;
     //}}}
-    //}}}
     */
+    //}}}
     //---
     printf("End!!");
     fout->Write();
@@ -1816,6 +2139,16 @@ int main(int argc, char *argv[]){
 }
 
 // functions{{{
+bool check_tqhIsCorrectlyMatched(int index_qjet, int jetIndex_is_quarkFromFCNtop){
+    bool tqhIsCorrectlyMatched = (index_qjet == jetIndex_is_quarkFromFCNtop) && (jetIndex_is_quarkFromFCNtop != -999);
+    return tqhIsCorrectlyMatched;
+}
+bool check_tbwIsCorrectlyMatched(std::vector<int> index_jet_chi2, std::vector<int> jetIndex_momPdgID_is_wboson, int index_bjet, int jetIndex_is_bquarkFromSMtop){
+    bool are_From_W_boson = (  ((index_jet_chi2[0] == jetIndex_momPdgID_is_wboson[0]) && (index_jet_chi2[1] == jetIndex_momPdgID_is_wboson[1]))\
+                            || ((index_jet_chi2[0] == jetIndex_momPdgID_is_wboson[1]) && (index_jet_chi2[1] == jetIndex_momPdgID_is_wboson[0])) );
+    bool tbwIsCorrectlyMatched = (index_bjet == jetIndex_is_bquarkFromSMtop) && are_From_W_boson;
+    return tbwIsCorrectlyMatched;
+}
 double GetM1M2_ratio(double M1, double M2){
     double ratio = abs(M1/M2-1) + abs(M2/M1-1);
     return ratio;
@@ -1835,30 +2168,32 @@ TLorentzVector GetBestM1(double &M1, int num_jets, int index_bjet, std::vector<i
         top_fcnh_candidates.push_back(top_fcnh_tmp);
     }
     //choose the candidate with Mass closest to top mass
-    int index_M1_min_chi2 = -999;
+    int index_M1_min_chi2 = -999; // meta index
     double chi2_min_M1 = 40000;//200^2 > 178^2 ~ (x-top_mass)^2 //NOTE: will bound the range of M1!!!
     //pick the wanted one (with index)
     for(int i=0; i<top_fcnh_candidates.size(); ++i){ if(top_fcnh_chi2[i]<chi2_min_M1){ index_M1_min_chi2 = i; chi2_min_M1 = top_fcnh_chi2[i];} }
     TLorentzVector null;
-    if(index_M1_min_chi2 == -999){ M1 = -999; return null;}//No suitable candidate
+    if(index_M1_min_chi2 == -999){ M1 = -999; index_q = -999; jet_q.SetPtEtaPhiM(0, 0, 0, 0); return null;}//No suitable candidate
     else{
         index_q = indices[index_M1_min_chi2];
-        jet_q = Jets[index_M1_min_chi2];
+        //jet_q = Jets[index_M1_min_chi2]; // bug: you should not use the meta-index. Please use the  real index for Jets!!
+        jet_q = Jets[index_q];
         M1 = top_fcnh_candidates[index_M1_min_chi2].M();
         return top_fcnh_candidates[index_M1_min_chi2];
     }
 }
 //}}}
 // ### Alternative Mother info{{{
-bool isMatched_with_Gen_tbw(std::vector<int> *GenPartInfo_MomPdgID, int index_bjet, int index_jet1, int index_jet2){
+bool isMatched_with_Gen_tbw(std::vector<int> *GenPartInfo_PdgID, std::vector<int> *GenPartInfo_MomPdgID, int index_bquark, int index_quark1, int index_quark2){
     bool isCorrect = \
-    index_bjet > 0 &&\
-    index_jet1 > 0 &&\
-    index_jet2 > 0 &&\
-    abs(GenPartInfo_MomPdgID->at(index_bjet)) == 6 &&\
-    abs(GenPartInfo_MomPdgID->at(index_jet1)) == 24 &&\
-    abs(GenPartInfo_MomPdgID->at(index_jet2)) == 24 &&\
-    (index_jet1 != index_jet2);
+    index_bquark > 0 &&\
+    index_quark1 > 0 &&\
+    index_quark2 > 0 &&\
+    abs(GenPartInfo_PdgID->at(index_bquark)) == 5 &&\
+    abs(GenPartInfo_MomPdgID->at(index_bquark)) == 6 &&\
+    abs(GenPartInfo_MomPdgID->at(index_quark1)) == 24 &&\
+    abs(GenPartInfo_MomPdgID->at(index_quark2)) == 24 &&\
+    (index_quark1 != index_quark2);
 
     return isCorrect;
 }
@@ -1900,22 +2235,10 @@ bool is_this_tqh_quark(TLorentzVector jet, Int_t GenPartInfo_size, std::vector<i
         }
     }//end of gen loop
 
-    /*
-    if(index>0){
-        printf("[check-tqh] \n");
-            printf("Status = %3d, ", GenPartInfo_Status->at(index));
-            printf("PdgID = %3d, ", GenPartInfo_PdgID->at(index));
-            printf("Pt = %6.2f, ", GenPartInfo_Pt->at(index));
-            printf("Eta = %9.2f, ", GenPartInfo_Eta->at(index));
-            printf("Phi = %6.2f, ", GenPartInfo_Phi->at(index));
-            printf("Mass = %6.2f, ", GenPartInfo_Mass->at(index));
-            printf("MomPdgID = %5d\n", GenPartInfo_MomPdgID->at(index));
-    } else{
-        printf("[check-tqh] index<0\n");
-    }
-    */
-
-    bool is_tqh_quark = ( index > 0 && abs(GenPartInfo_MomPdgID->at(index)) == 6 );
+    bool is_tqh_quark = ( (index != -999) && (abs(GenPartInfo_PdgID->at(index))!=5) && (abs(GenPartInfo_MomPdgID->at(index))==6) );
+    //if(index!=-999 && !is_tqh_quark) printf("[CHECK-is_this_tqh_quark] pdgID = %d, Mom_PdgID = %d\n", GenPartInfo_PdgID->at(index), GenPartInfo_MomPdgID->at(index));
+    //else if(index!=-999)             printf("[CHECK-is_this_tqh_quark] Matched! pdgID = %d, Mom_PdgID = %d\n", GenPartInfo_PdgID->at(index), GenPartInfo_MomPdgID->at(index));
+    //else                             printf(" No matched particles\n");
     return is_tqh_quark;
 
 }
@@ -1976,8 +2299,7 @@ bool checkAvailability(int index, std::vector<int> ID_IsChosen){
     return result;
 }
 //}}}
-// ##### print gen info{{{
-void print_matched_gen_info(TLorentzVector jet, Int_t GenPartInfo_size, std::vector<int> *GenPartInfo_MomPdgID, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID){
+double obtain_deltaR(bool bool_print, TLorentzVector jet, int &Matched_PdgID, int &Matched_MomPdgID, Int_t GenPartInfo_size, std::vector<int> *GenPartInfo_MomPdgID, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID){
     TLorentzVector truelove;//we are looking for the right genParticle to match the jet.
     int index = -999, truelove_PdgID = -999; double delta_R_min = 999.;
     for(int i=0; i<GenPartInfo_size; i++){
@@ -1997,22 +2319,74 @@ void print_matched_gen_info(TLorentzVector jet, Int_t GenPartInfo_size, std::vec
     }//end of gen loop
 
     if(index>0){
-        printf("[check-tqh] \n");
-            printf("Status = %3d, ", GenPartInfo_Status->at(index));
-            printf("PdgID = %3d, ", GenPartInfo_PdgID->at(index));
+        Matched_PdgID = GenPartInfo_PdgID->at(index);
+        Matched_MomPdgID = GenPartInfo_MomPdgID->at(index);
+        if(bool_print){
+            printf("deltaR = %6.3f, ", delta_R_min);
+            printf("MomPdgID = %5d, ", GenPartInfo_MomPdgID->at(index));
+            printf("PdgID = %3d\n", GenPartInfo_PdgID->at(index));
+        }
+    } else{
+        Matched_PdgID = -999;
+        Matched_MomPdgID = -999;
+        if(bool_print) printf("[check-obtain-deltaR] Not found.\n");
+    }
+
+    return delta_R_min;
+}
+// ##### print gen info{{{
+void obtain_gen_matched_ID(bool bool_print, TLorentzVector jet, int &index_gen, int &Matched_PdgID, int &Matched_MomPdgID, Int_t GenPartInfo_size, std::vector<int> *GenPartInfo_MomPdgID, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID){
+    TLorentzVector truelove;//we are looking for the right genParticle to match the jet.
+    int index = -999, truelove_PdgID = -999; double delta_R_min = 999.;
+    for(int i=0; i<GenPartInfo_size; i++){
+        if( abs(GenPartInfo_Status->at(i)) != 23 ) continue;//remove incoming/intermediate particles
+        if( abs(GenPartInfo_PdgID->at(i)) > 6 ) continue;//exclude top quark & other particles
+        //--------------------
+        TLorentzVector genParticle;
+        genParticle.SetPtEtaPhiM(GenPartInfo_Pt->at(i), GenPartInfo_Eta->at(i), GenPartInfo_Phi->at(i), GenPartInfo_Mass->at(i));
+        double delta_R = jet.DeltaR(genParticle);
+        //select quark & require min(deltaR)
+        if( delta_R < 0.4 && delta_R < delta_R_min){
+            index = i;//record the matched genParticle
+            delta_R_min = delta_R;
+            truelove = genParticle;
+            truelove_PdgID = GenPartInfo_PdgID->at(i);
+            index_gen = i;
+        }
+    }//end of gen loop
+
+
+    if(index>0){
+        Matched_PdgID = GenPartInfo_PdgID->at(index);
+        Matched_MomPdgID = GenPartInfo_MomPdgID->at(index);
+        if(bool_print){
+            //printf("Status = %3d, ", GenPartInfo_Status->at(index));
             printf("Pt = %6.2f, ", GenPartInfo_Pt->at(index));
             printf("Eta = %9.2f, ", GenPartInfo_Eta->at(index));
             printf("Phi = %6.2f, ", GenPartInfo_Phi->at(index));
             printf("Mass = %6.2f, ", GenPartInfo_Mass->at(index));
-            printf("MomPdgID = %5d\n", GenPartInfo_MomPdgID->at(index));
+            printf("deltaR = %6.3f, ", delta_R_min);
+            printf("MomPdgID = %5d, ", GenPartInfo_MomPdgID->at(index));
+            printf("PdgID = %3d\n", GenPartInfo_PdgID->at(index));
+        }
     } else{
-        printf("[check-tqh] Not found.\n");
+        Matched_PdgID = -999;
+        Matched_MomPdgID = -999;
+        if(bool_print) printf("[check-obtain] Not found.\n");
     }
 }
 //}}}
 //### report{{{
-void kinematics_info(const char* Title, TLorentzVector Particle){
-        printf("(%s) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f\n", Title, Particle.Pt(), Particle.Eta(), Particle.Phi(), Particle.Energy(), Particle.M());
+//void kinematics_info(const char* Title, TLorentzVector Particle){
+void kinematics_info(const char* Title, TLorentzVector Particle, int index){
+        //printf("(%s) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f\n", Title, Particle.Pt(), Particle.Eta(), Particle.Phi(), Particle.Energy(), Particle.M());
+        //printf("Status = ---, ");
+        //printf("PdgID = ---, ");
+        printf("Pt = %6.2f, ", Particle.Pt());
+        printf("Eta = %9.2f, ", Particle.Eta());
+        printf("Phi = %6.2f, ", Particle.Phi());
+        printf("Mass = %6.2f, ", Particle.M());
+        printf("index = %5d\n", index);
 }
 void kinematics_report(const char* recoTitle, TLorentzVector recoParticle, int id_recoParticle, const char* genTitle, TLorentzVector genParticle, int genParticle_PdgID){
         double delta_R = genParticle.DeltaR(recoParticle);
@@ -2047,7 +2421,8 @@ void hist_report(TH1D *hist, const char* chi2_type){
     printf("[INFO] chi2 %s: mean = %6.2f, sigma = %6.2f, mode lies in [%6.2f, %6.2f]\n", chi2_type, mean, sigma2, maxbin_lower_edge, maxbin_upper_edge);
 }
 //}}}
-//### chi2{{{
+//### chi2 (shift to include/generalChiSquareStudy.C){{{
+/*
 double Chi2_calculator_simple(double w_mass, double t_mass){
     TVectorD vec_mass(2);
     vec_mass(0) = w_mass - w_boson_mass;
@@ -2086,6 +2461,7 @@ double Chi2_calculator_improved(double w_mass, double t_mass, double fcnc_top_ma
     //matrix(1,0) = 323.97; matrix(1,1) = 787.07;
     return matrix.Invert()*vec_mass*vec_mass;
 }
+*/
 //###}}}
 //### mkplots{{{
 void MakeTwoPlots(TCanvas *c1, TH1D* hist_gen, TH1D* hist_reco, TLegend *legend, const char* name){

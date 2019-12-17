@@ -55,9 +55,34 @@ function ReRunStackPlotsOnly(){
 #./script/run_macro_stackPlots.sh "hadronic"
 
 export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
+
+## TT signal
+#make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root"
+#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root" "hadronic"
+#
 #make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root"
 #make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root" "hadronic"
-make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root" "leptonic"
+#
+make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root"
+make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root" "hadronic"
+#
+#make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root"
+#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root" "hadronic"
+#
+#
+## ST signal
+#make && time ./script/exe_covarianceMatrixStudy.sh "ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root"
+#make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root" "hadronic"
+#
+#make && time ./script/exe_covarianceMatrixStudy.sh "ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root"
+#make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root" "hadronic"
+
+
+#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root" "leptonic"
+#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-T2HJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
+#make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root" "leptonic"
+#make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
+
 
 #./script/prepareExeForNewMC_npu_float.sh "selection"
 #./script/exe_selection_batch.sh TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root "leptonic"
