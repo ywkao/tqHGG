@@ -38,8 +38,9 @@ bool printSelectedJetsInfo = false;
 bool bool_bjet_is_loose  = false;
 bool bool_bjet_is_medium = false;
 bool bool_bjet_is_tight  = true;
+//bool bool_num_bjets_is_exactly_one = true;
 bool bool_num_bjets_is_exactly_one = true;
-bool bool_num_bjets_is_atleast_one = false;
+bool bool_num_bjets_is_atleast_one = !bool_num_bjets_is_exactly_one;
 
 int main(int argc, char *argv[]){
     //### I/O and event info{{{
