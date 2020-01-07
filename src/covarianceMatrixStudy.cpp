@@ -1,3 +1,4 @@
+// vim: set fdm=marker:
 //***************************************************************************
 //
 // FileName    : covarianceMatrixStudy.cc
@@ -7,6 +8,7 @@
 // OutputFile  : include/generalChiSquareStudy.C
 //
 //***************************************************************************
+//### include{{{
 #include <fstream>
 #include <stdio.h>
 #include <math.h>
@@ -21,6 +23,7 @@
 #include "../include/covarianceMatrixStudy.h"
 #include "../include/cross_section.h"
 using namespace std;
+//}}}
 double w_boson_mass = 80.379;//GeV
 double top_quark_mass = 173.0;//GeV
 
@@ -65,8 +68,6 @@ int main(int argc, char *argv[]){
     int nentries = treeReader.GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
     for(int ientry=0; ientry<nentries; ientry++){
         treeReader.flashggStdTree->GetEntry(ientry);//load data
-        //printf("ientry = %d\n", ientry);
-        //if((ientry+1)%1000==0 || (ientry+1)==nentries) printf("ientry = %d\r", ientry);
         // ### Basic Selections{{{
         //==================================================//
         //-------------   Reset Parameters   ---------------//
@@ -163,11 +164,9 @@ int main(int argc, char *argv[]){
         //### GenMatching: find the gen particle (MC truth) for each jet (reconstructed). 
         //### pdgID: (1, 2, 3, 4, 5, 6) = (d, u, s, c, b, t)
         //### This is the simplest version. Identify the corresponding gen particle by selecting smallest deltaR(gen, jet).
-        //### One can try to print out the info of pt, eta, phi, energy, and deltaR of jet and corresponding gen particle to see if they are matched.
         std::vector<int> index_GenParticles, GenParticles_PdgID, GenParticles_MomPdgID;
         std::vector<TLorentzVector> Jets, GenParticles;
         //--- GenMatching for each reco jet ---//
-        //printf("ientry = %d\n", ientry);
         for(int i=0; i<treeReader.jets_size; i++){
             //--- basic jet selections{{{
             if( fabs(treeReader.JetInfo_Eta->at(i)) > 2.4 ) continue;
@@ -245,67 +244,12 @@ int main(int argc, char *argv[]){
         }
         if(!has_bottom_quark) continue;
         //}}}
-        /*
-        // Check GenInfo{{{
-        //if(num_bquark>1){
-        printf("\n");
-        printf("[GenCheck] GenPartInfo_size = %d\n", treeReader.GenPartInfo_size);
-        for(int i=0; i<treeReader.GenPartInfo_size; i++){
-            int pdgID = treeReader.GenPartInfo_PdgID->at(i);
-            bool isPromptFinalState = treeReader.GenPartInfo_isPromptFinalState->at(i);
-            bool isNeutrino = (abs(pdgID) == 12 || abs(pdgID) == 14 || abs(pdgID) == 16) && isPromptFinalState;
-            bool isChargedLepton = (abs(pdgID) == 11 || abs(pdgID) == 13 || abs(pdgID) == 15) && isPromptFinalState;
-            bool isWboson = (abs(pdgID) == 24);
-            bool isTop = (abs(pdgID) == 6);
-
-            //if(isNeutrino){
-            //if(isChargedLepton){
-            //if(isWboson){
-            //if(isTop){
-            printf("Status = %3d, ", treeReader.GenPartInfo_Status->at(i));
-            printf("PdgID = %3d, ", treeReader.GenPartInfo_PdgID->at(i));
-            printf("Pt = %6.2f, ", treeReader.GenPartInfo_Pt->at(i));
-            printf("Eta = %9.2f, ", treeReader.GenPartInfo_Eta->at(i));
-            printf("Phi = %6.2f, ", treeReader.GenPartInfo_Phi->at(i));
-            printf("Mass = %6.2f, ", treeReader.GenPartInfo_Mass->at(i));
-            printf("isHardProcess = %3d, ", treeReader.GenPartInfo_isHardProcess->at(i) ? 1 : 0);
-            printf("isPromptFinalState = %3d, ", treeReader.GenPartInfo_isPromptFinalState->at(i) ? 1 : 0);
-            printf("MomPdgID = %5d, ", treeReader.GenPartInfo_MomPdgID->at(i));
-            printf("MomStatus = %3d\n", treeReader.GenPartInfo_MomStatus->at(i));
-            //}
-        }
-        //}
-        //}}}
-        //gen check tool{{{
-        for(std::size_t i=0; i<Jets.size(); ++i){
-            printf("PdgID = %3d, ", GenParticles_PdgID[i]);
-            printf("Pt = %6.2f, ", GenParticles[i].Pt());
-            printf("Eta = %9.2f, ", GenParticles[i].Eta());
-            printf("Phi = %6.2f, ", GenParticles[i].Phi());
-            printf("Energy = %6.2f, ", GenParticles[i].E());
-            printf("MomPdgID = %5d\n", GenParticles_MomPdgID[i]);
-            //---
-            printf("PdgID = rec, ");
-            printf("Pt = %6.2f, ", Jets[i].Pt());
-            printf("Eta = %9.2f, ", Jets[i].Eta());
-            printf("Phi = %6.2f, ", Jets[i].Phi());
-            printf("Energy = %6.2f\n", Jets[i].E());
-        }
-        //}}}
-        */
         //### Reconstruction{{{
         //===============================//
         //------  Reconstruction   ------//
         //===============================//
         TLorentzVector bjet, wjets[2], tqh_jet;
         TLorentzVector bquark, wquarks[2], tqh_quark, Higgs;
-        //### Higgs gen info{{{
-        for(int i=0; i<treeReader.GenPartInfo_size; i++){
-            int pdgID = treeReader.GenPartInfo_PdgID->at(i);
-            if(abs(pdgID) == 25)
-                Higgs.SetPtEtaPhiM(treeReader.GenPartInfo_Pt->at(i), treeReader.GenPartInfo_Eta->at(i), treeReader.GenPartInfo_Phi->at(i), treeReader.GenPartInfo_Mass->at(i));
-        }
-        //}}}
         //### Identified particles according to mom info{{{
         int index_bjet = -999;
         int index_tqh_quark = -999;
@@ -333,22 +277,29 @@ int main(int argc, char *argv[]){
         if(index_bjet == -999 || index_tqh_quark == -999 || index_wjets[0] == -999 || index_wjets[1] == -999) continue;
         //}}}
         //### gen/reco W/tops reconstructon{{{
-        TLorentzVector w_candidate_gen, sm_top_candidate_gen, fcnc_top_candidate_gen;
-        w_candidate_gen = wquarks[0] + wquarks[1];
-        sm_top_candidate_gen = bquark + w_candidate_gen;
-        fcnc_top_candidate_gen = tqh_quark + Higgs;
-        
         TLorentzVector w_candidate_reco, sm_top_candidate_reco, fcnc_top_candidate_reco;
         w_candidate_reco = wjets[0] + wjets[1];
         sm_top_candidate_reco = bjet + w_candidate_reco;
         fcnc_top_candidate_reco = tqh_jet + diphoton;
-
-        hist_mass_gen_w -> Fill(w_candidate_gen.M());
-        hist_mass_gen_sm_top -> Fill(sm_top_candidate_gen.M());
-        hist_mass_gen_fcnc_top -> Fill(fcnc_top_candidate_gen.M());
         hist_mass_reco_w -> Fill(w_candidate_reco.M());
         hist_mass_reco_sm_top -> Fill(sm_top_candidate_reco.M());
         hist_mass_reco_fcnc_top -> Fill(fcnc_top_candidate_reco.M());
+
+        //NOTE: the reconstructed w boson and top quark from GEN-PARTICLES are for double check purpose only.
+        //### Higgs gen info{{{
+        for(int i=0; i<treeReader.GenPartInfo_size; i++){
+            int pdgID = treeReader.GenPartInfo_PdgID->at(i);
+            if(abs(pdgID) == 25)
+                Higgs.SetPtEtaPhiM(treeReader.GenPartInfo_Pt->at(i), treeReader.GenPartInfo_Eta->at(i), treeReader.GenPartInfo_Phi->at(i), treeReader.GenPartInfo_Mass->at(i));
+        }
+        //}}}
+        TLorentzVector w_candidate_gen, sm_top_candidate_gen, fcnc_top_candidate_gen;
+        w_candidate_gen = wquarks[0] + wquarks[1];
+        sm_top_candidate_gen = bquark + w_candidate_gen;
+        fcnc_top_candidate_gen = tqh_quark + Higgs;
+        hist_mass_gen_w -> Fill(w_candidate_gen.M());
+        hist_mass_gen_sm_top -> Fill(sm_top_candidate_gen.M());
+        hist_mass_gen_fcnc_top -> Fill(fcnc_top_candidate_gen.M());
         //}}}
         //}}}
         //### Covariant Matrix{{{
@@ -388,6 +339,7 @@ int main(int argc, char *argv[]){
     printf("[INFO] Nevents_pass_selection = %d\n", Nevents_pass_selection);
     printf("[INFO] before/after gen selection: %d/%d (%.3f%%)\n", Nevents_pass_selection, Counter_before_selection_on_genParticle, eff);
 
+    /*
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
     MakePlots(c1, hist_mass_gen_w, "", "cov_hist_mass_gen_w.png");
     MakePlots(c1, hist_mass_gen_sm_top, "", "cov_hist_mass_gen_sm_top.png");
@@ -395,6 +347,7 @@ int main(int argc, char *argv[]){
     MakePlots(c1, hist_mass_reco_w, "", "cov_hist_mass_reco_w.png");
     MakePlots(c1, hist_mass_reco_sm_top, "", "cov_hist_mass_reco_sm_top.png");
     MakePlots(c1, hist_mass_reco_fcnc_top, "", "cov_hist_mass_reco_fcnc_top.png");
+    */
 
     //}}}
     //### Covariant Matrix{{{
@@ -432,6 +385,7 @@ int main(int argc, char *argv[]){
     char* message = new char[512];
     ofstream myfile; myfile.open("include/generalChiSquareStudy.C");
     myfile << "//### AUTOMATICALLY GENERATED BY src/covarianceMatrixStudy.cpp ###//\n";
+    sprintf( message, Form("//### DATASET: %s\n", dataset) ); myfile << message;
     myfile << "#include <TMatrixD.h>\n";
     myfile << "#include \"generalChiSquareStudy.h\"\n";
     myfile << "\n\n";
@@ -923,4 +877,4 @@ void myParameters::Clear(){
         //    printf("[CHECK] w reco = %6.2f\n", w_candidate_reco.M());
         //    printf("[CHECK] t reco = %6.2f\n", top_candidate_reco.M());
         //}
-        //}}}
+//}}}

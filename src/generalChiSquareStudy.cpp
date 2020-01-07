@@ -1,3 +1,4 @@
+// vim: set fdm=marker:
 //***************************************************************************
 //
 // FileName    : generalChiSquareStudy.cpp
