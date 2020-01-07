@@ -4,8 +4,8 @@ set -e
 
 #INPUTDIR="ntuples_skimmed"
 #INPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed_trigger_pustudy"
-#INPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed"
-INPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed_mgg_tighter"
+#INPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed_mgg_tighter"
+INPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed"
 OUTPUTDIR="plots"
 EXECUTABLE=./bin/selection
 EXECUTABLE_npu=./bin/selection_npu_float

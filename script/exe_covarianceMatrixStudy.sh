@@ -2,7 +2,7 @@
 #ref of command awk: https://ubuntuforums.org/showthread.php?t=840054
 set -e
 
-INPUTDIR="/wk_cms2/youying/public/tH_FCNC/Era2017_RR-31Mar2018_v2/"
+INPUTDIR="/wk_cms2/youying/public/tH_FCNC/Era2017_RR-31Mar2018_v2"
 #INPUTDIR="/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0"
 INPUTDIR_ywk="/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0"
 OUTPUTDIR="ntuples_skimmed"

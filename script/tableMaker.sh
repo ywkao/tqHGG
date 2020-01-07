@@ -42,4 +42,6 @@ write "\chapter{Table of yields}"
 make_table plots_hadronic/log/info_stack_plots_hadronic
 make_table plots_leptonic/log/info_stack_plots_leptonic
 
+sed -i 's/_/\\_/g' ${targetFile}
+
 cd tables; ./Compile.sh

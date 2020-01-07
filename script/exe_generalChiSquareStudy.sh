@@ -50,14 +50,14 @@ CHANNEL=$2
 if [[ $FILE == 'DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa' || $FILE == 'GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8' ]]; then
     ExeAnalysis_multi $FILE $CHANNEL;
     echo "[MESSAGE] This is the end of $FILE $CHANNEL" && exit 0
-elif [[
-        $FILE == 'ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root' ||\
-        $FILE == 'ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root' ||\
-        $FILE == 'ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root' ||\
-        $FILE == 'ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root'
-     ]]; then
-    ExeAnalysis_singletop $FILE $CHANNEL;
-    echo "[MESSAGE] This is the end of $FILE $CHANNEL" && exit 0
+#elif [[
+#        $FILE == 'ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root' ||\
+#        $FILE == 'ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root' ||\
+#        $FILE == 'ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root' ||\
+#        $FILE == 'ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root'
+#     ]]; then
+#    ExeAnalysis_singletop $FILE $CHANNEL;
+#    echo "[MESSAGE] This is the end of $FILE $CHANNEL" && exit 0
 else
     ExeAnalysis $FILE $CHANNEL;
     echo "[MESSAGE] This is the end of $FILE $CHANNEL" && exit 0
