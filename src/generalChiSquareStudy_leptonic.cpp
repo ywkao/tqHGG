@@ -105,35 +105,8 @@ int main(int argc, char *argv[]){
     TH1D *hist_num_gen_bquark = new TH1D("hist_num_gen_bquark", ";Number of b quark (gen-level);Entries", 10, 0, 10);
     TH1D *hist_num_gen_light_quark = new TH1D("hist_num_gen_light_quark", ";Number of light quarks (gen-level);Entries", 10, 0, 10);
     TH1D *hist_num_selected_jets = new TH1D("hist_num_selected_jets", ";Number of selected jets;Entries", 10, 0, 10);
-    TH1D *hist_deltaR_W_genW_simple = new TH1D("hist_deltaR_W_genW_simple", ";deltaR;Entries", 20, 0, 0.01);
-    TH1D *hist_deltaR_W_genW_modified = new TH1D("hist_deltaR_W_genW_modified", ";deltaR;Entries", 20, 0, 0.01);
-    TH1D *hist_deltaR_W_genW_yfyj = new TH1D("hist_deltaR_W_genW_yfyj", ";deltaR;Entries", 20, 0, 0.01);
 
     TH1D *hist_mass_diphoton = new TH1D("hist_mass_diphoton", ";Mass [GeV/c^2];Entries", 50, 0, 250);
-    TH1D *hist_mass_top_fcnh_simple = new TH1D("hist_mass_top_fcnh_simple", ";Mass [GeV/c^2];Entries", 70, 0, 350);
-    TH1D *hist_mass_top_fcnh_modified = new TH1D("hist_mass_top_fcnh_modified", ";Mass [GeV/c^2];Entries", 70, 0, 350);
-
-    TH1D *hist_mass_w_candidate_yfyj = new TH1D("hist_mass_w_candidate_yfyj", ";Mass [GeV/c^2];Entries", 60, 0, 180);
-    TH1D *hist_mass_t1_candidate_yfyj = new TH1D("hist_mass_t1_candidate_yfyj", ";Mass [GeV/c^2];Entries", 70, 0, 350);
-    TH1D *hist_mass_t2_candidate_yfyj = new TH1D("hist_mass_t2_candidate_yfyj", ";Mass [GeV/c^2];Entries", 70, 0, 350);
-    TH1D *hist_mass_gen_w_candidate_yfyj = new TH1D("hist_mass_gen_w_candidate_yfyj", ";Mass [GeV/c^2];Entries", 50, 0, 150);
-    TH1D *hist_mass_gen_t2_candidate_yfyj = new TH1D("hist_mass_gen_t2_candidate_yfyj", ";Mass [GeV/c^2];Entries", 70, 0, 350);
-    TH1D *hist_mass_conditioned_gen_w_candidate_yfyj    = new TH1D("hist_mass_conditioned_gen_w_candidate_yfyj", ";Mass [GeV/c^2];Entries", 50, 0, 150);
-    TH1D *hist_mass_conditioned_gen_t2_candidate_yfyj   = new TH1D("hist_mass_conditioned_gen_t2_candidate_yfyj", ";Mass [GeV/c^2];Entries", 70, 0, 350);
-
-    TH1D *hist_mass_w_candidate_chi2_simple = new TH1D("hist_mass_w_candidate_chi2_simple", ";Mass [GeV/c^2];Entries", 60, 0, 180);
-    TH1D *hist_mass_top_candidate_chi2_simple = new TH1D("hist_mass_top_candidate_chi2_simple", ";Mass [GeV/c^2];Entries", 70, 0, 350);
-    TH1D *hist_mass_w_candidate_chi2_modified = new TH1D("hist_mass_w_candidate_chi2_modified", ";Mass [GeV/c^2];Entries", 60, 0, 180);
-    TH1D *hist_mass_top_candidate_chi2_modified = new TH1D("hist_mass_top_candidate_chi2_modified", ";Mass [GeV/c^2];Entries", 70, 0, 350);
-    TH1D *hist_mass_gen_w_candidate_chi2_simple     = new TH1D("hist_mass_gen_w_candidate_chi2_simple", ";Mass [GeV/c^2];Entries", 50, 0, 150);
-    TH1D *hist_mass_gen_top_candidate_chi2_simple   = new TH1D("hist_mass_gen_top_candidate_chi2_simple", ";Mass [GeV/c^2];Entries", 70, 0, 350);
-    TH1D *hist_mass_gen_w_candidate_chi2_modified   = new TH1D("hist_mass_gen_w_candidate_chi2_modified", ";Mass [GeV/c^2];Entries", 50, 0, 150);
-    TH1D *hist_mass_gen_top_candidate_chi2_modified = new TH1D("hist_mass_gen_top_candidate_chi2_modified", ";Mass [GeV/c^2];Entries", 70, 0, 350);
-
-    TH1D *hist_mass_conditioned_gen_w_candidate_chi2_simple     = new TH1D("hist_mass_conditioned_gen_w_candidate_chi2_simple", ";Mass [GeV/c^2];Entries", 50, 0, 150);
-    TH1D *hist_mass_conditioned_gen_top_candidate_chi2_simple   = new TH1D("hist_mass_conditioned_gen_top_candidate_chi2_simple", ";Mass [GeV/c^2];Entries", 70, 0, 350);
-    TH1D *hist_mass_conditioned_gen_w_candidate_chi2_modified   = new TH1D("hist_mass_conditioned_gen_w_candidate_chi2_modified", ";Mass [GeV/c^2];Entries", 50, 0, 150);
-    TH1D *hist_mass_conditioned_gen_top_candidate_chi2_modified = new TH1D("hist_mass_conditioned_gen_top_candidate_chi2_modified", ";Mass [GeV/c^2];Entries", 70, 0, 350);
     //}}}
     //### hist leptonic{{{
     //# deltaR{{{
@@ -141,38 +114,47 @@ int main(int argc, char *argv[]){
     TH1D *hist_mass_gen_topquark_leptonic = new TH1D("hist_mass_gen_topquark_leptonic", ";Mass [GeV/c^{2}];Entries", 34, 0, 340);
     TH1D *hist_deltaR_reco_top_higgs_leptonic = new TH1D("hist_deltaR_reco_top_higgs_leptonic", "", 40, 0, 6);
     TH1D *hist_deltaR_gen_reco_chargedLepton = new TH1D("hist_deltaR_gen_reco_chargedLepton", "", 40, 0, 0.1);
-    TH1D *hist_deltaR_gen_reco_neutrino_sol0 = new TH1D("hist_deltaR_gen_reco_neutrino_sol0", "", 40, 0, 6);
     TH1D *hist_deltaR_gen_reco_neutrino_sol1 = new TH1D("hist_deltaR_gen_reco_neutrino_sol1", "", 40, 0, 6);
+    TH1D *hist_deltaR_gen_reco_neutrino_sol2 = new TH1D("hist_deltaR_gen_reco_neutrino_sol2", "", 40, 0, 6);
     //---
-    component_plots hist_deltaR_gen_reco_wboson_sol0;
-    hist_deltaR_gen_reco_wboson_sol0.Init("ntuples_skimmed", "hist_deltaR_gen_reco_wboson_sol0", "positiveD", "negativeD", 40, 0, 6);
-    //TH1D *hist_deltaR_gen_reco_wboson_sol0 = new TH1D("hist_deltaR_gen_reco_wboson_sol0", "", 40, 0, 6);
-    //TH1D *hist_deltaR_gen_reco_wboson_sol0_positiveD = new TH1D("hist_deltaR_gen_reco_wboson_sol0_positiveD", "", 40, 0, 6);
-    //TH1D *hist_deltaR_gen_reco_wboson_sol0_negativeD = new TH1D("hist_deltaR_gen_reco_wboson_sol0_negativeD", "", 40, 0, 6);
-    TH1D *hist_deltaR_gen_reco_wboson_sol1 = new TH1D("hist_deltaR_gen_reco_wboson_sol1", "", 40, 0, 6);
-    TH1D *hist_deltaR_gen_reco_wboson_sol1_positiveD = new TH1D("hist_deltaR_gen_reco_wboson_sol1_positiveD", "", 40, 0, 6);
-    TH1D *hist_deltaR_gen_reco_wboson_sol1_negativeD = new TH1D("hist_deltaR_gen_reco_wboson_sol1_negativeD", "", 40, 0, 6);
-    TH1D *hist_deltaR_gen_reco_wboson_topKinFit = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit", "", 40, 0, 6);
-    TH1D *hist_deltaR_gen_reco_wboson_topKinFit_regDisc = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_regDisc", "", 40, 0, 6);
-    TH1D *hist_deltaR_gen_reco_wboson_topKinFit_irrDisc = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_irrDisc", "", 40, 0, 6);
-    TH1D *hist_deltaR_gen_reco_wboson_topKinFit_regDisc_positivePz = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_regDisc_positivePz", "", 40, 0, 6);
-    TH1D *hist_deltaR_gen_reco_wboson_topKinFit_regDisc_negativePz = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_regDisc_negativePz", "", 40, 0, 6);
+    component_plots chist_deltaR_gen_reco_wboson_sol1;
+    component_plots chist_deltaR_gen_reco_wboson_sol2;
+    component_plots chist_deltaR_gen_reco_wboson_topKinFit;
+    component_plots chist_deltaR_gen_reco_wboson_topKinFit_regDisc;
+    chist_deltaR_gen_reco_wboson_sol1.Init("ntuples_skimmed", "chist_deltaR_gen_reco_wboson_sol1", "positiveD", "negativeD", 40, 0, 6);
+    chist_deltaR_gen_reco_wboson_sol2.Init("ntuples_skimmed", "chist_deltaR_gen_reco_wboson_sol2", "positiveD", "negativeD", 40, 0, 6);
+    chist_deltaR_gen_reco_wboson_topKinFit.Init("ntuples_skimmed", "chist_deltaR_gen_reco_wboson_topKinFit", "regDisc", "irrDisc", 40, 0, 6);
+    chist_deltaR_gen_reco_wboson_topKinFit_regDisc.Init("ntuples_skimmed", "chist_deltaR_gen_reco_wboson_topKinFit_regDisc_", "positivePz", "negativePz", 40, 0, 6);
+
+    component_plots chist_deltaR_gen_reco_smtop_sol1;
+    component_plots chist_deltaR_gen_reco_smtop_sol2;
+    component_plots chist_deltaR_gen_reco_smtop_topKinFit;
+    component_plots chist_deltaR_gen_reco_smtop_topKinFit_regDisc;
+    chist_deltaR_gen_reco_smtop_sol1.Init("ntuples_skimmed", "chist_deltaR_gen_reco_smtop_sol1", "positiveD", "negativeD", 40, 0, 6);
+    chist_deltaR_gen_reco_smtop_sol2.Init("ntuples_skimmed", "chist_deltaR_gen_reco_smtop_sol2", "positiveD", "negativeD", 40, 0, 6);
+    chist_deltaR_gen_reco_smtop_topKinFit.Init("ntuples_skimmed", "chist_deltaR_gen_reco_smtop_topKinFit", "regDisc", "irrDisc", 40, 0, 6);
+    chist_deltaR_gen_reco_smtop_topKinFit_regDisc.Init("ntuples_skimmed", "chist_deltaR_gen_reco_smtop_topKinFit_regDisc_", "positivePz", "negativePz", 40, 0, 6);
+    //TH1D *hist_deltaR_gen_reco_wboson_topKinFit = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit", "", 40, 0, 6);
+    //TH1D *hist_deltaR_gen_reco_wboson_topKinFit_irrDisc = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_irrDisc", "", 40, 0, 6);
+    //TH1D *hist_deltaR_gen_reco_wboson_topKinFit_regDisc = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_regDisc", "", 40, 0, 6);
+    //TH1D *hist_deltaR_gen_reco_wboson_topKinFit_regDisc_positivePz = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_regDisc_positivePz", "", 40, 0, 6);
+    //TH1D *hist_deltaR_gen_reco_wboson_topKinFit_regDisc_negativePz = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_regDisc_negativePz", "", 40, 0, 6);
     //}}}
     //# deltaPT{{{
     TH1D *hist_deltaPT_gen_reco_chargedLepton = new TH1D("hist_deltaPT_gen_reco_chargedLepton", "", 40, -1, 1);
-    TH1D *hist_deltaPT_gen_reco_neutrino_sol0 = new TH1D("hist_deltaPT_gen_reco_neutrino_sol0", "", 40, -1, 1);
-    TH1D *hist_deltaPT_gen_reco_wboson_sol0 = new TH1D("hist_deltaPT_gen_reco_wboson_sol0", "", 40, -1, 1);
     TH1D *hist_deltaPT_gen_reco_neutrino_sol1 = new TH1D("hist_deltaPT_gen_reco_neutrino_sol1", "", 40, -1, 1);
     TH1D *hist_deltaPT_gen_reco_wboson_sol1 = new TH1D("hist_deltaPT_gen_reco_wboson_sol1", "", 40, -1, 1);
-    TH1D *hist_deltaPT_reco_neutrino_sol0_doubleCheck = new TH1D("hist_deltaPT_gen_reco_neutrino_sol0_doubleCheck", "", 40, -1, 1);
+    TH1D *hist_deltaPT_gen_reco_neutrino_sol2 = new TH1D("hist_deltaPT_gen_reco_neutrino_sol2", "", 40, -1, 1);
+    TH1D *hist_deltaPT_gen_reco_wboson_sol2 = new TH1D("hist_deltaPT_gen_reco_wboson_sol2", "", 40, -1, 1);
     TH1D *hist_deltaPT_reco_neutrino_sol1_doubleCheck = new TH1D("hist_deltaPT_gen_reco_neutrino_sol1_doubleCheck", "", 40, -1, 1);
+    TH1D *hist_deltaPT_reco_neutrino_sol2_doubleCheck = new TH1D("hist_deltaPT_gen_reco_neutrino_sol2_doubleCheck", "", 40, -1, 1);
     //}}}
     //# deltaPz{{{
     TH1D *hist_deltaPz_gen_reco_chargedLepton = new TH1D("hist_deltaPz_gen_reco_chargedLepton", "", 40, -100, 100);
-    TH1D *hist_deltaPz_gen_reco_neutrino_sol0 = new TH1D("hist_deltaPz_gen_reco_neutrino_sol0", "", 40, -200, 200);
     TH1D *hist_deltaPz_gen_reco_neutrino_sol1 = new TH1D("hist_deltaPz_gen_reco_neutrino_sol1", "", 40, -200, 200);
-    TH1D *hist_deltaPz_gen_reco_wboson_sol0 = new TH1D("hist_deltaPz_gen_reco_wboson_sol0", "", 40, -100, 100);
+    TH1D *hist_deltaPz_gen_reco_neutrino_sol2 = new TH1D("hist_deltaPz_gen_reco_neutrino_sol2", "", 40, -200, 200);
     TH1D *hist_deltaPz_gen_reco_wboson_sol1 = new TH1D("hist_deltaPz_gen_reco_wboson_sol1", "", 40, -100, 100);
+    TH1D *hist_deltaPz_gen_reco_wboson_sol2 = new TH1D("hist_deltaPz_gen_reco_wboson_sol2", "", 40, -100, 100);
     //---
     TH1D *hist_deltaPzRatio_gen_reco_neutrino_topKinFit = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_topKinFit", ";[Pz(reco) - Pz(gen)] / Pz(gen); Entries", 40, -2, 2);
     TH1D *hist_deltaPzRatio_gen_reco_neutrino_topKinFit_regDisc = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_topKinFit_regDisc", "", 40, -2, 2);
@@ -182,21 +164,33 @@ int main(int argc, char *argv[]){
     TH2D *hist_reco_Pz_gen_Pz_topKinFit_irrDisc = new TH2D("hist_reco_Pz_gen_Pz_topKinFit_irrDisc", ";Gen-level Pz [GeV/c];Reco Pz [GeV/c]", 40, -200, 200, 40, -200, 200);
     //---
     //TH1D *hist_deltaPz_gen_reco_chargedLepton = new TH1D("hist_deltaPz_gen_reco_chargedLepton", "", 40, -1, 1);
-    TH1D *hist_deltaPzRatio_gen_reco_neutrino_sol0 = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_sol0", ";[Pz(reco) - Pz(gen)] / Pz(gen); Entries", 40, -2, 2);
-    TH1D *hist_deltaPzRatio_gen_reco_neutrino_sol0_positiveD = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_sol0_positiveD", "", 40, -2, 2);
-    TH1D *hist_deltaPzRatio_gen_reco_neutrino_sol0_negativeD = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_sol0_negativeD", "", 40, -2, 2);
-
     TH1D *hist_deltaPzRatio_gen_reco_neutrino_sol1 = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_sol1", ";[Pz(reco) - Pz(gen)] / Pz(gen); Entries", 40, -2, 2);
     TH1D *hist_deltaPzRatio_gen_reco_neutrino_sol1_positiveD = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_sol1_positiveD", "", 40, -2, 2);
     TH1D *hist_deltaPzRatio_gen_reco_neutrino_sol1_negativeD = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_sol1_negativeD", "", 40, -2, 2);
+
+    TH1D *hist_deltaPzRatio_gen_reco_neutrino_sol2 = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_sol2", ";[Pz(reco) - Pz(gen)] / Pz(gen); Entries", 40, -2, 2);
+    TH1D *hist_deltaPzRatio_gen_reco_neutrino_sol2_positiveD = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_sol2_positiveD", "", 40, -2, 2);
+    TH1D *hist_deltaPzRatio_gen_reco_neutrino_sol2_negativeD = new TH1D("hist_deltaPzRatio_gen_reco_neutrino_sol2_negativeD", "", 40, -2, 2);
 
     TH2D *hist_reco_Pz_gen_Pz = new TH2D("hist_reco_Pz_gen_Pz", ";Gen-level Pz [GeV/c];Reco Pz [GeV/c]", 40, -200, 200, 40, -200, 200);
     TH2D *hist_reco_Pz_gen_Pz_negativeD = new TH2D("hist_reco_Pz_gen_Pz_negativeD", ";Gen-level Pz [GeV/c];Reco Pz [GeV/c]", 40, -200, 200, 40, -200, 200);
     TH2D *hist_reco_Pz_gen_Pz_positiveD = new TH2D("hist_reco_Pz_gen_Pz_positiveD", ";Gen-level Pz [GeV/c];Reco Pz [GeV/c]", 40, -200, 200, 40, -200, 200);
 
-    TH1D *hist_deltaPzRatio_gen_reco_wboson_sol0 = new TH1D("hist_deltaPzRatio_gen_reco_wboson_sol0", "", 40, -1, 1);
     TH1D *hist_deltaPzRatio_gen_reco_wboson_sol1 = new TH1D("hist_deltaPzRatio_gen_reco_wboson_sol1", "", 40, -1, 1);
+    TH1D *hist_deltaPzRatio_gen_reco_wboson_sol2 = new TH1D("hist_deltaPzRatio_gen_reco_wboson_sol2", "", 40, -1, 1);
     //}}}
+    //# deltaM
+    TH1D *hist_deltaM_gen_reco_wboson_quadratic = new TH1D("hist_deltaM_gen_reco_wboson_quadratic", ";M(t)^{gen} [GeV/c^{2}];Entries", 40, -150, 150);
+    TH2D *hist_deltaM_gen_reco_wboson_quadratic_2D = new TH2D("hist_deltaM_gen_reco_wboson_quadratic_2D", ";M(t)^{gen}[GeV/c^{2}];M(t)^{gen}-M(t)^{rec}[GeV/c^{2}]", 20, 0, 200, 20, -150, 150);
+    TH1D *hist_deltaM_gen_reco_smtop_quadratic = new TH1D("hist_deltaM_gen_reco_smtop_quadratic", ";M(t)^{gen} [GeV/c^{2}];Entries", 40, -150, 150);
+    TH2D *hist_deltaM_gen_reco_smtop_quadratic_2D = new TH2D("hist_deltaM_gen_reco_smtop_quadratic_2D", ";M(t)^{gen}[GeV/c^{2}];M(t)^{gen}-M(t)^{rec}[GeV/c^{2}]", 20, 0, 400, 20, -150, 150);
+
+    TH1D *hist_deltaM_gen_reco_wboson_topKinFit = new TH1D("hist_deltaM_gen_reco_wboson_topKinFit", ";M(t)^{gen} [GeV/c^{2}];Entries", 40, -150, 150);
+    TH2D *hist_deltaM_gen_reco_wboson_topKinFit_2D = new TH2D("hist_deltaM_gen_reco_wboson_topKinFit_2D", ";M(t)^{gen} [GeV/c^{2}];M(t)^{gen}-M(t)^{rec}[GeV/c^{2}]", 20, 0, 200, 20, -150, 150);
+    TH1D *hist_deltaM_gen_reco_smtop_topKinFit = new TH1D("hist_deltaM_gen_reco_smtop_topKinFit", ";M(t)^{gen} [GeV/c^{2}];Entries", 40, -150, 150);
+    TH2D *hist_deltaM_gen_reco_smtop_topKinFit_2D = new TH2D("hist_deltaM_gen_reco_smtop_topKinFit_2D", ";M(t)^{gen} [GeV/c^{2}];M(t)^{gen}-M(t)^{rec}[GeV/c^{2}]", 20, 0, 400, 20, -150, 150);
+
+    TH1D *hist_disc_topKinFit = new TH1D("hist_disc_topKinFit", "; discriminant; Entries", 40, 0, 1000);
     //# hist of neutrino pz{{{
     TH1D *hist_MetInfo_Pz_solution_1 = new TH1D("hist_MetInfo_Pz_solution_1", "", 40, -200, 200);
     TH1D *hist_MetInfo_Pz_solution_2 = new TH1D("hist_MetInfo_Pz_solution_2", "", 40, -200, 200);
@@ -233,6 +227,13 @@ int main(int argc, char *argv[]){
     TH1D *hist_leptonic_top_tbw_solution2_eta = new TH1D("hist_leptonic_top_tbw_solution2_eta", "", 40, -2.5, 2.5);
     TH1D *hist_leptonic_top_tbw_solution2_mass = new TH1D("hist_leptonic_top_tbw_solution2_mass", ";Mass [GeV/c^{2}];Entries", 70, 0, 350);
     TH1D *hist_leptonic_top_tbw_solution2_mass_negativeD = new TH1D("hist_leptonic_top_tbw_solution2_mass_negativeD", ";Mass [GeV/c^{2}];Entries", 70, 0, 350);
+    //---
+    TH1D *hist_leptonic_w_candidate_topKinFit_pt = new TH1D("hist_leptonic_w_candidate_topKinFit_pt", "", 40, 0, 200);
+    TH1D *hist_leptonic_w_candidate_topKinFit_eta = new TH1D("hist_leptonic_w_candidate_topKinFit_eta", "", 40, -2.5, 2.5);
+    TH1D *hist_leptonic_w_candidate_topKinFit_mass = new TH1D("hist_leptonic_w_candidate_topKinFit_mass", ";Mass [GeV/c^{2}];Entries", 50, 0, 150);
+    TH1D *hist_leptonic_top_tbw_topKinFit_pt = new TH1D("hist_leptonic_top_tbw_topKinFit_pt", "", 40, 0, 400);
+    TH1D *hist_leptonic_top_tbw_topKinFit_eta = new TH1D("hist_leptonic_top_tbw_topKinFit_eta", "", 40, -2.5, 2.5);
+    TH1D *hist_leptonic_top_tbw_topKinFit_mass = new TH1D("hist_leptonic_top_tbw_topKinFit_mass", ";Mass [GeV/c^{2}];Entries", 70, 0, 350);
     //}}}
 
     //}}}
@@ -259,21 +260,26 @@ int main(int argc, char *argv[]){
     double accuracy_chi2_simple = 0, accuracy_chi2_modified = 0, accuracy_yfyj = 0;
     double accuracy_tbw_chi2_simple = 0, accuracy_tbw_chi2_modified = 0, accuracy_tbw_chi2_improved = 0, accuracy_tbw_yfyj = 0;
     double accuracy_tqh_chi2_simple = 0, accuracy_tqh_chi2_modified = 0, accuracy_tqh_chi2_improved = 0, accuracy_tqh_yfyj = 0;
-    //}}}
+
     int counter_tqhIsCorrectlyMatched = 0;
     int counter_selectedJets_tbwCanBeReconstructed = 0;
     int counter_selectedJets_tqhCanBeReconstructed = 0;
     int counter_selectedJets_sigCanBeReconstructed = 0;
     int counter_lepton_is_correctly_chosen = 0;
+    //}}}
+    int counter_yy = 0;
+    int counter_yn = 0;
+    int counter_ny = 0;
+    int counter_nn = 0;
+    int counter_nperm = 0;
     
     //##################################################//
     //#########    Event Loop [Selection]    ###########//
     //##################################################//
-    // Goal: leptons, jets, diphoton; t->b+W(jj), 1 bjet + 2 chi2 jets 
     // # topKinFit method{{{
     KINFIT::kfit *kf = new KINFIT::kfit();
     kf->Init(TOPLEP); // Initialize tool for ttbar with FCNC top decay to Higgs(->bb)+u/c hypothesis
-    kf->SetNToy(100); // Set number of toys for minimization
+    kf->SetNToy(10); // Set number of toys for minimization
     // Define PDFs{{{
     std::string pdfFileName = "../TopKinFit/test/GenAnalysis/TopLep/pdf.root";
     //kf->SetPDF("TopWMass",pdfFileName.c_str(),"TopLepWM_Fit");
@@ -303,9 +309,10 @@ int main(int argc, char *argv[]){
     //}}}
     for(int ientry=0; ientry<nentries; ientry++){
         treeReader.flashggStdTree->GetEntry(ientry);//load data
+        //# Pre-process{{{
+        //printf("\nientry = %d/%d\n", ientry+1, nentries+1);
         if((ientry+1)%1000==0) printf("ientry = %d/%d\r", ientry+1, nentries+1);
         if((ientry+1)==nentries) printf("ientry = %d/%d\n", ientry+1, nentries+1);
-        //# Pre-process{{{
         //### reset, selection, Normalization factor{{{ 
         //==================================================//
         //-------------   Reset Parameters   ---------------//
@@ -528,12 +535,9 @@ int main(int argc, char *argv[]){
         if(mytree.num_jets<1) continue;
         //###}}}
         //}}}
-
         //================================================//
         //-----------   top reconstruction     -----------//
         //================================================//
-        TLorentzVector bjet;
-        TLorentzVector genParticle_bjet;
         // check gen of jets{{{
         if(printSelectedJetsInfo){
             printf("\nientry = %d/%d\n", ientry+1, nentries+1);
@@ -577,7 +581,7 @@ int main(int argc, char *argv[]){
         if(sigCanBeReconstructed) counter_selectedJets_sigCanBeReconstructed += 1;
         //}}}
         //### b-jet{{{
-        //----- b-jet -----//
+        TLorentzVector bjet;
         int num_bjets = 0, index_bjet = -999;
         int num_bjets_tight = 0, num_bjets_loose = 0, num_bjets_medium = 0;
         int index_leading_bjet_tight = -999, index_leading_bjet_loose = -999, index_leading_bjet_medium = -999;
@@ -663,9 +667,8 @@ int main(int argc, char *argv[]){
         if(bool_num_bjets_is_atleast_one) pass_bjets_multiplicity_selection = num_bjets >= 1;
         if(!pass_bjets_multiplicity_selection) continue;
         //### }}}
-        //# LEPTONIC Channel{{{
-        // geninfo{{{
-        TLorentzVector chargedLepton, neutrino, wboson, bquark, topquark;
+        //### geninfo{{{
+        TLorentzVector chargedLepton, neutrino, wboson, bquark, topquark_bw, topquark;
         for(int i=0; i<treeReader.GenPartInfo_size; i++){
             int pdgID = treeReader.GenPartInfo_PdgID->at(i);
             int mom_pdgID = treeReader.GenPartInfo_MomPdgID->at(i);
@@ -674,6 +677,7 @@ int main(int argc, char *argv[]){
             bool isChargedLepton = (abs(pdgID) == 11 || abs(pdgID) == 13 || abs(pdgID) == 15) && isPromptFinalState;
             bool isWboson = (abs(pdgID) == 24);
             bool isbquark = (abs(pdgID) == 5 && abs(mom_pdgID) == 6);
+            bool isTopQuark = ( abs(pdgID) == 6 && i==3 ); //pick up sm top
             if(isNeutrino){
                 neutrino.SetPtEtaPhiM(treeReader.GenPartInfo_Pt->at(i), treeReader.GenPartInfo_Eta->at(i), treeReader.GenPartInfo_Phi->at(i), treeReader.GenPartInfo_Mass->at(i));
                 //kinematics_info("v", neutrino);
@@ -689,22 +693,26 @@ int main(int argc, char *argv[]){
             if(isWboson){
                 wboson.SetPtEtaPhiM(treeReader.GenPartInfo_Pt->at(i), treeReader.GenPartInfo_Eta->at(i), treeReader.GenPartInfo_Phi->at(i), treeReader.GenPartInfo_Mass->at(i));
                 //kinematics_info("w", wboson);
-                topquark = wboson + bquark;
-                //kinematics_info("t", topquark);
+                topquark_bw = wboson + bquark;
+                //kinematics_info("t", topquark_bw, i);
                 hist_mass_gen_wboson_leptonic->Fill(wboson.M());
-                hist_mass_gen_topquark_leptonic->Fill(topquark.M());
+                hist_mass_gen_topquark_leptonic->Fill(topquark_bw.M());
+            }
+            if(isTopQuark){
+                topquark.SetPtEtaPhiM(treeReader.GenPartInfo_Pt->at(i), treeReader.GenPartInfo_Eta->at(i), treeReader.GenPartInfo_Phi->at(i), treeReader.GenPartInfo_Mass->at(i));
+                //kinematics_info("t", topquark, i);
             }
         }
         //TLorentzVector wboson_check = neutrino + chargedLepton;
         //kinematics_info("W", wboson_check);
+        hist_gen_neutrino_pz->Fill(neutrino.Pz());
         //}}}
-        
+        //# LEPTONIC Channel{{{
         float met_pt = treeReader.MetInfo_Pt;
         float met_phi = treeReader.MetInfo_Phi;
         float met_px = treeReader.MetInfo_Px;
         float met_py = treeReader.MetInfo_Py;
         float met_sumET = treeReader.MetInfo_SumET;
-
         //Quadratic Method (W, M2, M1){{{
         //--- solve met_pz{{{
         TLorentzVector lepton = Leptons[0]; // leading lepton
@@ -799,6 +807,11 @@ int main(int argc, char *argv[]){
         hist_leptonic_top_tbw_solution2_mass->Fill(L_bw_lep[1].M());
         if(coefficient_D<0) hist_leptonic_top_tbw_solution2_mass_negativeD->Fill(L_bw_lep[1].M());
 
+        hist_deltaM_gen_reco_wboson_quadratic    -> Fill(L_w_lep[1].M()-wboson.M());
+        hist_deltaM_gen_reco_smtop_quadratic     -> Fill(L_bw_lep[1].M()-topquark.M());
+        hist_deltaM_gen_reco_wboson_quadratic_2D -> Fill(wboson.M(), L_w_lep[1].M()-wboson.M());
+        hist_deltaM_gen_reco_smtop_quadratic_2D  -> Fill(topquark.M(), L_bw_lep[1].M()-topquark.M());
+
         //## comments: further MC truth study is needed
         //if(L_w_lep[1].M()>90){
         //    printf("[check - wboson] mass = %f\n", L_w_lep[1].M());
@@ -844,53 +857,52 @@ int main(int argc, char *argv[]){
         //}}}
         //--- deltaR/Pz/PT(gen, reco){{{
         double deltaR;
-        deltaR = diphoton.DeltaR(L_bw_lep[1])                             ; hist_deltaR_reco_top_higgs_leptonic->Fill(deltaR)   ;
-        deltaR = chargedLepton.DeltaR(lepton)                             ; hist_deltaR_gen_reco_chargedLepton->Fill(deltaR)   ;
-        deltaR = neutrino.DeltaR(L_met_lep[0])                            ; hist_deltaR_gen_reco_neutrino_sol0->Fill(deltaR)   ;
-        deltaR = neutrino.DeltaR(L_met_lep[1])                            ; hist_deltaR_gen_reco_neutrino_sol1->Fill(deltaR)   ;
+        deltaR = diphoton.DeltaR(L_bw_lep[1])  ; hist_deltaR_reco_top_higgs_leptonic->Fill(deltaR)  ;
+        deltaR = chargedLepton.DeltaR(lepton)  ; hist_deltaR_gen_reco_chargedLepton->Fill(deltaR)   ;
+        deltaR = neutrino.DeltaR(L_met_lep[0]) ; hist_deltaR_gen_reco_neutrino_sol1->Fill(deltaR)   ;
+        deltaR = neutrino.DeltaR(L_met_lep[1]) ; hist_deltaR_gen_reco_neutrino_sol2->Fill(deltaR)   ;
 
-        bool canFoundSolution = coefficient_D>=0;
+        bool canFoundSolution_quadratic = coefficient_D>=0;
         deltaR = wboson.DeltaR(L_w_lep[0]);
-        hist_deltaR_gen_reco_wboson_sol0.Fill_hist(canFoundSolution, deltaR);
+        chist_deltaR_gen_reco_wboson_sol1.Fill_hist(canFoundSolution_quadratic, deltaR);
+        deltaR = wboson.DeltaR(L_w_lep[1]);
+        chist_deltaR_gen_reco_wboson_sol2.Fill_hist(canFoundSolution_quadratic, deltaR);
 
-        //deltaR = wboson.DeltaR(L_w_lep[0])                                ; hist_deltaR_gen_reco_wboson_sol0->Fill(deltaR)     ;
-        //if(coefficient_D>=0) hist_deltaR_gen_reco_wboson_sol0_positiveD->Fill(deltaR)     ;
-        //if(coefficient_D<0) hist_deltaR_gen_reco_wboson_sol0_negativeD->Fill(deltaR)     ;
-
-        deltaR = wboson.DeltaR(L_w_lep[1])                                ; hist_deltaR_gen_reco_wboson_sol1->Fill(deltaR)     ;
-        if(coefficient_D>=0) hist_deltaR_gen_reco_wboson_sol1_positiveD->Fill(deltaR)     ;
-        if(coefficient_D<0) hist_deltaR_gen_reco_wboson_sol1_negativeD->Fill(deltaR)     ;
+        deltaR = topquark.DeltaR(L_bw_lep[0]);
+        chist_deltaR_gen_reco_smtop_sol1.Fill_hist(canFoundSolution_quadratic, deltaR);
+        deltaR = topquark.DeltaR(L_bw_lep[1]);
+        chist_deltaR_gen_reco_smtop_sol2.Fill_hist(canFoundSolution_quadratic, deltaR);
 
         //---
         double deltaPz;
         deltaPz = (lepton.Pz() - chargedLepton.Pz()) ; hist_deltaPz_gen_reco_chargedLepton->Fill(deltaPz) ;
-        deltaPz = (L_met_lep[0].Pz() - neutrino.Pz()) ; hist_deltaPz_gen_reco_neutrino_sol0->Fill(deltaPz) ;
-        deltaPz = (L_met_lep[1].Pz() - neutrino.Pz()) ; hist_deltaPz_gen_reco_neutrino_sol1->Fill(deltaPz) ;
-        deltaPz = (L_w_lep[0].Pz() - wboson.Pz()) ; hist_deltaPz_gen_reco_wboson_sol0->Fill(deltaPz)   ;
-        deltaPz = (L_w_lep[1].Pz() - wboson.Pz()) ; hist_deltaPz_gen_reco_wboson_sol1->Fill(deltaPz)   ;
+        deltaPz = (L_met_lep[0].Pz() - neutrino.Pz()) ; hist_deltaPz_gen_reco_neutrino_sol1->Fill(deltaPz) ;
+        deltaPz = (L_met_lep[1].Pz() - neutrino.Pz()) ; hist_deltaPz_gen_reco_neutrino_sol2->Fill(deltaPz) ;
+        deltaPz = (L_w_lep[0].Pz() - wboson.Pz()) ; hist_deltaPz_gen_reco_wboson_sol1->Fill(deltaPz)   ;
+        deltaPz = (L_w_lep[1].Pz() - wboson.Pz()) ; hist_deltaPz_gen_reco_wboson_sol2->Fill(deltaPz)   ;
         //deltaPz = (lepton.Pz() - chargedLepton.Pz()) / chargedLepton.Pz() ; hist_deltaPz_gen_reco_chargedLepton->Fill(deltaPz) ;
-        deltaPz = (L_met_lep[0].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol0->Fill(deltaPz) ;
-        deltaPz = (L_met_lep[1].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol1->Fill(deltaPz) ;
+        deltaPz = (L_met_lep[0].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol1->Fill(deltaPz) ;
+        deltaPz = (L_met_lep[1].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol2->Fill(deltaPz) ;
         if(coefficient_D>=0){
-            deltaPz = (L_met_lep[0].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol0_positiveD->Fill(deltaPz) ;
-            deltaPz = (L_met_lep[1].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol1_positiveD->Fill(deltaPz) ;
+            deltaPz = (L_met_lep[0].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol1_positiveD->Fill(deltaPz) ;
+            deltaPz = (L_met_lep[1].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol2_positiveD->Fill(deltaPz) ;
         }
         if(coefficient_D<0){
-            deltaPz = (L_met_lep[0].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol0_negativeD->Fill(deltaPz) ;
-            deltaPz = (L_met_lep[1].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol1_negativeD->Fill(deltaPz) ;
+            deltaPz = (L_met_lep[0].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol1_negativeD->Fill(deltaPz) ;
+            deltaPz = (L_met_lep[1].Pz() - neutrino.Pz()) / neutrino.Pz()     ; hist_deltaPzRatio_gen_reco_neutrino_sol2_negativeD->Fill(deltaPz) ;
         }
 
-        deltaPz = (L_w_lep[0].Pz() - wboson.Pz()) / wboson.Pz()           ; hist_deltaPzRatio_gen_reco_wboson_sol0->Fill(deltaPz)   ;
-        deltaPz = (L_w_lep[1].Pz() - wboson.Pz()) / wboson.Pz()           ; hist_deltaPzRatio_gen_reco_wboson_sol1->Fill(deltaPz)   ;
+        deltaPz = (L_w_lep[0].Pz() - wboson.Pz()) / wboson.Pz()           ; hist_deltaPzRatio_gen_reco_wboson_sol1->Fill(deltaPz)   ;
+        deltaPz = (L_w_lep[1].Pz() - wboson.Pz()) / wboson.Pz()           ; hist_deltaPzRatio_gen_reco_wboson_sol2->Fill(deltaPz)   ;
         //---
         double deltaPT;
         deltaPT = (lepton.Pt() - chargedLepton.Pt()) / chargedLepton.Pt() ; hist_deltaPT_gen_reco_chargedLepton->Fill(deltaPT) ;
-        deltaPT = (L_met_lep[0].Pt() - neutrino.Pt()) / neutrino.Pt()     ; hist_deltaPT_gen_reco_neutrino_sol0->Fill(deltaPT) ;
-        deltaPT = (L_met_lep[1].Pt() - neutrino.Pt()) / neutrino.Pt()     ; hist_deltaPT_gen_reco_neutrino_sol1->Fill(deltaPT) ;
-        deltaPT = (L_w_lep[0].Pt() - wboson.Pt()) / wboson.Pt()           ; hist_deltaPT_gen_reco_wboson_sol0->Fill(deltaPT)   ;
-        deltaPT = (L_w_lep[1].Pt() - wboson.Pt()) / wboson.Pt()           ; hist_deltaPT_gen_reco_wboson_sol1->Fill(deltaPT)   ;
-        deltaPT = (met_pt - L_met_lep[0].Pt()) / met_pt                   ; hist_deltaPT_reco_neutrino_sol0_doubleCheck->Fill(deltaPT) ;
-        deltaPT = (met_pt - L_met_lep[1].Pt()) / met_pt                   ; hist_deltaPT_reco_neutrino_sol1_doubleCheck->Fill(deltaPT) ;
+        deltaPT = (L_met_lep[0].Pt() - neutrino.Pt()) / neutrino.Pt()     ; hist_deltaPT_gen_reco_neutrino_sol1->Fill(deltaPT) ;
+        deltaPT = (L_met_lep[1].Pt() - neutrino.Pt()) / neutrino.Pt()     ; hist_deltaPT_gen_reco_neutrino_sol2->Fill(deltaPT) ;
+        deltaPT = (L_w_lep[0].Pt() - wboson.Pt()) / wboson.Pt()           ; hist_deltaPT_gen_reco_wboson_sol1->Fill(deltaPT)   ;
+        deltaPT = (L_w_lep[1].Pt() - wboson.Pt()) / wboson.Pt()           ; hist_deltaPT_gen_reco_wboson_sol2->Fill(deltaPT)   ;
+        deltaPT = (met_pt - L_met_lep[0].Pt()) / met_pt                   ; hist_deltaPT_reco_neutrino_sol1_doubleCheck->Fill(deltaPT) ;
+        deltaPT = (met_pt - L_met_lep[1].Pt()) / met_pt                   ; hist_deltaPT_reco_neutrino_sol2_doubleCheck->Fill(deltaPT) ;
         //}}}
         //--- M1{{{
         double M1;
@@ -917,7 +929,6 @@ int main(int argc, char *argv[]){
 //        //deltaR = Jets[0].DeltaR(Jets[1])                                      ; h[hist_deltaR_jet1_jet2] -> Fill(deltaR)     ;
 //        //}}}
         //}}}
-        /*
         //TopKinFit Method{{{
         // set up input parameters{{{
         std::vector<float> BJetPt;
@@ -975,7 +986,13 @@ int main(int argc, char *argv[]){
         int NPerm = kf->GetNPerm(); // Get number of permutations
         std::vector<float> NuPz, disc;
 
-        if(NPerm!=1) printf("[WARNNING] NPerm = %d\n", NPerm);
+        bool isMoreThanOnePermutation = false;
+        if(NPerm!=1)
+        {
+            counter_nperm += 1;
+            isMoreThanOnePermutation = true;
+            printf("[WARNNING] NPerm = %d\n", NPerm);
+        }
 
         for(int ip=0;ip<NPerm;ip++) // Loop over permutations - already sorted in likelihood value from min to max
         {
@@ -989,6 +1006,7 @@ int main(int argc, char *argv[]){
         }
 
         if(disc[0] > 100000.) counter_irregular_disc += 1;
+        hist_disc_topKinFit->Fill(disc[0]);
 
         //2D plots
         hist_reco_Pz_gen_Pz_topKinFit -> Fill(neutrino.Pz(), NuPz[0]);
@@ -1001,7 +1019,7 @@ int main(int argc, char *argv[]){
         if(disc[0] > 100000.) hist_deltaPzRatio_gen_reco_neutrino_topKinFit_irrDisc -> Fill(deltaPz);
         else                  hist_deltaPzRatio_gen_reco_neutrino_topKinFit_regDisc -> Fill(deltaPz);
 
-        //reconstruct W 
+        //reconstruct W, top
         TLorentzVector L_met_topKinFit;
         TLorentzVector L_w_topKinFit;
         TLorentzVector L_bw_topKinFit;
@@ -1011,26 +1029,58 @@ int main(int argc, char *argv[]){
         L_w_topKinFit.SetPxPyPzE(  (lepton_px + met_px), (lepton_py + met_py), (lepton_pz + met_pz_topKinFit), (lepton_energy + met_energy_topKinFit)  );
         L_bw_topKinFit = bjet + L_w_topKinFit;
 
-        deltaR = wboson.DeltaR(L_w_topKinFit);
-        hist_deltaR_gen_reco_wboson_topKinFit -> Fill(deltaR);
-        if(disc[0] > 100000.) hist_deltaR_gen_reco_wboson_topKinFit_irrDisc -> Fill(deltaR);
-        else if(met_pz_topKinFit >= 0){
-            hist_deltaR_gen_reco_wboson_topKinFit_regDisc -> Fill(deltaR);
-            hist_deltaR_gen_reco_wboson_topKinFit_regDisc_positivePz -> Fill(deltaR);
-        } else{
-            hist_deltaR_gen_reco_wboson_topKinFit_regDisc -> Fill(deltaR);
-            hist_deltaR_gen_reco_wboson_topKinFit_regDisc_negativePz -> Fill(deltaR);
-        }
-        //}}}
-        */
+        bool canFoundSolution_topKinFit = !(disc[0] > 100000.);
+        bool is_reg_and_positive = canFoundSolution_topKinFit && met_pz_topKinFit >= 0;
 
-        hist_gen_neutrino_pz->Fill(neutrino.Pz());
+        deltaR = wboson.DeltaR(L_w_topKinFit);
+        chist_deltaR_gen_reco_wboson_topKinFit.Fill_hist(canFoundSolution_topKinFit, deltaR);
+        chist_deltaR_gen_reco_wboson_topKinFit_regDisc.Fill_hist(is_reg_and_positive, deltaR);
+
+        deltaR = topquark.DeltaR(L_bw_topKinFit);
+        chist_deltaR_gen_reco_smtop_topKinFit.Fill_hist(canFoundSolution_topKinFit, deltaR);
+        chist_deltaR_gen_reco_smtop_topKinFit_regDisc.Fill_hist(is_reg_and_positive, deltaR);
+
+        hist_leptonic_w_candidate_topKinFit_pt   -> Fill(L_w_topKinFit.Pt());
+        hist_leptonic_w_candidate_topKinFit_eta  -> Fill(L_w_topKinFit.Eta());
+        hist_leptonic_w_candidate_topKinFit_mass -> Fill(L_w_topKinFit.M());
+        hist_leptonic_top_tbw_topKinFit_pt       -> Fill(L_bw_topKinFit.Pt());
+        hist_leptonic_top_tbw_topKinFit_eta      -> Fill(L_bw_topKinFit.Eta());
+        hist_leptonic_top_tbw_topKinFit_mass     -> Fill(L_bw_topKinFit.M());
+
+        hist_deltaM_gen_reco_wboson_topKinFit    -> Fill(L_w_topKinFit.M()-wboson.M());
+        hist_deltaM_gen_reco_smtop_topKinFit     -> Fill(L_bw_topKinFit.M()-topquark.M());
+        hist_deltaM_gen_reco_wboson_topKinFit_2D -> Fill(wboson.M(), L_w_topKinFit.M()-wboson.M());
+        hist_deltaM_gen_reco_smtop_topKinFit_2D  -> Fill(topquark.M(), L_bw_topKinFit.M()-topquark.M());
+        //hist_deltaR_gen_reco_wboson_topKinFit -> Fill(deltaR);
+        //if(disc[0] > 100000.) hist_deltaR_gen_reco_wboson_topKinFit_irrDisc -> Fill(deltaR);
+        //else if(met_pz_topKinFit >= 0){
+        //    hist_deltaR_gen_reco_wboson_topKinFit_regDisc -> Fill(deltaR);
+        //    hist_deltaR_gen_reco_wboson_topKinFit_regDisc_positivePz -> Fill(deltaR);
+        //} else{
+        //    hist_deltaR_gen_reco_wboson_topKinFit_regDisc -> Fill(deltaR);
+        //    hist_deltaR_gen_reco_wboson_topKinFit_regDisc_negativePz -> Fill(deltaR);
+        //}
         //}}}
+        //}}}
+
+        if(isMoreThanOnePermutation && canFoundSolution_topKinFit) counter_yy += 1;
+        if(!isMoreThanOnePermutation && canFoundSolution_topKinFit) counter_ny += 1;
+        if(!isMoreThanOnePermutation && !canFoundSolution_topKinFit) counter_nn += 1;
+        if(isMoreThanOnePermutation && !canFoundSolution_topKinFit) counter_yn += 1;
+        //if(canFoundSolution_quadratic && canFoundSolution_topKinFit) counter_yy += 1;
+        //if(!canFoundSolution_quadratic && canFoundSolution_topKinFit) counter_ny += 1;
+        //if(!canFoundSolution_quadratic && !canFoundSolution_topKinFit) counter_nn += 1;
+        //if(canFoundSolution_quadratic && !canFoundSolution_topKinFit) counter_yn += 1;
         Nevents_pass_selection += 1;
     }// End of event loop.
     //==================================================//
     //---------------------  Report  -------------------//
     //==================================================//
+    PrintCountsAndRatio("counter_nperm", counter_nperm, Nevents_pass_selection);
+    PrintCountsAndRatio("counter_yy", counter_yy, Nevents_pass_selection);
+    PrintCountsAndRatio("counter_yn", counter_yn, Nevents_pass_selection);
+    PrintCountsAndRatio("counter_ny", counter_ny, Nevents_pass_selection);
+    PrintCountsAndRatio("counter_nn", counter_nn, Nevents_pass_selection);
     // printf{{{
     printf("[INFO] Nevents_tqhIsCorrectlyMatched = %d / %d (%6.2f%%)\n", counter_tqhIsCorrectlyMatched, Nevents_pass_selection, 100 * (double)counter_tqhIsCorrectlyMatched / (double)Nevents_pass_selection);
     printf("[INFO] Nevents_leptonIsCorrectlyMatched = %d / %d (%6.2f%%)\n", counter_lepton_is_correctly_chosen, Nevents_pass_selection, 100 * (double)counter_lepton_is_correctly_chosen / (double)Nevents_pass_selection);
@@ -1047,29 +1097,13 @@ int main(int argc, char *argv[]){
     printf("[CHECK] number of counter_coeff_D_isNegative = %d / %d (%6.2f)\n", counter_coeff_D_isNegative, counter_coeff_D, (double)counter_coeff_D_isNegative/(double)counter_coeff_D);
     printf("[CHECK] number of counter_coeff_D_isNegative_gen = %d / %d (%6.2f)\n", counter_coeff_D_isNegative_gen, counter_coeff_D_gen, (double)counter_coeff_D_isNegative_gen/(double)counter_coeff_D_gen);
 
-    int _n1, _n2;
     printf("\n//--- report of quadratic ---//\n");
-    hist_deltaR_gen_reco_wboson_sol0.Report_hist("positiveD", "negativeD");
-    //_n1 = hist_deltaR_gen_reco_wboson_sol0_positiveD->GetEntries(); _n2 = hist_deltaR_gen_reco_wboson_sol0->GetEntries();
-    //printf("[INFO] sol0 positiveD / all = %d / %d (%6.2f)\n", _n1, _n2, (double)_n1 / (double)_n2 );
-    //_n1 = hist_deltaR_gen_reco_wboson_sol0_negativeD->GetEntries(); _n2 = hist_deltaR_gen_reco_wboson_sol0->GetEntries();
-    //printf("[INFO] sol0 negativeD / all = %d / %d (%6.2f)\n", _n1, _n2, (double)_n1 / (double)_n2 );
-    _n1 = hist_deltaR_gen_reco_wboson_sol1_positiveD->GetEntries(); _n2 = hist_deltaR_gen_reco_wboson_sol1->GetEntries();
-    printf("[INFO] sol1 positiveD / all = %d / %d (%6.2f)\n", _n1, _n2, (double)_n1 / (double)_n2 );
-    _n1 = hist_deltaR_gen_reco_wboson_sol1_negativeD->GetEntries(); _n2 = hist_deltaR_gen_reco_wboson_sol1->GetEntries();
-    printf("[INFO] sol1 negativeD / all = %d / %d (%6.2f)\n", _n1, _n2, (double)_n1 / (double)_n2 );
+    chist_deltaR_gen_reco_wboson_sol1.Report_hist("positiveD", "negativeD");
 
     printf("\n//--- report of topKinFit ---//\n");
-    _n1 = hist_deltaR_gen_reco_wboson_topKinFit_regDisc->GetEntries(); _n2 = hist_deltaR_gen_reco_wboson_topKinFit->GetEntries();
-    printf("[INFO] regular / all = %d / %d (%6.2f)\n", _n1, _n2, (double)_n1 / (double)_n2 );
-    _n1 = hist_deltaR_gen_reco_wboson_topKinFit_irrDisc->GetEntries(); _n2 = hist_deltaR_gen_reco_wboson_topKinFit->GetEntries();
-    printf("[INFO] irregular / all = %d / %d (%6.2f)\n", _n1, _n2, (double)_n1 / (double)_n2 );
-    _n1 = hist_deltaR_gen_reco_wboson_topKinFit_regDisc_positivePz->GetEntries(); _n2 = hist_deltaR_gen_reco_wboson_topKinFit->GetEntries();
-    printf("[INFO] positivePz / all = %d / %d (%6.2f)\n", _n1, _n2, (double)_n1 / (double)_n2 );
-    _n1 = hist_deltaR_gen_reco_wboson_topKinFit_regDisc_negativePz->GetEntries(); _n2 = hist_deltaR_gen_reco_wboson_topKinFit->GetEntries();
-    printf("[INFO] negativePz / all = %d / %d (%6.2f)\n", _n1, _n2, (double)_n1 / (double)_n2 );
+    chist_deltaR_gen_reco_wboson_topKinFit.Report_hist("regular", "irregular");
+    chist_deltaR_gen_reco_wboson_topKinFit_regDisc.Report_hist("positive Pz", "negative Pz");
     //}}}
-    //
     //--------------------
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
     //1-D plots with legend{{{
@@ -1210,23 +1244,6 @@ int main(int argc, char *argv[]){
     legend_ratio->Draw("same");
     c1->SaveAs("ntuples_skimmed/hist_deltaPzRatio_gen_reco_neutrino_topKinFit.png")                  ;
     //---
-    hist_deltaPzRatio_gen_reco_neutrino_sol0 -> Draw("hist")                  ;
-    hist_deltaPzRatio_gen_reco_neutrino_sol0 -> SetLineWidth(2)                  ;
-    hist_deltaPzRatio_gen_reco_neutrino_sol0_positiveD -> Draw("hist;same")                  ;
-    hist_deltaPzRatio_gen_reco_neutrino_sol0_positiveD -> SetLineColor(kRed)                  ;
-    hist_deltaPzRatio_gen_reco_neutrino_sol0_positiveD -> SetLineWidth(2)                  ;
-    hist_deltaPzRatio_gen_reco_neutrino_sol0_positiveD -> SetLineStyle(2)                  ;
-    hist_deltaPzRatio_gen_reco_neutrino_sol0_negativeD -> Draw("hist;same")                  ;
-    hist_deltaPzRatio_gen_reco_neutrino_sol0_negativeD -> SetLineColor(kGreen)                  ;
-    hist_deltaPzRatio_gen_reco_neutrino_sol0_negativeD -> SetLineWidth(2)                  ;
-    legend_ratio->Clear();
-    legend_ratio->AddEntry(hist_deltaPzRatio_gen_reco_neutrino_sol0, "All", "l");
-    legend_ratio->AddEntry(hist_deltaPzRatio_gen_reco_neutrino_sol0_positiveD, "D > 0", "l");
-    legend_ratio->AddEntry(hist_deltaPzRatio_gen_reco_neutrino_sol0_negativeD, "D < 0", "l");
-    legend_ratio->SetLineColor(0);
-    legend_ratio->Draw("same");
-    c1->SaveAs("ntuples_skimmed/hist_deltaPzRatio_gen_reco_neutrino_sol0.png")                  ;
-    //---
     hist_deltaPzRatio_gen_reco_neutrino_sol1 -> Draw("hist")                  ;
     hist_deltaPzRatio_gen_reco_neutrino_sol1 -> SetLineWidth(2)                  ;
     hist_deltaPzRatio_gen_reco_neutrino_sol1_positiveD -> Draw("hist;same")                  ;
@@ -1243,55 +1260,64 @@ int main(int argc, char *argv[]){
     legend_ratio->SetLineColor(0);
     legend_ratio->Draw("same");
     c1->SaveAs("ntuples_skimmed/hist_deltaPzRatio_gen_reco_neutrino_sol1.png")                  ;
+    //---
+    hist_deltaPzRatio_gen_reco_neutrino_sol2 -> Draw("hist")                  ;
+    hist_deltaPzRatio_gen_reco_neutrino_sol2 -> SetLineWidth(2)                  ;
+    hist_deltaPzRatio_gen_reco_neutrino_sol2_positiveD -> Draw("hist;same")                  ;
+    hist_deltaPzRatio_gen_reco_neutrino_sol2_positiveD -> SetLineColor(kRed)                  ;
+    hist_deltaPzRatio_gen_reco_neutrino_sol2_positiveD -> SetLineWidth(2)                  ;
+    hist_deltaPzRatio_gen_reco_neutrino_sol2_positiveD -> SetLineStyle(2)                  ;
+    hist_deltaPzRatio_gen_reco_neutrino_sol2_negativeD -> Draw("hist;same")                  ;
+    hist_deltaPzRatio_gen_reco_neutrino_sol2_negativeD -> SetLineColor(kGreen)                  ;
+    hist_deltaPzRatio_gen_reco_neutrino_sol2_negativeD -> SetLineWidth(2)                  ;
+    legend_ratio->Clear();
+    legend_ratio->AddEntry(hist_deltaPzRatio_gen_reco_neutrino_sol2, "All", "l");
+    legend_ratio->AddEntry(hist_deltaPzRatio_gen_reco_neutrino_sol2_positiveD, "D > 0", "l");
+    legend_ratio->AddEntry(hist_deltaPzRatio_gen_reco_neutrino_sol2_negativeD, "D < 0", "l");
+    legend_ratio->SetLineColor(0);
+    legend_ratio->Draw("same");
+    c1->SaveAs("ntuples_skimmed/hist_deltaPzRatio_gen_reco_neutrino_sol2.png")                  ;
     //}}}
     //# deltaR (W_reco, W_gen){{{
-    hist_deltaR_gen_reco_wboson_sol0.Draw_hist("D >= 0 ", "D < 0");
-    //MakePlots_coeffD(c1, legend_ratio, "hist_deltaR_gen_reco_wboson_sol0", "D >= 0 ", "D < 0", \
-                                        hist_deltaR_gen_reco_wboson_sol0, hist_deltaR_gen_reco_wboson_sol0_positiveD, hist_deltaR_gen_reco_wboson_sol0_negativeD);
-    MakePlots_coeffD(c1, legend_ratio, "hist_deltaR_gen_reco_wboson_sol1", "D >= 0 ", "D < 0", \
-                                        hist_deltaR_gen_reco_wboson_sol1, hist_deltaR_gen_reco_wboson_sol1_positiveD, hist_deltaR_gen_reco_wboson_sol1_negativeD);
-    MakePlots_coeffD(c1, legend_ratio, "hist_deltaR_gen_reco_wboson_topKinFit", "regular", "irregular", \
-                                        hist_deltaR_gen_reco_wboson_topKinFit, hist_deltaR_gen_reco_wboson_topKinFit_regDisc, hist_deltaR_gen_reco_wboson_topKinFit_irrDisc);
-    MakePlots_coeffD(c1, legend_ratio, "hist_deltaR_gen_reco_wboson_topKinFit_regDisc", "positive Pz", "negative Pz", \
-                                        hist_deltaR_gen_reco_wboson_topKinFit_regDisc, hist_deltaR_gen_reco_wboson_topKinFit_regDisc_positivePz, hist_deltaR_gen_reco_wboson_topKinFit_regDisc_negativePz);
-    //TH1D *hist_deltaR_gen_reco_wboson_topKinFit = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit", "", 40, 0, 6);
-    //TH1D *hist_deltaR_gen_reco_wboson_topKinFit_regDisc = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_regDisc", "", 40, 0, 6);
-    //TH1D *hist_deltaR_gen_reco_wboson_topKinFit_irrDisc = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_irrDisc", "", 40, 0, 6);
-    //TH1D *hist_deltaR_gen_reco_wboson_topKinFit_regDisc_positivePz = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_regDisc_positivePz", "", 40, 0, 6);
-    //TH1D *hist_deltaR_gen_reco_wboson_topKinFit_regDisc_negativePz = new TH1D("hist_deltaR_gen_reco_wboson_topKinFit_regDisc_negativePz", "", 40, 0, 6);
+    chist_deltaR_gen_reco_wboson_sol1.Draw_hist(c1, "D >= 0 ", "D < 0");
+    chist_deltaR_gen_reco_wboson_sol2.Draw_hist(c1, "D >= 0 ", "D < 0");
+    chist_deltaR_gen_reco_wboson_topKinFit.Draw_hist(c1, "regular", "irregular");
+    chist_deltaR_gen_reco_wboson_topKinFit_regDisc.Draw_hist(c1, "positive Pz", "negative Pz");
+    //---
+    chist_deltaR_gen_reco_smtop_sol1.Draw_hist(c1, "D >= 0 ", "D < 0");
+    chist_deltaR_gen_reco_smtop_sol2.Draw_hist(c1, "D >= 0 ", "D < 0");
+    chist_deltaR_gen_reco_smtop_topKinFit.Draw_hist(c1, "regular", "irregular");
+    chist_deltaR_gen_reco_smtop_topKinFit_regDisc.Draw_hist(c1, "positive Pz", "negative Pz");
     //}}}
     //}}}
-    /*
     // 1-D plots{{{
     const char* dir = "ntuples_skimmed/chi2_study_leptonic_1D_plots";
     hist_mass_gen_wboson_leptonic -> Draw("hist")               ; c1->SaveAs( Form("%s/hist_mass_gen_wboson_leptonic.png", dir) )               ;
     hist_mass_gen_topquark_leptonic -> Draw("hist")             ; c1->SaveAs( Form("%s/hist_mass_gen_topquark_leptonic.png", dir) )             ;
     hist_deltaR_reco_top_higgs_leptonic -> Draw("hist")         ; c1->SaveAs( Form("%s/hist_deltaR_reco_top_higgs_leptonic.png", dir) )         ;
     hist_deltaR_gen_reco_chargedLepton -> Draw("hist")          ; c1->SaveAs( Form("%s/hist_deltaR_gen_reco_chargedLepton.png", dir) )          ;
-    hist_deltaR_gen_reco_neutrino_sol0 -> Draw("hist")          ; c1->SaveAs( Form("%s/hist_deltaR_gen_reco_neutrino_sol0.png", dir) )          ;
-    //hist_deltaR_gen_reco_wboson_sol0 -> Draw("hist")            ; c1->SaveAs( Form("%s/hist_deltaR_gen_reco_wboson_sol0.png", dir) )            ;
     hist_deltaR_gen_reco_neutrino_sol1 -> Draw("hist")          ; c1->SaveAs( Form("%s/hist_deltaR_gen_reco_neutrino_sol1.png", dir) )          ;
-    hist_deltaR_gen_reco_wboson_sol1 -> Draw("hist")            ; c1->SaveAs( Form("%s/hist_deltaR_gen_reco_wboson_sol1.png", dir) )            ;
+    hist_deltaR_gen_reco_neutrino_sol2 -> Draw("hist")          ; c1->SaveAs( Form("%s/hist_deltaR_gen_reco_neutrino_sol2.png", dir) )          ;
     //---
     hist_deltaPz_gen_reco_chargedLepton -> Draw("hist")         ; c1->SaveAs( Form("%s/hist_deltaPz_gen_reco_chargedLepton.png", dir) )         ;
-    hist_deltaPz_gen_reco_neutrino_sol0 -> Draw("hist")         ; c1->SaveAs( Form("%s/hist_deltaPz_gen_reco_neutrino_sol0.png", dir) )         ;
-    hist_deltaPz_gen_reco_wboson_sol0 -> Draw("hist")           ; c1->SaveAs( Form("%s/hist_deltaPz_gen_reco_wboson_sol0.png", dir) )           ;
     hist_deltaPz_gen_reco_neutrino_sol1 -> Draw("hist")         ; c1->SaveAs( Form("%s/hist_deltaPz_gen_reco_neutrino_sol1.png", dir) )         ;
     hist_deltaPz_gen_reco_wboson_sol1 -> Draw("hist")           ; c1->SaveAs( Form("%s/hist_deltaPz_gen_reco_wboson_sol1.png", dir) )           ;
+    hist_deltaPz_gen_reco_neutrino_sol2 -> Draw("hist")         ; c1->SaveAs( Form("%s/hist_deltaPz_gen_reco_neutrino_sol2.png", dir) )         ;
+    hist_deltaPz_gen_reco_wboson_sol2 -> Draw("hist")           ; c1->SaveAs( Form("%s/hist_deltaPz_gen_reco_wboson_sol2.png", dir) )           ;
     //---
-    hist_deltaPzRatio_gen_reco_neutrino_sol0 -> Draw("hist")    ; c1->SaveAs( Form("%s/hist_deltaPzRatio_gen_reco_neutrino_sol0.png", dir) )    ;
-    hist_deltaPzRatio_gen_reco_wboson_sol0 -> Draw("hist")      ; c1->SaveAs( Form("%s/hist_deltaPzRatio_gen_reco_wboson_sol0.png", dir) )      ;
     hist_deltaPzRatio_gen_reco_neutrino_sol1 -> Draw("hist")    ; c1->SaveAs( Form("%s/hist_deltaPzRatio_gen_reco_neutrino_sol1.png", dir) )    ;
     hist_deltaPzRatio_gen_reco_wboson_sol1 -> Draw("hist")      ; c1->SaveAs( Form("%s/hist_deltaPzRatio_gen_reco_wboson_sol1.png", dir) )      ;
+    hist_deltaPzRatio_gen_reco_neutrino_sol2 -> Draw("hist")    ; c1->SaveAs( Form("%s/hist_deltaPzRatio_gen_reco_neutrino_sol2.png", dir) )    ;
+    hist_deltaPzRatio_gen_reco_wboson_sol2 -> Draw("hist")      ; c1->SaveAs( Form("%s/hist_deltaPzRatio_gen_reco_wboson_sol2.png", dir) )      ;
     //---
     hist_deltaPT_gen_reco_chargedLepton -> Draw("hist")         ; c1->SaveAs( Form("%s/hist_deltaPT_gen_reco_chargedLepton.png", dir) )         ;
-    hist_deltaPT_gen_reco_neutrino_sol0 -> Draw("hist")         ; c1->SaveAs( Form("%s/hist_deltaPT_gen_reco_neutrino_sol0.png", dir) )         ;
-    hist_deltaPT_gen_reco_wboson_sol0 -> Draw("hist")           ; c1->SaveAs( Form("%s/hist_deltaPT_gen_reco_wboson_sol0.png", dir) )           ;
     hist_deltaPT_gen_reco_neutrino_sol1 -> Draw("hist")         ; c1->SaveAs( Form("%s/hist_deltaPT_gen_reco_neutrino_sol1.png", dir) )         ;
     hist_deltaPT_gen_reco_wboson_sol1 -> Draw("hist")           ; c1->SaveAs( Form("%s/hist_deltaPT_gen_reco_wboson_sol1.png", dir) )           ;
+    hist_deltaPT_gen_reco_neutrino_sol2 -> Draw("hist")         ; c1->SaveAs( Form("%s/hist_deltaPT_gen_reco_neutrino_sol2.png", dir) )         ;
+    hist_deltaPT_gen_reco_wboson_sol2 -> Draw("hist")           ; c1->SaveAs( Form("%s/hist_deltaPT_gen_reco_wboson_sol2.png", dir) )           ;
     //---
-    hist_deltaPT_reco_neutrino_sol0_doubleCheck -> Draw("hist") ; c1->SaveAs( Form("%s/hist_deltaPT_reco_neutrino_sol0_doubleCheck.png", dir) ) ;
     hist_deltaPT_reco_neutrino_sol1_doubleCheck -> Draw("hist") ; c1->SaveAs( Form("%s/hist_deltaPT_reco_neutrino_sol1_doubleCheck.png", dir) ) ;
+    hist_deltaPT_reco_neutrino_sol2_doubleCheck -> Draw("hist") ; c1->SaveAs( Form("%s/hist_deltaPT_reco_neutrino_sol2_doubleCheck.png", dir) ) ;
     //---
     hist_gen_neutrino_pz -> Draw("hist")                        ; c1->SaveAs( Form("%s/hist_gen_neutrino_pz.png", dir) )                        ;
     hist_MetInfo_Pz_solution_1 -> Draw("hist")                  ; c1->SaveAs( Form("%s/hist_MetInfo_Pz_solution_1.png", dir) )                  ;
@@ -1317,6 +1343,26 @@ int main(int argc, char *argv[]){
     hist_leptonic_top_tbw_solution2_pt -> Draw("hist")          ; c1->SaveAs( Form("%s/hist_leptonic_top_tbw_solution2_pt.png", dir) )          ;
     hist_leptonic_top_tbw_solution2_eta -> Draw("hist")         ; c1->SaveAs( Form("%s/hist_leptonic_top_tbw_solution2_eta.png", dir) )         ;
     hist_leptonic_top_tbw_solution2_mass -> Draw("hist")        ; c1->SaveAs( Form("%s/hist_leptonic_top_tbw_solution2_mass.png", dir) )        ;
+    //---
+    hist_leptonic_w_candidate_topKinFit_pt -> Draw("hist")   ; c1->SaveAs( Form("%s/hist_leptonic_w_candidate_topKinFit_pt.png", dir) )   ;
+    hist_leptonic_w_candidate_topKinFit_eta -> Draw("hist")  ; c1->SaveAs( Form("%s/hist_leptonic_w_candidate_topKinFit_eta.png", dir) )  ;
+    hist_leptonic_w_candidate_topKinFit_mass -> Draw("hist") ; c1->SaveAs( Form("%s/hist_leptonic_w_candidate_topKinFit_mass.png", dir) ) ;
+    hist_leptonic_top_tbw_topKinFit_pt -> Draw("hist")       ; c1->SaveAs( Form("%s/hist_leptonic_top_tbw_topKinFit_pt.png", dir) )       ;
+    hist_leptonic_top_tbw_topKinFit_eta -> Draw("hist")      ; c1->SaveAs( Form("%s/hist_leptonic_top_tbw_topKinFit_eta.png", dir) )      ;
+    hist_leptonic_top_tbw_topKinFit_mass -> Draw("hist")     ; c1->SaveAs( Form("%s/hist_leptonic_top_tbw_topKinFit_mass.png", dir) )     ;
+    //---
+    hist_deltaM_gen_reco_wboson_quadratic    -> Draw("hist") ; c1 -> SaveAs( Form("%s/hist_deltaM_gen_reco_wboson_quadratic.png", dir) )    ;
+    hist_deltaM_gen_reco_wboson_quadratic_2D -> Draw("box")  ; c1 -> SaveAs( Form("%s/hist_deltaM_gen_reco_wboson_quadratic_2D.png", dir) ) ;
+    hist_deltaM_gen_reco_smtop_quadratic     -> Draw("hist") ; c1 -> SaveAs( Form("%s/hist_deltaM_gen_reco_smtop_quadratic.png", dir) )     ;
+    hist_deltaM_gen_reco_smtop_quadratic_2D  -> Draw("box")  ; c1 -> SaveAs( Form("%s/hist_deltaM_gen_reco_smtop_quadratic_2D.png", dir) )  ;
+
+    hist_deltaM_gen_reco_wboson_topKinFit    -> Draw("hist") ; c1 -> SaveAs( Form("%s/hist_deltaM_gen_reco_wboson_topKinFit.png", dir) )    ;
+    hist_deltaM_gen_reco_wboson_topKinFit_2D -> Draw("box")  ; c1 -> SaveAs( Form("%s/hist_deltaM_gen_reco_wboson_topKinFit_2D.png", dir) ) ;
+    hist_deltaM_gen_reco_smtop_topKinFit     -> Draw("hist") ; c1 -> SaveAs( Form("%s/hist_deltaM_gen_reco_smtop_topKinFit.png", dir) )     ;
+    hist_deltaM_gen_reco_smtop_topKinFit_2D  -> Draw("box")  ; c1 -> SaveAs( Form("%s/hist_deltaM_gen_reco_smtop_topKinFit_2D.png", dir) )  ;
+    //---
+    hist_disc_topKinFit->GetXaxis()->SetRange(1, hist_disc_topKinFit->GetNbinsX() + 1);
+    hist_disc_topKinFit -> Draw("hist"); c1 -> SaveAs( Form("%s/hist_disc_topKinFit.png", dir) )  ;
     //}}}
     //2-D plots{{{
     gPad->SetRightMargin(0.1);
@@ -1372,15 +1418,56 @@ int main(int argc, char *argv[]){
 //    //}}}
 //
     //}}}
-    */
     //--------------------
+    //1-D plots: comparison two methods{{{
+    TH1D* hist_deltaR_gen_reco_wboson_sol2      = chist_deltaR_gen_reco_wboson_sol2.Get_hist();
+    TH1D* hist_deltaR_gen_reco_wboson_topKinFit = chist_deltaR_gen_reco_wboson_topKinFit.Get_hist();
+    TH1D* hist_deltaR_gen_reco_smtop_sol2       = chist_deltaR_gen_reco_smtop_sol2.Get_hist();
+    TH1D* hist_deltaR_gen_reco_smtop_topKinFit  = chist_deltaR_gen_reco_smtop_topKinFit.Get_hist();
+
+    plots_comparison_two_methods("ntuples_skimmed", "hist_deltaR_wboson_comparison", c1, legend, \
+                                                     hist_deltaR_gen_reco_wboson_sol2, hist_deltaR_gen_reco_wboson_topKinFit);
+    plots_comparison_two_methods("ntuples_skimmed", "hist_deltaR_smtop_comparison", c1, legend, \
+                                                     hist_deltaR_gen_reco_smtop_sol2, hist_deltaR_gen_reco_smtop_topKinFit);
+
+    plots_comparison_two_methods("ntuples_skimmed", "hist_deltaM_wboson_comparison", c1, legend, \
+                                                     hist_deltaM_gen_reco_wboson_quadratic, hist_deltaM_gen_reco_wboson_topKinFit);
+    plots_comparison_two_methods("ntuples_skimmed", "hist_deltaM_smtop_comparison", c1, legend, \
+                                                     hist_deltaM_gen_reco_smtop_quadratic, hist_deltaM_gen_reco_smtop_topKinFit);
+    //}}}
+
     printf("End!!");
     fout->Write();
     fout->Close();
     return 1;
 }
 
+void PrintCountsAndRatio(const char* title, int a, int b){
+    printf("[INFO] %s = %d / %d (%6.2f%%)\n", title, a, b, 100. * (double)a / (double)b);
+}
 // functions{{{
+void plots_comparison_two_methods(const char* dirName, const char* plotName, TCanvas *c1, TLegend *legend, TH1D* hist_quadratic, TH1D* hist_topKinFit)
+{
+    double scale = 1.2;
+    double max_01 = hist_quadratic -> GetMaximum();
+    double max_02 = hist_topKinFit -> GetMaximum();
+    double max = (max_01 > max_02) ? max_01 : max_02;
+
+    hist_quadratic -> SetStats(0);
+    hist_quadratic -> SetMaximum(max*scale);
+    hist_quadratic->Draw();
+
+    hist_topKinFit -> SetStats(0);
+    hist_topKinFit->SetLineColor(kRed);
+    hist_topKinFit->Draw("same");
+
+    legend->Clear();
+    legend->AddEntry(hist_quadratic,  "quardratic", "l");
+    legend->AddEntry(hist_topKinFit,  "topKinFit", "l");
+    legend->SetLineColor(0);
+    legend->Draw("same");
+    c1->SaveAs( Form("%s/%s.png", dirName, plotName) )    ;
+}
 void MakePlots_coeffD(TCanvas* c1, TLegend* legend_ratio, const char* histName, const char* label1, const char* label2, TH1D* hist, TH1D* hist_positiveD, TH1D* hist_negativeD){
     hist -> Draw("hist");
     hist -> SetLineWidth(2);
@@ -1657,9 +1744,9 @@ void print_matched_gen_info(TLorentzVector jet, Int_t GenPartInfo_size, std::vec
 }
 //}}}
 //### report{{{
-void kinematics_info(const char* Title, TLorentzVector Particle){
-        printf("(%s) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f\n", Title, Particle.Pt(), Particle.Eta(), Particle.Phi(), Particle.Energy(), Particle.M());
-}
+//void kinematics_info(const char* Title, TLorentzVector Particle, int index){
+//        printf("(%s) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f\n", Title, Particle.Pt(), Particle.Eta(), Particle.Phi(), Particle.Energy(), Particle.M());
+//}
 void kinematics_report(const char* recoTitle, TLorentzVector recoParticle, int id_recoParticle, const char* genTitle, TLorentzVector genParticle, int genParticle_PdgID){
         double delta_R = genParticle.DeltaR(recoParticle);
         printf("(%s) Pt = %6.2f, Eta = %6.2f, Phi = %6.2f, Energy = %6.2f, Mass = %6.2f, id = %d\n", recoTitle, recoParticle.Pt(), recoParticle.Eta(), recoParticle.Phi(), recoParticle.Energy(), recoParticle.M(), id_recoParticle);
