@@ -90,8 +90,8 @@ function ReRunStackPlotsOnly(){
 #make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root" "hadronic"
 #}}}
 # top reconstruction study leptonic{{{
-export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
-make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-T2HJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
+#export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
+#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-T2HJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
 #make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hut-MadGraph5-pythia8.root" "leptonic"
 #make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
 #make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root" "leptonic"
@@ -106,16 +106,17 @@ make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-T2HJ_aTleptonic_HToa
 #Preselection
 #Intermission
 
+#export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
 #./script/prepareExeForNewMC_npu_float.sh "selection"
-#Selection "hadronic" #selection and make plots for hadronic channel
-#AfterSelection "hadronic" 
+##Selection "hadronic" #selection and make plots for hadronic channel
+##AfterSelection "hadronic" 
 #Selection "leptonic" #selection and make plots for leptonic channel
 #AfterSelection "leptonic" 
 #./script/check_errors.sh
-#./script/tableMaker.sh
+##./script/tableMaker.sh
 
 #tar -zcvf plots_hadronic.tar.gz plots_hadronic
 #tar -zcvf plots_leptonic.tar.gz plots_leptonic
 
 #ReRunStackPlotsOnly "hadronic"
-#ReRunStackPlotsOnly "leptonic"
+ReRunStackPlotsOnly "leptonic"

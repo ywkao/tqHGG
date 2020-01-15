@@ -24,8 +24,7 @@ void stackHist(const char* channel){
     if(bool_isHadronic) printf("[CHECK] from macro src/stackHist.C: isHadronic!\n");
     if(bool_isLeptonic) printf("[CHECK] from macro src/stackHist.C: isLeptonic!\n");
     //}}}
-    MakeStackHist("hist_DiPhoInfo_mass");
-    /*
+    //MakeStackHist("hist_DiPhoInfo_mass");
     //### MakeStackHist{{{
     MakeStackHist("hist_EvtInfo_NPu");
     MakeStackHist("hist_EvtInfo_Rho");
@@ -174,7 +173,6 @@ void stackHist(const char* channel){
     MakeStackHist("hist_leptonic_top_tbw_solution2_eta");
     MakeStackHist("hist_leptonic_top_tbw_solution2_mass");
     //}}}
-    */
 }
 void MakeStackHist(const char* histName){
     //if((string)histName == "hist_EvtInfo_NVtx") PrintTexStyle = true; else PrintTexStyle = false;

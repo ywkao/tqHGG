@@ -58,7 +58,7 @@ $(TARGET1): build/preselection.o
 
 $(TARGET2): build/selection.o
 	@echo " Linking for selection cpp..."
-	@echo " $(CC) $^ -o $(TARGET2) $(LIB)"; $(CC) $^ -o $(TARGET2) $(LIB)
+	@echo " $(CC) $^ -o $(TARGET2) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET2) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)
 
 $(TARGET3): build/generalChiSquareStudy.o
 	@echo " Linking for generalChiSquareStudy cpp..."
@@ -93,7 +93,7 @@ build/preselection.o: src/preselection.cpp
 
 build/selection.o: src/selection.cpp
 	@mkdir -p $(BUILDDIR)
-	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+	@echo " $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<
 
 build/generalChiSquareStudy.o: src/generalChiSquareStudy.cpp
 	@mkdir -p $(BUILDDIR)
