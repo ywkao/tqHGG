@@ -4,7 +4,7 @@
 // FileName    : selection.cpp
 // Purpose     : Develop for top FCNH with H to two photons analysis
 // Description : Applying event selection & Preparing histograms for individual dataset.
-// Deetail     : PU reweighting, leptonic/hadronic channels, hists, (top reconstruction).
+// Details     : PU reweighting, leptonic/hadronic selections, hists, top reconstruction.
 // Author      : Yu-Wei Kao [ykao@cern.ch]
 //
 //***************************************************************************
@@ -22,6 +22,8 @@
 #include "../include/main.h"
 #include "../include/selection.h"
 #include "../include/enumhist.h"
+#include "../../TopKinFit/kinfit.h"
+#include "../../TopKinFit/TopLep.h"
 using namespace std;
 
 bool bool_isHadronic;
@@ -36,10 +38,9 @@ bool bool_num_bjets_is_atleast_one = !bool_num_bjets_is_exactly_one;
 //}}}
 
 void Selection(char* input_file, char* output_file, char* output_tree, char* dataset, char* output_dir, char* channel){
+    //### bool MC/Data & hadronic/leptonic{{{
     bool isData = isThisDataOrNot(dataset);
     bool isMCsignal = isThisMCsignal(dataset);
-
-    //### bool hadronic / leptonic{{{
     if((string)channel == "hadronic") bool_isHadronic = true; else bool_isHadronic = false;
     bool_isLeptonic = !bool_isHadronic;
     if(bool_isHadronic) printf("[CHECK] isHadronic!\n");
@@ -151,24 +152,59 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
     myAnalysisTree->Branch("tree_top_eta", &tree_top_eta, "tree_top_eta/F");
     myAnalysisTree->Branch("tree_tH_deltaR", &tree_tH_deltaR, "tree_tH_deltaR/F");
     //}}}
-
+    //### counters{{{
     int counter_M1_exists_hadronic = 0;
     int counter_M1_exists_leptonic = 0;
     int counter_selected_events = 0;
     int counter_coeff_D_isNegative = 0;
+    int counter_bjet_is_bquark = 0;
+    int counter_irregular_disc = 0;
+    //}}}
     //==================================================//
     //-------------------- Event Loop ------------------//
     //==================================================//
-    int counter_bjet_is_bquark = 0;
+    // # topKinFit method{{{
+    KINFIT::kfit *kf = new KINFIT::kfit();
+    kf->Init(TOPLEP); // Initialize tool for ttbar with FCNC top decay to Higgs(->bb)+u/c hypothesis
+    kf->SetNToy(10); // Set number of toys for minimization
+    // Define PDFs{{{
+    std::string pdfFileName = "../TopKinFit/test/GenAnalysis/TopLep/pdf.root";
+    //kf->SetPDF("TopWMass",pdfFileName.c_str(),"TopLepWM_Fit");
+    kf->SetPDF("TopWMass",pdfFileName.c_str(),"TopWM_Fit");
+    kf->SetPDF("TopMass",pdfFileName.c_str(),"TopLepRecM_Fit");
+    //kf->SetPDF("HiggsMass",pdfFileName.c_str(),"HiggsRecM_Fit");
+    //kf->SetPDF("TopHadMass",pdfFileName.c_str(),"TopHadRecM_Fit");
+    kf->SetPDF("MetPx",pdfFileName.c_str(),"dMetPx_Gaus");
+    kf->SetPDF("MetPy",pdfFileName.c_str(),"dMetPy_Gaus");
+    kf->SetPDF("BJetPx",pdfFileName.c_str(),"dBJetPx_Fit");
+    kf->SetPDF("BJetPy",pdfFileName.c_str(),"dBJetPy_Fit");
+    kf->SetPDF("BJetPz",pdfFileName.c_str(),"dBJetPz_Fit");
+    kf->SetPDF("BJetE",pdfFileName.c_str(),"dBJetE_Fit");
+    kf->SetPDF("NonBJetPx",pdfFileName.c_str(),"dNonBJetPx_Fit");
+    kf->SetPDF("NonBJetPy",pdfFileName.c_str(),"dNonBJetPy_Fit");
+    kf->SetPDF("NonBJetPz",pdfFileName.c_str(),"dNonBJetPz_Fit");
+    kf->SetPDF("NonBJetE",pdfFileName.c_str(),"dNonBJetE_Fit");
+    kf->SetPDF("ElecPx",pdfFileName.c_str(),"dElecPx_Fit");
+    kf->SetPDF("ElecPy",pdfFileName.c_str(),"dElecPy_Fit");
+    kf->SetPDF("ElecPz",pdfFileName.c_str(),"dElecPz_Fit");
+    kf->SetPDF("ElecE",pdfFileName.c_str(),"dElecE_Fit");
+    kf->SetPDF("MuonPx",pdfFileName.c_str(),"dMuonPx_Fit");
+    kf->SetPDF("MuonPy",pdfFileName.c_str(),"dMuonPy_Fit");
+    kf->SetPDF("MuonPz",pdfFileName.c_str(),"dMuonPz_Fit");
+    kf->SetPDF("MuonE",pdfFileName.c_str(),"dMuonE_Fit");
+    //}}}
+    //}}}
     int nentries = treeReader.GetEntries();
     for(int ientry=0; ientry<nentries; ientry++){
         TTree* tmp = treeReader.GetTTree(); tmp->GetEntry(ientry);
+        //### entry reporter{{{
         if(ientry==0){
             printf("[INFO] total entry before preselection = %d\n", treeReader.EvtInfo_totalEntry_before_preselection);
             printf("[INFO] total entry after  preselection = %d\n", nentries);
         }
         //if((ientry+1)%10000==0)  printf("ientry = %d\r", ientry);
         //if((ientry+1)==nentries) printf("ientry = %d\r", ientry);
+        //}}}
         //### InitTree{{{
         tree_event_weight = -999;
         tree_leadingPhoton_pt = -999;
@@ -218,8 +254,8 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         tree_event_weight = NormalizationFactor;
         //Reminder: EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
         //}}}
+        //=== pu study only (skipped){{{
         /*
-        //=== pu study only ==={{{
         //--- pu study only ---//
         bool pass_leadingPhotonPT = treeReader.DiPhoInfo_leadPt > 35.;
         bool pass_subleadingPhotonPT = treeReader.DiPhoInfo_subleadPt > 25.;
@@ -243,8 +279,8 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         h[hist_EvtInfo_Rho_wopu] -> Fill(treeReader.EvtInfo_Rho, isData ? 1. : NormalizationFactor_wopu);
         h[hist_EvtInfo_NVtx] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor);
         h[hist_EvtInfo_NVtx_wopu] -> Fill(treeReader.EvtInfo_NVtx, isData ? 1. : NormalizationFactor_wopu);
-        //}}}
         */
+        //}}}
         //### Event selection{{{
         //blind data
         bool pass_signal_region = treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130;
@@ -419,6 +455,8 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         //### Leptons{{{
         //--------- Leptons ---------//
         std::vector<TLorentzVector> Leptons;
+        std::vector<TLorentzVector> Electrons;
+        std::vector<TLorentzVector> Muons;
         std::vector<int> Leptons_charge;
         h[hist_ElecInfo_Size] -> Fill(treeReader.ElecInfo_Size, isData ? 1. : NormalizationFactor);
         h[hist_MuonInfo_Size] -> Fill(treeReader.MuonInfo_Size, isData ? 1. : NormalizationFactor);
@@ -442,6 +480,7 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
                 h[hist_lepton_diphoton_deltaR] -> Fill(treeReader.ElecInfo_electron_diphoton_deltaR_selection->at(i), isData ? 1. : NormalizationFactor);
                 //------------------------
                 TLorentzVector electron; electron.SetPtEtaPhiE(treeReader.ElecInfo_electron_pt_selection->at(i), treeReader.ElecInfo_electron_eta_selection->at(i), treeReader.ElecInfo_electron_phi_selection->at(i), treeReader.ElecInfo_electron_energy_selection->at(i));
+                Electrons.push_back(electron);
                 Leptons.push_back(electron);
                 Leptons_charge.push_back(treeReader.ElecInfo_electron_charge_selection->at(i));
 
@@ -499,6 +538,7 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
                 h[hist_lepton_diphoton_deltaR] -> Fill(treeReader.MuonInfo_muon_diphoton_deltaR_selection->at(i), isData ? 1. : NormalizationFactor);
                 //------------------------
                 TLorentzVector muon; muon.SetPtEtaPhiE(treeReader.MuonInfo_muon_pt_selection->at(i), treeReader.MuonInfo_muon_eta_selection->at(i), treeReader.MuonInfo_muon_phi_selection->at(i), treeReader.MuonInfo_muon_energy_selection->at(i));
+                Muons.push_back(muon);
                 Leptons.push_back(muon);
                 Leptons_charge.push_back(treeReader.MuonInfo_muon_charge_selection->at(i));
             }
@@ -575,7 +615,7 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         h[hist_MetInfo_Py] -> Fill(treeReader.MetInfo_Py, isData ? 1. : NormalizationFactor);
         h[hist_MetInfo_SumET] -> Fill(treeReader.MetInfo_SumET, isData ? 1. : NormalizationFactor);
         //}}}
-        //### top reconstruction{{{
+        //### top reconstruction
         //================================================//
         //-----------   top reconstruction     -----------//
         //================================================//
@@ -706,7 +746,7 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
             tree_tH_deltaR = diphoton.DeltaR(top_candidate_chi2_modified);
 
         } else{ // bool_isLeptonic == true
-        //--- solve met_pz{{{
+        //### set known info of met & leading lepton{{{
         float met_pt = treeReader.MetInfo_Pt;
         float met_phi = treeReader.MetInfo_Phi;
         float met_px = treeReader.MetInfo_Px;
@@ -717,6 +757,9 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         float lepton_py = lepton.Py();
         float lepton_pz = lepton.Pz();
         float lepton_energy = lepton.E();
+        //}}}
+        /*
+        //--- solve met_pz{{{
         //float coefficient_factor = ( w_boson_mass*w_boson_mass + 2*lepton_px*met_px + 2*lepton_py*met_py ) / (2.*lepton_energy);
         float coefficient_factor = ( 80.375*80.375 + 2.*lepton_px*met_px + 2.*lepton_py*met_py ) / (2.*lepton_energy);
         //float coefficient_A = 1. - (lepton_pz/lepton_energy)*(lepton_pz/lepton_energy);
@@ -852,12 +895,106 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         deltaR = bjet.DeltaR(L_w_lep[1])                                      ; h[hist_deltaR_bW] -> Fill(deltaR, isData ? 1. : NormalizationFactor)            ;
         //deltaR = Jets[0].DeltaR(Jets[1])                                      ; h[hist_deltaR_jet1_jet2] -> Fill(deltaR, isData ? 1. : NormalizationFactor)     ;
         //}}}
-
+        // store tree parameters{{{
         tree_neutrino_pz = met_pz_solution_2;
         tree_top_pt = L_bw_lep[1].Pt();
         tree_top_eta = L_bw_lep[1].Eta();
         tree_top_mass = L_bw_lep[1].M();
         tree_tH_deltaR = diphoton.DeltaR(L_bw_lep[1]);
+        //}}}
+        */
+
+        //TopKinFit Method{{{
+        // set up input parameters{{{
+        std::vector<float> BJetPt;
+        std::vector<float> BJetEta;
+        std::vector<float> BJetPhi;
+        std::vector<float> BJetE;
+        std::vector<float> NonBJetFilteredPt;
+        std::vector<float> NonBJetFilteredEta;
+        std::vector<float> NonBJetFilteredPhi;
+        std::vector<float> NonBJetFilteredE;
+        std::vector<float> ElectronPt;
+        std::vector<float> ElectronEta;
+        std::vector<float> ElectronPhi;
+        std::vector<float> ElectronE;
+        std::vector<float> MuonPt;
+        std::vector<float> MuonEta;
+        std::vector<float> MuonPhi;
+        std::vector<float> MuonE;
+        float MetRecPx = treeReader.MetInfo_Px;
+        float MetRecPy = treeReader.MetInfo_Py;
+
+        //exactly one tight bjet
+        BJetPt.push_back(bjet.Pt());
+        BJetEta.push_back(bjet.Eta());
+        BJetPhi.push_back(bjet.Phi());
+        BJetE.push_back(bjet.E());
+        for(std::size_t i=0; i<Jets.size(); ++i){
+            if(i==index_bjet) continue;
+            NonBJetFilteredPt.push_back(Jets[i].Pt());
+            NonBJetFilteredEta.push_back(Jets[i].Eta());
+            NonBJetFilteredPhi.push_back(Jets[i].Phi());
+            NonBJetFilteredE.push_back(Jets[i].E());
+        }
+        for(std::size_t i=0; i<Electrons.size(); ++i){
+            ElectronPt.push_back(Electrons[i].Pt());
+            ElectronEta.push_back(Electrons[i].Eta());
+            ElectronPhi.push_back(Electrons[i].Phi());
+            ElectronE.push_back(Electrons[i].E());
+        }
+        for(std::size_t i=0; i<Muons.size(); ++i){
+            MuonPt.push_back(Muons[i].Pt());
+            MuonEta.push_back(Muons[i].Eta());
+            MuonPhi.push_back(Muons[i].Phi());
+            MuonE.push_back(Muons[i].E());
+        }
+
+        // Pass reconstructed objects to the tool (std::vector<float> for all objects except float for Met)
+        kf->SetBJet(BJetPt,BJetEta,BJetPhi,BJetE);
+        kf->SetNonBJet(NonBJetFilteredPt,NonBJetFilteredEta,NonBJetFilteredPhi,NonBJetFilteredE);
+        kf->SetElectron(ElectronPt,ElectronEta,ElectronPhi,ElectronE);
+        kf->SetMuon(MuonPt,MuonEta,MuonPhi,MuonE);
+        kf->SetMet(MetRecPx,MetRecPy);
+        //}}}
+        //run{{{
+        kf->Run(); // Run the tool
+        int NPerm = kf->GetNPerm(); // Get number of permutations
+        std::vector<float> NuPz, disc;
+
+        for(int ip=0;ip<NPerm;ip++) // Loop over permutations - already sorted in likelihood value from min to max
+        {
+            //printf("[INFO-kinfit] disc = %f\n", disc);
+            disc.push_back( kf->GetDisc(ip) ); // Get minimized likelihood value
+            // Get reconstructed neutrino
+            float NuPx = kf->GetNuPx(ip,0);
+            float NuPy = kf->GetNuPy(ip,0);
+            NuPz.push_back( kf->GetNuPz(ip,0) );
+        }
+        //}}}
+
+        if(disc[0] > 100000.) counter_irregular_disc += 1;
+
+        //reconstruct W, top
+        TLorentzVector L_met_topKinFit;
+        TLorentzVector L_w_topKinFit;
+        TLorentzVector L_bw_topKinFit;
+        float met_pz_topKinFit = NuPz[0];
+        float met_energy_topKinFit = TMath::Sqrt(met_pt*met_pt + met_pz_topKinFit*met_pz_topKinFit);
+        L_met_topKinFit.SetPxPyPzE( met_px, met_py, met_pz_topKinFit, met_energy_topKinFit );
+        L_w_topKinFit.SetPxPyPzE( (lepton_px + met_px), (lepton_py + met_py), (lepton_pz + met_pz_topKinFit), (lepton_energy + met_energy_topKinFit) );
+        L_bw_topKinFit = bjet + L_w_topKinFit;
+
+        bool canFoundSolution_topKinFit = !(disc[0] > 100000.);
+        bool is_reg_and_positive = canFoundSolution_topKinFit && met_pz_topKinFit >= 0;
+
+        //}}}
+
+        tree_neutrino_pz = L_met_topKinFit.Pz();
+        tree_top_pt = L_bw_topKinFit.Pt();
+        tree_top_eta = L_bw_topKinFit.Eta();
+        tree_top_mass = L_bw_topKinFit.M();
+        tree_tH_deltaR = diphoton.DeltaR(L_bw_topKinFit);
 
         } // end of else
         //}}}
