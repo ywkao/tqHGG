@@ -7,6 +7,9 @@
 # 4) http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
 # 5) https://www.wooster.edu/_media/files/academics/areas/computer-science/resources/makefile-tut.pdf
 ##################################################################################
+ROOTCFLAGS    = $(shell root-config --cflags)
+ROOTLIBS      = $(shell root-config --libs) -lMinuit
+ROOTGLIBS     = $(shell root-config --glibs)
 
 # CC := clang --analyze # and comment out the linker last line for sanity
 CC       := g++ # This is the main compiler
@@ -28,9 +31,14 @@ CFLAGS   := $(shell root-config --cflags) -g -O3 #-Wno-write-strings -D_FILE_OFF
 LIB      := $(shell root-config --libs) -lMinuit
 INC      := -I include
 
-all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2} $(TARGET3) $(TARGET3b) $(TARGET4)
+
+all: build/libHistFactory.so ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2} $(TARGET3) $(TARGET3b) $(TARGET4)
 #all: ${TARGET} ${TARGET0} ${TARGET1} ${TARGET2} $(TARGET3) $(TARGET4) $(TARGET5)
 
+
+build/libHistFactory.so: include/hist_factory.h include/hist_factory.cpp
+	      @echo "####### Building library build/libHistFactory.so"
+		  @gcc -fPIC -shared $(ROOTCFLAGS) $(ROOTLIBS) -I. include/hist_factory.cpp -o build/libHistFactory.so
 
 
 #$(TARGET): $(OBJECTS)
@@ -56,7 +64,7 @@ $(TARGET3): build/generalChiSquareStudy.o
 	@echo " Linking for generalChiSquareStudy cpp..."
 	@echo " $(CC) $^ -o $(TARGET3) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET3) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)
 
-$(TARGET3b): build/generalChiSquareStudy_leptonic.o
+$(TARGET3b): build/generalChiSquareStudy_leptonic.o build/libHistFactory.so
 	@echo " Linking for generalChiSquareStudy_leptonic cpp..."
 	@echo " $(CC) $^ -o $(TARGET3b) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET3b) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)
 
