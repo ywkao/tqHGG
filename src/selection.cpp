@@ -988,6 +988,40 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         bool canFoundSolution_topKinFit = !(disc[0] > 100000.);
         bool is_reg_and_positive = canFoundSolution_topKinFit && met_pz_topKinFit >= 0;
 
+        //--- M1{{{
+        double M1;
+        int index_q;
+        TLorentzVector jet_q;
+        TLorentzVector top_fcnh = GetBestM1(M1, treeReader.num_jets, index_bjet, index_jet_chi2_modified, diphoton, Jets, index_q, jet_q);
+        if(M1 != -999){
+            counter_M1_exists_leptonic += 1;
+            //-----
+            h[hist_top_tqh_pt]->Fill(top_fcnh.Pt(), isData ? 1. : NormalizationFactor);//exclude event without suitable candidate
+            h[hist_top_tqh_eta]->Fill(top_fcnh.Eta(), isData ? 1. : NormalizationFactor);//exclude event without suitable candidate
+            h[hist_top_tqh_mass]->Fill(top_fcnh.M(), isData ? 1. : NormalizationFactor);//exclude event without suitable candidate
+            //-----
+            h[hist_jetq_pt] -> Fill(jet_q.Pt(), isData ? 1. : NormalizationFactor);
+            h[hist_jetq_eta] -> Fill(jet_q.Eta(), isData ? 1. : NormalizationFactor);
+            h[hist_jetq_phi] -> Fill(jet_q.Phi(), isData ? 1. : NormalizationFactor);
+            h[hist_jetq_energy] -> Fill(jet_q.E(), isData ? 1. : NormalizationFactor);
+            h[hist_jetq_btag_score] -> Fill(Jets_btag_score[index_q], isData ? 1. : NormalizationFactor);
+            h[hist_jetq_CvsL_score] -> Fill(Jets_CvsL_score[index_q], isData ? 1. : NormalizationFactor);
+            h[hist_jetq_CvsB_score] -> Fill(Jets_CvsB_score[index_q], isData ? 1. : NormalizationFactor);
+            h[hist_jetq_diphoton_deltaR] -> Fill(jet_q.DeltaR(diphoton), isData ? 1. : NormalizationFactor);
+            if(treeReader.num_leptons>0){
+                for(int i=0; i<treeReader.num_leptons; ++i){
+                    double delta_R = jet_q.DeltaR(Leptons.at(i));
+                    h[hist_jetq_lepton_deltaR] -> Fill(delta_R, isData ? 1. : NormalizationFactor);
+                }
+            }
+            tree_jet2_pt   = jet_q.Pt();
+            tree_jet2_eta  = jet_q.Eta();
+            tree_jet2_btag = Jets_btag_score[index_q];
+            tree_jet2_CvsL = Jets_CvsL_score[index_q];
+            tree_jet2_CvsB = Jets_CvsB_score[index_q];
+        }
+
+        //}}}
         //}}}
 
         tree_neutrino_pz = L_met_topKinFit.Pz();
