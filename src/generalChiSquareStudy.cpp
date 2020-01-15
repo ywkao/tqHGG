@@ -2,8 +2,12 @@
 //***************************************************************************
 //
 // FileName    : generalChiSquareStudy.cpp
-// Purpose     : Develop for top FCNH with H to two photons analysis
-// Description : Extracting event info & Selecting objects (diphoton, leptons, jets).
+// Purpose     : Develop top reconstruction methods in hadronic channel (test code) 
+// Description : several methods for top reconstruction are tested
+//             : (1) leading jets method (only high pt jets are selected for reconstruction)
+//             : (2) simple chi-2 method (without consider covariance term)
+//             : (3) modified chi-2 method (2X2 matrix)
+//             : (4) improved chi-2 method (3X3 matrix)
 // Author      : Yu-Wei Kao [ykao@cern.ch]
 //
 //***************************************************************************
@@ -36,11 +40,10 @@ using namespace std;
 //bool printSelectedJetsInfo = true;
 bool printSelectedJetsInfo = false;
 //--- control bjet selection ---//
-bool bool_bjet_is_loose  = false;
+bool bool_bjet_is_loose  = true;
 bool bool_bjet_is_medium = false;
-bool bool_bjet_is_tight  = true;
-//bool bool_num_bjets_is_exactly_one = true;
-bool bool_num_bjets_is_exactly_one = true;
+bool bool_bjet_is_tight  = false;
+bool bool_num_bjets_is_exactly_one = false;
 bool bool_num_bjets_is_atleast_one = !bool_num_bjets_is_exactly_one;
 
 int main(int argc, char *argv[]){

@@ -5,18 +5,18 @@ component_plots::component_plots()
 }
 component_plots::~component_plots()
 {
-    delete c1;
-    delete legend;
-    delete hist;
-    delete hist_positive;
-    delete hist_negative;
+    //delete c1;
+    //delete legend;
+    //delete hist;
+    //delete hist_positive;
+    //delete hist_negative;
 }
 
 void component_plots::Init(const char* dirName, const char* histName, const char* ext_01, const char* ext_02, int nbins, double lower_bound, double upper_bound)
 {
     sprintf(dirName_, "%s", dirName);
     sprintf(histName_, "%s", histName);
-    c1 = new TCanvas("c1", "c1", 800, 600);
+    //c1 = new TCanvas("c1", "c1", 800, 600);
     legend = new TLegend(0.65,0.53,0.85,0.73);
     hist = new TH1D(histName, "", nbins, lower_bound, upper_bound);
     hist_positive = new TH1D(Form("%s_%s", histName, ext_01), "", nbins, lower_bound, upper_bound);
@@ -30,7 +30,7 @@ void component_plots::Fill_hist(bool canFindSolution, double value)
     else                hist_negative -> Fill(value);
 }
 
-void component_plots::Draw_hist(const char* label1, const char* label2)
+void component_plots::Draw_hist(TCanvas* c1, const char* label1, const char* label2)
 {
     hist -> Draw("hist");
     hist -> SetMinimum(0.);
@@ -58,4 +58,8 @@ void component_plots::Report_hist(const char* label1, const char* label2)
     printf("[INFO] %s / all = %d / %d (%6.2f%%)\n", label1, _n1, _n2, 100. * (double)_n1 / (double)_n2 );
     _n1 = hist_negative->GetEntries(); _n2 = hist->GetEntries();
     printf("[INFO] %s / all = %d / %d (%6.2f%%)\n", label2, _n1, _n2, 100. * (double)_n1 / (double)_n2 );
+}
+TH1D* component_plots::Get_hist()
+{
+    return hist;
 }

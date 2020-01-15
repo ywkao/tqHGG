@@ -5,7 +5,9 @@ fin="include/histogramList.h"
 file="include/enumhist.h"
 num=`cat ${fin} | grep -v "//" | wc -l`
 
-echo "#ifndef __ENUMHIST_H__" > ${file}
+echo "//### AUTOMATICALLY CREATED BY ./script/createEnumHist.sh ###//" > ${file}
+echo "//### Original file: ${fin}" >> ${file}
+echo "#ifndef __ENUMHIST_H__" >> ${file}
 echo "#define __ENUMHIST_H__" >> ${file}
 echo "#include <string>" >> ${file}
 echo "using namespace std;" >> ${file}

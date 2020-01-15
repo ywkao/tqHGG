@@ -1,3 +1,4 @@
+// vim: set fdm=marker:
 #include <string>
 #include <TCanvas.h>
 #include <TFile.h>
@@ -11,10 +12,9 @@ using namespace std;
 
 bool bool_isHadronic;
 bool bool_isLeptonic;
-const double TunableSigBranchingFraction = 0.05; //The branching fraction of signal MC = 5%
+const double TunableSigBranchingFraction = 0.005; //The branching fraction of signal MC = 0.5%
 //const double TunableSigBranchingFraction = 2.0; //The branching fraction of signal MC = 2001%
 //const double TunableSigBranchingFraction = 0.001; //The branching fraction of signal MC = 0.1%
-bool PrintHistInfo = false;
 bool PrintTexStyle;
 
 void stackHist(const char* channel){
@@ -24,11 +24,9 @@ void stackHist(const char* channel){
     if(bool_isHadronic) printf("[CHECK] from macro src/stackHist.C: isHadronic!\n");
     if(bool_isLeptonic) printf("[CHECK] from macro src/stackHist.C: isLeptonic!\n");
     //}}}
+    MakeStackHist("hist_DiPhoInfo_mass");
+    /*
     //### MakeStackHist{{{
-    //MakeStackHist("hist_EvtInfo_NVtx");
-    //MakeStackHist("hist_EvtInfo_NVtx_wopu");
-    //MakeStackHist("hist_EvtInfo_Rho");
-    //MakeStackHist("hist_EvtInfo_Rho_wopu");
     MakeStackHist("hist_EvtInfo_NPu");
     MakeStackHist("hist_EvtInfo_Rho");
     MakeStackHist("hist_EvtInfo_Rho_wopu");
@@ -176,9 +174,11 @@ void stackHist(const char* channel){
     MakeStackHist("hist_leptonic_top_tbw_solution2_eta");
     MakeStackHist("hist_leptonic_top_tbw_solution2_mass");
     //}}}
+    */
 }
 void MakeStackHist(const char* histName){
-    if((string)histName == "hist_EvtInfo_NVtx") PrintTexStyle = true; else PrintTexStyle = false;
+    //if((string)histName == "hist_EvtInfo_NVtx") PrintTexStyle = true; else PrintTexStyle = false;
+    if((string)histName == "hist_DiPhoInfo_mass") PrintTexStyle = true; else PrintTexStyle = false;
     TCanvas *c1 = new TCanvas("c1", "c1", 1000, 800);
     THStack *stackHist = new THStack("stackHist", "");//If setting titles here, the x(y)-title will NOT be able to set later.
     //### Set up boolean{{{
@@ -255,6 +255,8 @@ void MakeStackHist(const char* histName){
     for(int i=0; i<NUM_data; i++)
         RegisterHistogram(file[i+NUM_sig+NUM_resbkg+NUM_nonresbkg], fileNames_data[i].c_str(), hist_tqh_data[i], histName, kBlack, false, true);
     //}}}
+    if((string)histName == "hist_DiPhoInfo_mass") printf("[check] [%6.2f, %6.2f]\n",
+            hist_tqh_sig[0]->GetBinLowEdge(11), hist_tqh_sig[0]->GetBinLowEdge(16));
     //### Combine had/lep signal{{{ 
     //==================================//
     //===== Combine had/lep signal =====//
@@ -374,52 +376,6 @@ void MakeStackHist(const char* histName){
     hist_tqh_mc_wosig = (TH1D*) hist_tqh_resbkg[NUM_resbkg]->Clone();
     hist_tqh_mc_wosig->Add(hist_tqh_nonresbkg[NUM_nonresbkg]);
     //}}}
-    //### Calculate yields from combined histograms {{{
-    //=====================================================//
-    //===== Calculate yields from combined histograms =====//
-    //=====================================================//
-    if(PrintHistInfo){
-        printf("===========================================================================\n");
-        printf("Process \t\t\t Entries \t\t Yields \t\t   Error \n");
-        printf("===========================================================================\n");
-        CalculateHistYields("DiPhotonJetsBox", hist_tqh_DiPhotonJetsBox);
-        CalculateHistYields("GJet\t\t", hist_tqh_GJet);
-        CalculateHistYields("TGJets\t\t", hist_tqh_TGJets);
-        CalculateHistYields("TTGJets\t\t", hist_tqh_TTGJets);
-        CalculateHistYields("TTGG\t\t", hist_tqh_TTGG);
-        CalculateHistYields("TTJets\t\t", hist_tqh_TTJets );
-        CalculateHistYields("DYJetsToLL\t", hist_tqh_DYJetsToLL );
-        CalculateHistYields("WJetsToLNu\t", hist_tqh_WJetsToLNu );
-        CalculateHistYields("VG\t\t", hist_tqh_VG );
-        CalculateHistYields("VV\t\t", hist_tqh_VV );
-        CalculateHistYields("Higgs\t\t", hist_tqh_Higgs);
-        CalculateHistYields("QCD\t\t", hist_tqh_QCD);
-        printf("---------------------------------------------------------------------------\n");
-        CalculateHistYields("MC bkg\t\t", hist_tqh_mc_wosig);
-        CalculateHistYields("Data\t\t", hist_tqh_data[NUM_data]);
-        printf("\n\n");
-    }
-    if(PrintTexStyle){
-        printf("Processes & Entries & \\multicolumn{2}{c}{Yields}\\\\ \n");
-        printf("\\hline\\hline\n");
-        CalculateHistYields("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox);
-        CalculateHistYields("GJet\t\t", hist_tqh_GJet);
-        CalculateHistYields("TGJets\t\t", hist_tqh_TGJets);
-        CalculateHistYields("TTGJets\t\t", hist_tqh_TTGJets);
-        CalculateHistYields("TTGG\t\t", hist_tqh_TTGG);
-        CalculateHistYields("TTJets\t\t", hist_tqh_TTJets );
-        CalculateHistYields("DYJetsToLL\t", hist_tqh_DYJetsToLL );
-        CalculateHistYields("WJetsToLNu\t", hist_tqh_WJetsToLNu );
-        CalculateHistYields("VG\t\t", hist_tqh_VG );
-        CalculateHistYields("VV\t\t", hist_tqh_VV );
-        CalculateHistYields("Higgs\t\t", hist_tqh_Higgs);
-        CalculateHistYields("QCD\t\t", hist_tqh_QCD);
-        printf("\\hline\n");
-        CalculateHistYields("MC background\t", hist_tqh_mc_wosig);
-        CalculateHistYields("Data\t\t", hist_tqh_data[NUM_data]);
-        printf("\n\n");
-    }
-    //}}}
     //### Calculate relative MC uncertainty {{{
     //=============================================//
     //===== Calculate relative MC uncertainty =====//
@@ -450,6 +406,7 @@ void MakeStackHist(const char* histName){
     //=================================//
     //===== Make stack histograms =====//
     //=================================//
+    stackHist->Add(hist_tqh_Higgs);
     stackHist->Add(hist_tqh_DiPhotonJetsBox);
     stackHist->Add(hist_tqh_GJet);
     stackHist->Add(hist_tqh_TGJets);
@@ -460,7 +417,6 @@ void MakeStackHist(const char* histName){
     stackHist->Add(hist_tqh_WJetsToLNu );
     stackHist->Add(hist_tqh_VG );
     stackHist->Add(hist_tqh_VV );
-    stackHist->Add(hist_tqh_Higgs);
     if(considerQCD) stackHist->Add(hist_tqh_QCD);
     //}}}
     //### Choose proper signal hist to present{{{ 
@@ -497,13 +453,43 @@ void MakeStackHist(const char* histName){
     double scale_sig_tt_hct = 1;
     double scale_sig_st_hct = 1;
     //}}}
+    //### Calculate yields from combined histograms {{{
+    //=====================================================//
+    //===== Calculate yields from combined histograms =====//
+    //=====================================================//
+    if(PrintTexStyle){
+        printf("Processes & Entries & \\multicolumn{2}{c}{Yields}\\\\ \n");
+        printf("\\hline\\hline\n");
+        CalculateHistYields("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox);
+        CalculateHistYields("GJet\t\t", hist_tqh_GJet);
+        CalculateHistYields("TGJets\t\t", hist_tqh_TGJets);
+        CalculateHistYields("TTGJets\t\t", hist_tqh_TTGJets);
+        CalculateHistYields("TTGG\t\t", hist_tqh_TTGG);
+        CalculateHistYields("TTJets\t\t", hist_tqh_TTJets );
+        CalculateHistYields("DYJetsToLL\t", hist_tqh_DYJetsToLL );
+        CalculateHistYields("WJetsToLNu\t", hist_tqh_WJetsToLNu );
+        CalculateHistYields("VG\t\t", hist_tqh_VG );
+        CalculateHistYields("VV\t\t", hist_tqh_VV );
+        CalculateHistYields("Higgs\t\t", hist_tqh_Higgs);
+        CalculateHistYields("QCD\t\t", hist_tqh_QCD);
+        CalculateHistYields("sig_tt_hut\t", hist_sig_tt_hut);
+        CalculateHistYields("sig_st_hut\t", hist_sig_st_hut);
+        CalculateHistYields("sig_tt_hct\t", hist_sig_tt_hct);
+        CalculateHistYields("sig_st_hct\t", hist_sig_st_hct);
+        printf("\\hline\n");
+        CalculateHistYields("MC background\t", hist_tqh_mc_wosig);
+        CalculateHistYields("Data\t\t", hist_tqh_data[NUM_data]);
+        printf("\n\n");
+    }
+    //}}}
     //### Draw upper plots{{{ 
     //============================//
     //===== Draw upper plots =====//
     //============================//
     TPad *pad1 = new TPad("pad1", "pad1", 0, 0.25, 1, 1.0);
-    pad1->SetRightMargin(0.25); //Upper and lower pads are joined
-    pad1->SetBottomMargin(0); //Upper and lower pads are joined
+    pad1->SetRightMargin(0.22);
+    pad1->SetLeftMargin(0.10);
+    pad1->SetBottomMargin(0.015); //Upper and lower pads are joined
     pad1->SetAttLinePS(kBlack,1,2);
     pad1->Draw();
     pad1->cd(); //pad1 becomes current pad
@@ -542,16 +528,16 @@ void MakeStackHist(const char* histName){
     double BinWidth = hist_tqh_data[NUM_data]->GetXaxis()->GetBinWidth(1);//Take the width of the first bin as a representative.
     string yTitle = GetYtitleAccordingToHistName(histName, BinWidth);
     stackHist->GetYaxis()->SetTitle(yTitle.c_str());
-    stackHist->GetYaxis()->SetTitleSize(20);
+    stackHist->GetYaxis()->SetTitleSize(32);//20
     stackHist->GetYaxis()->SetTitleFont(43);
-    stackHist->GetYaxis()->SetTitleOffset(1.2);
+    stackHist->GetYaxis()->SetTitleOffset(1.05);
     stackHist->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
-    stackHist->GetYaxis()->SetLabelSize(15);
+    stackHist->GetYaxis()->SetLabelSize(20);//15
+    stackHist->GetXaxis()->SetLabelSize(0);// remove labels on x-axis
     //}}}
     //##### TLegend{{{
-    //--------------------
-    //TLegend *legend = new TLegend(0.50,0.35,0.85,0.85);
-    TLegend *legend = new TLegend(0.77,0.25,0.85,0.85);
+    //# normal{{{
+    TLegend *legend = new TLegend(0.79,0.15,0.85,0.85);
     legend->SetTextSize(0.03);
     legend->AddEntry(hist_tqh_data[NUM_data], "Observed", "lep");
     legend->AddEntry(hist_tqh_DiPhotonJetsBox, "#gamma#gamma + jets", "f");
@@ -575,32 +561,86 @@ void MakeStackHist(const char* histName){
     legend->SetLineColor(0);
     legend->Draw("same");
     //}}}
+    //--------------------
+    /*
+    // # poster {{{
+    TLegend *legend = new TLegend(0.79,0.05,0.88,0.85);
+    legend->SetTextSize(0.05);
+    legend->AddEntry(hist_tqh_data[NUM_data], "Observed", "lep");
+    legend->AddEntry(hist_tqh_mc_wosig, "Uncertainty", "f");
+    legend->AddEntry(hist_sig_tt_hut, "TT Hut", "f");
+    legend->AddEntry(hist_sig_st_hut, "ST Hut", "f");
+    legend->AddEntry(hist_sig_tt_hct, "TT Hct", "f");
+    legend->AddEntry(hist_sig_st_hct, "ST Hct", "f");
+    legend->SetLineColor(0);
+    legend->Draw("same");
+    //}}}
+    // # poster lep{{{
+    TLegend *legend_poster_lep = new TLegend(0.40,0.43,0.73,0.75);
+    legend_poster_lep->SetNColumns(2);
+    legend_poster_lep->SetTextSize(0.06);//0.03
+    legend_poster_lep->SetFillStyle(4000);//0.03
+    legend_poster_lep->SetFillColor(4000);//0.03
+    legend_poster_lep->AddEntry(hist_tqh_VG, "V#gamma", "f");
+    legend_poster_lep->AddEntry(hist_tqh_DYJetsToLL, "DY + jets", "f");
+    legend_poster_lep->AddEntry(hist_tqh_TTJets, "t#bar{t} + jets", "f");
+    legend_poster_lep->AddEntry(hist_tqh_TTGJets, "t#bar{t}#gamma + jets", "f");
+    //legend_poster_lep->AddEntry(hist_tqh_TTGG, "t#bar{t}#gamma#gamma", "f");
+    //legend_poster_lep->AddEntry(hist_tqh_WJetsToLNu, "W + jets", "f");
+    //legend_poster_lep->AddEntry(hist_tqh_VV, "VV", "f");
+    //legend_poster_lep->AddEntry(hist_tqh_Higgs, "Higgs", "f");
+    legend_poster_lep->SetLineColor(0);
+    legend_poster_lep->Draw("same");
+    //}}}
+    // # poster had{{{
+    TLegend *legend_poster_had = new TLegend(0.40,0.43,0.73,0.75);
+    legend_poster_had->SetNColumns(2);
+    legend_poster_had->SetTextSize(0.06);//0.03
+    legend_poster_had->SetFillStyle(4000);//0.03
+    legend_poster_had->SetFillColor(4000);//0.03
+    if(considerQCD) legend_poster_had->AddEntry(hist_tqh_QCD, "QCD", "f");
+    legend_poster_had->AddEntry(hist_tqh_WJetsToLNu, "W + jets", "f");
+    legend_poster_had->AddEntry(hist_tqh_GJet, "#gamma + jet", "f");
+    legend_poster_had->AddEntry(hist_tqh_DiPhotonJetsBox, "#gamma#gamma + jets", "f");
+    //legend_poster_had->AddEntry(hist_tqh_TGJets, "t#gamma + jets", "f");
+    //legend_poster_had->AddEntry(hist_tqh_TTGJets, "t#bar{t}#gamma + jets", "f");
+    //legend_poster_had->AddEntry(hist_tqh_TTGG, "t#bar{t}#gamma#gamma", "f");
+    //legend_poster_had->AddEntry(hist_tqh_TTJets, "t#bar{t} + jets", "f");
+    //legend_poster_had->AddEntry(hist_tqh_DYJetsToLL, "DY + jets", "f");
+    //legend_poster_had->AddEntry(hist_tqh_VG, "V#gamma", "f");
+    //legend_poster_had->AddEntry(hist_tqh_VV, "VV", "f");
+    //legend_poster_had->AddEntry(hist_tqh_Higgs, "Higgs", "f");
+    legend_poster_had->SetLineColor(0);
+    legend_poster_had->Draw("same");
+    //}}}
+    */
+
+    //}}}
     //##### TLatex{{{
     //--------------------
     TLatex latex;
     latex.SetNDC(kTRUE);
     latex.SetTextFont(43);
-    latex.SetTextSize(22);
-    latex.SetTextAlign(13);
-    latex.DrawLatex(0.10, 0.95, "#bf{CMS} #it{Preliminary}");
+    latex.SetTextSize(32);//22
+    latex.SetTextAlign(11);
+    latex.DrawLatex(0.10, 0.92, "#bf{CMS} #it{Preliminary}");
     //latex.DrawLatex(0.14, 0.84, "#bf{CMS}");
     //latex.DrawLatex(0.14, 0.78, "#it{Preliminary}");
     //--------------------
     TLatex latex_channel;
     latex_channel.SetNDC(kTRUE);
     latex_channel.SetTextFont(43);
-    latex_channel.SetTextSize(26);
-    latex_channel.SetTextAlign(13);
-    if(bool_isHadronic) latex_channel.DrawLatex(0.50, 0.85, "#bf{Hadronic Channel}");
-    if(bool_isLeptonic) latex_channel.DrawLatex(0.50, 0.85, "#bf{Leptonic Channel}");
+    latex_channel.SetTextSize(40);//26
+    latex_channel.SetTextAlign(31);
+    if(bool_isHadronic) latex_channel.DrawLatex(0.72, 0.80, "#bf{Hadronic Channel}");
+    if(bool_isLeptonic) latex_channel.DrawLatex(0.72, 0.80, "#bf{Leptonic Channel}");
     //--------------------
     TLatex latex_lumi;
     latex_lumi.SetNDC(kTRUE);
     latex_lumi.SetTextFont(43);
-    latex_lumi.SetTextSize(22);
+    latex_lumi.SetTextSize(32);//22
     latex_lumi.SetTextAlign(31);
-    //latex_lumi.DrawLatex(0.89, 0.92, "41.5 fb^{-1} (2017, 13 TeV)");
-    latex_lumi.DrawLatex(0.75, 0.92, "41.5 fb^{-1} (2017, #sqrt{s} = 13 TeV)");
+    latex_lumi.DrawLatex(0.77, 0.92, "41.5 fb^{-1} (2017, #sqrt{s} = 13 TeV)");
     //}}}
     //}}}
     //### Draw lower plots{{{ 
@@ -608,12 +648,13 @@ void MakeStackHist(const char* histName){
     //===== Draw lower plots =====//
     //============================//
     c1->cd(); //Go back to the main canvas before defining pad2
-    TPad *pad2 = new TPad("pad2", "pad2", 0, 0.05, 1, 0.25);
-    pad2->SetRightMargin(0.25);
-    pad2->SetTopMargin(0.01); 
-    pad2->SetBottomMargin(0.4);
+    TPad *pad2 = new TPad("pad2", "pad2", 0, 0, 1, 0.245);//0.25
+    pad2->SetRightMargin(0.22);
+    pad1->SetLeftMargin(0.10);
+    pad2->SetTopMargin(0.036);//0.01 //Upper and lower pads are joined
+    pad2->SetBottomMargin(0.5);
     pad2->SetAttLinePS(kBlack,1,2);
-    pad2->SetGridx(1); //Upper and lower pads are joined
+    pad2->SetGridx(1);
     pad2->Draw();
     pad2->cd(); //pad2 becomes current pad
     gPad->SetTicks(1,1);
@@ -622,7 +663,7 @@ void MakeStackHist(const char* histName){
     hist_tqh_ratio->SetMaximum(2.0);
     //hist_tqh_ratio->SetMinimum(0);
     //hist_tqh_ratio->SetMaximum(1.75);
-    hist_tqh_ratio->SetMinimum(0.5);
+    hist_tqh_ratio->SetMinimum(0.);
     //hist_tqh_ratio->SetMaximum(2.25);
     hist_tqh_ratio->SetTitle("");
     hist_tqh_ratio->SetStats(0); //No statistics on lower plot
@@ -632,23 +673,24 @@ void MakeStackHist(const char* histName){
     hist_tqh_mc_uncertainty->Draw("E2,same");
     hist_tqh_ratio->Draw("p,E1,same");
     //--------------------
-    hist_tqh_ratio->GetYaxis()->SetTitle("Obs/Exp");
-    hist_tqh_ratio->GetYaxis()->SetNdivisions(510);
-    //hist_tqh_ratio->GetYaxis()->SetNdivisions(5);
-    hist_tqh_ratio->GetYaxis()->SetTitleSize(20);
+    hist_tqh_ratio->GetYaxis()->SetTitle(" Obs/Exp");
+    //hist_tqh_ratio->GetYaxis()->SetNdivisions(10);
+    hist_tqh_ratio->GetYaxis()->SetNdivisions(5);
+    hist_tqh_ratio->GetYaxis()->SetTitleSize(32);//20
     hist_tqh_ratio->GetYaxis()->SetTitleFont(43);
-    hist_tqh_ratio->GetYaxis()->SetTitleOffset(1.2);
+    hist_tqh_ratio->GetYaxis()->SetTitleOffset(1.0);//1.2
     hist_tqh_ratio->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
-    hist_tqh_ratio->GetYaxis()->SetLabelSize(15);
+    hist_tqh_ratio->GetYaxis()->SetLabelSize(20);
     //--------------------
     //hist_tqh_ratio->GetXaxis()->SetTitle("Invariant mass of diphoton + jet [GeV/c^{2}]");
     string xTitle = GetXtitleAccordingToHistName(histName);
     hist_tqh_ratio->GetXaxis()->SetTitle(xTitle.c_str());
-    hist_tqh_ratio->GetXaxis()->SetTitleSize(25);
+    hist_tqh_ratio->GetXaxis()->SetTitleSize(40);//25
     hist_tqh_ratio->GetXaxis()->SetTitleFont(43);
-    hist_tqh_ratio->GetXaxis()->SetTitleOffset(4.);
+    hist_tqh_ratio->GetXaxis()->SetTitleOffset(3.3);
     hist_tqh_ratio->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
-    hist_tqh_ratio->GetXaxis()->SetLabelSize(15);
+    hist_tqh_ratio->GetXaxis()->SetLabelSize(20);//15
+    hist_tqh_ratio->GetXaxis()->SetLabelOffset(0.03);
     //--------------------
     c1->Update();//update the value of pad2->GetUxmax().
     TLine line;
@@ -790,7 +832,7 @@ string GetXtitleAccordingToHistName(const char* histName){
     if((string)histName == "hist_chosen_bjet_phi") return "#phi of bjet";
     if((string)histName == "hist_chosen_bjet_energy") return "Energy of bjet [GeV]";
     //----------------------------------------------------------------------
-    if((string)histName == "hist_DiPhoInfo_mass") return "Diphoton invariant mass [GeV/c^2]";
+    if((string)histName == "hist_DiPhoInfo_mass") return "Diphoton invariant mass [GeV/c^{2}]";
     if((string)histName == "hist_DiPhoInfo_pt") return "Pt of diphoton [GeV/c]";
     if((string)histName == "hist_DiPhoInfo_eta") return "#eta of diphoton";
     if((string)histName == "hist_DiPhoInfo_phi") return "#phi of diphoton";
@@ -944,11 +986,29 @@ void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const ch
 }
 
 void CalculateHistYields(const char *process, TH1D* hist){
+    // signal region
+    int totalEntries = hist->GetEntries();
+    double totalYields = 0.;
+    double totalError = 0.;
+    for(int i=11; i<16; ++i){
+        totalYields +=  hist->GetBinContent(i);
+        double error =  hist->GetBinError(i);
+        totalError += pow(error, 2);
+    }
+    totalError = sqrt(totalError);
+
+    if(PrintTexStyle) printf("%s & \t %15d & \t %15.2f & $\\pm$ \t %10.2f\\\\\n", process, totalEntries, totalYields, totalError);
+    else printf("%s \t %15.2f \t %15.2f\n", process, totalYields, totalError);
+
+    //--------------------------------------------------
+    // whole region
+    /*
     int totalEntries = hist->GetEntries();
     double totalYields = hist->Integral();
     double totalError = SumErrors(hist);
     if(PrintTexStyle) printf("%s & \t %15d & \t %15.2f & $\\pm$ \t %10.2f\\\\\n", process, totalEntries, totalYields, totalError);
     else printf("%s \t %15.2f \t %15.2f\n", process, totalYields, totalError);
+    */
 }
 
 double SumErrors(TH1D* hist){

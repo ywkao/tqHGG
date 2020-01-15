@@ -1,3 +1,5 @@
+//### AUTOMATICALLY CREATED BY ./script/createEnumHist.sh ###//
+//### Original file: include/histogramList.h
 #ifndef __ENUMHIST_H__
 #define __ENUMHIST_H__
 #include <string>

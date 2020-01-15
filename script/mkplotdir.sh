@@ -1,13 +1,16 @@
 #!/bin/bash
+# vim: set fdm=marker:
 set -e
 if [ ! -d bin ]; then
     mkdir bin;
 fi
 
-if [ ! -d ntuples_skimmed ]; then
-    mkdir ntuples_skimmed;
-fi
+# direcotry ntuples_skimmed{{{
+mkdir -p ntuples_skimmed;
+mkdir -p ntuples_skimmed/chi2_study_leptonic_1D_plots;
+#}}}
 
+# direcotry plots {{{
 if [ ! -d plots ]; then
     mkdir plots;
 fi
@@ -23,6 +26,7 @@ fi
 if [ ! -d plots/log ]; then
     mkdir plots/log;
 fi
+#}}}
 
 for file in `cat ListRootFiles | grep -v "#"`
 do

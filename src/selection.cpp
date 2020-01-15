@@ -1,3 +1,4 @@
+// vim: set fdm=marker:
 //***************************************************************************
 //
 // FileName    : selection.cpp
@@ -28,10 +29,10 @@ bool bool_isLeptonic;
 
 //--- control bjet selection ---//
 bool bool_bjet_is_loose  = false;
-bool bool_bjet_is_medium = true;
-bool bool_bjet_is_tight  = false;
-bool bool_num_bjets_is_exactly_one = false;
-bool bool_num_bjets_is_atleast_one = true;
+bool bool_bjet_is_medium = false;
+bool bool_bjet_is_tight  = true;
+bool bool_num_bjets_is_exactly_one = true;
+bool bool_num_bjets_is_atleast_one = !bool_num_bjets_is_exactly_one;
 //}}}
 
 void Selection(char* input_file, char* output_file, char* output_tree, char* dataset, char* output_dir, char* channel){
@@ -245,6 +246,13 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         //}}}
         */
         //### Event selection{{{
+        //blind data
+        bool pass_signal_region = treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130;
+        if(isData && pass_signal_region) continue;
+        //supress QCD
+        bool pass_photon_IDMVA = treeReader.DiPhoInfo_leadIDMVA>0 && treeReader.DiPhoInfo_subleadIDMVA>0;
+        if(!pass_photon_IDMVA) continue;
+
         bool passEvent=true;
         //--------- Hadronic Channel ---------//
         if(bool_isHadronic){
@@ -342,7 +350,7 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         bool pass_bjets_multiplicity_selection;
         if(bool_num_bjets_is_exactly_one) pass_bjets_multiplicity_selection = num_bjets == 1;
         if(bool_num_bjets_is_atleast_one) pass_bjets_multiplicity_selection = num_bjets >= 1;
-        //if(!pass_bjets_multiplicity_selection) continue;
+        if(!pass_bjets_multiplicity_selection) continue;
 
         //store leading bjet info{{{
         if(index_bjet != -999){//at least one bjet!
@@ -362,25 +370,6 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         }
         //}}}
 
-        //To be modified later...{{{
-        //if(num_bjets != 1) continue;// exactly one
-        //if(num_bjets == 0) continue;// at least one
-        ////No gen-info yet......
-        //
-        ////--- check the rate of bjet being bqurak ---//
-        //bool is_b_quark = CheckBJetID(bjets_tight[0],\
-        //                  treeReader.GenPartInfo_size, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
-        //                  treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
-        //if(is_b_quark) count_bjet_is_bquark_tight += 1;
-
-        //if(treeReader.num_bjets == 0) continue;
-        //if(treeReader.num_bjets > 0){
-        //    h[hist_leading_bjet_pt]     -> Fill(treeReader.JetInfo_leading_bjet_pt_selection->at(0), isData ? 1. : NormalizationFactor);
-        //    h[hist_leading_bjet_eta]    -> Fill(treeReader.JetInfo_leading_bjet_eta_selection->at(0), isData ? 1. : NormalizationFactor);
-        //    h[hist_leading_bjet_phi]    -> Fill(treeReader.JetInfo_leading_bjet_phi_selection->at(0), isData ? 1. : NormalizationFactor);
-        //    h[hist_leading_bjet_energy] -> Fill(treeReader.JetInfo_leading_bjet_energy_selection->at(0), isData ? 1. : NormalizationFactor);
-        //}
-        //}}}
         //}}}
         //### Store Info{{{
         //========= Store Info =========//

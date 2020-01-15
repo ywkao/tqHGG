@@ -14,14 +14,14 @@ class component_plots
 
         void Init(const char* dirName, const char* histName, const char* ext_01, const char* ext_02, int nbins, double lower_bound, double upper_bound);
         void Fill_hist(bool canFindSolution, double value);
-        void Draw_hist(const char* label1, const char* label2);
+        void Draw_hist(TCanvas* c1, const char* label1, const char* label2);
         void Report_hist(const char* label1, const char* label2);
+        TH1D* Get_hist();
 
     private:
         char histName_[128];
         char dirName_[64];
 
-        TCanvas *c1;
         TLegend *legend;
 
         TH1D* hist;

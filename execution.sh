@@ -1,6 +1,7 @@
 #!/bin/bash
+# vim: set fdm=marker:
 set -e
-
+# functions{{{
 #===== Preselection =====#
 function Preselection_npustudy(){
     time ./fireBatchJobs.sh -npustudy > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
@@ -9,7 +10,7 @@ function Preselection(){
     time ./fireBatchJobs.sh -p > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
 }
 function Intermission(){
-    ./check_submit_status.sh | tee -a log/stdout.log
+    ./script/check_submit_status.sh | tee -a log/stdout.log
     echo "Rename log/stdout.log to log/stdout_pre.log";
     mv log/stdout.log log/stdout_pre.log
     mv log/stderr.log log/stderr_pre.log
@@ -26,7 +27,7 @@ function Selection(){
         echo "[INFO-execution] Wait another 10 sec.."
         sleep 10s;
     done
-    ./check_submit_status.sh | tee -a log/stdout_selection.log
+    ./script/check_submit_status.sh | tee -a log/stdout_selection.log
 }
 function AfterSelection(){
     CHANNEL=$1
@@ -47,14 +48,25 @@ function ReRunStackPlotsOnly(){
     ./script/resetPlotsChannels.sh plots_${CHANNEL}
     cp -p log/info_stack_plots_${CHANNEL} plots_${CHANNEL}/log
 }
+#}}}
+
 
 
 #------------------------------ Test Section ------------------------------#
+# preselection{{{
 #./script/prepareExeForNewMC_npu_float.sh "preselection_npustudy"
 #Preselection_npustudy
 #./script/run_macro_stackPlots.sh "hadronic"
+#}}}
+# selection{{{
+#./script/prepareExeForNewMC_npu_float.sh "selection"
+#./script/exe_selection_batch.sh TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root "leptonic"
+#time ./script/exe_selection_batch.sh "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8" "leptonic"
+#time ./script/exe_selection_batch.sh "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8" "hadronic"
+#}}}
 
-export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
+# top reconstruction study hadronic{{{
+#export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
 
 ## TT signal
 #make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root"
@@ -63,8 +75,8 @@ export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit metho
 #make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root"
 #make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root" "hadronic"
 #
-make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root"
-make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root" "hadronic"
+#make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root"
+#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root" "hadronic"
 #
 #make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root"
 #make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root" "hadronic"
@@ -76,18 +88,17 @@ make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HTo
 #
 #make && time ./script/exe_covarianceMatrixStudy.sh "ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root"
 #make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root" "hadronic"
-
-
+#}}}
+# top reconstruction study leptonic{{{
+export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
+make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-T2HJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
+#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hut-MadGraph5-pythia8.root" "leptonic"
+#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
 #make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root" "leptonic"
-#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-T2HJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
 #make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root" "leptonic"
 #make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
+#}}}
 
-
-#./script/prepareExeForNewMC_npu_float.sh "selection"
-#./script/exe_selection_batch.sh TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root "leptonic"
-#time ./script/exe_selection_batch.sh "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8" "leptonic"
-#time ./script/exe_selection_batch.sh "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8" "hadronic"
 
 
 #------------------------- Main Exe Section -------------------------#
@@ -102,6 +113,9 @@ make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HTo
 #AfterSelection "leptonic" 
 #./script/check_errors.sh
 #./script/tableMaker.sh
+
+#tar -zcvf plots_hadronic.tar.gz plots_hadronic
+#tar -zcvf plots_leptonic.tar.gz plots_leptonic
 
 #ReRunStackPlotsOnly "hadronic"
 #ReRunStackPlotsOnly "leptonic"
