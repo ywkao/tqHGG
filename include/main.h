@@ -4,20 +4,15 @@
 //==========================//
 //---  Useful Constants  ---//
 //==========================//
-double pfDeepCSVJetTags_tight  = 0.8001;
-double pfDeepCSVJetTags_medium = 0.4941;
-double pfDeepCSVJetTags_loose  = 0.1522;
-double w_boson_mass = 80.379;//GeV
-double w_boson_width = 9.5;//GeV
-double top_quark_mass = 173.0;//GeV
-double top_quark_width = 16.3;//GeV
+float pfDeepCSVJetTags_tight  = 0.8001;
+float pfDeepCSVJetTags_medium = 0.4941;
+float pfDeepCSVJetTags_loose  = 0.1522;
+float w_boson_mass = 80.379;//GeV
+float top_quark_mass = 173.0;//GeV
 
 //==========================//
 //---  Class & Function  ---//
 //==========================//
-double Chi2_calculator(double w_mass, double t_mass);
-double Chi2_calculator_w_only(double w_mass);
-void MakePlots(TCanvas *c1, TH1D* hist, const char* title, const char* outputFile);
 bool isThisDataOrNot(char* dataset);
 bool isThisMultiFile(char* dataset);
 bool isThisMCsignal(char* dataset);
@@ -252,7 +247,7 @@ public:
     void AddMultiRootFile(char* input_file);
     void SetBranchAddresses(void);
     int GetEntries(void);
-    double GetGenWeight(void);
+    float GetGenWeight(void);
     TChain *GetTChain(void);
 };
 class myTreeClass: public myParameters, public flashggStdTreeParameters{

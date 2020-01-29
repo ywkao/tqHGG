@@ -17,6 +17,7 @@ ExeAnalysis(){
     echo $file | awk -F "." '{print "'$INPUTDIR'""/"$1".root", "'$OUTPUTDIR'""/ntuple_"$1".root", $1}' |\
     xargs -n3 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
     # REMARK: input_file / output_file / datasets / output_dir
+    cp -p ${log} ${OUTPUTDIR}/log/
 }
 ExeAnalysis_multi(){
     file=$1
@@ -25,6 +26,7 @@ ExeAnalysis_multi(){
     echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1, "'$OUTPUTDIR'""/ntuple_"$1".root", $1}' |\
     xargs -n3 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
     # REMARK: input_file / output_file / datasets / output_dir
+    cp -p ${log} ${OUTPUTDIR}/log/
 }
 ExeAnalysis_npu_float(){
     file=$1
@@ -33,6 +35,7 @@ ExeAnalysis_npu_float(){
     echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1, "'$OUTPUTDIR'""/ntuple_"$1".root", $1}' |\
     xargs -n3 ${EXECUTABLE_npu} | grep -v ientry | tee -a ${log}
     # REMARK: input_file / output_file / datasets / output_dir
+    cp -p ${log} ${OUTPUTDIR}/log/
 }
 ExeAnalysis_singletop(){
     file=$1
@@ -41,6 +44,7 @@ ExeAnalysis_singletop(){
     echo $file | awk -F "." '{print "'$INPUTDIR_ywk'""/"$1".root", "'$OUTPUTDIR'""/ntuple_"$1".root", $1}' |\
     xargs -n3 ${EXECUTABLE} | grep -v ientry | tee -a ${log}
     # REMARK: input_file / output_file / datasets / output_dir
+    cp -p ${log} ${OUTPUTDIR}/log/
 }
 
 #--------------- DryRun ---------------#

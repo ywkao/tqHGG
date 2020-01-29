@@ -1,12 +1,16 @@
 #!/bin/bash
 # vim: set fdm=marker:
 set -e
+OUTPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed"
+
 if [ ! -d bin ]; then
     mkdir bin;
 fi
 
 # direcotry ntuples_skimmed{{{
-mkdir -p ntuples_skimmed;
+# for output from preselection
+mkdir -p ${OUTPUTDIR}/log;
+# for output from chi-2 study
 mkdir -p ntuples_skimmed/chi2_study_leptonic_1D_plots;
 #}}}
 
