@@ -172,6 +172,12 @@ void stackHist(const char* channel){
     MakeStackHist("hist_leptonic_top_tbw_solution2_pt");
     MakeStackHist("hist_leptonic_top_tbw_solution2_eta");
     MakeStackHist("hist_leptonic_top_tbw_solution2_mass");
+    MakeStackHist("hist_leptonic_w_candidate_topKinFit_pt");
+    MakeStackHist("hist_leptonic_w_candidate_topKinFit_eta");
+    MakeStackHist("hist_leptonic_w_candidate_topKinFit_mass");
+    MakeStackHist("hist_leptonic_top_tbw_topKinFit_pt");
+    MakeStackHist("hist_leptonic_top_tbw_topKinFit_eta");
+    MakeStackHist("hist_leptonic_top_tbw_topKinFit_mass");
     //}}}
 }
 void MakeStackHist(const char* histName){

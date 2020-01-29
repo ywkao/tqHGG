@@ -19,10 +19,11 @@ function write(){
 
 function make_table(){
     log=$1
+    channel=$2
     write ""
     write "{\renewcommand{\arraystretch}{1.0}"
     write "\begin{center}"
-    write "    \captionof{table}{${time_stamp} hadronic}"
+    write "    \captionof{table}{${time_stamp} ${channel}}"
     write "\begin{tabular}{lrrl}"
     write "    \hline\hline"
     write "    Processes & Entries &\multicolumn{2}{c}{Yields}\\\\"
@@ -39,8 +40,8 @@ function make_table(){
 
 write "\clearpage"; write_method=1
 write "\chapter{Table of yields}"
-make_table plots_hadronic/log/info_stack_plots_hadronic
-make_table plots_leptonic/log/info_stack_plots_leptonic
+make_table plots_hadronic/log/info_stack_plots_hadronic "hadronic"
+make_table plots_leptonic/log/info_stack_plots_leptonic "leptonic"
 
 sed -i 's/_/\\_/g' ${targetFile}
 

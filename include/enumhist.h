@@ -152,6 +152,12 @@ enum histList {
     hist_leptonic_top_tbw_solution2_pt,
     hist_leptonic_top_tbw_solution2_eta,
     hist_leptonic_top_tbw_solution2_mass,
+    hist_leptonic_w_candidate_topKinFit_pt,
+    hist_leptonic_w_candidate_topKinFit_eta,
+    hist_leptonic_w_candidate_topKinFit_mass,
+    hist_leptonic_top_tbw_topKinFit_pt,
+    hist_leptonic_top_tbw_topKinFit_eta,
+    hist_leptonic_top_tbw_topKinFit_mass,
     totalHistNum
 };
 std::string histNames[totalHistNum]{
@@ -300,7 +306,13 @@ std::string histNames[totalHistNum]{
     "hist_leptonic_w_candidate_solution2_mass",
     "hist_leptonic_top_tbw_solution2_pt",
     "hist_leptonic_top_tbw_solution2_eta",
-    "hist_leptonic_top_tbw_solution2_mass"
+    "hist_leptonic_top_tbw_solution2_mass",
+    "hist_leptonic_w_candidate_topKinFit_pt",
+    "hist_leptonic_w_candidate_topKinFit_eta",
+    "hist_leptonic_w_candidate_topKinFit_mass",
+    "hist_leptonic_top_tbw_topKinFit_pt",
+    "hist_leptonic_top_tbw_topKinFit_eta",
+    "hist_leptonic_top_tbw_topKinFit_mass"
 };
 int histNbins[totalHistNum]{
     100,//hist_EvtInfo_NPu
@@ -448,7 +460,13 @@ int histNbins[totalHistNum]{
     50,//hist_leptonic_w_candidate_solution2_mass
     40,//hist_leptonic_top_tbw_solution2_pt
     40,//hist_leptonic_top_tbw_solution2_eta
-    40//hist_leptonic_top_tbw_solution2_mass
+    40,//hist_leptonic_top_tbw_solution2_mass
+    40,//hist_leptonic_w_candidate_topKinFit_pt
+    40,//hist_leptonic_w_candidate_topKinFit_eta
+    50,//hist_leptonic_w_candidate_topKinFit_mass
+    40,//hist_leptonic_top_tbw_topKinFit_pt
+    40,//hist_leptonic_top_tbw_topKinFit_eta
+    40//hist_leptonic_top_tbw_topKinFit_mass
 };
 double histBinLow[totalHistNum]{
     0,//hist_EvtInfo_NPu
@@ -596,7 +614,13 @@ double histBinLow[totalHistNum]{
     0,//hist_leptonic_w_candidate_solution2_mass
     0,//hist_leptonic_top_tbw_solution2_pt
     -2.5,//hist_leptonic_top_tbw_solution2_eta
-    0//hist_leptonic_top_tbw_solution2_mass
+    0,//hist_leptonic_top_tbw_solution2_mass
+    0,//hist_leptonic_w_candidate_topKinFit_pt
+    -2.5,//hist_leptonic_w_candidate_topKinFit_eta
+    0,//hist_leptonic_w_candidate_topKinFit_mass
+    0,//hist_leptonic_top_tbw_topKinFit_pt
+    -2.5,//hist_leptonic_top_tbw_topKinFit_eta
+    0//hist_leptonic_top_tbw_topKinFit_mass
 };
 double histBinHigh[totalHistNum]{
     100,//hist_EvtInfo_NPu
@@ -744,6 +768,12 @@ double histBinHigh[totalHistNum]{
     150,//hist_leptonic_w_candidate_solution2_mass
     400,//hist_leptonic_top_tbw_solution2_pt
     2.5,//hist_leptonic_top_tbw_solution2_eta
-    400//hist_leptonic_top_tbw_solution2_mass
+    400,//hist_leptonic_top_tbw_solution2_mass
+    200,//hist_leptonic_w_candidate_topKinFit_pt
+    2.5,//hist_leptonic_w_candidate_topKinFit_eta
+    150,//hist_leptonic_w_candidate_topKinFit_mass
+    400,//hist_leptonic_top_tbw_topKinFit_pt
+    2.5,//hist_leptonic_top_tbw_topKinFit_eta
+    400//hist_leptonic_top_tbw_topKinFit_mass
 };
 #endif

@@ -25,17 +25,15 @@
 #include "../../TopKinFit/kinfit.h"
 #include "../../TopKinFit/TopLep.h"
 using namespace std;
-
+//}}}
 bool bool_isHadronic;
 bool bool_isLeptonic;
-
 //--- control bjet selection ---//
 bool bool_bjet_is_loose  = false;
-bool bool_bjet_is_medium = false;
-bool bool_bjet_is_tight  = true;
-bool bool_num_bjets_is_exactly_one = true;
+bool bool_bjet_is_medium = true;
+bool bool_bjet_is_tight  = false;
+bool bool_num_bjets_is_exactly_one = false;
 bool bool_num_bjets_is_atleast_one = !bool_num_bjets_is_exactly_one;
-//}}}
 
 void Selection(char* input_file, char* output_file, char* output_tree, char* dataset, char* output_dir, char* channel){
     //### bool MC/Data & hadronic/leptonic{{{
@@ -286,8 +284,8 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         bool pass_signal_region = treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130;
         if(isData && pass_signal_region) continue;
         //supress QCD
-        bool pass_photon_IDMVA = treeReader.DiPhoInfo_leadIDMVA>0 && treeReader.DiPhoInfo_subleadIDMVA>0;
-        if(!pass_photon_IDMVA) continue;
+        //bool pass_photon_IDMVA = treeReader.DiPhoInfo_leadIDMVA>0 && treeReader.DiPhoInfo_subleadIDMVA>0;
+        //if(!pass_photon_IDMVA) continue;
 
         bool passEvent=true;
         //--------- Hadronic Channel ---------//
@@ -1023,6 +1021,13 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
 
         //}}}
         //}}}
+
+        h[hist_leptonic_w_candidate_topKinFit_pt]->Fill(L_w_topKinFit.Pt(), isData ? 1. : NormalizationFactor);
+        h[hist_leptonic_w_candidate_topKinFit_eta]->Fill(L_w_topKinFit.Eta(), isData ? 1. : NormalizationFactor);
+        h[hist_leptonic_w_candidate_topKinFit_mass]->Fill(L_w_topKinFit.M(), isData ? 1. : NormalizationFactor);
+        h[hist_leptonic_top_tbw_topKinFit_pt]->Fill(L_bw_topKinFit.Pt(), isData ? 1. : NormalizationFactor);
+        h[hist_leptonic_top_tbw_topKinFit_eta]->Fill(L_bw_topKinFit.Eta(), isData ? 1. : NormalizationFactor);
+        h[hist_leptonic_top_tbw_topKinFit_mass]->Fill(L_bw_topKinFit.M(), isData ? 1. : NormalizationFactor);
 
         tree_neutrino_pz = L_met_topKinFit.Pz();
         tree_top_pt = L_bw_topKinFit.Pt();

@@ -178,6 +178,13 @@ TH1D *hist_leptonic_w_candidate_solution2_mass = new TH1D("hist_leptonic_w_candi
 TH1D *hist_leptonic_top_tbw_solution2_pt = new TH1D("hist_leptonic_top_tbw_solution2_pt", "", 40, 0, 400);
 TH1D *hist_leptonic_top_tbw_solution2_eta = new TH1D("hist_leptonic_top_tbw_solution2_eta", "", 40, -2.5, 2.5);
 TH1D *hist_leptonic_top_tbw_solution2_mass = new TH1D("hist_leptonic_top_tbw_solution2_mass", "", 40, 0, 400);
+//---
+TH1D *hist_leptonic_w_candidate_topKinFit_pt = new TH1D("hist_leptonic_w_candidate_topKinFit_pt", "", 40, 0, 200);
+TH1D *hist_leptonic_w_candidate_topKinFit_eta = new TH1D("hist_leptonic_w_candidate_topKinFit_eta", "", 40, -2.5, 2.5);
+TH1D *hist_leptonic_w_candidate_topKinFit_mass = new TH1D("hist_leptonic_w_candidate_topKinFit_mass", "", 50, 0, 150);
+TH1D *hist_leptonic_top_tbw_topKinFit_pt = new TH1D("hist_leptonic_top_tbw_topKinFit_pt", "", 40, 0, 400);
+TH1D *hist_leptonic_top_tbw_topKinFit_eta = new TH1D("hist_leptonic_top_tbw_topKinFit_eta", "", 40, -2.5, 2.5);
+TH1D *hist_leptonic_top_tbw_topKinFit_mass = new TH1D("hist_leptonic_top_tbw_topKinFit_mass", "", 40, 0, 400);
 //------------------------
 //TH1D  *hist_mass_w_candidate = new TH1D("hist_mass_w_candidate", "hist_mass_w_candidate", 50, 0, 150);
 //TH1D  *hist_mass_top_candidate = new TH1D("hist_mass_top_candidate", "hist_mass_top_candidate", 40, 0, 400);

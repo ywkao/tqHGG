@@ -1752,8 +1752,7 @@ int main(int argc, char *argv[]){
     printf("[INFO] counter_notM_notC = %d / %d (%6.2f%%)\n", counter_notM_notC, Nevents_pass_selection, 100 * (double)counter_notM_notC / (double)Nevents_pass_selection);
     printf("--------------------------------------------------\n");
     //}}}
-    // bjet correct rate (skipped){{{
-    /*
+    // bjet correct rate {{{
     printf("[INFO] bin1 bin2 bin3; correcat rate in bin2; accuracy with exactly one particle cut\n");
     hist_bin_fraction(hist_num_gen_bquark, "gen_bquark", hist_num_gen_bquark->GetBinContent(2));
     hist_bin_fraction(hist_num_bjets_loose, "bjets_loose", count_bjet_is_bquark_loose);
@@ -1761,7 +1760,6 @@ int main(int argc, char *argv[]){
     hist_bin_fraction(hist_num_bjets_tight, "bjets_tight", count_bjet_is_bquark_tight);
     double percentage_bjet_is_bquark = (double) count_bjet_is_bquark / (double) Nevents_pass_selection;
     printf("[INFO] percentage_bjet_is_bquark = %f\n", percentage_bjet_is_bquark);
-    */
     //}}}
 
     //# HADRONIC chi-2 Study{{{
