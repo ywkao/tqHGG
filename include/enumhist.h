@@ -1,5 +1,5 @@
 //### AUTOMATICALLY CREATED BY ./script/createEnumHist.sh ###//
-//### Original file: include/histogramList.h
+//### Original file: include/list_histograms.h
 #ifndef __ENUMHIST_H__
 #define __ENUMHIST_H__
 #include <string>
@@ -14,20 +14,25 @@ enum histList {
     hist_EvtInfo_genweight,
     hist_DiPhoInfo_mass,
     hist_DiPhoInfo_pt,
+    hist_DiPhoInfo_pt_overM,
     hist_DiPhoInfo_eta,
     hist_DiPhoInfo_phi,
     hist_DiPhoInfo_energy,
     hist_DiPhoInfo_leadPt,
+    hist_DiPhoInfo_leadPt_overM,
     hist_DiPhoInfo_leadEta,
     hist_DiPhoInfo_leadPhi,
     hist_DiPhoInfo_leadE,
     hist_DiPhoInfo_leadhoe,
+    hist_DiPhoInfo_leadIDMVA_beforeCut,
     hist_DiPhoInfo_leadIDMVA,
     hist_DiPhoInfo_subleadPt,
+    hist_DiPhoInfo_subleadPt_overM,
     hist_DiPhoInfo_subleadEta,
     hist_DiPhoInfo_subleadPhi,
     hist_DiPhoInfo_subleadE,
     hist_DiPhoInfo_subleadhoe,
+    hist_DiPhoInfo_subleadIDMVA_beforeCut,
     hist_DiPhoInfo_subleadIDMVA,
     hist_ElecInfo_Size,
     hist_MuonInfo_Size,
@@ -48,6 +53,11 @@ enum histList {
     hist_MuonInfo_muon_diphoton_deltaR,
     hist_jets_size,
     hist_num_jets,
+    hist_num_bjets,
+    hist_num_jets_leptonicChannel,
+    hist_num_bjets_leptonicChannel,
+    hist_num_jets_hadronicChannel,
+    hist_num_bjets_hadronicChannel,
     hist_JetInfo_jet_pt,
     hist_JetInfo_jet_eta,
     hist_JetInfo_jet_phi,
@@ -169,20 +179,25 @@ std::string histNames[totalHistNum]{
     "hist_EvtInfo_genweight",
     "hist_DiPhoInfo_mass",
     "hist_DiPhoInfo_pt",
+    "hist_DiPhoInfo_pt_overM",
     "hist_DiPhoInfo_eta",
     "hist_DiPhoInfo_phi",
     "hist_DiPhoInfo_energy",
     "hist_DiPhoInfo_leadPt",
+    "hist_DiPhoInfo_leadPt_overM",
     "hist_DiPhoInfo_leadEta",
     "hist_DiPhoInfo_leadPhi",
     "hist_DiPhoInfo_leadE",
     "hist_DiPhoInfo_leadhoe",
+    "hist_DiPhoInfo_leadIDMVA_beforeCut",
     "hist_DiPhoInfo_leadIDMVA",
     "hist_DiPhoInfo_subleadPt",
+    "hist_DiPhoInfo_subleadPt_overM",
     "hist_DiPhoInfo_subleadEta",
     "hist_DiPhoInfo_subleadPhi",
     "hist_DiPhoInfo_subleadE",
     "hist_DiPhoInfo_subleadhoe",
+    "hist_DiPhoInfo_subleadIDMVA_beforeCut",
     "hist_DiPhoInfo_subleadIDMVA",
     "hist_ElecInfo_Size",
     "hist_MuonInfo_Size",
@@ -203,6 +218,11 @@ std::string histNames[totalHistNum]{
     "hist_MuonInfo_muon_diphoton_deltaR",
     "hist_jets_size",
     "hist_num_jets",
+    "hist_num_bjets",
+    "hist_num_jets_leptonicChannel",
+    "hist_num_bjets_leptonicChannel",
+    "hist_num_jets_hadronicChannel",
+    "hist_num_bjets_hadronicChannel",
     "hist_JetInfo_jet_pt",
     "hist_JetInfo_jet_eta",
     "hist_JetInfo_jet_phi",
@@ -323,20 +343,25 @@ int histNbins[totalHistNum]{
     100,//hist_EvtInfo_genweight
     40,//hist_DiPhoInfo_mass
     40,//hist_DiPhoInfo_pt
+    40,//hist_DiPhoInfo_pt_overM
     40,//hist_DiPhoInfo_eta
     40,//hist_DiPhoInfo_phi
     40,//hist_DiPhoInfo_energy
     40,//hist_DiPhoInfo_leadPt
+    40,//hist_DiPhoInfo_leadPt_overM
     40,//hist_DiPhoInfo_leadEta
     40,//hist_DiPhoInfo_leadPhi
     40,//hist_DiPhoInfo_leadE
     50,//hist_DiPhoInfo_leadhoe
+    50,//hist_DiPhoInfo_leadIDMVA_beforeCut
     50,//hist_DiPhoInfo_leadIDMVA
     40,//hist_DiPhoInfo_subleadPt
+    40,//hist_DiPhoInfo_subleadPt_overM
     40,//hist_DiPhoInfo_subleadEta
     40,//hist_DiPhoInfo_subleadPhi
     40,//hist_DiPhoInfo_subleadE
     50,//hist_DiPhoInfo_subleadhoe
+    50,//hist_DiPhoInfo_subleadIDMVA_beforeCut
     50,//hist_DiPhoInfo_subleadIDMVA
     10,//hist_ElecInfo_Size
     10,//hist_MuonInfo_Size
@@ -357,6 +382,11 @@ int histNbins[totalHistNum]{
     40,//hist_MuonInfo_muon_diphoton_deltaR
     10,//hist_jets_size
     15,//hist_num_jets
+    15,//hist_num_bjets
+    15,//hist_num_jets_leptonicChannel
+    15,//hist_num_bjets_leptonicChannel
+    15,//hist_num_jets_hadronicChannel
+    15,//hist_num_bjets_hadronicChannel
     40,//hist_JetInfo_jet_pt
     40,//hist_JetInfo_jet_eta
     40,//hist_JetInfo_jet_phi
@@ -477,20 +507,25 @@ double histBinLow[totalHistNum]{
     0,//hist_EvtInfo_genweight
     100,//hist_DiPhoInfo_mass
     0,//hist_DiPhoInfo_pt
+    0,//hist_DiPhoInfo_pt_overM
     -2.5,//hist_DiPhoInfo_eta
     -3.0,//hist_DiPhoInfo_phi
     0,//hist_DiPhoInfo_energy
     0,//hist_DiPhoInfo_leadPt
+    0,//hist_DiPhoInfo_leadPt_overM
     -2.5,//hist_DiPhoInfo_leadEta
     -3.0,//hist_DiPhoInfo_leadPhi
     0,//hist_DiPhoInfo_leadE
     0,//hist_DiPhoInfo_leadhoe
+    -1.,//hist_DiPhoInfo_leadIDMVA_beforeCut
     -1.,//hist_DiPhoInfo_leadIDMVA
     0,//hist_DiPhoInfo_subleadPt
+    0,//hist_DiPhoInfo_subleadPt_overM
     -2.5,//hist_DiPhoInfo_subleadEta
     -3.0,//hist_DiPhoInfo_subleadPhi
     0,//hist_DiPhoInfo_subleadE
     0,//hist_DiPhoInfo_subleadhoe
+    -1.,//hist_DiPhoInfo_subleadIDMVA_beforeCut
     -1.,//hist_DiPhoInfo_subleadIDMVA
     0,//hist_ElecInfo_Size
     0,//hist_MuonInfo_Size
@@ -511,6 +546,11 @@ double histBinLow[totalHistNum]{
     0,//hist_MuonInfo_muon_diphoton_deltaR
     0,//hist_jets_size
     0,//hist_num_jets
+    0,//hist_num_bjets
+    0,//hist_num_jets_leptonicChannel
+    0,//hist_num_bjets_leptonicChannel
+    0,//hist_num_jets_hadronicChannel
+    0,//hist_num_bjets_hadronicChannel
     0,//hist_JetInfo_jet_pt
     -2.5,//hist_JetInfo_jet_eta
     -3.0,//hist_JetInfo_jet_phi
@@ -631,20 +671,25 @@ double histBinHigh[totalHistNum]{
     100,//hist_EvtInfo_genweight
     180,//hist_DiPhoInfo_mass
     200,//hist_DiPhoInfo_pt
+    10,//hist_DiPhoInfo_pt_overM
     2.5,//hist_DiPhoInfo_eta
     3.0,//hist_DiPhoInfo_phi
     500,//hist_DiPhoInfo_energy
     200,//hist_DiPhoInfo_leadPt
+    10,//hist_DiPhoInfo_leadPt_overM
     2.5,//hist_DiPhoInfo_leadEta
     3.0,//hist_DiPhoInfo_leadPhi
     200,//hist_DiPhoInfo_leadE
     0.10,//hist_DiPhoInfo_leadhoe
+    1.,//hist_DiPhoInfo_leadIDMVA_beforeCut
     1.,//hist_DiPhoInfo_leadIDMVA
     200,//hist_DiPhoInfo_subleadPt
+    10,//hist_DiPhoInfo_subleadPt_overM
     2.5,//hist_DiPhoInfo_subleadEta
     3.0,//hist_DiPhoInfo_subleadPhi
     200,//hist_DiPhoInfo_subleadE
     0.10,//hist_DiPhoInfo_subleadhoe
+    1.,//hist_DiPhoInfo_subleadIDMVA_beforeCut
     1.,//hist_DiPhoInfo_subleadIDMVA
     10,//hist_ElecInfo_Size
     10,//hist_MuonInfo_Size
@@ -665,6 +710,11 @@ double histBinHigh[totalHistNum]{
     6,//hist_MuonInfo_muon_diphoton_deltaR
     10,//hist_jets_size
     15,//hist_num_jets
+    15,//hist_num_bjets
+    15,//hist_num_jets_leptonicChannel
+    15,//hist_num_bjets_leptonicChannel
+    15,//hist_num_jets_hadronicChannel
+    15,//hist_num_bjets_hadronicChannel
     200,//hist_JetInfo_jet_pt
     2.5,//hist_JetInfo_jet_eta
     3.0,//hist_JetInfo_jet_phi

@@ -10,6 +10,8 @@
 #include "../include/stack.h"
 using namespace std;
 
+bool considerQCD = false;
+bool normalizeSigEntryToData = true;
 bool bool_isHadronic;
 bool bool_isLeptonic;
 const double TunableSigBranchingFraction = 0.005; //The branching fraction of signal MC = 0.5%
@@ -25,6 +27,14 @@ void stackHist(const char* channel){
     if(bool_isLeptonic) printf("[CHECK] from macro src/stackHist.C: isLeptonic!\n");
     //}}}
     //MakeStackHist("hist_DiPhoInfo_mass");
+    MakeStackHist("hist_num_leptons");
+    MakeStackHist("hist_num_jets");
+    MakeStackHist("hist_num_bjets");
+    MakeStackHist("hist_num_jets_leptonicChannel");
+    MakeStackHist("hist_num_bjets_leptonicChannel");
+    MakeStackHist("hist_num_jets_hadronicChannel");
+    MakeStackHist("hist_num_bjets_hadronicChannel");
+    /*
     //### MakeStackHist{{{
     MakeStackHist("hist_EvtInfo_NPu");
     MakeStackHist("hist_EvtInfo_Rho");
@@ -34,20 +44,25 @@ void stackHist(const char* channel){
     MakeStackHist("hist_EvtInfo_genweight");
     MakeStackHist("hist_DiPhoInfo_mass");
     MakeStackHist("hist_DiPhoInfo_pt");
+    MakeStackHist("hist_DiPhoInfo_pt_overM");
     MakeStackHist("hist_DiPhoInfo_eta");
     MakeStackHist("hist_DiPhoInfo_phi");
     MakeStackHist("hist_DiPhoInfo_energy");
     MakeStackHist("hist_DiPhoInfo_leadPt");
+    MakeStackHist("hist_DiPhoInfo_leadPt_overM");
     MakeStackHist("hist_DiPhoInfo_leadEta");
     MakeStackHist("hist_DiPhoInfo_leadPhi");
     MakeStackHist("hist_DiPhoInfo_leadE");
     MakeStackHist("hist_DiPhoInfo_leadhoe");
+    MakeStackHist("hist_DiPhoInfo_leadIDMVA_beforeCut");
     MakeStackHist("hist_DiPhoInfo_leadIDMVA");
     MakeStackHist("hist_DiPhoInfo_subleadPt");
+    MakeStackHist("hist_DiPhoInfo_subleadPt_overM");
     MakeStackHist("hist_DiPhoInfo_subleadEta");
     MakeStackHist("hist_DiPhoInfo_subleadPhi");
     MakeStackHist("hist_DiPhoInfo_subleadE");
     MakeStackHist("hist_DiPhoInfo_subleadhoe");
+    MakeStackHist("hist_DiPhoInfo_subleadIDMVA_beforeCut");
     MakeStackHist("hist_DiPhoInfo_subleadIDMVA");
     MakeStackHist("hist_ElecInfo_Size");
     MakeStackHist("hist_MuonInfo_Size");
@@ -68,6 +83,11 @@ void stackHist(const char* channel){
     MakeStackHist("hist_MuonInfo_muon_diphoton_deltaR");
     MakeStackHist("hist_jets_size");
     MakeStackHist("hist_num_jets");
+    MakeStackHist("hist_num_bjets");
+    MakeStackHist("hist_num_jets_leptonicChannel");
+    MakeStackHist("hist_num_bjets_leptonicChannel");
+    MakeStackHist("hist_num_jets_hadronicChannel");
+    MakeStackHist("hist_num_bjets_hadronicChannel");
     MakeStackHist("hist_JetInfo_jet_pt");
     MakeStackHist("hist_JetInfo_jet_eta");
     MakeStackHist("hist_JetInfo_jet_phi");
@@ -178,7 +198,8 @@ void stackHist(const char* channel){
     MakeStackHist("hist_leptonic_top_tbw_topKinFit_pt");
     MakeStackHist("hist_leptonic_top_tbw_topKinFit_eta");
     MakeStackHist("hist_leptonic_top_tbw_topKinFit_mass");
-    //}}}
+    //end of MakeStackHist}}}
+    */
 }
 void MakeStackHist(const char* histName){
     //if((string)histName == "hist_EvtInfo_NVtx") PrintTexStyle = true; else PrintTexStyle = false;
@@ -186,7 +207,6 @@ void MakeStackHist(const char* histName){
     TCanvas *c1 = new TCanvas("c1", "c1", 1000, 800);
     THStack *stackHist = new THStack("stackHist", "");//If setting titles here, the x(y)-title will NOT be able to set later.
     //### Set up boolean{{{
-    bool considerQCD = true;
     bool isIDMVA = isThisIDMVA(histName);
     bool isNum = isThisNum(histName);
     bool isEtaPhi = isThisEtaPhi(histName);
@@ -297,7 +317,18 @@ void MakeStackHist(const char* histName){
     hist_tqh_resbkg[NUM_resbkg] = (TH1D*) hist_tqh_resbkg[0]->Clone();
     for(int i=1; i<NUM_resbkg; i++) hist_tqh_resbkg[NUM_resbkg]->Add(hist_tqh_resbkg[i]);
     hist_tqh_nonresbkg[NUM_nonresbkg] = (TH1D*) hist_tqh_nonresbkg[0]->Clone();
-    for(int i=1; i<NUM_nonresbkg; i++) hist_tqh_nonresbkg[NUM_nonresbkg]->Add(hist_tqh_nonresbkg[i]);
+    if(considerQCD)
+    {
+        for(int i=1; i<NUM_nonresbkg; i++) hist_tqh_nonresbkg[NUM_nonresbkg]->Add(hist_tqh_nonresbkg[i]);
+    }
+    else
+    {
+        for(int i=1; i<NUM_nonresbkg; i++)
+        {
+            if(i==8 || i==9 || i==10) continue;
+            else hist_tqh_nonresbkg[NUM_nonresbkg]->Add(hist_tqh_nonresbkg[i]);
+        }
+    }
     //--------------------
     hist_tqh_ggH = (TH1D*) hist_tqh_resbkg[0]->Clone();
     hist_tqh_VBF = (TH1D*) hist_tqh_resbkg[1]->Clone();
@@ -446,44 +477,88 @@ void MakeStackHist(const char* histName){
     hist_sig_st_hut->SetLineColor(kPink+1); hist_sig_st_hut->SetLineStyle(2);
     hist_sig_tt_hct->SetLineColor(kRed);
     hist_sig_st_hct->SetLineColor(kRed); hist_sig_st_hct->SetLineStyle(2);
-    //--- normalize to total entries of data ---//
-    //double total_entries_data = hist_tqh_data[NUM_data]->Integral();
-    //double scale_sig_tt_hut = total_entries_data / hist_sig_tt_hut->Integral() ; hist_sig_tt_hut->Scale(scale_sig_tt_hut);
-    //double scale_sig_st_hut = total_entries_data / hist_sig_st_hut->Integral() ; hist_sig_st_hut->Scale(scale_sig_st_hut);
-    //double scale_sig_tt_hct = total_entries_data / hist_sig_tt_hct->Integral() ; hist_sig_tt_hct->Scale(scale_sig_tt_hct);
-    //double scale_sig_st_hct = total_entries_data / hist_sig_st_hct->Integral() ; hist_sig_st_hct->Scale(scale_sig_st_hct);
-    double scale_sig_tt_hut = 1;
-    double scale_sig_st_hut = 1;
-    double scale_sig_tt_hct = 1;
-    double scale_sig_st_hct = 1;
     //}}}
-    //### Calculate yields from combined histograms {{{
+    /*
+    //### Calculate yields from combined histograms (signal region){{{
     //=====================================================//
     //===== Calculate yields from combined histograms =====//
     //=====================================================//
     if(PrintTexStyle){
         printf("Processes & Entries & \\multicolumn{2}{c}{Yields}\\\\ \n");
         printf("\\hline\\hline\n");
-        CalculateHistYields("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox);
-        CalculateHistYields("GJet\t\t", hist_tqh_GJet);
-        CalculateHistYields("TGJets\t\t", hist_tqh_TGJets);
-        CalculateHistYields("TTGJets\t\t", hist_tqh_TTGJets);
-        CalculateHistYields("TTGG\t\t", hist_tqh_TTGG);
-        CalculateHistYields("TTJets\t\t", hist_tqh_TTJets );
-        CalculateHistYields("DYJetsToLL\t", hist_tqh_DYJetsToLL );
-        CalculateHistYields("WJetsToLNu\t", hist_tqh_WJetsToLNu );
-        CalculateHistYields("VG\t\t", hist_tqh_VG );
-        CalculateHistYields("VV\t\t", hist_tqh_VV );
-        CalculateHistYields("Higgs\t\t", hist_tqh_Higgs);
-        CalculateHistYields("QCD\t\t", hist_tqh_QCD);
-        CalculateHistYields("sig_tt_hut\t", hist_sig_tt_hut);
-        CalculateHistYields("sig_st_hut\t", hist_sig_st_hut);
-        CalculateHistYields("sig_tt_hct\t", hist_sig_tt_hct);
-        CalculateHistYields("sig_st_hct\t", hist_sig_st_hct);
+        CalculateHistYields_signalRegion("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox);
+        CalculateHistYields_signalRegion("GJet\t\t", hist_tqh_GJet);
+        CalculateHistYields_signalRegion("TGJets\t\t", hist_tqh_TGJets);
+        CalculateHistYields_signalRegion("TTGJets\t\t", hist_tqh_TTGJets);
+        CalculateHistYields_signalRegion("TTGG\t\t", hist_tqh_TTGG);
+        CalculateHistYields_signalRegion("TTJets\t\t", hist_tqh_TTJets );
+        CalculateHistYields_signalRegion("DYJetsToLL\t", hist_tqh_DYJetsToLL );
+        CalculateHistYields_signalRegion("WJetsToLNu\t", hist_tqh_WJetsToLNu );
+        CalculateHistYields_signalRegion("VG\t\t", hist_tqh_VG );
+        CalculateHistYields_signalRegion("VV\t\t", hist_tqh_VV );
+        CalculateHistYields_signalRegion("Higgs\t\t", hist_tqh_Higgs);
+        CalculateHistYields_signalRegion("ggH\t\t", hist_tqh_ggH);
+        CalculateHistYields_signalRegion("VBF\t\t", hist_tqh_VBF);
+        CalculateHistYields_signalRegion("VH\t\t", hist_tqh_VH);
+        CalculateHistYields_signalRegion("ttH\t\t", hist_tqh_ttH);
+        CalculateHistYields_signalRegion("QCD\t\t", hist_tqh_QCD);
+        CalculateHistYields_signalRegion("sig_tt_hut\t", hist_sig_tt_hut);
+        CalculateHistYields_signalRegion("sig_st_hut\t", hist_sig_st_hut);
+        CalculateHistYields_signalRegion("sig_tt_hct\t", hist_sig_tt_hct);
+        CalculateHistYields_signalRegion("sig_st_hct\t", hist_sig_st_hct);
         printf("\\hline\n");
-        CalculateHistYields("MC background\t", hist_tqh_mc_wosig);
-        CalculateHistYields("Data\t\t", hist_tqh_data[NUM_data]);
+        CalculateHistYields_signalRegion("MC background\t", hist_tqh_mc_wosig);
+        CalculateHistYields_signalRegion("Data\t\t", hist_tqh_data[NUM_data]);
         printf("\n\n");
+    }
+    //}}}
+    */
+    //### Calculate yields from combined histograms (sideband region){{{
+    //=====================================================//
+    //===== Calculate yields from combined histograms =====//
+    //=====================================================//
+    if(PrintTexStyle){
+        printf("Processes & Entries & \\multicolumn{2}{c}{Yields}\\\\ \n");
+        printf("\\hline\\hline\n");
+        CalculateHistYields_sidebandRegion("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox);
+        CalculateHistYields_sidebandRegion("GJet\t\t", hist_tqh_GJet);
+        CalculateHistYields_sidebandRegion("TGJets\t\t", hist_tqh_TGJets);
+        CalculateHistYields_sidebandRegion("TTGJets\t\t", hist_tqh_TTGJets);
+        CalculateHistYields_sidebandRegion("TTGG\t\t", hist_tqh_TTGG);
+        CalculateHistYields_sidebandRegion("TTJets\t\t", hist_tqh_TTJets );
+        CalculateHistYields_sidebandRegion("DYJetsToLL\t", hist_tqh_DYJetsToLL );
+        CalculateHistYields_sidebandRegion("WJetsToLNu\t", hist_tqh_WJetsToLNu );
+        CalculateHistYields_sidebandRegion("VG\t\t", hist_tqh_VG );
+        CalculateHistYields_sidebandRegion("VV\t\t", hist_tqh_VV );
+        CalculateHistYields_sidebandRegion("Higgs\t\t", hist_tqh_Higgs);
+        CalculateHistYields_sidebandRegion("ggH\t\t", hist_tqh_ggH);
+        CalculateHistYields_sidebandRegion("VBF\t\t", hist_tqh_VBF);
+        CalculateHistYields_sidebandRegion("VH\t\t", hist_tqh_VH);
+        CalculateHistYields_sidebandRegion("ttH\t\t", hist_tqh_ttH);
+        CalculateHistYields_sidebandRegion("QCD\t\t", hist_tqh_QCD);
+        CalculateHistYields_sidebandRegion("sig_tt_hut\t", hist_sig_tt_hut);
+        CalculateHistYields_sidebandRegion("sig_st_hut\t", hist_sig_st_hut);
+        CalculateHistYields_sidebandRegion("sig_tt_hct\t", hist_sig_tt_hct);
+        CalculateHistYields_sidebandRegion("sig_st_hct\t", hist_sig_st_hct);
+        printf("\\hline\n");
+        CalculateHistYields_sidebandRegion("MC background\t", hist_tqh_mc_wosig);
+        CalculateHistYields_sidebandRegion("Data\t\t", hist_tqh_data[NUM_data]);
+        printf("\n\n");
+    }
+    //}}}
+    // Scale signal{{{
+    //--- normalize to total entries of data ---//
+    double total_entries_data = 1.;
+    double scale_sig_tt_hut = 1.;
+    double scale_sig_st_hut = 1.;
+    double scale_sig_tt_hct = 1.;
+    double scale_sig_st_hct = 1.;
+    if(normalizeSigEntryToData){
+        total_entries_data = hist_tqh_data[NUM_data]->Integral();
+        scale_sig_tt_hut = total_entries_data / hist_sig_tt_hut->Integral() ; hist_sig_tt_hut->Scale(scale_sig_tt_hut);
+        scale_sig_st_hut = total_entries_data / hist_sig_st_hut->Integral() ; hist_sig_st_hut->Scale(scale_sig_st_hut);
+        scale_sig_tt_hct = total_entries_data / hist_sig_tt_hct->Integral() ; hist_sig_tt_hct->Scale(scale_sig_tt_hct);
+        scale_sig_st_hct = total_entries_data / hist_sig_st_hct->Integral() ; hist_sig_st_hct->Scale(scale_sig_st_hct);
     }
     //}}}
     //### Draw upper plots{{{ 
@@ -989,12 +1064,29 @@ void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const ch
     hist->SetStats(0);
 }
 
-void CalculateHistYields(const char *process, TH1D* hist){
+void CalculateHistYields_signalRegion(const char *process, TH1D* hist){
     // signal region
     int totalEntries = hist->GetEntries();
     double totalYields = 0.;
     double totalError = 0.;
     for(int i=11; i<16; ++i){
+        totalYields +=  hist->GetBinContent(i);
+        double error =  hist->GetBinError(i);
+        totalError += pow(error, 2);
+    }
+    totalError = sqrt(totalError);
+
+    if(PrintTexStyle) printf("%s & \t %15d & \t %15.2f & $\\pm$ \t %10.2f\\\\\n", process, totalEntries, totalYields, totalError);
+    else printf("%s \t %15.2f \t %15.2f\n", process, totalYields, totalError);
+}
+
+void CalculateHistYields_sidebandRegion(const char *process, TH1D* hist){
+    // signal region
+    int totalEntries = hist->GetEntries();
+    double totalYields = 0.;
+    double totalError = 0.;
+    for(int i=1; i<41; ++i){
+        if( i>10 && i<16) continue; // exclude [120, 130]
         totalYields +=  hist->GetBinContent(i);
         double error =  hist->GetBinError(i);
         totalError += pow(error, 2);
