@@ -3,14 +3,11 @@
 set -e
 # functions{{{
 #===== Preselection =====#
-function Preselection_npustudy(){
-    time ./fireBatchJobs.sh -npustudy > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
-}
 function Preselection(){
-    time ./fireBatchJobs.sh -p > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
+    time ./script/fireBatchJobs.sh -p > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
 }
 function Intermission(){
-    ./script/check_submit_status.sh | tee -a log/stdout.log
+    ./script/check_submit_status.sh -p | tee -a log/stdout.log
     echo "Rename log/stdout.log to log/stdout_pre.log";
     mv log/stdout.log log/stdout_pre.log
     mv log/stderr.log log/stderr_pre.log
@@ -19,7 +16,7 @@ function Intermission(){
 #===== Selection =====#
 function Selection(){
     CHANNEL=$1
-    time ./fireBatchJobs.sh -s ${CHANNEL} > >(tee log/stdout_selection.log) 2> >(tee log/stderr_selection.log >&2)
+    time ./script/fireBatchJobs.sh -s ${CHANNEL} > >(tee log/stdout_selection.log) 2> >(tee log/stderr_selection.log >&2)
     sleep 1m; # Depends on the condition of ntugrid5 computers...
     NUM=`cat ListRootFiles | grep -v "#" | nl | cut -f 1 | tail -n1 | tr -d " "`
     while [ `grep -ic end log/stdout_selection.log` != ${NUM} ]
@@ -27,7 +24,8 @@ function Selection(){
         echo "[INFO-execution] Wait another 10 sec.."
         sleep 10s;
     done
-    ./script/check_submit_status.sh | tee -a log/stdout_selection.log
+    ./script/check_submit_status.sh -s | tee -a log/stdout_selection.log
+    cp -p src/selection.cpp plots/log/
 }
 function AfterSelection(){
     CHANNEL=$1
@@ -50,12 +48,9 @@ function ReRunStackPlotsOnly(){
 }
 #}}}
 
-
-
 #------------------------------ Test Section ------------------------------#
 # preselection{{{
 #./script/prepareExeForNewMC_npu_float.sh "preselection_npustudy"
-#Preselection_npustudy
 #./script/run_macro_stackPlots.sh "hadronic"
 #}}}
 # selection{{{
@@ -106,17 +101,27 @@ function ReRunStackPlotsOnly(){
 #Preselection
 #Intermission
 
-#export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
-#./script/prepareExeForNewMC_npu_float.sh "selection"
-##Selection "hadronic" #selection and make plots for hadronic channel
-##AfterSelection "hadronic" 
+export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
+./script/prepareExeForNewMC_npu_float.sh "selection"
+Selection "hadronic" #selection and make plots for hadronic channel
+AfterSelection "hadronic" 
 #Selection "leptonic" #selection and make plots for leptonic channel
 #AfterSelection "leptonic" 
-#./script/check_errors.sh
-##./script/tableMaker.sh
+./script/check_errors.sh
+#./script/tableMaker.sh
+
+mv plots_hadronic plots
 
 #tar -zcvf plots_hadronic.tar.gz plots_hadronic
 #tar -zcvf plots_leptonic.tar.gz plots_leptonic
 
 #ReRunStackPlotsOnly "hadronic"
-ReRunStackPlotsOnly "leptonic"
+#ReRunStackPlotsOnly "leptonic"
+#./script/tableMaker.sh
+##mv tables/tableMaker.pdf tables/tableMaker_signalRegion.pdf
+#mv tables/tableMaker.pdf tables/tableMaker_sidebandRegion.pdf
+
+#--------------------------------------------------
+# 2016
+# 2017
+# 2018

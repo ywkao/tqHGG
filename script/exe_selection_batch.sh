@@ -2,10 +2,8 @@
 #ref of command awk: https://ubuntuforums.org/showthread.php?t=840054
 set -e
 
-#INPUTDIR="ntuples_skimmed"
-#INPUTDIR="/wk_cms/ykao/tqHGG/2017_oldNtuples/ntuples_skimmed_trigger_pustudy"
-INPUTDIR="/wk_cms/ykao/tqHGG/2017_oldNtuples/ntuples_skimmed_mgg_tighter"
 #INPUTDIR="/wk_cms/ykao/tqHGG/2017_oldNtuples/ntuples_skimmed"
+INPUTDIR="/wk_cms/ykao/tqHGG/2017_oldNtuples/ntuples_skimmed_mgg_tighter"
 OUTPUTDIR="plots"
 EXECUTABLE=./bin/selection
 EXECUTABLE_npu=./bin/selection_npu_float
@@ -18,13 +16,12 @@ function ExeAnalysis() {
     elif [[ ${tag} == 'npu_is_float' ]]; then exe=${EXECUTABLE_npu}; message="[MESSAGE_npu] Start to analyze ${file}";
     else echo "[WARNING] something went wrong in the file: script/exe_selection_batch.sh"; exit 1;
     fi
-    echo "manual check: "${exe}
+    #echo "manual check: "${exe}
     #--------------------------------------------------#
     log=log/log_skimmed_ntuple_${file}_${channel}.txt
     echo ${message} | tee ${log} 
     echo $file | awk -F "." '{print "'$INPUTDIR'""/ntuple_"$1".root", "'$OUTPUTDIR'""/"$1"/hist_"$1".root", "'$OUTPUTDIR'""/mva/tree_"$1".root", $1, "'$OUTPUTDIR'""/"$1, "'$channel'"}' |\
-    xargs -n6 ${exe} | tee -a ${log}
-    ## REMARK: input_file / output_file / output_tree / datasets / output_dir / channel
+    xargs -n6 ${exe} | tee -a ${log} # REMARK: input_file / output_file / output_tree / datasets / output_dir / channel
     cp -p ${log} ${OUTPUTDIR}/log
 }
 
