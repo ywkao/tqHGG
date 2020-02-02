@@ -5,8 +5,8 @@ set -e
 INPUTDIR="/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0"
 INPUTDIR_ywk="/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0"
 #OUTPUTDIR="ntuples_skimmed"
-OUTPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed"
-#OUTPUTDIR="/wk_cms/ykao/tqHGG/ntuples_skimmed_trigger_pustudy"
+OUTPUTDIR="/wk_cms/ykao/tqHGG/2017_oldNtuples/ntuples_skimmed"
+#OUTPUTDIR="/wk_cms/ykao/tqHGG/2017_oldNtuples/ntuples_skimmed_trigger_pustudy"
 EXECUTABLE=./bin/preselection
 EXECUTABLE_npu=./bin/preselection_npu_float
 
