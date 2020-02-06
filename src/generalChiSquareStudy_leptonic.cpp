@@ -189,7 +189,7 @@ int main(int argc, char *argv[]){
     // # topKinFit method{{{
     KINFIT::kfit *kf = new KINFIT::kfit();
     kf->Init(TOPLEP); // Initialize tool for ttbar with FCNC top decay to Higgs(->bb)+u/c hypothesis
-    kf->SetNToy(10); // Set number of toys for minimization
+    kf->SetNToy(1); // Set number of toys for minimization
     // Define PDFs{{{
     std::string pdfFileName = "../TopKinFit/test/GenAnalysis/TopLep/pdf.root";
     //kf->SetPDF("TopWMass",pdfFileName.c_str(),"TopLepWM_Fit");
