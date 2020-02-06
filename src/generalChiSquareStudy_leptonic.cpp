@@ -80,8 +80,8 @@ int main(int argc, char *argv[]){
     int nentries = treeReader.GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
     double NormalizationFactor;
     double Luminosity = 41.53; //fb{-1}
-    double CrossSection = GetXsec(dataset); //pb
-    double BranchingFraction = GetBranchingFraction(dataset); //pb
+    double CrossSection = GetXsec_2017old(dataset); //pb
+    double BranchingFraction = GetBranchingFraction_2017old(dataset); //pb
     printf("[INFO] CrossSection = %f !\n", CrossSection);
     printf("[INFO] Equivalent lumi. = %f !\n", (double)nentries/CrossSection);
     printf("[INFO] BranchingFraction = %f !\n", BranchingFraction);
