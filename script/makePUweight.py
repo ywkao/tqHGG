@@ -22,7 +22,7 @@ def main():
                         )
     parser.add_argument('-f', '--fileprefix', dest='prefix', type=str,
                         help='Storage prefix',
-                        default='./data/pileupweights',
+                        default='./puInfo/pileupweights',
                         )
     parser.add_argument('-m', '--mcmodule', dest='mcmodule', type=str,
                         help='MC Module to use from SimGeneral.MixingModule',
@@ -32,12 +32,12 @@ def main():
                         )
     parser.add_argument('-l', '--lumimask', dest='lumimask', type=str,
                         help='Lumimask json file to use',
-                        default='data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt',
-                        #default='data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt',
+                        default='puInfo/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt',
+                        #default='puInfo/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt',
                         )
     parser.add_argument('-p', '--pufile', dest='pufile', type=str,
                         help='Pileup json file to use',
-                        default='data/pileup_latest.txt',
+                        default='puInfo/pileup_latest.txt',
                         #default='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/PileUp/pileup_latest.txt',
                         )
     args = parser.parse_args()
@@ -64,10 +64,10 @@ def main():
         --minBiasXsec {2}   \
         --maxPileupBin  {3} \
         --numPileupBins {3} \
-        ./data/PileUp.root
+        ./puInfo/PileUp.root
     """.format(args.lumimask, args.pufile, args.xsec, 98 ) )
     #""".format(args.lumimask, args.pufile, args.xsec, 75 ) ) #because the .txt bin number is 75
-    datapufile = ROOT.TFile.Open('./data/PileUp.root')
+    datapufile = ROOT.TFile.Open('./puInfo/PileUp.root')
     datapuhist = datapufile.Get('pileup')
     datapuhist.Scale(1. / datapuhist.Integral())
 
@@ -87,7 +87,7 @@ def main():
         puweightsum = puweightsum + (mcpileup[i] * mcweight[i])
         print i, mcweight[i], mcpileup[i], datapuhist.GetBinContent(i + 1)
 
-    mcfile = ROOT.TFile.Open("./data/MCPileUp.root","update")
+    mcfile = ROOT.TFile.Open("./puInfo/MCPileUp.root","update")
     mchist.Write()
     puhist.Write()
     print puweightsum
