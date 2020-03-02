@@ -6,6 +6,7 @@
 // Author      : Yu-Wei Kao [ykao@cern.ch]
 //
 //***************************************************************************
+// includes{{{
 #include <stdio.h>
 #include <math.h>
 #include <TCanvas.h>
@@ -18,19 +19,26 @@
 #include <string>
 #include "../include/main.h"
 #include "../include/cross_section.h"
+#include "../include/cross_section_2016.h"
+#include "../include/cross_section_2017.h"
+#include "../include/cross_section_2018.h"
 #include "../include/preselection_criteria.h"
 using namespace std;
+//}}}
 
 int main(int argc, char *argv[]){
+    // I/O{{{
     //============================//
     //----- Input file names -----//
     //============================//
-    char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
+    char input_file[512] ; sprintf(input_file , "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file) ;
     char output_file[512]; sprintf(output_file, "%s", argv[2]); printf("[INFO] output_file = %s\n", output_file);
-    char dataset[512]; sprintf(dataset, "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset);
+    char dataset[512]    ; sprintf(dataset    , "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset)    ;
+    char tag[512]        ; sprintf(tag        , "%s", argv[4]); printf("[INFO] tag         = %s\n", tag)        ;
+    char year[512]       ; sprintf(year       , "%s", argv[5]); printf("[INFO] year        = %s\n", year)       ;
     bool isData = isThisDataOrNot(dataset);
     bool isMCsignal = isThisMCsignal(dataset);
-    bool isMultiFile = isThisMultiFile(dataset);
+    bool isMultiFile = isDirectory(tag);
     TFile *fout = new TFile(output_file, "RECREATE");
     //==============================//
     //----- Read input file(s) -----//
@@ -43,41 +51,51 @@ int main(int argc, char *argv[]){
     //===============================//
     //----- Prepare output file -----//
     //===============================//
+    fout->cd();
     myTreeClass mytree;
     mytree.InitTree();
     mytree.MakeNewBranchAddresses();
-    //==================================================//
-    //--------   Event Loop [Normalization]   ----------//
-    //==================================================//
+    //}}}
+    // luminosity, cross section, total genweight{{{
+    //==================================//
+    //--------   Basic Info   ----------//
+    //==================================//
     // Note: Normalization factors will be used in selection stage instead of preselection.
     int nentries = treeReader.GetEntries(); printf("[INFO] N_entries = %d\n", nentries);
-    float NormalizationFactor;
-    float Luminosity = LUMINOSITY_2017; //fb{-1}
-    float CrossSection = GetXsec(dataset); //pb
-    float BranchingFraction = GetBranchingFraction(dataset); //pb
-    printf("[INFO] CrossSection = %f !\n", CrossSection);
-    printf("[INFO] Equivalent lumi. = %f !\n", (float)nentries/CrossSection);
-    printf("[INFO] BranchingFraction = %f !\n", BranchingFraction);
-    float TotalGenweight=0;
-    for(int ientry=0; ientry<nentries; ientry++){
-        treeReader.flashggStdTree->GetEntry(ientry);//load data
-        TotalGenweight+=treeReader.GetGenWeight();
-    }
-    NormalizationFactor = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
-    printf("[INFO] TotalGenweight = %f!\n", TotalGenweight);
-    printf("[INFO] NormalizationFactor = %f!\n", isData ? 1. : NormalizationFactor);
+    float Luminosity = GetLuminosity(year); //fb{-1}
+    float CrossSection = GetXsec(year, dataset); //pb
+    float BranchingFraction = 1.;
+    printf("[INFO] Luminosity = %.2f\n", Luminosity);
+    printf("[INFO] CrossSection = %f\n", CrossSection);
+    printf("[INFO] Equivalent lumi. = %.2f\n", (float)nentries/CrossSection);
+    printf("[INFO] BranchingFraction = %.2f\n", BranchingFraction);
 
+    float TotalGenweight = GetTotalGenweight(year, dataset);
+    // 2017old get TotalGenweight{{{
+    if((string)year == "2017old"){
+        float _TotalGenweight =0.;
+        int nentries = treeReader.flashggStdTree->GetEntries();
+        for(int ientry=0; ientry<nentries; ientry++){
+            treeReader.flashggStdTree->GetEntry(ientry);//load data
+            _TotalGenweight+=treeReader.GetGenWeight();
+        }
+        TotalGenweight = _TotalGenweight;
+    }
+    //}}}
+    printf("[INFO] TotalGenweight = %.2f\n", TotalGenweight);
+
+    float NormalizationFactor = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
+    printf("[INFO] NormalizationFactor = %.2f\n", isData ? 1. : NormalizationFactor);
+    //}}}
 
     //##################################################//
     //#########    Event Loop [Selection]    ###########//
     //##################################################//
     int Nevents_pass_selection = 0;
     for(int ientry=0; ientry<nentries; ientry++){
-        treeReader.flashggStdTree->GetEntry(ientry);//load data
-        //==================================================//
-        //-------------   Reset Parameters   ---------------//
-        //==================================================//
-        mytree.Clear();
+        treeReader.flashggStdTree->GetEntry(ientry); // load data
+        mytree.Clear(); // reset parameters
+        // # Basic selection{{{
         //==================================================//
         //--------------   Basic Selectoin   ---------------//
         //==================================================//
@@ -95,7 +113,8 @@ int main(int argc, char *argv[]){
                                          treeReader.DiPhoInfo_subleadEta < CRITERION_PHOTON_ETA);
         bool pass_photon_criteria_eta = pass_leadingPhotonEta && pass_subleadingPhotonEta;
         //--------------------------------------------------
-        bool pass_interested_region = treeReader.DiPhoInfo_mass > 100 && treeReader.DiPhoInfo_mass < 180;
+        //bool pass_interested_region = treeReader.DiPhoInfo_mass > 100 && treeReader.DiPhoInfo_mass < 180;
+        bool pass_interested_region = treeReader.DiPhoInfo_mass > 100;
         bool pass_signal_region = treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130;
 
         //require MC events pass trigger.
@@ -106,30 +125,39 @@ int main(int argc, char *argv[]){
         //control region
         if(!pass_interested_region) continue;
         if(isData && pass_signal_region) continue;
-
         //Others: photon id mva -> to be cut at src/selection.cpp
-        //==================================================//
-        //------------   Normalization factor   ------------//
-        //==================================================//
+        //end of basic selection}}}
+        // # Store event info{{{
+        //=============================================//
+        //-----------   Store Event Info    -----------//
+        //=============================================//
         mytree.EvtInfo_totalEntry_before_preselection = nentries;
         mytree.EvtInfo_NormalizationFactor_lumi = isData ? 1. : NormalizationFactor;
+        mytree.EvtInfo_NPu = treeReader.EvtInfo_NPu;
+        mytree.EvtInfo_Rho = treeReader.EvtInfo_Rho;
+        mytree.EvtInfo_NVtx = treeReader.EvtInfo_NVtx;
+        mytree.EvtInfo_genweight = treeReader.EvtInfo_genweight;
+        //end of store event info}}}
+        // # Store photon info{{{
         //===============================================//
         //-----------   Store Diphoton Info   -----------//
         //===============================================//
-        mytree.DiPhoInfo_leadPt       = treeReader.DiPhoInfo_leadPt;
-        mytree.DiPhoInfo_leadEta      = treeReader.DiPhoInfo_leadEta;
-        mytree.DiPhoInfo_leadPhi      = treeReader.DiPhoInfo_leadPhi;
-        mytree.DiPhoInfo_leadE        = treeReader.DiPhoInfo_leadE;
-        mytree.DiPhoInfo_leadhoe      = treeReader.DiPhoInfo_leadhoe;
-        mytree.DiPhoInfo_leadIDMVA    = treeReader.DiPhoInfo_leadIDMVA;
-        mytree.DiPhoInfo_subleadPt    = treeReader.DiPhoInfo_subleadPt;
-        mytree.DiPhoInfo_subleadEta   = treeReader.DiPhoInfo_subleadEta;
-        mytree.DiPhoInfo_subleadPhi   = treeReader.DiPhoInfo_subleadPhi;
-        mytree.DiPhoInfo_subleadE     = treeReader.DiPhoInfo_subleadE;
-        mytree.DiPhoInfo_subleadhoe   = treeReader.DiPhoInfo_subleadhoe;
-        mytree.DiPhoInfo_subleadIDMVA = treeReader.DiPhoInfo_subleadIDMVA;
-        mytree.DiPhoInfo_mass         = treeReader.DiPhoInfo_mass;
-        mytree.DiPhoInfo_pt           = treeReader.DiPhoInfo_pt;
+        mytree.DiPhoInfo_leadPt              = treeReader.DiPhoInfo_leadPt;
+        mytree.DiPhoInfo_leadEta             = treeReader.DiPhoInfo_leadEta;
+        mytree.DiPhoInfo_leadPhi             = treeReader.DiPhoInfo_leadPhi;
+        mytree.DiPhoInfo_leadE               = treeReader.DiPhoInfo_leadE;
+        mytree.DiPhoInfo_leadhoe             = treeReader.DiPhoInfo_leadhoe;
+        mytree.DiPhoInfo_leadIDMVA           = treeReader.DiPhoInfo_leadIDMVA;
+        mytree.DiPhoInfo_leadhasPixelSeed    = treeReader.DiPhoInfo_leadhasPixelSeed;
+        mytree.DiPhoInfo_subleadPt           = treeReader.DiPhoInfo_subleadPt;
+        mytree.DiPhoInfo_subleadEta          = treeReader.DiPhoInfo_subleadEta;
+        mytree.DiPhoInfo_subleadPhi          = treeReader.DiPhoInfo_subleadPhi;
+        mytree.DiPhoInfo_subleadE            = treeReader.DiPhoInfo_subleadE;
+        mytree.DiPhoInfo_subleadhoe          = treeReader.DiPhoInfo_subleadhoe;
+        mytree.DiPhoInfo_subleadIDMVA        = treeReader.DiPhoInfo_subleadIDMVA;
+        mytree.DiPhoInfo_subleadhasPixelSeed = treeReader.DiPhoInfo_subleadhasPixelSeed;
+        mytree.DiPhoInfo_mass                = treeReader.DiPhoInfo_mass;
+        mytree.DiPhoInfo_pt                  = treeReader.DiPhoInfo_pt;
 
         TLorentzVector leading_photon, subleading_photon, diphoton;
         leading_photon.SetPtEtaPhiE(treeReader.DiPhoInfo_leadPt, treeReader.DiPhoInfo_leadEta, treeReader.DiPhoInfo_leadPhi, treeReader.DiPhoInfo_leadE);
@@ -138,6 +166,8 @@ int main(int argc, char *argv[]){
         mytree.DiPhoInfo_eta = diphoton.Eta();
         mytree.DiPhoInfo_phi = diphoton.Phi();
         mytree.DiPhoInfo_energy = diphoton.Energy();
+        //end of diphoton info}}}
+        // # Select electrons{{{
         //==============================//
         //-----  Select Electrons  -----//
         //==============================//
@@ -175,6 +205,8 @@ int main(int argc, char *argv[]){
                 mytree.num_electrons=treeReader.ElecInfo_Size;
         }
         bool bool_AtLeastOneSelectedElectron = mytree.num_electrons>0 ? true : false;//for calculation of deltaR(e,j).
+        //end of select electrons}}}
+        // # Select muons{{{
         //==========================//
         //-----  Select Muons  -----//
         //==========================//
@@ -214,11 +246,11 @@ int main(int argc, char *argv[]){
         }
         bool bool_AtLeastOneSelectedMuon = mytree.num_muons>0 ? true : false;//for calculation of deltaR(mu,j).
         mytree.num_leptons = mytree.num_electrons + mytree.num_muons;
-
+        //end of select muons}}}
+        // # Select jets{{{
         //=========================//
         //-----  Select Jets  -----//
         //=========================//
-        int num_jets_cut2_purpose = 0;
         mytree.jets_size = treeReader.jets_size;
         std::vector<TLorentzVector> Jets;
         bool bool_AtLeastOneJet = treeReader.jets_size>0 ? true : false;//treeReader.jets_size = -999 => event without diphoton candidate
@@ -227,7 +259,6 @@ int main(int argc, char *argv[]){
                 //flashgg::Tight2017 jet ID #Already applied flashgg package.
                 if( fabs(treeReader.JetInfo_Eta->at(i)) > CRITERION_JET_ETA ) continue;
                 if( fabs(treeReader.JetInfo_Pt->at(i))  < CRITERION_JET_PT  ) continue;
-                num_jets_cut2_purpose += 1;
                 //--- check deltaR(jet,photon) ---//
                 TLorentzVector jet; 
                 jet.SetPtEtaPhiE(treeReader.JetInfo_Pt->at(i), treeReader.JetInfo_Eta->at(i), treeReader.JetInfo_Phi->at(i), treeReader.JetInfo_Energy->at(i));
@@ -273,55 +304,77 @@ int main(int argc, char *argv[]){
         else{
                 mytree.num_jets=treeReader.jets_size;
         }
-        //===========================//
-        //-----  Store METInfo  -----//
-        //===========================//
+        //end of select jets}}}
+        // # Store met info{{{
+        //============================//
+        //-----  Store MET Info  -----//
+        //============================//
         mytree.MetInfo_Pt = treeReader.MetInfo_Pt;
         mytree.MetInfo_Phi = treeReader.MetInfo_Phi;
         mytree.MetInfo_Px = treeReader.MetInfo_Px;
         mytree.MetInfo_Py = treeReader.MetInfo_Py;
         mytree.MetInfo_SumET = treeReader.MetInfo_SumET;
-        
+        //end of store met}}}
+        // # Store GenInfo (skipped){{{ 
         //===========================//
         //-----  Store GenInfo  -----//
         //===========================//
-        //### [warnning] will take too much space!!!
-        /*
-        mytree.GenPartInfo_size = treeReader.GenPartInfo_size;
-        for(int i=0; i<treeReader.GenPartInfo_size; i++){
-                mytree.GenPartInfo_gen_Pt.push_back(treeReader.GenPartInfo_Pt->at(i));
-                mytree.GenPartInfo_gen_Eta.push_back(treeReader.GenPartInfo_Eta->at(i));
-                mytree.GenPartInfo_gen_Phi.push_back(treeReader.GenPartInfo_Phi->at(i));
-                mytree.GenPartInfo_gen_Phi.push_back(treeReader.GenPartInfo_Phi->at(i));
-                mytree.GenPartInfo_gen_Mass.push_back(treeReader.GenPartInfo_Mass->at(i));
-                mytree.GenPartInfo_gen_PdgID.push_back(treeReader.GenPartInfo_PdgID->at(i));
-                mytree.GenPartInfo_gen_Status.push_back(treeReader.GenPartInfo_Status->at(i));
-                mytree.GenPartInfo_gen_nMo.push_back(treeReader.GenPartInfo_nMo->at(i));
-                mytree.GenPartInfo_gen_nDa.push_back(treeReader.GenPartInfo_nDa->at(i));
-        }
-        */
-        //================================================//
-        //-----------   Store EventPar Info    -----------//
-        //================================================//
-        mytree.EvtInfo_NPu = treeReader.EvtInfo_NPu;
-        mytree.EvtInfo_Rho = treeReader.EvtInfo_Rho;
-        mytree.EvtInfo_NVtx = treeReader.EvtInfo_NVtx;
-        mytree.EvtInfo_genweight = treeReader.EvtInfo_genweight;
+        ////### [warnning] will take too much space!!! more trials are needed!!!
+        //mytree.GenPartInfo_size = treeReader.GenPartInfo_size;
+        //for(int i=0; i<treeReader.GenPartInfo_size; i++){
+        //        mytree.GenPartInfo_gen_Pt.push_back(treeReader.GenPartInfo_Pt->at(i));
+        //        mytree.GenPartInfo_gen_Eta.push_back(treeReader.GenPartInfo_Eta->at(i));
+        //        mytree.GenPartInfo_gen_Phi.push_back(treeReader.GenPartInfo_Phi->at(i));
+        //        mytree.GenPartInfo_gen_Phi.push_back(treeReader.GenPartInfo_Phi->at(i));
+        //        mytree.GenPartInfo_gen_Mass.push_back(treeReader.GenPartInfo_Mass->at(i));
+        //        mytree.GenPartInfo_gen_PdgID.push_back(treeReader.GenPartInfo_PdgID->at(i));
+        //        mytree.GenPartInfo_gen_Status.push_back(treeReader.GenPartInfo_Status->at(i));
+        //        mytree.GenPartInfo_gen_nMo.push_back(treeReader.GenPartInfo_nMo->at(i));
+        //        mytree.GenPartInfo_gen_nDa.push_back(treeReader.GenPartInfo_nDa->at(i));
+        //}
+        //end of store gen info}}}
+        // # Event counting{{{
         //==================================================//
         //-------------   Event Counting     ---------------//
         //==================================================//
         Nevents_pass_selection += 1;
         mytree.Fill();
+        //}}}
     }// End of event loop.
+    // report & close{{{
     //==================================================//
     //---------------------  Report  -------------------//
     //==================================================//
     printf("[INFO] Nevents_pass_selection = %d\n", Nevents_pass_selection);
     fout->Write();
     fout->Close();
-    return 1;
+    //}}}
+    return 0;
 }//end
 
+// functions{{{
+float GetTotalGenweight(char* year, char* dataset){
+    if((string)year == "2016") return GetTotalGenweight_2016(dataset);
+    if((string)year == "2017") return GetTotalGenweight_2017(dataset);
+    if((string)year == "2018") return GetTotalGenweight_2018(dataset);
+    return -1.;
+}
+
+float GetLuminosity(char* year){
+    if((string)year == "2016") return GetLuminosity_2016();
+    if((string)year == "2017") return GetLuminosity_2017();
+    if((string)year == "2018") return GetLuminosity_2018();
+    if((string)year == "2017old") return GetLuminosity_2017old();
+    return -999.;
+}
+
+float GetXsec(char* year, char* dataset){
+    if((string)year == "2016") return GetXsec_2016(dataset);
+    if((string)year == "2017") return GetXsec_2017(dataset);
+    if((string)year == "2018") return GetXsec_2018(dataset);
+    if((string)year == "2017old") return GetXsec_2017old(dataset);
+    return 1.;
+}
 
 bool isThisMCsignal(char* dataset){
     if((string)dataset == "ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8") return true;
@@ -344,24 +397,18 @@ bool isThisDataOrNot(char* dataset){
     if((string)dataset == "DoubleEG_D") return true;
     if((string)dataset == "DoubleEG_E") return true;
     if((string)dataset == "DoubleEG_F") return true;
+    if((string)dataset == "DoubleEG_G") return true;
+    if((string)dataset == "DoubleEG_H") return true;
+    if((string)dataset == "DoubleEG") return true;
+    if((string)dataset == "EGamma") return true;
     return false;
 }
-bool isThisMultiFile(char* dataset){
-    if((string)dataset == "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa") return true;
-    if((string)dataset == "GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8") return true;
-    if((string)dataset == "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
-    if((string)dataset == "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
-    if((string)dataset == "WGToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
-    if((string)dataset == "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8") return true;
-    if((string)dataset == "WW_TuneCP5_13TeV-pythia8") return true;
-    if((string)dataset == "WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8") return true;
-    if((string)dataset == "ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8") return true;
-    if((string)dataset == "ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8") return true;
-    return false;
+bool isDirectory(char* tag){
+    if((string)tag == "directory") return true;
+    else return false;
 }
-
-
-
+//}}}
+// class functions{{{
 flashggStdTreeParameters::flashggStdTreeParameters(){
     GenPartInfo_Pt = new std::vector<float>;
     GenPartInfo_Eta = new std::vector<float>;
@@ -510,7 +557,7 @@ void flashggStdTreeReader::AddMultiRootFile(char* input_file){
     printf("[INFO] flashggStdTreeReader::AddMultiRootFile : Finished!\n");
 }
 int flashggStdTreeReader::GetEntries(void){
-    printf("[INFO] flashggStdTreeReader::GetEntries : %d\n", flashggStdTree->GetEntries());
+    //printf("[INFO] flashggStdTreeReader::GetEntries : %d\n", flashggStdTree->GetEntries());
     return flashggStdTree->GetEntries();
 }
 float flashggStdTreeReader::GetGenWeight(void){
@@ -534,6 +581,7 @@ void flashggStdTreeReader::SetBranchAddresses(){
     flashggStdTree->SetBranchAddress("DiPhoInfo.leadE", &DiPhoInfo_leadE);
     flashggStdTree->SetBranchAddress("DiPhoInfo.leadhoe", &DiPhoInfo_leadhoe);
     flashggStdTree->SetBranchAddress("DiPhoInfo.leadIDMVA", &DiPhoInfo_leadIDMVA);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.leadhasPixelSeed", &DiPhoInfo_leadhasPixelSeed);
     //------------------------
     flashggStdTree->SetBranchAddress("DiPhoInfo.subleadPt", &DiPhoInfo_subleadPt);
     flashggStdTree->SetBranchAddress("DiPhoInfo.subleadEta", &DiPhoInfo_subleadEta);
@@ -541,6 +589,7 @@ void flashggStdTreeReader::SetBranchAddresses(){
     flashggStdTree->SetBranchAddress("DiPhoInfo.subleadE", &DiPhoInfo_subleadE);
     flashggStdTree->SetBranchAddress("DiPhoInfo.subleadhoe", &DiPhoInfo_subleadhoe);
     flashggStdTree->SetBranchAddress("DiPhoInfo.subleadIDMVA", &DiPhoInfo_subleadIDMVA);
+    flashggStdTree->SetBranchAddress("DiPhoInfo.subleadhasPixelSeed", &DiPhoInfo_subleadhasPixelSeed);
     //------------------------
     flashggStdTree->SetBranchAddress("GenPartInfo.size", &GenPartInfo_size);
     flashggStdTree->SetBranchAddress("GenPartInfo.Pt", &GenPartInfo_Pt);
@@ -729,12 +778,14 @@ void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("DiPhoInfo_leadE", &DiPhoInfo_leadE, "DiPhoInfo_leadE/F");
     mytree -> Branch("DiPhoInfo_leadhoe", &DiPhoInfo_leadhoe, "DiPhoInfo_leadhoe/F");
     mytree -> Branch("DiPhoInfo_leadIDMVA", &DiPhoInfo_leadIDMVA, "DiPhoInfo_leadIDMVA/F");
+    mytree -> Branch("DiPhoInfo_leadhasPixelSeed", &DiPhoInfo_leadhasPixelSeed, "DiPhoInfo_leadhasPixelSeed/O");
     mytree -> Branch("DiPhoInfo_subleadPt", &DiPhoInfo_subleadPt, "DiPhoInfo_subleadPt/F");
     mytree -> Branch("DiPhoInfo_subleadEta", &DiPhoInfo_subleadEta, "DiPhoInfo_subleadEta/F");
     mytree -> Branch("DiPhoInfo_subleadPhi", &DiPhoInfo_subleadPhi, "DiPhoInfo_subleadPhi/F");
     mytree -> Branch("DiPhoInfo_subleadE", &DiPhoInfo_subleadE, "DiPhoInfo_subleadE/F");
     mytree -> Branch("DiPhoInfo_subleadhoe", &DiPhoInfo_subleadhoe, "DiPhoInfo_subleadhoe/F");
     mytree -> Branch("DiPhoInfo_subleadIDMVA", &DiPhoInfo_subleadIDMVA, "DiPhoInfo_subleadIDMVA/F");
+    mytree -> Branch("DiPhoInfo_subleadhasPixelSeed", &DiPhoInfo_subleadhasPixelSeed, "DiPhoInfo_subleadhasPixelSeed/O");
     //------------------------
     mytree -> Branch("ElecInfo_Size", &ElecInfo_Size, "ElecInfo_Size/I");
     mytree -> Branch("MuonInfo_Size", &MuonInfo_Size, "MuonInfo_Size/I");
@@ -772,23 +823,12 @@ void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("JetInfo_jet_pfDeepCSVJetTags_probc", &JetInfo_jet_pfDeepCSVJetTags_probc);
     mytree -> Branch("JetInfo_jet_pfDeepCSVJetTags_probudsg", &JetInfo_jet_pfDeepCSVJetTags_probudsg);
     mytree -> Branch("num_bjets", &num_bjets, "num_bjets/I");
-    mytree -> Branch("JetInfo_leading_bjet_pt", &JetInfo_leading_bjet_pt);
-    mytree -> Branch("JetInfo_leading_bjet_eta", &JetInfo_leading_bjet_eta);
-    mytree -> Branch("JetInfo_leading_bjet_phi", &JetInfo_leading_bjet_phi);
-    mytree -> Branch("JetInfo_leading_bjet_energy", &JetInfo_leading_bjet_energy);
     //------------------------
     mytree -> Branch("MetInfo_Pt", &MetInfo_Pt, "MetInfo_Pt/F");
     mytree -> Branch("MetInfo_Phi", &MetInfo_Phi, "MetInfo_Phi/F");
     mytree -> Branch("MetInfo_Px", &MetInfo_Px, "MetInfo_Px/F");
     mytree -> Branch("MetInfo_Py", &MetInfo_Py, "MetInfo_Py/F");
     mytree -> Branch("MetInfo_SumET", &MetInfo_SumET, "MetInfo_SumET/F");
-    //------------------------
-    //mytree -> Branch("num_btagged_jets", &num_btagged_jets, "num_btagged_jets/I");
-    //mytree -> Branch("num_nonbtagged_jets", &num_nonbtagged_jets, "num_nonbtagged_jets/I");
-    //------------------------
-    //mytree -> Branch("inv_mass_dijet", &inv_mass_dijet, "inv_mass_dijet/F");
-    //mytree -> Branch("inv_mass_diphoton", &inv_mass_diphoton, "inv_mass_diphoton/F");
-    //mytree -> Branch("inv_mass_tbw", &inv_mass_tbw, "inv_mass_tbw/F");
 }
 void myTreeClass::Fill(){
     mytree -> Fill();
@@ -814,11 +854,6 @@ void myParameters::Clear(){
     JetInfo_jet_pfDeepCSVJetTags_probc.clear();
     JetInfo_jet_pfDeepCSVJetTags_probudsg.clear();
     num_bjets = 0;// # of selected objects.
-    JetInfo_leading_bjet_pt.clear();
-    JetInfo_leading_bjet_eta.clear();
-    JetInfo_leading_bjet_phi.clear();
-    JetInfo_leading_bjet_energy.clear();
-    //------------------------
     //------------------------
     num_leptons = 0;
     num_electrons = 0;
@@ -839,20 +874,5 @@ void myParameters::Clear(){
     MuonInfo_muon_diphoton_deltaR.clear();
     MuonInfo_muon_leadingPhoton_deltaR.clear();
     MuonInfo_muon_subleadingPhoton_deltaR.clear();
-    //------------------------
-    //Not used in preselection stage
-    //------------------------
-    num_btagged_jets = 0;
-    num_nonbtagged_jets = 0;
-    //------------------------
-    //Chi-2 sorting related
-    //------------------------
-    inv_mass_dijet = 0;
-    inv_mass_diphoton = 0;
-    inv_mass_tbw = 0;
-    //------------------------
-    JetInfo_dijet_delta_eta = 0;
-    JetInfo_dijet_delta_phi = 0;
-    JetInfo_dijet_delta_angle = 0;
-    //------------------------
 }
+//}}}

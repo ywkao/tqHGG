@@ -1,8 +1,6 @@
 #ifndef PRESELECTION_CRITERIA_H
 #define PRESELECTION_CRITERIA_H
 
-#define LUMINOSITY_2017 41.53
-
 //--- trigger ---//
 //diphoton trigger
 

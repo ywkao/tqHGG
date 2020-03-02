@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -e; bool_exe=true; #bool_exe=false;
 #function GetNumber(){{{
 #--------------- Function ---------------#
 function GetNumber(){
@@ -25,33 +25,47 @@ fi
 #}}}
 # funciont submit(){{{
 function submit() {
-    option=$1; channel=$2;
+    option=$1; year="$2"; channel=$3;
     if   [[ $option == '-p' ]]; then message="[MESSAGE] Start submit preselection!"; exe=./script/exe_preselection_batch.sh;
     elif [[ $option == '-s' ]]; then message="[MESSAGE] Start submit selection!"   ; exe=./script/exe_selection_batch.sh   ;
     elif [[ $option == '-c' ]]; then message="[MESSAGE] Start submit check work!"  ; exe=./script/doCheckYields            ;
     else echo "[WARNING] something went wrong in the file: ./script/fireBatchJobs.sh"; exit 1;
     fi
+
+    if   [[ $option == '-p' ]] && [[ $year == '2016' ]]; then list="./lists/list_samples_2016";
+    elif [[ $option == '-p' ]] && [[ $year == '2017' ]]; then list="./lists/list_samples_2017";
+    elif [[ $option == '-p' ]] && [[ $year == '2018' ]]; then list="./lists/list_samples_2018";
+    elif [[ $option == '-s' ]] && [[ $year == '2016' ]]; then list="./lists/list_selection_2016";
+    elif [[ $option == '-s' ]] && [[ $year == '2017' ]]; then list="./lists/list_selection";
+    elif [[ $option == '-s' ]] && [[ $year == '2018' ]]; then list="./lists/list_selection";
+    elif [[ $option == '-s' ]] && [[ $year == '161718' ]]; then list="./lists/list_selection"; # selection stage only
+    else list="./lists/ListRootFiles";
+    fi
+    echo ${list}
     #--------------------------------------------------
-    echo ${message}
-    for dataset in `cat ListRootFiles | grep -v "#"`
+    if [ ${bool_exe} = true ]; then echo ${message}; fi
+    for dataset in `cat ${list} | grep -v "#"`
     do
-        name="test_${dataset}"
-        number=$(GetNumber); echo "[MESSAGE] ssh node${number} dataset=${dataset}"
-        command="source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval $(scramv1 runtime -sh) time ${exe} ${dataset} ${channel}"
-        echo ${command}
-        ssh node${number} ${command} & # self submission
-        # qsub (not work yet){{{
-        #command='"cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; time ${exe} ${dataset} ${channel}"' # do not work
-        #if [[ $option == '-s' ]];
-        #then ./script/submitJOB.py --command=${command} --name=${name} # qsub
-        #else ssh node${number} ${command} & # self submission
-        #fi
+        if [[ $dataset == 'DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa' ]]; then tag="directory"; else tag="rootfile"; fi # Note: the tag for 2017old is not correct here though, modifies in exe_pre*.sh
+        if [[ $option  == '-s' ]]; then tag="rootfile"; fi # Note: in selection stage, all files are rootfiles
+        number=$(GetNumber);
+        if [ ${bool_exe} = true ]; then
+            echo "[MESSAGE] ssh node${number} dataset=${dataset}"
+            command="source /cvmfs/cms.cern.ch/cmsset_default.sh; cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; pwd; eval $(scramv1 runtime -sh) time ${exe} ${dataset} ${year} ${tag} ${channel}"
+            ssh node${number} ${command} & # self submission
+        fi
+        # test{{{
+        #--- for test only ---#
+        if [ ${bool_exe} = false ]; then
+            command="cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; time ${exe} ${dataset} ${year} ${tag} ${channel}"
+            echo ${command}
+        fi
         #}}}
     done
 }
 #}}}
-    
-#--------------- Setup ---------------#
+# warning message{{{
+#--------------- Warning Message ---------------#
 if [ $# -eq 0 ]; then
     echo "[WARNING] Please input an option."
     echo "./script/fireBatchJobs -c  # Check Entries/Yields"
@@ -59,9 +73,7 @@ if [ $# -eq 0 ]; then
     echo "./script/fireBatchJobs -s  # Selection"
     exit 0
 fi
-echo "[MESSAGE] Check directories for plots..." && ./script/mkplotdir.sh
-echo "[MESSAGE] Check executable..." && make
-echo "[MESSAGE] Ready!"
+#}}}
 
 #--------------- Submit ---------------#
-option=$1; channel=$2; submit ${option} ${channel}
+option=$1; year=$2; channel=$3; submit ${option} ${year} ${channel}

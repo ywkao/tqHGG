@@ -1,32 +1,88 @@
 #!/bin/bash
 #ref of command awk: https://ubuntuforums.org/showthread.php?t=840054
-set -e
-
+set -e; bool_exe=true; #bool_exe=false;
+# I/O{{{
 INPUTDIR="/wk_cms2/youying/public/2017_94X_3_1_X_and_3_2_0"
 INPUTDIR_ywk="/wk_cms2/ykao/public/2017_94X_3_1_X_and_3_2_0"
-OUTPUTDIR="/wk_cms/ykao/tqHGG/2017_oldNtuples/ntuples_skimmed"
-EXECUTABLE=./bin/preselection
-EXECUTABLE_npu=./bin/preselection_npu_float
+INPUTDIR_2016="/wk_cms2/ykao/public/thFCNC/flashgg_105X/2016"
+INPUTDIR_2017="/wk_cms2/youying/public/thFCNC/flashgg_105X/2017"
+INPUTDIR_2018="/wk_cms2/youying/public/thFCNC/flashgg_105X/2018"
 
-# functions{{{
+BIN=bin
+OUTPUTDIR="/wk_cms/ykao/tqHGG/2017old/output_preselection"
+OUTPUTDIR_2016="/wk_cms/ykao/tqHGG/2016/output_preselection"
+OUTPUTDIR_2017="/wk_cms/ykao/tqHGG/2017/output_preselection"
+OUTPUTDIR_2018="/wk_cms/ykao/tqHGG/2018/output_preselection"
+
+#BIN=bin_2
+#OUTPUTDIR_2016="/wk_cms/ykao/tqHGG/2016/output_preselection_tighterPhotonPT"
+#OUTPUTDIR_2017="/wk_cms/ykao/tqHGG/2017/output_preselection_tighterPhotonPT"
+#OUTPUTDIR_2018="/wk_cms/ykao/tqHGG/2018/output_preselection_tighterPhotonPT"
+
+#BIN=bin_3
+#OUTPUTDIR_2016="/wk_cms/ykao/tqHGG/2016/output_preselection_noPhotonPT"
+#OUTPUTDIR_2017="/wk_cms/ykao/tqHGG/2017/output_preselection_noPhotonPT"
+#OUTPUTDIR_2018="/wk_cms/ykao/tqHGG/2018/output_preselection_noPhotonPT"
+
+#OUTPUTDIR="/wk_cms/ykao/tqHGG/2017_oldNtuples/ntuples_skimmed"
+#}}}
+EXECUTABLE=./${BIN}/preselection
+EXECUTABLE_npu=./${BIN}/preselection_npu_float
+
+# function KeepTrack(){{{
+function KeepTrack(){
+    log_dir=$1; dir=$2; code=$3;
+    source_code=./${dir}/${code};
+    target=${log_dir}/${code};
+    if [ ! -f ${target} ]; then echo "cp -p ${source_code} ${target}" ; cp -p ${source_code} ${target}; fi
+}
+#}}}
+# function ExeAnalysis() {{{
 function ExeAnalysis() {
-    file=$1; tag=$2;
-    if   [[ ${tag} == 'is_regular'           ]]; then exe=${EXECUTABLE}    ; input_directory=${INPUTDIR}    ; root_extension=".root";
-    elif [[ ${tag} == 'npu_is_float'         ]]; then exe=${EXECUTABLE_npu}; input_directory=${INPUTDIR_ywk}; root_extension=""     ;
-    elif [[ ${tag} == 'is_single_top'        ]]; then exe=${EXECUTABLE}    ; input_directory=${INPUTDIR_ywk}; root_extension=".root";
-    elif [[ ${tag} == 'has_multi_root_files' ]]; then exe=${EXECUTABLE}    ; input_directory=${INPUTDIR_ywk}; root_extension=""     ;
+    file=$1; year=$2; tag=$3;
+    if   [[ ${tag} == 'is_regular'                           ]]; then exe=${EXECUTABLE}    ; input_directory=${INPUTDIR}     ; output_directory=${OUTPUTDIR}     ; root_extension=".root";
+    elif [[ ${tag} == 'npu_is_float'                         ]]; then exe=${EXECUTABLE_npu}; input_directory=${INPUTDIR_ywk} ; output_directory=${OUTPUTDIR}     ; root_extension=""     ;
+    elif [[ ${tag} == 'is_single_top'                        ]]; then exe=${EXECUTABLE}    ; input_directory=${INPUTDIR_ywk} ; output_directory=${OUTPUTDIR}     ; root_extension=".root";
+    elif [[ ${tag} == 'has_multi_root_files'                 ]]; then exe=${EXECUTABLE}    ; input_directory=${INPUTDIR_ywk} ; output_directory=${OUTPUTDIR}     ; root_extension=""     ;
+    elif [[ ${year} == '2016' ]] && [[ ${tag} == 'rootfile'  ]]; then exe=${EXECUTABLE_npu}; input_directory=${INPUTDIR_2016}; output_directory=${OUTPUTDIR_2016}; root_extension=".root";
+    elif [[ ${year} == '2016' ]] && [[ ${tag} == 'directory' ]]; then exe=${EXECUTABLE_npu}; input_directory=${INPUTDIR_2016}; output_directory=${OUTPUTDIR_2016}; root_extension=""     ;
+    elif [[ ${year} == '2017' ]] && [[ ${tag} == 'rootfile'  ]]; then exe=${EXECUTABLE_npu}; input_directory=${INPUTDIR_2017}; output_directory=${OUTPUTDIR_2017}; root_extension=".root";
+    elif [[ ${year} == '2017' ]] && [[ ${tag} == 'directory' ]]; then exe=${EXECUTABLE_npu}; input_directory=${INPUTDIR_2017}; output_directory=${OUTPUTDIR_2017}; root_extension=""     ;
+    elif [[ ${year} == '2018' ]] && [[ ${tag} == 'rootfile'  ]]; then exe=${EXECUTABLE_npu}; input_directory=${INPUTDIR_2018}; output_directory=${OUTPUTDIR_2018}; root_extension=".root";
+    elif [[ ${year} == '2018' ]] && [[ ${tag} == 'directory' ]]; then exe=${EXECUTABLE_npu}; input_directory=${INPUTDIR_2018}; output_directory=${OUTPUTDIR_2018}; root_extension=""     ;
     else echo "[WARNING] something went wrong in the file: script/exe_preselection_batch.sh"; exit 1;
     fi
-    #echo "manual check: ${exe} ${input_directory} ${root_extension}"
-    #echo $file | awk -F "." '{print "'$input_directory'""/"$1"'$root_extension'", "'$OUTPUTDIR'""/ntuple_"$1".root", $1}'
+    mkdir -p ${output_directory} # create output directory if it is new
+    if [[ ${root_extension} == '' ]]; then isDirecotry="directory"; else isDirecotry="rootfile"; fi; message="[MESSAGE] Start to analyze ${file} [check] file type: ${isDirecotry}"
     #--------------------------------------------------
-    log=log/log_${file}.txt
-    echo "[MESSAGE] Start to analyze ${file}" | tee ${log} 
-    echo $file | awk -F "." '{print "'$input_directory'""/"$1"'$root_extension'", "'$OUTPUTDIR'""/ntuple_"$1".root", $1}' |\
-    xargs -n3 ${exe} | grep -v ientry | tee -a ${log} # REMARK: input_file / output_file / datasets
-    cp -p ${log} ${OUTPUTDIR}/log/
-}
+    if [ ${bool_exe} = true ]; then
+        dataset=`echo $file | awk -F "." '{print $1}'`
+        log=log/log_preselection_${year}_${dataset}.txt
+        input_file="${input_directory}/${dataset}${root_extension}"
+        output_file="${output_directory}/ntuple_${dataset}.root"
+        echo "${message}" | tee ${log} 
+        ${exe} ${input_file} ${output_file} ${dataset} ${isDirecotry} ${year} | tee -a ${log}
+        # store log messages
+        log_dir="${output_directory}/log"; mkdir -p ${log_dir}; cp -p ${log} ${log_dir};
+        KeepTrack ${log_dir} "src" "preselection.cpp"
+        KeepTrack ${log_dir} "include" "preselection_criteria.h"
+    else
+        dataset=`echo $file | awk -F "." '{print $1}'`
+        input_file="${input_directory}/${dataset}${root_extension}"
+        output_file="${output_directory}/ntuple_${dataset}.root"
+        exe=echo
+        ${exe} ${message}
+        ${exe} ${input_file}
+        ${exe} ${output_file}
+        #${exe} ${input_file} ${output_file} ${dataset} ${isDirecotry} ${year}
 
+        log_dir="${output_directory}/log"
+        KeepTrack ${log_dir} "src" "preselection.cpp"
+        KeepTrack ${log_dir} "include" "preselection_criteria.h"
+    fi
+}
+#}}}
+#function Get_type_based_on_file_name() {{{
 function Get_type_based_on_file_name() {
     if [[
           $FILE == 'DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa' ||
@@ -62,6 +118,8 @@ function Get_type_based_on_file_name() {
 #}}}
 
 #--------------- Execution ---------------#
-FILE=$1; TAG=`Get_type_based_on_file_name ${FILE}`;
-ExeAnalysis ${FILE} ${TAG}
+FILE=$1; YEAR=$2;
+echo "check year=$YEAR"
+if [[ ${YEAR} == "2017old" ]]; then TAG=`Get_type_based_on_file_name ${FILE}`; else TAG=$3; fi
+ExeAnalysis ${FILE} ${YEAR} ${TAG}
 echo "[MESSAGE] This is the end of $FILE" && exit 0

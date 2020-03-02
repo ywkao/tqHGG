@@ -1,54 +1,77 @@
 #!/bin/bash
 # vim: set fdm=marker:
 set -e
-# functions{{{
-#===== Preselection =====#
+#===== Functions =====#
+# function Preselection(){{{
 function Preselection(){
-    time ./script/fireBatchJobs.sh -p > >(tee log/stdout.log) 2> >(tee log/stderr.log >&2)
-}
-function Intermission(){
-    ./script/check_submit_status.sh -p | tee -a log/stdout.log
-    echo "Rename log/stdout.log to log/stdout_pre.log";
-    mv log/stdout.log log/stdout_pre.log
-    mv log/stderr.log log/stderr_pre.log
-}
-
-#===== Selection =====#
-function Selection(){
-    CHANNEL=$1
-    time ./script/fireBatchJobs.sh -s ${CHANNEL} > >(tee log/stdout_selection.log) 2> >(tee log/stderr_selection.log >&2)
-    sleep 1m; # Depends on the condition of ntugrid5 computers...
-    NUM=`cat ListRootFiles | grep -v "#" | nl | cut -f 1 | tail -n1 | tr -d " "`
-    while [ `grep -ic end log/stdout_selection.log` != ${NUM} ]
-    do
-        echo "[INFO-execution] Wait another 10 sec.."
-        sleep 10s;
-    done
-    ./script/check_submit_status.sh -s | tee -a log/stdout_selection.log
-    cp -p src/selection.cpp plots/log/
-}
-function AfterSelection(){
-    CHANNEL=$1
-    ./script/run_macro_stackPlots.sh ${CHANNEL}
-    ./script/resetPlotsChannels.sh plots_${CHANNEL}
-    cp -p log/stdout_selection.log plots_${CHANNEL}/log/stdout_${CHANNEL}.log
-    cp -p log/stderr_selection.log plots_${CHANNEL}/log/stderr_${CHANNEL}.log
-    cp -p log/info_stack_plots_${CHANNEL} plots_${CHANNEL}/log
-    mv log/stdout_selection.log log/stdout_${CHANNEL}.log
-    mv log/stderr_selection.log log/stderr_${CHANNEL}.log
-}
-function ReRunStackPlotsOnly(){
-    CHANNEL=$1
-    if [ ! -d plots ]; then echo "[INFO] mv plots_${CHANNEL} plots"; mv plots_${CHANNEL} plots;
-    else echo "[WARNNING] dir plots exists! (abort)"; exit 1;
-    fi
-    ./script/run_macro_stackPlots.sh ${CHANNEL}
-    ./script/resetPlotsChannels.sh plots_${CHANNEL}
-    cp -p log/info_stack_plots_${CHANNEL} plots_${CHANNEL}/log
+    year="$1"
+    log=log/stdout_preselection_${year}.txt
+    err=log/stderr_preselection_${year}.txt
+    exe=./script/qsubMultiJob_preselection.py; opt=""; #exe=./script/fireBatchJobs.sh; opt="-p";
+    time ${exe} ${opt} ${year} > >(tee ${log}) 2> >(tee ${err} >&2)
 }
 #}}}
+# function Intermission(){{{
+function Intermission(){
+    year=$1
+    #./script/check_submit_status.sh -p | tee -a log/stdout.log
+    echo "Rename log/stdout.log to log/stdout_pre.log";
+    #mv log/stdout.log log/stdout_pre.log
+    #mv log/stderr.log log/stderr_pre.log
+    #backup condition of preselection
+}
+#}}}
+# function Selection(){{{
+function Selection(){
+    year="$1"; channel=$2;
+    log=log/stdout_selection_${year}_${channel}.txt; touch ${log}
+    err=log/stderr_selection_${year}_${channel}.txt; touch ${err}
+    exe=./script/qsubMultiJob_selection.py; opt=""; #exe=./script/fireBatchJobs.sh; opt="-s";
+    time ${exe} ${opt} ${year} ${channel} > >(tee ${log}) 2> >(tee ${err} >&2)
+    sleep 30s; # Depends on the condition of ntugrid5 computers...
 
+    # get sample list
+    if   [[ $year == '2016' ]]; then list="lists/list_selection_2016";
+    elif [[ $year == '2017' ]]; then list="lists/list_selection";
+    elif [[ $year == '2018' ]]; then list="lists/list_selection";
+    elif [[ $year == '161718' ]]; then list="lists/list_selection";
+    else list="lists/ListRootFiles";
+    fi
+    echo ${list}
+
+    # monitor processing status
+    ./script/monitor.sh ${year} ${channel} ${list}
+
+    # backup log messages
+    log_dir="plots/${year}/log" # log dir is created by script/exe_selection_batch.sh
+    cp -p src/selection.cpp ${log_dir}
+    cp -p ${log} ${log_dir}
+    cp -p ${err} ${log_dir}
+}
+#}}}
+# function AfterSelection(){{{
+function AfterSelection(){
+    year=$1; channel=$2; local log=log/info_stack_plots_${channel}.txt;
+    ./script/run_macro_stackPlots.sh ${year} ${channel}  | tee ${log}
+    log_dir="plots/${year}/log"
+    cp -p src/stackHist*.C ${log_dir}
+    cp ${log} ${log_dir}
+}
+#}}}
+# function ReRunStackPlotsOnly(){{{
+function ReRunStackPlotsOnly(){
+    year="$1"; channel=$2;
+    local log=log/info_stack_plots_${channel}.txt
+    if [ ! -d plots ]; then echo "[INFO] mv plots_${channel} plots"; mv plots_${channel} plots;
+    else echo "[WARNNING] dir plots exists! (abort)"; exit 1;
+    fi
+    ./script/run_macro_stackPlots.sh ${channel}  | tee ${log}
+    cp ${log} plots/${year}/log
+    ./script/resetPlotsChannels.sh plots_${channel}
+}
+#}}}
 #------------------------------ Test Section ------------------------------#
+#./script/setup_before_fireBatchJobs.sh 
 # preselection{{{
 #./script/prepareExeForNewMC_npu_float.sh "preselection_npustudy"
 #./script/run_macro_stackPlots.sh "hadronic"
@@ -59,7 +82,6 @@ function ReRunStackPlotsOnly(){
 #time ./script/exe_selection_batch.sh "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8" "leptonic"
 #time ./script/exe_selection_batch.sh "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8" "hadronic"
 #}}}
-
 # top reconstruction study hadronic{{{
 #export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
 
@@ -93,35 +115,69 @@ function ReRunStackPlotsOnly(){
 #make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root" "leptonic"
 #make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
 #}}}
-
-
-
 #------------------------- Main Exe Section -------------------------#
+#./script/setup_before_fireBatchJobs.sh 
 #./script/prepareExeForNewMC_npu_float.sh "preselection"
-#Preselection
-#Intermission
+#for year in "2017old" "2018" "2017" "2016"
+#do
+#    Preselection "${year}"
+#done
+#Intermission # not yet
+#time ./script/convert_outputPreselection_to_inputSelection.sh
 
-export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
-./script/prepareExeForNewMC_npu_float.sh "selection"
-Selection "hadronic" #selection and make plots for hadronic channel
-AfterSelection "hadronic" 
-#Selection "leptonic" #selection and make plots for leptonic channel
-#AfterSelection "leptonic" 
-./script/check_errors.sh
-#./script/tableMaker.sh
+#--------------------------------------------------#
+#export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH #!For topKinFit method
+#./script/prepareExeForNewMC_npu_float.sh "selection"
 
-mv plots_hadronic plots
+tag="_latest"
+#tag="_update"
+for channel in "leptonic" "hadronic"
+do
+    echo "mv plots_${channel}${tag} plots"; mv plots_${channel}${tag} plots; # re-stack
+    #echo "mv plots_${channel} plots"; mv plots_${channel} plots; # re-stack
+    #for year in "2017old" "161718" "2018" "2017" "2016"
+    for year in "161718"
+    do
+        #Selection ${year} ${channel}
+        #if [ $year == "2016" ]; then
+        #    ./script/warning_use2017VHToGG_as2016VHToGG.sh
+        #    ls "plots/2016"
+        #fi
+        AfterSelection ${year} ${channel}
+    done
+    #./script/resetPlotsChannels.sh plots_${channel}
+    ./script/resetPlotsChannels.sh plots_${channel}${tag}
+    #./script/resetPlotsChannels.sh ${target}
+done
+./script/tableMaker.sh "${tag}"
+#--------------------------------------------------
+#target_dir="plots_leptonic_latest/161718/mva"
 
-#tar -zcvf plots_hadronic.tar.gz plots_hadronic
-#tar -zcvf plots_leptonic.tar.gz plots_leptonic
+### MVA training ###
+### please edit before training
+### 1. src/mva_TMVAClassification_leptonic.C
+### 2. script/train_MVA_method.sh
+#time ./script/train_MVA_method.sh
+#cp src/mva_TMVAClassification_leptonic.C ${target_dir}
 
-#ReRunStackPlotsOnly "hadronic"
-#ReRunStackPlotsOnly "leptonic"
-#./script/tableMaker.sh
-##mv tables/tableMaker.pdf tables/tableMaker_signalRegion.pdf
-#mv tables/tableMaker.pdf tables/tableMaker_sidebandRegion.pdf
+### MVA application ###
+### please check following steps before submission
+### 1. put the dataset/weights in a proper directory
+### 2. src/app_TMVAClassificationApplication.C
+#cp -r dataset_testALL_24 ${target_dir}
+#time ./script/qsubMultiJob_mvaApplication.py
+#cp src/app_TMVAClassificationApplication.C ${target_dir}
+
+### stack plots ###
+### please check following steps before stacking
+### 1. include/stack_mva_output_score.h # path
+### 2. isCoraser=false/true
+#root -l -b -q "src/output_mvaScore_stackHist.C(\"leptonic\")"
 
 #--------------------------------------------------
-# 2016
-# 2017
-# 2018
+#Selection 161718 "leptonic" #selection and make plots for leptonic channel
+#./script/tableMaker.sh
+#ReRunStackPlotsOnly 161718 "hadronic"
+#ReRunStackPlotsOnly 161718 "leptonic"
+#./script/tableMaker.sh
+#./script/check_errors.sh

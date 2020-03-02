@@ -13,8 +13,11 @@ float top_quark_mass = 173.0;//GeV
 //==========================//
 //---  Class & Function  ---//
 //==========================//
+float GetTotalGenweight(char* year, char* dataset);
+float GetLuminosity(char* year);
+float GetXsec(char* year, char* dataset);
+bool isDirectory(char* tag);
 bool isThisDataOrNot(char* dataset);
-bool isThisMultiFile(char* dataset);
 bool isThisMCsignal(char* dataset);
 
 class flashggStdTreeParameters{
@@ -47,6 +50,7 @@ public:
     float DiPhoInfo_leadE;
     float DiPhoInfo_leadhoe;
     float DiPhoInfo_leadIDMVA;
+    bool  DiPhoInfo_leadhasPixelSeed;
     //------------------------
     float DiPhoInfo_subleadPt;
     float DiPhoInfo_subleadEta;
@@ -54,6 +58,7 @@ public:
     float DiPhoInfo_subleadE;
     float DiPhoInfo_subleadhoe;
     float DiPhoInfo_subleadIDMVA;
+    bool  DiPhoInfo_subleadhasPixelSeed;
     //------------------------
     Int_t jets_size;
     std::vector<float> *JetInfo_Pt;
@@ -152,10 +157,6 @@ public:
     std::vector<float> JetInfo_jet_pfDeepCSVJetTags_probc;
     std::vector<float> JetInfo_jet_pfDeepCSVJetTags_probudsg;
     Int_t num_bjets;// # of selected objects.
-    std::vector<float> JetInfo_leading_bjet_pt;
-    std::vector<float> JetInfo_leading_bjet_eta;
-    std::vector<float> JetInfo_leading_bjet_phi;
-    std::vector<float> JetInfo_leading_bjet_energy;
     //------------------------
     Int_t num_leptons;// # of selected objects.
     Int_t num_electrons;// # of selected objects.
@@ -176,21 +177,6 @@ public:
     std::vector<float> MuonInfo_muon_diphoton_deltaR;
     std::vector<float> MuonInfo_muon_leadingPhoton_deltaR;
     std::vector<float> MuonInfo_muon_subleadingPhoton_deltaR;
-    //------------------------
-    //Not used in preselection stage
-    //------------------------
-    Int_t num_btagged_jets;// # of selected objects.
-    Int_t num_nonbtagged_jets;// # of selected objects.
-    //------------------------
-    //Chi-2 sorting related
-    //------------------------
-    float inv_mass_dijet;
-    float inv_mass_diphoton;
-    float inv_mass_tbw;
-    //------------------------
-    float JetInfo_dijet_delta_eta;
-    float JetInfo_dijet_delta_phi;
-    float JetInfo_dijet_delta_angle;
     //------------------------
     //containers used in selection stage
     //------------------------
@@ -214,11 +200,6 @@ public:
     std::vector<float> *JetInfo_jet_pfDeepCSVJetTags_probbb_selection;
     std::vector<float> *JetInfo_jet_pfDeepCSVJetTags_probc_selection;
     std::vector<float> *JetInfo_jet_pfDeepCSVJetTags_probudsg_selection;
-    //-----
-    std::vector<float> *JetInfo_leading_bjet_pt_selection;
-    std::vector<float> *JetInfo_leading_bjet_eta_selection;
-    std::vector<float> *JetInfo_leading_bjet_phi_selection;
-    std::vector<float> *JetInfo_leading_bjet_energy_selection;
     //-----
     std::vector<int> *ElecInfo_electron_charge_selection;
     std::vector<float> *ElecInfo_electron_pt_selection;

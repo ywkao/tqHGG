@@ -13,23 +13,38 @@ TH1D *hist_EvtInfo_NVtx = new TH1D("hist_EvtInfo_NVtx", "", 50, 0, 100);
 TH1D *hist_EvtInfo_NVtx_wopu = new TH1D("hist_EvtInfo_NVtx_wopu", "", 50, 0, 100);
 TH1D *hist_EvtInfo_genweight = new TH1D("hist_EvtInfo_genweight", "", 100, 0, 100);
 //------------------------
-TH1D *hist_DiPhoInfo_mass = new TH1D("hist_DiPhoInfo_mass", "", 40, 100, 180);
+TH1D *hist_DiPhoInfo_mass = new TH1D("hist_DiPhoInfo_mass", "", 40, 100, 300);
+//TH1D *hist_DiPhoInfo_mass = new TH1D("hist_DiPhoInfo_mass", "", 40, 100, 180);
 TH1D *hist_DiPhoInfo_pt = new TH1D("hist_DiPhoInfo_pt", "", 40, 0, 200);
+TH1D *hist_DiPhoInfo_pt_overM = new TH1D("hist_DiPhoInfo_pt_overM", "", 40, 0, 10);
 TH1D *hist_DiPhoInfo_eta = new TH1D("hist_DiPhoInfo_eta", "", 40, -2.5, 2.5);
 TH1D *hist_DiPhoInfo_phi = new TH1D("hist_DiPhoInfo_phi", "", 40, -3.0, 3.0);
 TH1D *hist_DiPhoInfo_energy = new TH1D("hist_DiPhoInfo_energy", "", 40, 0, 500);
+TH1D *hist_DiPhoInfo_cos_deltaPhi = new TH1D("hist_DiPhoInfo_cos_deltaPhi", "", 40, -1.0, 1.0);
 TH1D *hist_DiPhoInfo_leadPt = new TH1D("hist_DiPhoInfo_leadPt", "", 40, 0, 200);
+TH1D *hist_DiPhoInfo_leadPt_overM = new TH1D("hist_DiPhoInfo_leadPt_overM", "", 40, 0, 10);
 TH1D *hist_DiPhoInfo_leadEta = new TH1D("hist_DiPhoInfo_leadEta", "", 40, -2.5, 2.5);
 TH1D *hist_DiPhoInfo_leadPhi = new TH1D("hist_DiPhoInfo_leadPhi", "", 40, -3.0, 3.0);
 TH1D *hist_DiPhoInfo_leadE = new TH1D("hist_DiPhoInfo_leadE", "", 40, 0, 200);
 TH1D *hist_DiPhoInfo_leadhoe = new TH1D("hist_DiPhoInfo_leadhoe", "", 50, 0, 0.10);
+TH1D *hist_DiPhoInfo_leadIDMVA_beforeCut = new TH1D("hist_DiPhoInfo_leadIDMVA_beforeCut", "", 50, -1., 1.);
+TH1D *hist_DiPhoInfo_leadhasPixelSeed_beforeCut = new TH1D("hist_DiPhoInfo_leadhasPixelSeed_beforeCut", "", 2, 0, 2);
 TH1D *hist_DiPhoInfo_leadIDMVA = new TH1D("hist_DiPhoInfo_leadIDMVA", "", 50, -1., 1.);
+TH1D *hist_DiPhoInfo_leadhasPixelSeed = new TH1D("hist_DiPhoInfo_leadhasPixelSeed", "", 2, 0, 2);
 TH1D *hist_DiPhoInfo_subleadPt = new TH1D("hist_DiPhoInfo_subleadPt", "", 40, 0, 200);
+TH1D *hist_DiPhoInfo_subleadPt_overM = new TH1D("hist_DiPhoInfo_subleadPt_overM", "", 40, 0, 10);
 TH1D *hist_DiPhoInfo_subleadEta = new TH1D("hist_DiPhoInfo_subleadEta", "", 40, -2.5, 2.5);
 TH1D *hist_DiPhoInfo_subleadPhi = new TH1D("hist_DiPhoInfo_subleadPhi", "", 40, -3.0, 3.0);
 TH1D *hist_DiPhoInfo_subleadE = new TH1D("hist_DiPhoInfo_subleadE", "", 40, 0, 200);
 TH1D *hist_DiPhoInfo_subleadhoe = new TH1D("hist_DiPhoInfo_subleadhoe", "", 50, 0, 0.10);
+TH1D *hist_DiPhoInfo_subleadIDMVA_beforeCut = new TH1D("hist_DiPhoInfo_subleadIDMVA_beforeCut", "", 50, -1., 1.);
+TH1D *hist_DiPhoInfo_subleadhasPixelSeed_beforeCut = new TH1D("hist_DiPhoInfo_subleadhasPixelSeed_beforeCut", "", 2, 0, 2);
 TH1D *hist_DiPhoInfo_subleadIDMVA = new TH1D("hist_DiPhoInfo_subleadIDMVA", "", 50, -1., 1.);
+TH1D *hist_DiPhoInfo_subleadhasPixelSeed = new TH1D("hist_DiPhoInfo_subleadhasPixelSeed", "", 2, 0, 2);
+TH1D *hist_DiPhoInfo_maxIDMVA_beforeCut = new TH1D("hist_DiPhoInfo_maxIDMVA_beforeCut", "", 50, -1., 1.);
+TH1D *hist_DiPhoInfo_maxIDMVA = new TH1D("hist_DiPhoInfo_maxIDMVA", "", 50, -1., 1.);
+TH1D *hist_DiPhoInfo_minIDMVA_beforeCut = new TH1D("hist_DiPhoInfo_minIDMVA_beforeCut", "", 50, -1., 1.);
+TH1D *hist_DiPhoInfo_minIDMVA = new TH1D("hist_DiPhoInfo_minIDMVA", "", 50, -1., 1.);
 //------------------------
 TH1D *hist_ElecInfo_Size = new TH1D("hist_ElecInfo_Size", "", 10, 0, 10);
 TH1D *hist_MuonInfo_Size = new TH1D("hist_MuonInfo_Size", "", 10, 0, 10);
@@ -51,6 +66,11 @@ TH1D *hist_MuonInfo_muon_diphoton_deltaR = new TH1D("hist_MuonInfo_muon_diphoton
 //------------------------
 TH1D *hist_jets_size = new TH1D("hist_jets_size", "", 10, 0, 10);
 TH1D *hist_num_jets = new TH1D("hist_num_jets", "", 15, 0, 15);
+TH1D *hist_num_bjets = new TH1D("hist_num_bjets", "", 15, 0, 15);
+TH1D *hist_num_jets_leptonicChannel = new TH1D("hist_num_jets_leptonicChannel", "", 15, 0, 15);
+TH1D *hist_num_bjets_leptonicChannel = new TH1D("hist_num_bjets_leptonicChannel", "", 15, 0, 15);
+TH1D *hist_num_jets_hadronicChannel = new TH1D("hist_num_jets_hadronicChannel", "", 15, 0, 15);
+TH1D *hist_num_bjets_hadronicChannel = new TH1D("hist_num_bjets_hadronicChannel", "", 15, 0, 15);
 TH1D *hist_JetInfo_jet_pt = new TH1D("hist_JetInfo_jet_pt", "", 40, 0, 200);
 TH1D *hist_JetInfo_jet_eta = new TH1D("hist_JetInfo_jet_eta", "", 40, -2.5, 2.5);
 TH1D *hist_JetInfo_jet_phi = new TH1D("hist_JetInfo_jet_phi", "", 40, -3.0, 3.0);
@@ -78,6 +98,9 @@ TH1D *hist_lepton_eta = new TH1D("hist_lepton_eta", "", 40, -2.5, 2.5);
 TH1D *hist_lepton_phi = new TH1D("hist_lepton_phi", "", 40, -3.0, 3.0);
 TH1D *hist_lepton_energy = new TH1D("hist_lepton_energy", "", 40, 0, 200);
 TH1D *hist_lepton_diphoton_deltaR = new TH1D("hist_lepton_diphoton_deltaR", "", 40, 0, 6);
+TH1D *hist_lepton_leadingPhoton_deltaR = new TH1D("hist_lepton_leadingPhoton_deltaR", "", 40, 0, 6);
+TH1D *hist_lepton_subleadingPhoton_deltaR = new TH1D("hist_lepton_subleadingPhoton_deltaR", "", 40, 0, 6);
+TH1D *hist_lepton_diphoton_deltaTheta = new TH1D("hist_lepton_diphoton_deltaTheta", "", 40, 0, 3.0);
 //------------------------
 //jet1: leading jet
 //jet2: subleading jet
