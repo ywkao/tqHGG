@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 tag=$1
-file=src/TMVAClassification_leptonic.C 
+file=src/mva_TMVAClassification_leptonic.C 
 tmpDir=src/tmp/task_${tag}
 # function{{{
 function Edit(){
@@ -50,14 +50,14 @@ Edit 115 "Use" "Use[\"FDA_MCMT\"]        = 0;"
 #}}}
 #// Neural Networks (all are feed-forward Multilayer Perceptrons){{{
 Edit 118 "Use" "Use[\"MLP\"]             = 1; // Recommended ANN"
-Edit 119 "Use" "Use[\"MLPBFGS\"]         = 1; // Recommended ANN with optional training method"
-Edit 120 "Use" "Use[\"MLPBNN\"]          = 1; // Recommended ANN with BFGS training method and bayesian regulator"
+Edit 119 "Use" "Use[\"MLPBFGS\"]         = 0; // Recommended ANN with optional training method"
+Edit 120 "Use" "Use[\"MLPBNN\"]          = 0; // Recommended ANN with BFGS training method and bayesian regulator"
 Edit 121 "Use" "Use[\"CFMlpANN\"]        = 1; // Depreciated ANN from ALEPH"
 Edit 122 "Use" "Use[\"TMlpANN\"]         = 1; // ROOT's own ANN"
-Edit 124 "Use" "Use[\"DNN_GPU\"]         = 1; // CUDA-accelerated DNN training."
-Edit 126 "Use" "Use[\"DNN_GPU\"]         = 1;"
-Edit 130 "Use" "Use[\"DNN_CPU\"]         = 1; // Multi-core accelerated DNN."
-Edit 132 "Use" "Use[\"DNN_CPU\"]         = 1;"
+Edit 124 "Use" "Use[\"DNN_GPU\"]         = 0; // CUDA-accelerated DNN training."
+Edit 126 "Use" "Use[\"DNN_GPU\"]         = 0;"
+Edit 130 "Use" "Use[\"DNN_CPU\"]         = 0; // Multi-core accelerated DNN."
+Edit 132 "Use" "Use[\"DNN_CPU\"]         = 0;"
 #}}}
 #// Support Vector Machine{{{
 Edit 136 "Use" "Use[\"SVM\"]             = 0;"

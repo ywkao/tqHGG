@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 tag=$1
-file=src/TMVAClassification_leptonic.C 
+file=src/mva_TMVAClassification_leptonic.C 
 tmpDir=src/tmp/task_${tag}
 # function{{{
 function Edit(){

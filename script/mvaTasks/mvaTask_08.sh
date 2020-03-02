@@ -19,11 +19,11 @@ Edit 84 "Use" "Use[\"CutsGA\"]          = 0; // [ERROR]"
 Edit 85 "Use" "Use[\"CutsSA\"]          = 0;"
 #}}}
 #// 1-dimensional likelihood ({{{
-Edit 88 "Use" "Use[\"Likelihood\"]      = 1;"
-Edit 89 "Use" "Use[\"LikelihoodD\"]     = 1; // the \"D\" extension indicates decorrelated input variables (see option strings)"
-Edit 90 "Use" "Use[\"LikelihoodPCA\"]   = 1; // the \"PCA\" extension indicates PCA-transformed input variables (see option strings)"
+Edit 88 "Use" "Use[\"Likelihood\"]      = 0;"
+Edit 89 "Use" "Use[\"LikelihoodD\"]     = 0; // the \"D\" extension indicates decorrelated input variables (see option strings)"
+Edit 90 "Use" "Use[\"LikelihoodPCA\"]   = 0; // the \"PCA\" extension indicates PCA-transformed input variables (see option strings)"
 Edit 91 "Use" "Use[\"LikelihoodKDE\"]   = 0; // [ERROR]"
-Edit 92 "Use" "Use[\"LikelihoodMIX\"]   = 1;"
+Edit 92 "Use" "Use[\"LikelihoodMIX\"]   = 0;"
 #}}}
 #// Mutidimensional likelihood and Nearest-Neighbour methods{{{
 Edit 95 "Use" "Use[\"PDERS\"]           = 0;"
@@ -61,8 +61,8 @@ Edit 132 "Use" "Use[\"DNN_CPU\"]         = 0;"
 #}}}
 #// Support Vector Machine{{{
 Edit 136 "Use" "Use[\"SVM\"]             = 0;"
-Edit 137 "Use" "Use[\"BDT\"]             = 0; // uses Adaptive Boost"
-Edit 138 "Use" "Use[\"BDTG\"]            = 0; // uses Gradient Boost"
+Edit 137 "Use" "Use[\"BDT\"]             = 1; // uses Adaptive Boost"
+Edit 138 "Use" "Use[\"BDTG\"]            = 1; // uses Gradient Boost"
 Edit 139 "Use" "Use[\"BDTB\"]            = 0; // uses Bagging"
 Edit 140 "Use" "Use[\"BDTD\"]            = 0; // decorrelation + Adaptive Boost"
 Edit 141 "Use" "Use[\"BDTF\"]            = 0; // allow usage of fisher discriminant for node splitting"
@@ -70,5 +70,5 @@ Edit 141 "Use" "Use[\"BDTF\"]            = 0; // allow usage of fisher discrimin
 #// Friedman's RuleFit method, ie, an optimised series of cuts ({{{
 Edit 144 "Use" "Use[\"RuleFit\"]         = 0;"
 #}}}
-mkdir -p ${tmpDir}
-cp -p ${file} ${tmpDir}/TMVAClassification.C
+#mkdir -p ${tmpDir}
+#cp -p ${file} ${tmpDir}/TMVAClassification.C

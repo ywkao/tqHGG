@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 tag=$1
-file=src/TMVAClassification_leptonic.C 
+file=src/mva_TMVAClassification_leptonic.C 
 tmpDir=src/tmp/task_${tag}
 # function{{{
 function Edit(){
@@ -26,8 +26,8 @@ Edit 91 "Use" "Use[\"LikelihoodKDE\"]   = 0; // [ERROR]"
 Edit 92 "Use" "Use[\"LikelihoodMIX\"]   = 0;"
 #}}}
 #// Mutidimensional likelihood and Nearest-Neighbour methods{{{
-Edit 95 "Use" "Use[\"PDERS\"]           = 1;"
-Edit 96 "Use" "Use[\"PDERSD\"]          = 1;"
+Edit 95 "Use" "Use[\"PDERS\"]           = 0;"
+Edit 96 "Use" "Use[\"PDERSD\"]          = 0;"
 Edit 97 "Use" "Use[\"PDERSPCA\"]        = 1;"
 Edit 98 "Use" "Use[\"PDEFoam\"]         = 1;"
 Edit 99 "Use" "Use[\"PDEFoamBoost\"]    = 1; // uses generalised MVA method boosting"

@@ -4,7 +4,11 @@
 using namespace std;
 //NOTE: these are final cross section values with the branching fraction(s) taken into account.
 
-double GetXsec(char* dataset){
+float GetLuminosity_2017old(){
+    return 41.53;
+}
+
+float GetXsec_2017old(char* dataset){
     if((string)dataset == "DiPhotonJetsBox_M40_80-Sherpa") return 299.3;
     else if((string)dataset == "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa") return 84.0;
     else if((string)dataset == "DoubleEG_B") return 1.;
@@ -55,7 +59,7 @@ double GetXsec(char* dataset){
     else return 1.;
 }
 
-double GetBranchingFraction(char* dataset){
+float GetBranchingFraction_2017old(char* dataset){
     if((string)dataset == "DiPhotonJetsBox_M40_80-Sherpa") return 1.;
     else if((string)dataset == "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa") return 1.;
     else if((string)dataset == "DoubleEG_B") return 1.;

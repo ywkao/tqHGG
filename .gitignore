@@ -13,6 +13,7 @@ bin/*
 # Ignore any plots
 plots*
 ntuples_skimmed
+collections
 
 # Ignore latex derivative files
 tables/*.aux
@@ -20,9 +21,10 @@ tables/*.log
 tables/*.out
 tables/*.pdf
 
+# Ignore files that takes much disks
+puInfo
+
 # Ignore any logs and test files
 log/*
 test/*
-data
 *.swp
-

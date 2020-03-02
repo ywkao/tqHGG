@@ -7,17 +7,26 @@
 #os.system('./script/submitJOB.py --command={} --name={}'.format(command, 'runMVAjob'))
 #}}}
 
-command='"cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; ./script/mvaTasks/mvaTraining.sh {1}"'
+command='"cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG; ./script/mvaTasks/mvaTraining.sh {}"'
 import os
-mvaNum = 7
-for i in range(1, mvaNum+1):
-    tagName = 'testAll_{:02d}'.format(i)
+mvaNum = 8
+#list = [1, 2, 5]
+#list = [8]
 
-    # edit src/TMVAClassification_leptonic.C && cp src/TMVAClassification_leptonic.C src/tmp/task_${tag}/TMVAClassification.C
+#for i in list:
+for i in range(1, mvaNum+1):
+    #tagName = 'testAll_moreBkg_{:02d}'.format(i)
+    tagName = 'testAll_{:02d}'.format(i)
+    print tagName
+
+    #--------------------------------------------------
+    # 1) edit src/TMVAClassification_leptonic.C
+    # 2) cp src/TMVAClassification_leptonic.C src/tmp/task_${tag}/TMVAClassification.C
     os.system('./script/mvaTasks/mvaTask_{0:02d}.sh {1}'.format(i, tagName))
 
-    # submit jobs; root -l -b -q src/TMVAClassification.C
-    os.system('./script/submitJOB.py --command={} --name={}'.format(command.format(i, tagName), 'runMVAjob_{:02d}'.format(i)))
+    #--------------------------------------------------
+    # submit jobs; root -l -b -q src/tmp/task_${tag}/TMVAClassification.C
+    os.system('./script/submitJOB.py --command={} --name={}'.format(command.format(tagName), 'runMVAjob_{:02d}'.format(i)))
 
 # legacy{{{
 #command='"cd /wk_cms2/ykao/CMSSW_9_4_10/src/2017/tqHGG/script && ./hello.py"'

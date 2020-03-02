@@ -18,6 +18,7 @@ enum histList {
     hist_DiPhoInfo_eta,
     hist_DiPhoInfo_phi,
     hist_DiPhoInfo_energy,
+    hist_DiPhoInfo_cos_deltaPhi,
     hist_DiPhoInfo_leadPt,
     hist_DiPhoInfo_leadPt_overM,
     hist_DiPhoInfo_leadEta,
@@ -25,7 +26,9 @@ enum histList {
     hist_DiPhoInfo_leadE,
     hist_DiPhoInfo_leadhoe,
     hist_DiPhoInfo_leadIDMVA_beforeCut,
+    hist_DiPhoInfo_leadhasPixelSeed_beforeCut,
     hist_DiPhoInfo_leadIDMVA,
+    hist_DiPhoInfo_leadhasPixelSeed,
     hist_DiPhoInfo_subleadPt,
     hist_DiPhoInfo_subleadPt_overM,
     hist_DiPhoInfo_subleadEta,
@@ -33,7 +36,13 @@ enum histList {
     hist_DiPhoInfo_subleadE,
     hist_DiPhoInfo_subleadhoe,
     hist_DiPhoInfo_subleadIDMVA_beforeCut,
+    hist_DiPhoInfo_subleadhasPixelSeed_beforeCut,
     hist_DiPhoInfo_subleadIDMVA,
+    hist_DiPhoInfo_subleadhasPixelSeed,
+    hist_DiPhoInfo_maxIDMVA_beforeCut,
+    hist_DiPhoInfo_maxIDMVA,
+    hist_DiPhoInfo_minIDMVA_beforeCut,
+    hist_DiPhoInfo_minIDMVA,
     hist_ElecInfo_Size,
     hist_MuonInfo_Size,
     hist_num_leptons,
@@ -80,6 +89,9 @@ enum histList {
     hist_lepton_phi,
     hist_lepton_energy,
     hist_lepton_diphoton_deltaR,
+    hist_lepton_leadingPhoton_deltaR,
+    hist_lepton_subleadingPhoton_deltaR,
+    hist_lepton_diphoton_deltaTheta,
     hist_jet1_pt,
     hist_jet1_eta,
     hist_jet1_phi,
@@ -183,6 +195,7 @@ std::string histNames[totalHistNum]{
     "hist_DiPhoInfo_eta",
     "hist_DiPhoInfo_phi",
     "hist_DiPhoInfo_energy",
+    "hist_DiPhoInfo_cos_deltaPhi",
     "hist_DiPhoInfo_leadPt",
     "hist_DiPhoInfo_leadPt_overM",
     "hist_DiPhoInfo_leadEta",
@@ -190,7 +203,9 @@ std::string histNames[totalHistNum]{
     "hist_DiPhoInfo_leadE",
     "hist_DiPhoInfo_leadhoe",
     "hist_DiPhoInfo_leadIDMVA_beforeCut",
+    "hist_DiPhoInfo_leadhasPixelSeed_beforeCut",
     "hist_DiPhoInfo_leadIDMVA",
+    "hist_DiPhoInfo_leadhasPixelSeed",
     "hist_DiPhoInfo_subleadPt",
     "hist_DiPhoInfo_subleadPt_overM",
     "hist_DiPhoInfo_subleadEta",
@@ -198,7 +213,13 @@ std::string histNames[totalHistNum]{
     "hist_DiPhoInfo_subleadE",
     "hist_DiPhoInfo_subleadhoe",
     "hist_DiPhoInfo_subleadIDMVA_beforeCut",
+    "hist_DiPhoInfo_subleadhasPixelSeed_beforeCut",
     "hist_DiPhoInfo_subleadIDMVA",
+    "hist_DiPhoInfo_subleadhasPixelSeed",
+    "hist_DiPhoInfo_maxIDMVA_beforeCut",
+    "hist_DiPhoInfo_maxIDMVA",
+    "hist_DiPhoInfo_minIDMVA_beforeCut",
+    "hist_DiPhoInfo_minIDMVA",
     "hist_ElecInfo_Size",
     "hist_MuonInfo_Size",
     "hist_num_leptons",
@@ -245,6 +266,9 @@ std::string histNames[totalHistNum]{
     "hist_lepton_phi",
     "hist_lepton_energy",
     "hist_lepton_diphoton_deltaR",
+    "hist_lepton_leadingPhoton_deltaR",
+    "hist_lepton_subleadingPhoton_deltaR",
+    "hist_lepton_diphoton_deltaTheta",
     "hist_jet1_pt",
     "hist_jet1_eta",
     "hist_jet1_phi",
@@ -347,6 +371,7 @@ int histNbins[totalHistNum]{
     40,//hist_DiPhoInfo_eta
     40,//hist_DiPhoInfo_phi
     40,//hist_DiPhoInfo_energy
+    40,//hist_DiPhoInfo_cos_deltaPhi
     40,//hist_DiPhoInfo_leadPt
     40,//hist_DiPhoInfo_leadPt_overM
     40,//hist_DiPhoInfo_leadEta
@@ -354,7 +379,9 @@ int histNbins[totalHistNum]{
     40,//hist_DiPhoInfo_leadE
     50,//hist_DiPhoInfo_leadhoe
     50,//hist_DiPhoInfo_leadIDMVA_beforeCut
+    2,//hist_DiPhoInfo_leadhasPixelSeed_beforeCut
     50,//hist_DiPhoInfo_leadIDMVA
+    2,//hist_DiPhoInfo_leadhasPixelSeed
     40,//hist_DiPhoInfo_subleadPt
     40,//hist_DiPhoInfo_subleadPt_overM
     40,//hist_DiPhoInfo_subleadEta
@@ -362,7 +389,13 @@ int histNbins[totalHistNum]{
     40,//hist_DiPhoInfo_subleadE
     50,//hist_DiPhoInfo_subleadhoe
     50,//hist_DiPhoInfo_subleadIDMVA_beforeCut
+    2,//hist_DiPhoInfo_subleadhasPixelSeed_beforeCut
     50,//hist_DiPhoInfo_subleadIDMVA
+    2,//hist_DiPhoInfo_subleadhasPixelSeed
+    50,//hist_DiPhoInfo_maxIDMVA_beforeCut
+    50,//hist_DiPhoInfo_maxIDMVA
+    50,//hist_DiPhoInfo_minIDMVA_beforeCut
+    50,//hist_DiPhoInfo_minIDMVA
     10,//hist_ElecInfo_Size
     10,//hist_MuonInfo_Size
     10,//hist_num_leptons
@@ -409,6 +442,9 @@ int histNbins[totalHistNum]{
     40,//hist_lepton_phi
     40,//hist_lepton_energy
     40,//hist_lepton_diphoton_deltaR
+    40,//hist_lepton_leadingPhoton_deltaR
+    40,//hist_lepton_subleadingPhoton_deltaR
+    40,//hist_lepton_diphoton_deltaTheta
     40,//hist_jet1_pt
     40,//hist_jet1_eta
     40,//hist_jet1_phi
@@ -511,6 +547,7 @@ double histBinLow[totalHistNum]{
     -2.5,//hist_DiPhoInfo_eta
     -3.0,//hist_DiPhoInfo_phi
     0,//hist_DiPhoInfo_energy
+    -1.0,//hist_DiPhoInfo_cos_deltaPhi
     0,//hist_DiPhoInfo_leadPt
     0,//hist_DiPhoInfo_leadPt_overM
     -2.5,//hist_DiPhoInfo_leadEta
@@ -518,7 +555,9 @@ double histBinLow[totalHistNum]{
     0,//hist_DiPhoInfo_leadE
     0,//hist_DiPhoInfo_leadhoe
     -1.,//hist_DiPhoInfo_leadIDMVA_beforeCut
+    0,//hist_DiPhoInfo_leadhasPixelSeed_beforeCut
     -1.,//hist_DiPhoInfo_leadIDMVA
+    0,//hist_DiPhoInfo_leadhasPixelSeed
     0,//hist_DiPhoInfo_subleadPt
     0,//hist_DiPhoInfo_subleadPt_overM
     -2.5,//hist_DiPhoInfo_subleadEta
@@ -526,7 +565,13 @@ double histBinLow[totalHistNum]{
     0,//hist_DiPhoInfo_subleadE
     0,//hist_DiPhoInfo_subleadhoe
     -1.,//hist_DiPhoInfo_subleadIDMVA_beforeCut
+    0,//hist_DiPhoInfo_subleadhasPixelSeed_beforeCut
     -1.,//hist_DiPhoInfo_subleadIDMVA
+    0,//hist_DiPhoInfo_subleadhasPixelSeed
+    -1.,//hist_DiPhoInfo_maxIDMVA_beforeCut
+    -1.,//hist_DiPhoInfo_maxIDMVA
+    -1.,//hist_DiPhoInfo_minIDMVA_beforeCut
+    -1.,//hist_DiPhoInfo_minIDMVA
     0,//hist_ElecInfo_Size
     0,//hist_MuonInfo_Size
     0,//hist_num_leptons
@@ -573,6 +618,9 @@ double histBinLow[totalHistNum]{
     -3.0,//hist_lepton_phi
     0,//hist_lepton_energy
     0,//hist_lepton_diphoton_deltaR
+    0,//hist_lepton_leadingPhoton_deltaR
+    0,//hist_lepton_subleadingPhoton_deltaR
+    0,//hist_lepton_diphoton_deltaTheta
     0,//hist_jet1_pt
     -2.5,//hist_jet1_eta
     -3.0,//hist_jet1_phi
@@ -669,12 +717,13 @@ double histBinHigh[totalHistNum]{
     100,//hist_EvtInfo_NVtx
     100,//hist_EvtInfo_NVtx_wopu
     100,//hist_EvtInfo_genweight
-    180,//hist_DiPhoInfo_mass
+    300,//hist_DiPhoInfo_mass
     200,//hist_DiPhoInfo_pt
     10,//hist_DiPhoInfo_pt_overM
     2.5,//hist_DiPhoInfo_eta
     3.0,//hist_DiPhoInfo_phi
     500,//hist_DiPhoInfo_energy
+    1.0,//hist_DiPhoInfo_cos_deltaPhi
     200,//hist_DiPhoInfo_leadPt
     10,//hist_DiPhoInfo_leadPt_overM
     2.5,//hist_DiPhoInfo_leadEta
@@ -682,7 +731,9 @@ double histBinHigh[totalHistNum]{
     200,//hist_DiPhoInfo_leadE
     0.10,//hist_DiPhoInfo_leadhoe
     1.,//hist_DiPhoInfo_leadIDMVA_beforeCut
+    2,//hist_DiPhoInfo_leadhasPixelSeed_beforeCut
     1.,//hist_DiPhoInfo_leadIDMVA
+    2,//hist_DiPhoInfo_leadhasPixelSeed
     200,//hist_DiPhoInfo_subleadPt
     10,//hist_DiPhoInfo_subleadPt_overM
     2.5,//hist_DiPhoInfo_subleadEta
@@ -690,7 +741,13 @@ double histBinHigh[totalHistNum]{
     200,//hist_DiPhoInfo_subleadE
     0.10,//hist_DiPhoInfo_subleadhoe
     1.,//hist_DiPhoInfo_subleadIDMVA_beforeCut
+    2,//hist_DiPhoInfo_subleadhasPixelSeed_beforeCut
     1.,//hist_DiPhoInfo_subleadIDMVA
+    2,//hist_DiPhoInfo_subleadhasPixelSeed
+    1.,//hist_DiPhoInfo_maxIDMVA_beforeCut
+    1.,//hist_DiPhoInfo_maxIDMVA
+    1.,//hist_DiPhoInfo_minIDMVA_beforeCut
+    1.,//hist_DiPhoInfo_minIDMVA
     10,//hist_ElecInfo_Size
     10,//hist_MuonInfo_Size
     10,//hist_num_leptons
@@ -737,6 +794,9 @@ double histBinHigh[totalHistNum]{
     3.0,//hist_lepton_phi
     200,//hist_lepton_energy
     6,//hist_lepton_diphoton_deltaR
+    6,//hist_lepton_leadingPhoton_deltaR
+    6,//hist_lepton_subleadingPhoton_deltaR
+    3.0,//hist_lepton_diphoton_deltaTheta
     200,//hist_jet1_pt
     2.5,//hist_jet1_eta
     3.0,//hist_jet1_phi

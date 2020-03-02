@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 tag=$1
-file=src/TMVAClassification_leptonic.C 
+file=src/mva_TMVAClassification_leptonic.C 
 tmpDir=src/tmp/task_${tag}
 # function{{{
 function Edit(){
@@ -65,7 +65,7 @@ Edit 137 "Use" "Use[\"BDT\"]             = 1; // uses Adaptive Boost"
 Edit 138 "Use" "Use[\"BDTG\"]            = 1; // uses Gradient Boost"
 Edit 139 "Use" "Use[\"BDTB\"]            = 1; // uses Bagging"
 Edit 140 "Use" "Use[\"BDTD\"]            = 1; // decorrelation + Adaptive Boost"
-Edit 141 "Use" "Use[\"BDTF\"]            = 1; // allow usage of fisher discriminant for node splitting"
+Edit 141 "Use" "Use[\"BDTF\"]            = 0; // allow usage of fisher discriminant for node splitting // error: ncut<0"
 #}}}
 #// Friedman's RuleFit method, ie, an optimised series of cuts ({{{
 Edit 144 "Use" "Use[\"RuleFit\"]         = 0;"

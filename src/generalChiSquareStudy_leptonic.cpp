@@ -139,6 +139,8 @@ int main(int argc, char *argv[]){
     hist_factory hf_chargedLepton (output_histDir, "chargedLepton", "", 100);
     hist_factory hf_neutrino_sol1 (output_histDir, "neutrino_sol1", "quadratic", 100);
     hist_factory hf_neutrino_sol2 (output_histDir, "neutrino_sol2", "quadratic", 100);
+    hist_factory hf_neutrino_sol2_positive (output_histDir, "neutrino_sol2_positive", "quadratic", 100);
+    hist_factory hf_neutrino_sol2_negative (output_histDir, "neutrino_sol2_negative", "quadratic", 100);
     hist_factory hf_neutrino_topKinFit (output_histDir, "neutrino", "topKinFit", 100);
     //---
     hist_factory hf_wboson_quadratic (output_histDir, "wboson", "quadratic", 200);
@@ -152,6 +154,9 @@ int main(int argc, char *argv[]){
     int counter_coeff_D_gen = 0;
     int counter_coeff_D_isNegative = 0;
     int counter_coeff_D_isNegative_gen = 0;
+    int counter_coeff_D_isNegative_gen_largerThan20 = 0;
+    int counter_coeff_D_isNegative_gen_smallerThan20 = 0;
+    int counter_coeff_D_isNegative_gen_between20 = 0;
     int Nevents_pass_selection = 0;
     int check_num_bquak_is_one = 0;
     int check_num_bquak_is_two = 0;
@@ -661,6 +666,9 @@ int main(int argc, char *argv[]){
             //met_pz_solution_2 = sqrt( coefficient_C / coefficient_A);
             hist_MetInfo_coeff_D -> Fill(-sqrt(-coefficient_D));//keep tracking negative value
             hist_MetInfo_coeff_D2A -> Fill(-sqrt(-coefficient_D) / (2*coefficient_A));
+            if(neutrino.Pz() >  20.)      counter_coeff_D_isNegative_gen_largerThan20 += 1;
+            else if(neutrino.Pz() > -20.) counter_coeff_D_isNegative_gen_smallerThan20 += 1;
+            else                          counter_coeff_D_isNegative_gen_between20 += 1;
         } else{
             met_pz_solution_1 = (coefficient_B + TMath::Sqrt(coefficient_D))/(2.*coefficient_A);
             met_pz_solution_2 = (coefficient_B - TMath::Sqrt(coefficient_D))/(2.*coefficient_A);
@@ -700,11 +708,15 @@ int main(int argc, char *argv[]){
         hf_chargedLepton.Fill_hist(chargedLepton, lepton);
         hf_neutrino_sol1.Fill_hist(L_met_lep[0], neutrino);
         hf_neutrino_sol2.Fill_hist(L_met_lep[1], neutrino);
+        if(coefficient_D>=0) hf_neutrino_sol2_positive.Fill_hist(L_met_lep[1], neutrino);
+        else                 hf_neutrino_sol2_negative.Fill_hist(L_met_lep[1], neutrino);
         hf_wboson_quadratic.Fill_hist(L_w_lep[1], wboson);
         hf_top_quadratic.Fill_hist(L_bw_lep[1], topquark);
 
         deltaR = diphoton.DeltaR(L_bw_lep[1])  ; hist_deltaR_reco_top_higgs_leptonic->Fill(deltaR)  ;
         bool canFoundSolution_quadratic = coefficient_D>=0;
+
+
         //}}}
         //--- solve met_pz (gen study){{{
         TLorentzVector gen_lepton = chargedLepton; // leading gen_lepton
@@ -867,6 +879,9 @@ int main(int argc, char *argv[]){
     PrintCountsAndRatio("Nevents_leptonIsCorrectlyMatched", counter_lepton_is_correctly_chosen, Nevents_pass_selection);
     PrintCountsAndRatio("number of irregular disc value", counter_irregular_disc, counter_coeff_D);
     PrintCountsAndRatio("number of counter_coeff_D_isNegative", counter_coeff_D_isNegative, counter_coeff_D);
+    PrintCountsAndRatio("number of counter_coeff_D_isNegative_gen_largerThan20", counter_coeff_D_isNegative_gen_largerThan20, counter_coeff_D);
+    PrintCountsAndRatio("number of counter_coeff_D_isNegative_gen_smallerThan20", counter_coeff_D_isNegative_gen_smallerThan20, counter_coeff_D);
+    PrintCountsAndRatio("number of counter_coeff_D_isNegative_gen_between20", counter_coeff_D_isNegative_gen_between20, counter_coeff_D);
     PrintCountsAndRatio("number of counter_coeff_D_isNegative_gen", counter_coeff_D_isNegative_gen, counter_coeff_D_gen);
     //printf("\n//--- report of quadratic ---//\n");
     //printf("\n//--- report of topKinFit ---//\n");
@@ -875,6 +890,8 @@ int main(int argc, char *argv[]){
     hf_chargedLepton.Draw_all_hist(c1);
     hf_neutrino_sol1.Draw_all_hist(c1);
     hf_neutrino_sol2.Draw_all_hist(c1);
+    hf_neutrino_sol2_positive.Draw_all_hist(c1);
+    hf_neutrino_sol2_negative.Draw_all_hist(c1);
     hf_neutrino_topKinFit.Draw_all_hist(c1);
     hf_wboson_quadratic.Draw_all_hist(c1);
     hf_wboson_topKinFit.Draw_all_hist(c1);
@@ -887,10 +904,14 @@ int main(int argc, char *argv[]){
 
     printf("\n//--- Correlation Factor of quadratic vs. topKinFit ---//\n");
     MakeComparison_CorrelationFactors(hf_neutrino_sol2, hf_neutrino_topKinFit);
+    MakeComparison_CorrelationFactors(hf_neutrino_sol2_positive, hf_neutrino_topKinFit);
+    MakeComparison_CorrelationFactors(hf_neutrino_sol2_negative, hf_neutrino_topKinFit);
     MakeComparison_CorrelationFactors(hf_wboson_quadratic, hf_wboson_topKinFit);
     MakeComparison_CorrelationFactors(hf_top_quadratic, hf_top_topKinFit);
 
     //1-D plots with legend{{{
+    gPad->SetRightMargin(0.05);
+    gPad->SetLeftMargin(0.10);
     TLegend *legend = new TLegend(0.60,0.65,0.85,0.85);
     //# coeff_D at gen-level{{{
     double max;
