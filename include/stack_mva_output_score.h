@@ -4,10 +4,11 @@
 using namespace std;
 
 
-//const char TARGET_DIR[128] = "plots_leptonic_test_star/161718/mva";
-//const char SIGNAL_DIR[128] = "plots_leptonic_test_star/161718/mva";
-const char TARGET_DIR[128] = "plots_leptonic_latest/161718/mva";
-const char SIGNAL_DIR[128] = "plots_leptonic_latest/161718/mva";
+//const char TAG[64] = "";
+const char TAG[64] = "_st_hut";
+const char OUTPUT_DIR[128] = "plots_leptonic_update/161718/mva/plots";
+const char TARGET_DIR[128] = "plots_leptonic_update/161718/mva";
+const char SIGNAL_DIR[128] = "plots_leptonic_update/161718/mva";
 //const char TARGET_DIR[128] = "plots_leptonic_update/161718/mva";
 //const char SIGNAL_DIR[128] = "plots_leptonic_update/161718/mva";
 //const char TARGET_DIR[128] = "collections/plots_leptonic_update/161718/app_stack";
@@ -24,6 +25,7 @@ const int NUM_data = 1;
 const int NUM = NUM_sig + NUM_resbkg + NUM_nonresbkg + NUM_data;
 
 void MakeStackHist(const char* histName);
+void Prepare_upperlimit_dataCard(const char *process, TH1D* hist, std::vector<const char*> &vec_process, std::vector<double> &vec_yields, std::vector<double> &vec_relativeError);
 void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false);
 void CalculateHistYields_signalRegion(const char *process, TH1D* hist);
 void CalculateHistYields_sidebandRegion(const char *process, TH1D* hist);
@@ -43,9 +45,11 @@ bool isThisTopSpectrum(const char* histName);
 
 //TH1D* GetSignificanceHist(TH1D* sig, TH1D* bkg);
 //void GetSignificanceHist(TH1D *& hist_significance, TH1D* sig, TH1D* bkg);
-void GetSignificanceHist(TH1D *& hist_significance, TH1D *& hist_yield_s, TH1D *& hist_yield_b, TH1D* sig, TH1D* bkg);
+void GetSignificanceHist(bool isZA, TH1D *& hist_significance, TH1D *& hist_yield_s, TH1D *& hist_yield_b, TH1D* sig, TH1D* bkg);
 double calculate_ZA(float s, float b);
 double unc_ZA(float s, float b, float ds, float db);
+double calculate_sOverSqrtB(float s, float b);
+double unc_sOverSqrtB(float s, float b, float ds, float db);
 
 //#--------------- Signal ---------------#
 string fileNames_sig[NUM_sig] = {

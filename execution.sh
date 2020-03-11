@@ -160,19 +160,35 @@ done
 #time ./script/train_MVA_method.sh
 #cp src/mva_TMVAClassification_leptonic.C ${target_dir}
 
-### MVA application ###
+### MVA application (I) ###
 ### please check following steps before submission
 ### 1. put the dataset/weights in a proper directory
-### 2. src/app_TMVAClassificationApplication.C
+### 2. src/app_TMVAClassificationApplication.C # Directory, tag, var
 #cp -r dataset_testALL_24 ${target_dir}
+#time ./script/qsubMultiJob_mvaApplication.py
+
+### stack plots (check significance) ###
+### please check following steps before stacking
+### 1. include/stack_mva_output_score.h # TAG, DIR
+### 2. isCoraser=false/true
+### 3. mkdir -p plots_leptonic_latest/161718/mva/plots
+### 4. script/run_macro_stackPlots_mvaScore.sh # tag
+#time ./script/run_macro_stackPlots_mvaScore.sh
+
+### MVA application (II) ###
+### please check following steps before submission
+### 1. src/app_TMVAClassificationApplication.C # FINAL_SELECTION
 #time ./script/qsubMultiJob_mvaApplication.py
 #cp src/app_TMVAClassificationApplication.C ${target_dir}
 
-### stack plots ###
-### please check following steps before stacking
-### 1. include/stack_mva_output_score.h # path
-### 2. isCoraser=false/true
-#root -l -b -q "src/output_mvaScore_stackHist.C(\"leptonic\")"
+### stack plots (check final yields) ###
+#time ./script/run_macro_stackPlots_mvaScore.sh
+
+### upperlimit ###
+### /wk_cms2/ykao/CMSSW_8_1_0/src/HiggsAnalysis/CombinedLimit/
+### 1. quick.sh # check tag, str, signalRater
+### 2. upperlimit/macro.C # check xtitle
+#time ./quick.sh
 
 #--------------------------------------------------
 #Selection 161718 "leptonic" #selection and make plots for leptonic channel
@@ -181,3 +197,4 @@ done
 #ReRunStackPlotsOnly 161718 "leptonic"
 #./script/tableMaker.sh
 #./script/check_errors.sh
+

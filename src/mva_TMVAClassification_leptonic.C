@@ -63,7 +63,7 @@
 
 int TMVAClassification( TString myMethodList = "" ){
    (TMVA::gConfig().GetVariablePlotting()).fMaxNumOfAllowedVariablesForScatterPlots = 256;
-   const char TAG[32] = "testAll_24";
+   const char TAG[32] = "testAll_24_st_hct";
    // How to process{{{
    // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
    // if you use your private .rootrc, or run from a different directory, please copy the
@@ -191,16 +191,16 @@ int TMVAClassification( TString myMethodList = "" ){
     //const char Directory[64] = "./plots_leptonic/mva";
     const char Directory[128]  = "./plots_leptonic_latest/161718/mva";
     const char signal_dir[128] = "./plots_leptonic_latest/2017old/mva";
-    const int NUM_training_samples = 15; //total (sig, res bkg, non-res bkg) = (12, 4, 19)
+    const int NUM_training_samples = 14; //total (sig, res bkg, non-res bkg) = (12, 4, 19)
     TString fname[NUM_training_samples] = {
         //Form("%s/tree_ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
         //Form("%s/tree_ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
+        Form("%s/tree_ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
         //Form("%s/tree_ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
         //Form("%s/tree_TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
         //Form("%s/tree_TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
-        Form("%s/tree_TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
-        Form("%s/tree_TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
+        //Form("%s/tree_TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
+        //Form("%s/tree_TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
         //Form("%s/tree_TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
         //Form("%s/tree_TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
         //Form("%s/tree_TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
@@ -300,11 +300,11 @@ int TMVAClassification( TString myMethodList = "" ){
     dataloader->AddVariable( "tree_jet1_btag", "jet1_btag", "", 'F');
     dataloader->AddVariable( "tree_jet1_CvsL", "jet1_CvsL", "", 'F');
     dataloader->AddVariable( "tree_jet1_CvsB", "jet1_CvsB", "", 'F');
-    dataloader->AddVariable( "tree_jet2_pt", "jet2_pt", "", 'F');
-    dataloader->AddVariable( "tree_jet2_eta", "jet2_eta", "", 'F');
-    dataloader->AddVariable( "tree_jet2_btag", "jet2_btag", "", 'F');
-    dataloader->AddVariable( "tree_jet2_CvsL", "jet2_CvsL", "", 'F');
-    dataloader->AddVariable( "tree_jet2_CvsB", "jet2_CvsB", "", 'F');
+    //dataloader->AddVariable( "tree_jet2_pt", "jet2_pt", "", 'F');
+    //dataloader->AddVariable( "tree_jet2_eta", "jet2_eta", "", 'F');
+    //dataloader->AddVariable( "tree_jet2_btag", "jet2_btag", "", 'F');
+    //dataloader->AddVariable( "tree_jet2_CvsL", "jet2_CvsL", "", 'F');
+    //dataloader->AddVariable( "tree_jet2_CvsB", "jet2_CvsB", "", 'F');
     //dataloader->AddVariable( "tree_jet3_pt", "jet3_pt", "", 'F');
     //dataloader->AddVariable( "tree_jet3_eta", "jet3_eta", "", 'F');
     //dataloader->AddVariable( "tree_jet3_btag", "jet3_btag", "", 'F');
@@ -337,8 +337,9 @@ int TMVAClassification( TString myMethodList = "" ){
 
     // You can add an arbitrary number of signal or background trees
     dataloader->AddSignalTree    ( MC_samples[0],     signalWeight     );
-    dataloader->AddSignalTree    ( MC_samples[1],     signalWeight     );
-    for(int i=2; i<NUM_training_samples; ++i)
+    //dataloader->AddSignalTree    ( MC_samples[1],     signalWeight     );
+    //for(int i=2; i<NUM_training_samples; ++i)
+    for(int i=1; i<NUM_training_samples; ++i)
         dataloader->AddBackgroundTree( MC_samples[i], backgroundWeight );
 
    // To give different trees for training and testing, do as follows:

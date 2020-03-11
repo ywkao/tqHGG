@@ -1,4 +1,5 @@
 // vim: set fdm=marker:
+// include & bool{{{
 #include <string>
 #include <math.h>
 #include <TCanvas.h>
@@ -10,6 +11,7 @@
 #include <string>
 #include "../include/stack_mva_output_score.h"
 using namespace std;
+double SCALE=1;
 
 //bool isCoarser = true;
 bool isCoarser = false;
@@ -22,20 +24,22 @@ bool bool_isHadronic;
 bool bool_isLeptonic;
 const double TunableSigBranchingFraction = 0.001; //The branching fraction of signal MC = 0.1% (ATLAS' latest result)
 bool PrintTexStyle;
-
+//}}}
 void output_mvaScore_stackHist(const char* channel){
     //### bool hadronic/leptonic channel{{{
     if((string)channel == "hadronic") bool_isHadronic = true; else bool_isHadronic = false;
     bool_isLeptonic = !bool_isHadronic;
-    if(bool_isHadronic) printf("[check] from macro src/stackHist.C: isHadronic!\n");
-    if(bool_isLeptonic) printf("[check] from macro src/stackHist.C: isLeptonic!\n");
+    if(bool_isHadronic) printf("[check] from macro src/output_mvaScore_stackHist.C: isHadronic!\n");
+    if(bool_isLeptonic) printf("[check] from macro src/output_mvaScore_stackHist.C: isLeptonic!\n");
     //}}}
     MakeStackHist("MVA_BDT");
     MakeStackHist("MVA_BDT_signalRegion");
+    MakeStackHist("MVA_BDT_signalRegion_final");
 }
 
 void MakeStackHist(const char* histName){
-    if((string)histName == "MVA_BDT") PrintTexStyle = true; else PrintTexStyle = false;
+    //if((string)histName == "MVA_BDT") PrintTexStyle = true; else PrintTexStyle = false;
+    PrintTexStyle = true;
     TCanvas *c1 = new TCanvas("c1", "c1", 1000, 800);
     THStack *stackHist = new THStack("stackHist", "");//If setting titles here, the x(y)-title will NOT be able to set later.
     //### Set up boolean{{{
@@ -297,111 +301,12 @@ void MakeStackHist(const char* histName){
     hist_sig_tt_hct->SetLineColor(kRed);
     hist_sig_st_hct->SetLineColor(kRed); hist_sig_st_hct->SetLineStyle(2);
     //}}}
-    /*
-    //### Calculate yields from combined histograms (signal region){{{
-    //=====================================================//
-    //===== Calculate yields from combined histograms =====//
-    //=====================================================//
-    if(PrintTexStyle){
-        printf("Processes & Entries & \\multicolumn{2}{c}{Yields}\\\\ \n");
-        printf("\\hline\\hline\n");
-        CalculateHistYields_signalRegion("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox);
-        CalculateHistYields_signalRegion("GJet\t\t", hist_tqh_GJet);
-        CalculateHistYields_signalRegion("TGJets\t\t", hist_tqh_TGJets);
-        CalculateHistYields_signalRegion("TTGJets\t\t", hist_tqh_TTGJets);
-        CalculateHistYields_signalRegion("TTGG\t\t", hist_tqh_TTGG);
-        CalculateHistYields_signalRegion("TTJets\t\t", hist_tqh_TTJets );
-        CalculateHistYields_signalRegion("DYJetsToLL\t", hist_tqh_DYJetsToLL );
-        CalculateHistYields_signalRegion("VG\t\t", hist_tqh_VG );
-        CalculateHistYields_signalRegion("VV\t\t", hist_tqh_VV );
-        CalculateHistYields_signalRegion("Higgs\t\t", hist_tqh_Higgs);
-        CalculateHistYields_signalRegion("ggH\t\t", hist_tqh_ggH);
-        CalculateHistYields_signalRegion("VBF\t\t", hist_tqh_VBF);
-        CalculateHistYields_signalRegion("VH\t\t", hist_tqh_VH);
-        CalculateHistYields_signalRegion("ttH\t\t", hist_tqh_ttH);
-        CalculateHistYields_signalRegion("QCD\t\t", hist_tqh_QCD);
-        CalculateHistYields_signalRegion("sig_tt_hut\t", hist_sig_tt_hut);
-        CalculateHistYields_signalRegion("sig_st_hut\t", hist_sig_st_hut);
-        CalculateHistYields_signalRegion("sig_tt_hct\t", hist_sig_tt_hct);
-        CalculateHistYields_signalRegion("sig_st_hct\t", hist_sig_st_hct);
-        printf("\\hline\n");
-        CalculateHistYields_signalRegion("MC background\t", hist_tqh_mc_wosig);
-        CalculateHistYields_signalRegion("Data\t\t", hist_tqh_data[NUM_data]);
-        printf("\n\n");
-    }
-    //}}}
-    //### Calculate yields from combined histograms (full region){{{
-    //=====================================================//
-    //===== Calculate yields from combined histograms =====//
-    //=====================================================//
-    if(PrintTexStyle){
-        printf("Processes & Entries & \\multicolumn{2}{c}{Yields}\\\\ \n");
-        printf("\\hline\\hline\n");
-        CalculateHistYields_fullRegion("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox);
-        CalculateHistYields_fullRegion("GJet\t\t", hist_tqh_GJet);
-        CalculateHistYields_fullRegion("TGJets\t\t", hist_tqh_TGJets);
-        CalculateHistYields_fullRegion("TTGJets\t\t", hist_tqh_TTGJets);
-        CalculateHistYields_fullRegion("TTGG\t\t", hist_tqh_TTGG);
-        CalculateHistYields_fullRegion("TTJets\t\t", hist_tqh_TTJets );
-        CalculateHistYields_fullRegion("DYJetsToLL\t", hist_tqh_DYJetsToLL );
-        CalculateHistYields_fullRegion("VG\t\t", hist_tqh_VG );
-        CalculateHistYields_fullRegion("VV\t\t", hist_tqh_VV );
-        CalculateHistYields_fullRegion("Higgs\t\t", hist_tqh_Higgs);
-        CalculateHistYields_fullRegion("ggH\t\t", hist_tqh_ggH);
-        CalculateHistYields_fullRegion("VBF\t\t", hist_tqh_VBF);
-        CalculateHistYields_fullRegion("VH\t\t", hist_tqh_VH);
-        CalculateHistYields_fullRegion("ttH\t\t", hist_tqh_ttH);
-        CalculateHistYields_fullRegion("QCD\t\t", hist_tqh_QCD);
-        CalculateHistYields_fullRegion("sig_tt_hut\t", hist_sig_tt_hut);
-        CalculateHistYields_fullRegion("sig_st_hut\t", hist_sig_st_hut);
-        CalculateHistYields_fullRegion("sig_tt_hct\t", hist_sig_tt_hct);
-        CalculateHistYields_fullRegion("sig_st_hct\t", hist_sig_st_hct);
-        printf("\\hline\n");
-        CalculateHistYields_fullRegion("MC background\t", hist_tqh_mc_wosig);
-        CalculateHistYields_fullRegion("Data\t\t", hist_tqh_data[NUM_data]);
-        printf("\n\n");
-    }
-    //}}}
-    //### Calculate yields from combined histograms (sideband region){{{
-    //=====================================================//
-    //===== Calculate yields from combined histograms =====//
-    //=====================================================//
-    if(PrintTexStyle){
-        printf("Processes & Entries & \\multicolumn{2}{c}{Yields}\\\\ \n");
-        printf("\\hline\\hline\n");
-        CalculateHistYields_sidebandRegion("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox);
-        CalculateHistYields_sidebandRegion("GJet\t\t", hist_tqh_GJet);
-        CalculateHistYields_sidebandRegion("TGJets\t\t", hist_tqh_TGJets);
-        CalculateHistYields_sidebandRegion("TTGJets\t\t", hist_tqh_TTGJets);
-        CalculateHistYields_sidebandRegion("TTGG\t\t", hist_tqh_TTGG);
-        CalculateHistYields_sidebandRegion("TTJets\t\t", hist_tqh_TTJets );
-        CalculateHistYields_sidebandRegion("DYJetsToLL\t", hist_tqh_DYJetsToLL );
-        CalculateHistYields_sidebandRegion("VG\t\t", hist_tqh_VG );
-        CalculateHistYields_sidebandRegion("VV\t\t", hist_tqh_VV );
-        CalculateHistYields_sidebandRegion("Higgs\t\t", hist_tqh_Higgs);
-        CalculateHistYields_sidebandRegion("ggH\t\t", hist_tqh_ggH);
-        CalculateHistYields_sidebandRegion("VBF\t\t", hist_tqh_VBF);
-        CalculateHistYields_sidebandRegion("VH\t\t", hist_tqh_VH);
-        CalculateHistYields_sidebandRegion("ttH\t\t", hist_tqh_ttH);
-        CalculateHistYields_sidebandRegion("QCD\t\t", hist_tqh_QCD);
-        CalculateHistYields_sidebandRegion("sig_tt_hut\t", hist_sig_tt_hut);
-        CalculateHistYields_sidebandRegion("sig_st_hut\t", hist_sig_st_hut);
-        CalculateHistYields_sidebandRegion("sig_tt_hct\t", hist_sig_tt_hct);
-        CalculateHistYields_sidebandRegion("sig_st_hct\t", hist_sig_st_hct);
-        printf("\\hline\n");
-        CalculateHistYields_sidebandRegion("resonant background\t", hist_tqh_resbkg[NUM_resbkg]);
-        CalculateHistYields_sidebandRegion("non-res background\t", hist_tqh_nonresbkg[NUM_nonresbkg]);
-        CalculateHistYields_sidebandRegion("MC background\t", hist_tqh_mc_wosig);
-        CalculateHistYields_sidebandRegion("Data\t\t", hist_tqh_data[NUM_data]);
-        printf("\n\n");
-    }
-    //}}}
-    */
     //### Calculate yields from combined histograms (mva score){{{
     //=====================================================//
     //===== Calculate yields from combined histograms =====//
     //=====================================================//
-    if(PrintTexStyle){
+    if(PrintTexStyle && isCoarser){
+        printf("==========   %s   ==========\n", histName);
         printf("Processes & Entries & \\multicolumn{2}{c}{Yields}\\\\ \n");
         printf("\\hline\\hline\n");
         CalculateHistYields_mva_score("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox);
@@ -429,6 +334,55 @@ void MakeStackHist(const char* histName){
         CalculateHistYields_mva_score("MC background\t", hist_tqh_mc_wosig);
         CalculateHistYields_mva_score("Data\t\t", hist_tqh_data[NUM_data]);
         printf("\n\n");
+    }
+    //}}}
+    //### Prepare_upperlimit_dataCard{{{
+    if(PrintTexStyle && !isCoarser && (string)histName=="MVA_BDT_signalRegion_final"){
+        std::vector<const char*> vec_process;
+        std::vector<double>      vec_yields;
+        std::vector<double>      vec_relativeError;
+        Prepare_upperlimit_dataCard("sig_st_hut", hist_sig_st_hut, vec_process, vec_yields, vec_relativeError);
+        //Prepare_upperlimit_dataCard("sig_st_hct", hist_sig_st_hct, vec_process, vec_yields, vec_relativeError);
+        //Prepare_upperlimit_dataCard("sig_tt_hut", hist_sig_tt_hut, vec_process, vec_yields, vec_relativeError);
+        //Prepare_upperlimit_dataCard("sig_tt_hct", hist_sig_tt_hct, vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox, vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("GJet", hist_tqh_GJet, vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("TGJets", hist_tqh_TGJets, vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("TTGJets", hist_tqh_TTGJets, vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("TTGG", hist_tqh_TTGG, vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("TTJets", hist_tqh_TTJets , vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("DYJetsToLL", hist_tqh_DYJetsToLL , vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("VG", hist_tqh_VG , vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("VV", hist_tqh_VV , vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("ggH", hist_tqh_ggH, vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("VBF", hist_tqh_VBF, vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("VH", hist_tqh_VH, vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("ttH", hist_tqh_ttH, vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("QCD", hist_tqh_QCD, vec_process, vec_yields, vec_relativeError);
+
+        int num = vec_process.size();
+        printf("imax 1  number of channels\n");
+        printf("jmax %d  number of backgrounds\n", num-1);
+        printf("kmax %d  number of nuisance parameters (sources of systematical uncertainties)\n", num+1);
+        printf("------------\n");
+        printf("bin bin1\n");
+        printf("observation 0\n");
+        printf("------------\n");
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-16s", "bin");     if((i+1)==vec_process.size()) printf("%s\n", "bin1");          else printf ("%s\t", "bin1");}
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-16s", "process"); if((i+1)==vec_process.size()) printf("%s\n", vec_process[i]);  else printf ("%s  ", vec_process[i]);}
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-16s", "process"); if((i+1)==vec_process.size()) printf("%d\n", i);               else printf ("%d\t", i);}
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-16s", "rate");    if((i+1)==vec_process.size()) printf("%.3f\n", vec_yields[i]); else printf ("%.3f\t", vec_yields[i]);}
+        printf("------------\n");
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-16slnN ", "lumi"); if((i+1)==vec_process.size()) printf("1.25\n");                else printf ("1.25\t");}
+        for(int i=0; i<vec_process.size(); ++i){
+            for(int j=0; j<vec_process.size(); ++j){
+                if(j==0) printf("stat_%-16slnN ", vec_process[i]);
+                if(j==i) printf("%.3f ", vec_relativeError[i]);
+                else if((j+1)==vec_process.size())    printf("-\n");
+                else     printf("- ");
+            }
+        }
+        printf("\n");
     }
     //}}}
     // Scale signal{{{
@@ -667,17 +621,8 @@ void MakeStackHist(const char* histName){
     TLine line;
     line.SetLineStyle(1);
     line.DrawLine(pad2->GetUxmin(),1.0,pad2->GetUxmax(),1.0);
-    //line.SetLineStyle(2);
-    //line.DrawLine(pad2->GetUxmin(),0.5,pad2->GetUxmax(),0.5);
-    //line.DrawLine(pad2->GetUxmin(),1.0,pad2->GetUxmax(),1.0);
-    //line.DrawLine(pad2->GetUxmin(),1.5,pad2->GetUxmax(),1.5);
-    //line.DrawLine(pad2->GetUxmin(),2.0,pad2->GetUxmax(),2.0);
-    if(isCoarser){
-        c1->SaveAs(Form("%s/stack_%s_coarser.pdf", TARGET_DIR, histName));
-    } else{
-        c1->SaveAs(Form("%s/stack_%s.pdf", TARGET_DIR, histName));
-    }
-    //c1->SaveAs(Form("%s/stack_%s.root", TARGET_DIR, histName));
+    if(isCoarser) c1->SaveAs(Form("%s/report%s_stack_%s_coarser.pdf", OUTPUT_DIR, TAG, histName));
+    else          c1->SaveAs(Form("%s/report%s_stack_%s.pdf", OUTPUT_DIR, TAG, histName));
     //}}}
     //### Draw log scale{{{ 
     //============================//
@@ -688,18 +633,8 @@ void MakeStackHist(const char* histName){
     if(isCoarser){
         stackHist->SetMaximum(1e+5);
         stackHist->SetMinimum(5e-1);
-        c1->SaveAs(Form("%s/stack_log_%s.pdf", TARGET_DIR, histName));
+        c1->SaveAs(Form("%s/report%s_stack_%s_log.pdf", OUTPUT_DIR, TAG, histName));
     }
-    if(isMassSpectrum){
-        //stackHist->SetMaximum(600);
-        //c1->SaveAs(Form("plots/stack_%s_zoomin.png", histName));
-        if(isDiPhotonSpectrum) stackHist->SetMaximum(1e+11);
-        if(isDijetSpectrum)    stackHist->SetMaximum(1e+8);
-        if(isTopSpectrum)      stackHist->SetMaximum(1e+8);
-        stackHist->SetMinimum(5e-1);
-        c1->SaveAs(Form("%s/log_scale/stack_%s_log.pdf", TARGET_DIR, histName));
-    }
-    else stackHist->SetMaximum(isNum ? 1e+9 : 1e+9);
     //}}}
 
     // Scale signal (significance purpose){{{
@@ -722,23 +657,42 @@ void MakeStackHist(const char* histName){
         hist_sig_st_hct->Scale(scale_sig_st_hct);
     }
     //}}}
+    // significance{{{
     if(!isCoarser){
         gPad->SetLogy(0);
         TCanvas *c2 = new TCanvas("c2", "c2", 1000, 800);
         c2->cd();
         //--------------------------------------------------
+        bool isZA;
         TH1D *sig, *bkg;
         if(bool_isHut) sig = (TH1D*) hist_sig_tt_hut->Clone();
         if(bool_isHct) sig = (TH1D*) hist_sig_tt_hct->Clone();
         bkg = (TH1D*) hist_tqh_mc_wosig->Clone();
-        TH1D *hist_significance = new TH1D("hist_significance", "", 100, -0.8, 0.8);
+
+        isZA = false;
         TH1D *hist_yield_s = new TH1D("hist_yield_s", "", 100, -0.8, 0.8);
         TH1D *hist_yield_b = new TH1D("hist_yield_b", "", 100, -0.8, 0.8);
-        GetSignificanceHist(hist_significance, hist_yield_s, hist_yield_b, sig, bkg);
+        TH1D *hist_sOverSqrtB = new TH1D("hist_sOverSqrtB", "", 100, -0.8, 0.8);
+        GetSignificanceHist(isZA, hist_sOverSqrtB, hist_yield_s, hist_yield_b, sig, bkg);
+        hist_sOverSqrtB->SetMinimum(0);
+        hist_sOverSqrtB->Draw();
+        gPad->SetGrid();
+        c2->SaveAs(Form("%s/report%s_sOverSqrtB_%s.pdf", OUTPUT_DIR, TAG, histName));
+
+        isZA = true;
+        TH1D *hist_significance = new TH1D("hist_significance", "", 100, -0.8, 0.8);
+        GetSignificanceHist(isZA, hist_significance, hist_yield_s, hist_yield_b, sig, bkg);
         hist_significance->SetMinimum(0);
-        hist_significance->SetMaximum(1.8);
         hist_significance->Draw();
-        c2->SaveAs(Form("%s/report_significance_%s.pdf", TARGET_DIR, histName));
+        gPad->SetGrid();
+        c2->SaveAs(Form("%s/report%s_significance_%s.pdf", OUTPUT_DIR, TAG, histName));
+
+        //# study shape of significance{{{
+        //TFile *fz = new TFile(Form("%s/report%s_%s_scale_%.2f.root", OUTPUT_DIR, TAG, histName, SCALE), "RECREATE");
+        //hist_sOverSqrtB->Write();
+        //hist_significance->Write();
+        //fz->Close();
+        //}}}
         //--------------------------------------------------
         double _max_b = hist_yield_b->GetMaximum();
         double _max_s = hist_yield_s->GetMaximum();
@@ -753,9 +707,9 @@ void MakeStackHist(const char* histName){
         legend_yield->AddEntry(hist_yield_s, "signal", "p");
         legend_yield->AddEntry(hist_yield_b, "background", "p");
         legend_yield->Draw("same");
-        c2->SaveAs(Form("%s/report_yield_%s.pdf", TARGET_DIR, histName));
+        c2->SaveAs(Form("%s/report%s_yield_%s.pdf", OUTPUT_DIR, TAG, histName));
     }
-
+    //}}}
     for(int i=0; i<NUM; i++) file[i]->Close();
 }
 
@@ -1087,13 +1041,25 @@ void CalculateHistYields_sidebandRegion(const char *process, TH1D* hist){
     */
 }
 
+void Prepare_upperlimit_dataCard(const char *process, TH1D* hist, std::vector<const char*> &vec_process, std::vector<double> &vec_yields, std::vector<double> &vec_relativeError){
+    double totalYields = hist->Integral();
+    double totalError = SumErrors(hist);
+    double relativeError = 1+totalError/totalYields;
+    if(totalYields < 1e-3) return;
+
+    vec_process.push_back(process);
+    vec_yields.push_back(totalYields);
+    vec_relativeError.push_back(relativeError);
+}
+
 void CalculateHistYields_mva_score(const char *process, TH1D* hist){
     // signal region
     int totalEntries = hist->GetEntries();
     double totalYields = hist->Integral();
     double totalError = SumErrors(hist);
 
-    if(PrintTexStyle) printf("%s & \t %15d & \t %15.2f & $\\pm$ \t %10.2f\\\\\n", process, totalEntries, totalYields, totalError);
+    if(PrintTexStyle) printf("%s & \t %15d & \t %20.7f & $\\pm$ \t %15.7f (%5.3f) \\\\\n", process, totalEntries, totalYields, totalError, 1+totalError/totalYields);
+    //if(PrintTexStyle) printf("%s & \t %15d & \t %15.2f & $\\pm$ \t %10.2f\\\\\n", process, totalEntries, totalYields, totalError);
     else printf("%s \t %15.2f \t %15.2f\n", process, totalYields, totalError);
 }
 
@@ -1122,10 +1088,10 @@ double GetMaxScope(THStack* h1, std::vector<TH1D*> vec_hists){
     return max;
 }
 
-void GetSignificanceHist(TH1D *& hist_significance, TH1D *& hist_yield_s, TH1D *& hist_yield_b, TH1D* sig, TH1D* bkg){
+void GetSignificanceHist(bool isZA, TH1D *& hist_significance, TH1D *& hist_yield_s, TH1D *& hist_yield_b, TH1D* sig, TH1D* bkg){
     //TH1D *hist_significance = (TH1D*) sig->Clone();
     int nbins = sig->GetNbinsX();
-    printf("GetSignificanceHist::nbins = %d\n", nbins);
+    //printf("GetSignificanceHist::nbins = %d\n", nbins);
     for(int i=0; i<nbins; ++i){
         float s = 0, unc_s = 0;
         float b = 0, unc_b = 0;
@@ -1142,9 +1108,17 @@ void GetSignificanceHist(TH1D *& hist_significance, TH1D *& hist_yield_s, TH1D *
         hist_yield_b->SetBinContent(i+1, b);
         hist_yield_b->SetBinError(i+1, unc_b);
 
+        s     = s     * SCALE;
+        unc_s = unc_s * SCALE;
+        float significance, error;
+        if(isZA){
+            significance = calculate_ZA(s, b);
+            error        = unc_ZA(s, b, unc_s, unc_b);
+        } else {
+            significance = calculate_sOverSqrtB(s, b);
+            error        = unc_sOverSqrtB(s, b, unc_s, unc_b);
+        }
         //    printf("[check] %3d: %8.3f, %8.3f\n", i+1, significance, error);
-        float significance = calculate_ZA(s, b);
-        float error        = unc_ZA(s, b, unc_s, unc_b);
         hist_significance->SetBinContent(i+1, significance);
         hist_significance->SetBinError(i+1, error);
     }
@@ -1164,6 +1138,23 @@ void GetSignificanceHist(TH1D *& hist_significance, TH1D *& hist_yield_s, TH1D *
     hist_significance->GetXaxis()->SetTitle("BDT output score");
     hist_significance->GetYaxis()->SetTitle("Z_{A}");
     //return hist_significance;
+}
+
+double calculate_sOverSqrtB(float s, float b){
+    if(s <= 0) return 0;
+    if(b <= 0) return 0;
+    double q1 = s / sqrt(b);
+    return q1;
+}
+
+double unc_sOverSqrtB(float s, float b, float ds, float db){
+    if(s <= 0) return 0;
+    if(b <= 0) return 0;
+    double sOverSqrtB = calculate_sOverSqrtB(s, b);
+    double Zs = 1./s;
+    double Zb = 1./(2*b);
+    double error =  sOverSqrtB * sqrt((Zs*ds)*(Zs*ds) + (Zb*db)*(Zb*db));
+    return error;
 }
 
 double calculate_ZA(float s, float b){
