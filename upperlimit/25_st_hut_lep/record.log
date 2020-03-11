@@ -1,0 +1,181 @@
+quick.sh::start!
+./upperlimit/25_st_hut_lep/fcnc_ST_leptonic_counting_br0.01.txt
+rate            1.104	3.664	0.525	0.525	6.166	0.681	1.078	20.171	0.074	0.216	0.046	2.624	5.367
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 5.6583
+Expected  2.5%: r < 12.1523
+Expected 16.0%: r < 16.9492
+Expected 50.0%: r < 25.5000
+Expected 84.0%: r < 39.8318
+Expected 97.5%: r < 61.0437
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/25_st_hut_lep/fcnc_ST_leptonic_counting_br0.02.txt
+rate            2.208	3.664	0.525	0.525	6.166	0.681	1.078	20.171	0.074	0.216	0.046	2.624	5.367
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 2.8292
+Expected  2.5%: r < 6.0762
+Expected 16.0%: r < 8.4746
+Expected 50.0%: r < 12.7500
+Expected 84.0%: r < 19.9159
+Expected 97.5%: r < 30.5218
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/25_st_hut_lep/fcnc_ST_leptonic_counting_br0.03.txt
+rate            3.312	3.664	0.525	0.525	6.166	0.681	1.078	20.171	0.074	0.216	0.046	2.624	5.367
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 1.8861
+Expected  2.5%: r < 4.0508
+Expected 16.0%: r < 5.6497
+Expected 50.0%: r < 8.5000
+Expected 84.0%: r < 13.2773
+Expected 97.5%: r < 20.3479
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/25_st_hut_lep/fcnc_ST_leptonic_counting_br0.04.txt
+rate            4.416	3.664	0.525	0.525	6.166	0.681	1.078	20.171	0.074	0.216	0.046	2.624	5.367
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 1.4107
+Expected  2.5%: r < 3.0381
+Expected 16.0%: r < 4.2373
+Expected 50.0%: r < 6.3750
+Expected 84.0%: r < 9.9580
+Expected 97.5%: r < 15.2609
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/25_st_hut_lep/fcnc_ST_leptonic_counting_br0.05.txt
+rate            5.520	3.664	0.525	0.525	6.166	0.681	1.078	20.171	0.074	0.216	0.046	2.624	5.367
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 1.1305
+Expected  2.5%: r < 2.4275
+Expected 16.0%: r < 3.4065
+Expected 50.0%: r < 5.0938
+Expected 84.0%: r < 7.9566
+Expected 97.5%: r < 12.2526
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/25_st_hut_lep/fcnc_ST_leptonic_counting_br0.06.txt
+rate            6.624	3.664	0.525	0.525	6.166	0.681	1.078	20.171	0.074	0.216	0.046	2.624	5.367
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 0.9411
+Expected  2.5%: r < 2.0254
+Expected 16.0%: r < 2.8249
+Expected 50.0%: r < 4.2500
+Expected 84.0%: r < 6.6386
+Expected 97.5%: r < 10.1739
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/25_st_hut_lep/fcnc_ST_leptonic_counting_br0.07.txt
+rate            7.728	3.664	0.525	0.525	6.166	0.681	1.078	20.171	0.074	0.216	0.046	2.624	5.367
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 0.8078
+Expected  2.5%: r < 1.7350
+Expected 16.0%: r < 2.4198
+Expected 50.0%: r < 3.6406
+Expected 84.0%: r < 5.6868
+Expected 97.5%: r < 8.7572
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/25_st_hut_lep/fcnc_ST_leptonic_counting_br0.08.txt
+rate            8.832	3.664	0.525	0.525	6.166	0.681	1.078	20.171	0.074	0.216	0.046	2.624	5.367
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 0.7054
+Expected  2.5%: r < 1.5190
+Expected 16.0%: r < 2.1186
+Expected 50.0%: r < 3.1875
+Expected 84.0%: r < 4.9790
+Expected 97.5%: r < 7.6305
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/25_st_hut_lep/fcnc_ST_leptonic_counting_br0.09.txt
+rate            9.936	3.664	0.525	0.525	6.166	0.681	1.078	20.171	0.074	0.216	0.046	2.624	5.367
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 0.6287
+Expected  2.5%: r < 1.3478
+Expected 16.0%: r < 1.8913
+Expected 50.0%: r < 2.8281
+Expected 84.0%: r < 4.4176
+Expected 97.5%: r < 6.8028
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/25_st_hut_lep/fcnc_ST_leptonic_counting_br0.10.txt
+rate            11.040	3.664	0.525	0.525	6.166	0.681	1.078	20.171	0.074	0.216	0.046	2.624	5.367
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 0.5652
+Expected  2.5%: r < 1.2137
+Expected 16.0%: r < 1.7033
+Expected 50.0%: r < 2.5469
+Expected 84.0%: r < 3.9783
+Expected 97.5%: r < 6.1263
+
+Done in 0.01 min (cpu), 0.01 min (real)

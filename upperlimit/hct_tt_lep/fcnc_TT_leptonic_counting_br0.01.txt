@@ -1,0 +1,39 @@
+# Simple counting experiment, with one signal and a few background processes 
+# Simplified version of the 35/pb H->WW analysis for mH = 160 GeV
+imax 1  number of channels
+jmax 6  number of backgrounds
+kmax 8  number of nuisance parameters (sources of systematical uncertainties)
+------------
+# we have just one channel, in which we observe 0 events
+bin bin1
+observation 0
+------------
+# now we list the expected events for signal and all backgrounds in that bin
+# the second 'process' line must have a positive number for backgrounds, and 0 for signal
+# then we list the independent sources of uncertainties, and give their effect (syst. error)
+# on each process and bin
+bin             bin1      bin1    bin1    bin1    bin1             bin1     bin1
+process         tt_fcnc   ttH     VH      ggH     DiphotonJetBox   ttGG     ttGJets
+process         0         1       2       3       4                5        6
+rate            0.942     1.075   0.061   0.021   0.131            0.101    0.687
+------------
+lumi    lnN    1.25 1.25 1.25 1.25 1.25 1.25 1.25
+
+stat_tt_fcnc lnN 1.003 - - - - - -
+stat_ttH     lnN - 1.049 - - - - -
+stat_VH      lnN - - 1.206 - - - -
+stat_ggH     lnN - - - 1.604 - - -
+stat_GGJets  lnN - - - - 1.364 - -
+stat_ttGG    lnN - - - - - 1.151 -
+stat_ttGJets lnN - - - - - - 1.788
+
+#xs_tt_fcnc lnN 1.50 - - - - - -
+#xs_ttH     lnN - 1.50 - - - - -
+#xs_VH      lnN - - 1.50 - - - -
+#xs_ggH     lnN - - - 1.50 - - -
+#xs_GGJets  lnN - - - - 1.50 - -
+#xs_ttGG    lnN - - - - - 1.50 -
+#xs_ttGJets lnN - - - - - - 1.50
+
+#WW_norm gmN 4    -   0.16    -     -    WW estimate of 0.64 comes from sidebands: 4 events in sideband times 0.16 (=> ~50% statistical uncertainty)
+#bg_others lnN    -     -     -   1.30   30% uncertainty on the rest of the backgrounds

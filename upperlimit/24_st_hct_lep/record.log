@@ -1,0 +1,181 @@
+quick.sh::start!
+./upperlimit/24_st_hct/fcnc_ST_leptonic_counting_br0.01.txt
+stat_TTGJets         lnN - - - - 1.203 - - - - - - - -
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 6.5580
+Expected  2.5%: r < 14.2373
+Expected 16.0%: r < 19.9182
+Expected 50.0%: r < 29.8750
+Expected 84.0%: r < 46.6657
+Expected 97.5%: r < 71.5168
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/24_st_hct/fcnc_ST_leptonic_counting_br0.02.txt
+stat_TTGJets         lnN - - - - 1.203 - - - - - - - -
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 3.2790
+Expected  2.5%: r < 7.1187
+Expected 16.0%: r < 9.9591
+Expected 50.0%: r < 14.9375
+Expected 84.0%: r < 23.3329
+Expected 97.5%: r < 35.7584
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/24_st_hct/fcnc_ST_leptonic_counting_br0.03.txt
+stat_TTGJets         lnN - - - - 1.203 - - - - - - - -
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 2.1860
+Expected  2.5%: r < 4.7507
+Expected 16.0%: r < 6.6260
+Expected 50.0%: r < 9.9688
+Expected 84.0%: r < 15.5318
+Expected 97.5%: r < 23.8465
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/24_st_hct/fcnc_ST_leptonic_counting_br0.04.txt
+stat_TTGJets         lnN - - - - 1.203 - - - - - - - -
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 1.6434
+Expected  2.5%: r < 3.5593
+Expected 16.0%: r < 4.9948
+Expected 50.0%: r < 7.4688
+Expected 84.0%: r < 11.6664
+Expected 97.5%: r < 17.8792
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/24_st_hct/fcnc_ST_leptonic_counting_br0.05.txt
+stat_TTGJets         lnN - - - - 1.203 - - - - - - - -
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 1.3128
+Expected  2.5%: r < 2.8445
+Expected 16.0%: r < 3.9917
+Expected 50.0%: r < 5.9688
+Expected 84.0%: r < 9.3234
+Expected 97.5%: r < 14.3574
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/24_st_hct/fcnc_ST_leptonic_counting_br0.06.txt
+stat_TTGJets         lnN - - - - 1.203 - - - - - - - -
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 1.0956
+Expected  2.5%: r < 2.3754
+Expected 16.0%: r < 3.3130
+Expected 50.0%: r < 4.9844
+Expected 84.0%: r < 7.7659
+Expected 97.5%: r < 11.9233
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/24_st_hct/fcnc_ST_leptonic_counting_br0.07.txt
+stat_TTGJets         lnN - - - - 1.203 - - - - - - - -
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 0.9378
+Expected  2.5%: r < 2.0328
+Expected 16.0%: r < 2.8527
+Expected 50.0%: r < 4.2656
+Expected 84.0%: r < 6.6630
+Expected 97.5%: r < 10.2113
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/24_st_hct/fcnc_ST_leptonic_counting_br0.08.txt
+stat_TTGJets         lnN - - - - 1.203 - - - - - - - -
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 0.8217
+Expected  2.5%: r < 1.7797
+Expected 16.0%: r < 2.4898
+Expected 50.0%: r < 3.7344
+Expected 84.0%: r < 5.8332
+Expected 97.5%: r < 8.9396
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/24_st_hct/fcnc_ST_leptonic_counting_br0.09.txt
+stat_TTGJets         lnN - - - - 1.203 - - - - - - - -
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 0.7288
+Expected  2.5%: r < 1.5861
+Expected 16.0%: r < 2.2121
+Expected 50.0%: r < 3.3281
+Expected 84.0%: r < 5.1721
+Expected 97.5%: r < 7.9168
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/24_st_hct/fcnc_ST_leptonic_counting_br0.10.txt
+stat_TTGJets         lnN - - - - 1.203 - - - - - - - -
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 0.6564
+Expected  2.5%: r < 1.4222
+Expected 16.0%: r < 1.9958
+Expected 50.0%: r < 2.9844
+Expected 84.0%: r < 4.6617
+Expected 97.5%: r < 7.1787
+
+Done in 0.01 min (cpu), 0.01 min (real)

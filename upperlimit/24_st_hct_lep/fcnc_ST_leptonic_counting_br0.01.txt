@@ -1,0 +1,26 @@
+imax 1  number of channels
+jmax 12  number of backgrounds
+kmax 14  number of nuisance parameters (sources of systematical uncertainties)
+------------
+bin bin1
+observation 0
+------------
+bin             bin1	bin1	bin1	bin1	bin1	bin1	bin1	bin1	bin1	bin1	bin1	bin1	bin1
+process         sig_st_hut  DiPhotonJetsBox   GJet  TGJets  TTGJets  TTGG  TTJets  VG  VV  ggH  VBF  VH  ttH
+process         0	1	2	3	4	5	6	7	8	9	10	11	12
+rate            0.958	3.300	0.303	0.470	8.337	0.862	12.711	9.096	0.074	0.180	0.039	0.538	6.575
+------------
+lumi            lnN 1.25	1.25	1.25	1.25	1.25	1.25	1.25	1.25	1.25	1.25	1.25	1.25	1.25
+stat_sig_st_hut      lnN 1.002 - - - - - - - - - - - -
+stat_DiPhotonJetsBox lnN - 1.157 - - - - - - - - - - -
+stat_GJet            lnN - - 1.955 - - - - - - - - - -
+stat_TGJets          lnN - - - 7.693 - - - - - - - - -
+stat_TTGJets         lnN - - - - 1.203 - - - - - - - -
+stat_TTGG            lnN - - - - - 1.047 - - - - - - -
+stat_TTJets          lnN - - - - - - 1.580 - - - - - -
+stat_VG              lnN - - - - - - - 1.816 - - - - -
+stat_VV              lnN - - - - - - - - 2.000 - - - -
+stat_ggH             lnN - - - - - - - - - 1.298 - - -
+stat_VBF             lnN - - - - - - - - - - 1.235 - -
+stat_VH              lnN - - - - - - - - - - - 1.063 -
+stat_ttH             lnN - - - - - - - - - - - - 1.020 
