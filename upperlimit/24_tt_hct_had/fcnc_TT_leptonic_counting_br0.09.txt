@@ -1,0 +1,28 @@
+imax 1  number of channels
+jmax 1  number of backgrounds
+kmax 15  number of nuisance parameters (sources of systematical uncertainties)
+------------
+bin bin1
+observation 0
+------------
+bin             bin1      bin1 
+process         tt_fcnc   ttH  
+process         0         1    
+rate            390.600      6046
+------------
+lumi    lnN    1.025 1.025
+
+pile-up                       lnN 1.05 1.05
+tt_xsec                       lnN 1.05 1.05
+diphoton_BR                   lnN 1.02 1.02
+trigger_efficiency            lnN 1.10 1.10
+photon                        lnN 1.10 1.10
+b-tagging_JES                 lnN 1.10 1.10
+b-tagging_Purity              lnN 1.10 1.10
+b-tagging_stat                lnN 1.10 1.10
+JEC                           lnN 1.10 1.10
+JER                           lnN 1.10 1.10
+Parton_distribution_functions lnN 1.10 1.10
+Background_normalization      lnN 1.10 1.10
+Non-resonant_bkg_shape        lnN -    1.10
+PDF_signal_kinematics         lnN 1.10 - 

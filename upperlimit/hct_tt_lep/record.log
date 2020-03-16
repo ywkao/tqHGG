@@ -1,6 +1,6 @@
 quick.sh::start!
 ./upperlimit/hct_tt_lep/fcnc_TT_leptonic_counting_br0.01.txt
-rate            0.942     1.075   0.061   0.021   0.131            0.101    0.687
+# now we list the expected events for signal and all backgrounds in that bin
  <<< Combine >>> 
 >>> including systematics
 >>> method used is AsymptoticLimits
@@ -9,16 +9,16 @@ RooArgSet:: = ()
 Computing results starting from observation (a-posteriori)
 
  -- AsymptoticLimits ( CLs ) --
-Observed Limit: r < 3.0527
-Expected  2.5%: r < 2.3306
-Expected 16.0%: r < 3.3771
-Expected 50.0%: r < 5.3750
-Expected 84.0%: r < 9.0172
-Expected 97.5%: r < 14.8562
+Observed Limit: r < 3.5631
+Expected  2.5%: r < 2.7045
+Expected 16.0%: r < 4.0110
+Expected 50.0%: r < 6.5938
+Expected 84.0%: r < 11.6926
+Expected 97.5%: r < 19.9853
 
 Done in 0.01 min (cpu), 0.01 min (real)
 ./upperlimit/hct_tt_lep/fcnc_TT_leptonic_counting_br0.02.txt
-rate            1.884     1.075   0.061   0.021   0.131            0.101    0.687
+# now we list the expected events for signal and all backgrounds in that bin
  <<< Combine >>> 
 >>> including systematics
 >>> method used is AsymptoticLimits
@@ -27,16 +27,16 @@ RooArgSet:: = ()
 Computing results starting from observation (a-posteriori)
 
  -- AsymptoticLimits ( CLs ) --
-Observed Limit: r < 1.5270
-Expected  2.5%: r < 1.1653
-Expected 16.0%: r < 1.6885
-Expected 50.0%: r < 2.6875
-Expected 84.0%: r < 4.5086
-Expected 97.5%: r < 7.4281
+Observed Limit: r < 1.7817
+Expected  2.5%: r < 1.3522
+Expected 16.0%: r < 2.0055
+Expected 50.0%: r < 3.2969
+Expected 84.0%: r < 5.8463
+Expected 97.5%: r < 9.9927
 
 Done in 0.01 min (cpu), 0.01 min (real)
 ./upperlimit/hct_tt_lep/fcnc_TT_leptonic_counting_br0.03.txt
-rate            2.826     1.075   0.061   0.021   0.131            0.101    0.687
+# now we list the expected events for signal and all backgrounds in that bin
  <<< Combine >>> 
 >>> including systematics
 >>> method used is AsymptoticLimits
@@ -45,16 +45,16 @@ RooArgSet:: = ()
 Computing results starting from observation (a-posteriori)
 
  -- AsymptoticLimits ( CLs ) --
-Observed Limit: r < 1.0156
-Expected  2.5%: r < 0.7757
-Expected 16.0%: r < 1.1241
-Expected 50.0%: r < 1.7891
-Expected 84.0%: r < 3.0014
-Expected 97.5%: r < 4.9639
+Observed Limit: r < 1.1876
+Expected  2.5%: r < 0.8950
+Expected 16.0%: r < 1.3345
+Expected 50.0%: r < 2.2031
+Expected 84.0%: r < 3.9068
+Expected 97.5%: r < 6.6776
 
 Done in 0.01 min (cpu), 0.01 min (real)
 ./upperlimit/hct_tt_lep/fcnc_TT_leptonic_counting_br0.04.txt
-rate            3.768     1.075   0.061   0.021   0.131            0.101    0.687
+# now we list the expected events for signal and all backgrounds in that bin
  <<< Combine >>> 
 >>> including systematics
 >>> method used is AsymptoticLimits
@@ -63,16 +63,16 @@ RooArgSet:: = ()
 Computing results starting from observation (a-posteriori)
 
  -- AsymptoticLimits ( CLs ) --
-Observed Limit: r < 0.7635
-Expected  2.5%: r < 0.5826
-Expected 16.0%: r < 0.8443
-Expected 50.0%: r < 1.3438
-Expected 84.0%: r < 2.2543
-Expected 97.5%: r < 3.7141
+Observed Limit: r < 0.8908
+Expected  2.5%: r < 0.6761
+Expected 16.0%: r < 1.0028
+Expected 50.0%: r < 1.6484
+Expected 84.0%: r < 2.9232
+Expected 97.5%: r < 4.9963
 
 Done in 0.01 min (cpu), 0.01 min (real)
 ./upperlimit/hct_tt_lep/fcnc_TT_leptonic_counting_br0.05.txt
-rate            4.710     1.075   0.061   0.021   0.131            0.101    0.687
+# now we list the expected events for signal and all backgrounds in that bin
  <<< Combine >>> 
 >>> including systematics
 >>> method used is AsymptoticLimits
@@ -81,16 +81,16 @@ RooArgSet:: = ()
 Computing results starting from observation (a-posteriori)
 
  -- AsymptoticLimits ( CLs ) --
-Observed Limit: r < 0.6095
-Expected  2.5%: r < 0.4658
-Expected 16.0%: r < 0.6749
-Expected 50.0%: r < 1.0742
-Expected 84.0%: r < 1.8021
-Expected 97.5%: r < 2.9691
+Observed Limit: r < 0.7114
+Expected  2.5%: r < 0.5364
+Expected 16.0%: r < 0.7997
+Expected 50.0%: r < 1.3203
+Expected 84.0%: r < 2.3413
+Expected 97.5%: r < 4.0018
 
 Done in 0.01 min (cpu), 0.01 min (real)
 ./upperlimit/hct_tt_lep/fcnc_TT_leptonic_counting_br0.06.txt
-rate            5.652     1.075   0.061   0.021   0.131            0.101    0.687
+# now we list the expected events for signal and all backgrounds in that bin
  <<< Combine >>> 
 >>> including systematics
 >>> method used is AsymptoticLimits
@@ -99,16 +99,16 @@ RooArgSet:: = ()
 Computing results starting from observation (a-posteriori)
 
  -- AsymptoticLimits ( CLs ) --
-Observed Limit: r < 0.5078
-Expected  2.5%: r < 0.3879
-Expected 16.0%: r < 0.5620
-Expected 50.0%: r < 0.8945
-Expected 84.0%: r < 1.5007
-Expected 97.5%: r < 2.4820
+Observed Limit: r < 0.5938
+Expected  2.5%: r < 0.4475
+Expected 16.0%: r < 0.6672
+Expected 50.0%: r < 1.1016
+Expected 84.0%: r < 1.9534
+Expected 97.5%: r < 3.3388
 
 Done in 0.01 min (cpu), 0.01 min (real)
 ./upperlimit/hct_tt_lep/fcnc_TT_leptonic_counting_br0.07.txt
-rate            6.594     1.075   0.061   0.021   0.131            0.101    0.687
+# now we list the expected events for signal and all backgrounds in that bin
  <<< Combine >>> 
 >>> including systematics
 >>> method used is AsymptoticLimits
@@ -117,16 +117,16 @@ RooArgSet:: = ()
 Computing results starting from observation (a-posteriori)
 
  -- AsymptoticLimits ( CLs ) --
-Observed Limit: r < 0.4359
-Expected  2.5%: r < 0.3328
-Expected 16.0%: r < 0.4823
-Expected 50.0%: r < 0.7676
-Expected 84.0%: r < 1.2877
-Expected 97.5%: r < 2.1215
+Observed Limit: r < 0.5083
+Expected  2.5%: r < 0.3840
+Expected 16.0%: r < 0.5726
+Expected 50.0%: r < 0.9453
+Expected 84.0%: r < 1.6763
+Expected 97.5%: r < 2.8652
 
 Done in 0.01 min (cpu), 0.01 min (real)
 ./upperlimit/hct_tt_lep/fcnc_TT_leptonic_counting_br0.08.txt
-rate            7.536     1.075   0.061   0.021   0.131            0.101    0.687
+# now we list the expected events for signal and all backgrounds in that bin
  <<< Combine >>> 
 >>> including systematics
 >>> method used is AsymptoticLimits
@@ -135,16 +135,16 @@ RooArgSet:: = ()
 Computing results starting from observation (a-posteriori)
 
  -- AsymptoticLimits ( CLs ) --
-Observed Limit: r < 0.3817
-Expected  2.5%: r < 0.2913
-Expected 16.0%: r < 0.4221
-Expected 50.0%: r < 0.6719
-Expected 84.0%: r < 1.1272
-Expected 97.5%: r < 1.8570
+Observed Limit: r < 0.4454
+Expected  2.5%: r < 0.3381
+Expected 16.0%: r < 0.5014
+Expected 50.0%: r < 0.8242
+Expected 84.0%: r < 1.4616
+Expected 97.5%: r < 2.4982
 
 Done in 0.01 min (cpu), 0.01 min (real)
 ./upperlimit/hct_tt_lep/fcnc_TT_leptonic_counting_br0.09.txt
-rate            8.478     1.075   0.061   0.021   0.131            0.101    0.687
+# now we list the expected events for signal and all backgrounds in that bin
  <<< Combine >>> 
 >>> including systematics
 >>> method used is AsymptoticLimits
@@ -153,16 +153,16 @@ RooArgSet:: = ()
 Computing results starting from observation (a-posteriori)
 
  -- AsymptoticLimits ( CLs ) --
-Observed Limit: r < 0.3385
-Expected  2.5%: r < 0.2591
-Expected 16.0%: r < 0.3755
-Expected 50.0%: r < 0.5977
-Expected 84.0%: r < 1.0026
-Expected 97.5%: r < 1.6455
+Observed Limit: r < 0.3961
+Expected  2.5%: r < 0.2983
+Expected 16.0%: r < 0.4448
+Expected 50.0%: r < 0.7344
+Expected 84.0%: r < 1.3023
+Expected 97.5%: r < 2.2259
 
 Done in 0.01 min (cpu), 0.01 min (real)
 ./upperlimit/hct_tt_lep/fcnc_TT_leptonic_counting_br0.10.txt
-rate            9.420     1.075   0.061   0.021   0.131            0.101    0.687
+# now we list the expected events for signal and all backgrounds in that bin
  <<< Combine >>> 
 >>> including systematics
 >>> method used is AsymptoticLimits
@@ -171,11 +171,11 @@ RooArgSet:: = ()
 Computing results starting from observation (a-posteriori)
 
  -- AsymptoticLimits ( CLs ) --
-Observed Limit: r < 0.3048
-Expected  2.5%: r < 0.2329
-Expected 16.0%: r < 0.3375
-Expected 50.0%: r < 0.5371
-Expected 84.0%: r < 0.9011
-Expected 97.5%: r < 1.4845
+Observed Limit: r < 0.3557
+Expected  2.5%: r < 0.2682
+Expected 16.0%: r < 0.3999
+Expected 50.0%: r < 0.6602
+Expected 84.0%: r < 1.1707
+Expected 97.5%: r < 2.0009
 
 Done in 0.01 min (cpu), 0.01 min (real)

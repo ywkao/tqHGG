@@ -1,0 +1,189 @@
+quick.sh::start!
+./upperlimit/24_tt_hct_had/fcnc_TT_leptonic_counting_br0.01.txt
+rate            43.400      6046
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 9110.4450
+Expected  2.5%: r < 53.5283
+Expected 16.0%: r < 74.9908
+Expected 50.0%: r < 113.2500
+Expected 84.0%: r < 179.1572
+Expected 97.5%: r < 279.8379
+
+Done in 0.02 min (cpu), 0.02 min (real)
+./upperlimit/24_tt_hct_had/fcnc_TT_leptonic_counting_br0.02.txt
+rate            86.800      6046
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 4563.5782
+Expected  2.5%: r < 26.6016
+Expected 16.0%: r < 37.4362
+Expected 50.0%: r < 56.7500
+Expected 84.0%: r < 89.5501
+Expected 97.5%: r < 139.4908
+
+Done in 0.01 min (cpu), 0.02 min (real)
+./upperlimit/24_tt_hct_had/fcnc_TT_leptonic_counting_br0.03.txt
+rate            130.200      6046
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 3036.8150
+Expected  2.5%: r < 17.8428
+Expected 16.0%: r < 24.9969
+Expected 50.0%: r < 37.7500
+Expected 84.0%: r < 59.7191
+Expected 97.5%: r < 93.2793
+
+Done in 0.01 min (cpu), 0.02 min (real)
+./upperlimit/24_tt_hct_had/fcnc_TT_leptonic_counting_br0.04.txt
+rate            173.600      6046
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 2281.7891
+Expected  2.5%: r < 13.3008
+Expected 16.0%: r < 18.7181
+Expected 50.0%: r < 28.3750
+Expected 84.0%: r < 44.7751
+Expected 97.5%: r < 69.7454
+
+Done in 0.01 min (cpu), 0.02 min (real)
+./upperlimit/24_tt_hct_had/fcnc_TT_leptonic_counting_br0.05.txt
+rate            217.000      6046
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 1824.4261
+Expected  2.5%: r < 10.6348
+Expected 16.0%: r < 14.9662
+Expected 50.0%: r < 22.6875
+Expected 84.0%: r < 35.8003
+Expected 97.5%: r < 55.7656
+
+Done in 0.01 min (cpu), 0.02 min (real)
+./upperlimit/24_tt_hct_had/fcnc_TT_leptonic_counting_br0.06.txt
+rate            260.400      6046
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 1518.4075
+Expected  2.5%: r < 8.9214
+Expected 16.0%: r < 12.4985
+Expected 50.0%: r < 18.8750
+Expected 84.0%: r < 29.8595
+Expected 97.5%: r < 46.6396
+
+Done in 0.01 min (cpu), 0.02 min (real)
+./upperlimit/24_tt_hct_had/fcnc_TT_leptonic_counting_br0.07.txt
+rate            303.800      6046
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 1302.2104
+Expected  2.5%: r < 7.6511
+Expected 16.0%: r < 10.7189
+Expected 50.0%: r < 16.1875
+Expected 84.0%: r < 25.6080
+Expected 97.5%: r < 39.8144
+
+Done in 0.01 min (cpu), 0.02 min (real)
+./upperlimit/24_tt_hct_had/fcnc_TT_leptonic_counting_br0.08.txt
+rate            347.200      6046
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 1140.8946
+Expected  2.5%: r < 6.6504
+Expected 16.0%: r < 9.3590
+Expected 50.0%: r < 14.1875
+Expected 84.0%: r < 22.3875
+Expected 97.5%: r < 34.8727
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/24_tt_hct_had/fcnc_TT_leptonic_counting_br0.09.txt
+rate            390.600      6046
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+[#0] ERROR:Eval -- RooAbsReal::logEvalError(model_s) evaluation error, 
+ origin       : RooProdPdf::model_s[ modelObs_s * nuisancePdf ]
+ message      : getLogVal() top-level p.d.f evaluates to zero
+ server values: !pdfs=(modelObs_s = 0/1,nuisancePdf = 1)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 1010.9720
+Expected  2.5%: r < 5.9377
+Expected 16.0%: r < 8.3185
+Expected 50.0%: r < 12.5625
+Expected 84.0%: r < 19.9235
+Expected 97.5%: r < 31.2040
+
+Done in 0.01 min (cpu), 0.01 min (real)
+./upperlimit/24_tt_hct_had/fcnc_TT_leptonic_counting_br0.10.txt
+rate            434.000      6046
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is AsymptoticLimits
+>>> random number generator seed is 123456
+RooArgSet:: = ()
+Computing results starting from observation (a-posteriori)
+[#0] ERROR:Eval -- RooAbsReal::logEvalError(model_s) evaluation error, 
+ origin       : RooProdPdf::model_s[ modelObs_s * nuisancePdf ]
+ message      : getLogVal() top-level p.d.f evaluates to zero
+ server values: !pdfs=(modelObs_s = 0/1,nuisancePdf = 1)
+
+ -- AsymptoticLimits ( CLs ) --
+Observed Limit: r < 912.2130
+Expected  2.5%: r < 5.3174
+Expected 16.0%: r < 7.4831
+Expected 50.0%: r < 11.3438
+Expected 84.0%: r < 17.9002
+Expected 97.5%: r < 27.8828
+
+Done in 0.01 min (cpu), 0.01 min (real)

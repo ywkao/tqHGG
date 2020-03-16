@@ -13,7 +13,7 @@ using namespace std;
 //}}}
 const double UPPER_BOUND=1e+03, LOWER_BOUND=5e-02;
 const double BF_min=0., BF_max=1.2;
-const char xtitle[128] = "Branching fraction (t #rightarrow uH) [%]";
+const char xtitle[128] = "Branching fraction (u #rightarrow tH) [%]";
 const char ytitle[128] = "95\% CL upper limit on signal strength";
 
 void macro(const char* tag){

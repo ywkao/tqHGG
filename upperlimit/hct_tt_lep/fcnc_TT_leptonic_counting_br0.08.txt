@@ -2,7 +2,7 @@
 # Simplified version of the 35/pb H->WW analysis for mH = 160 GeV
 imax 1  number of channels
 jmax 6  number of backgrounds
-kmax 8  number of nuisance parameters (sources of systematical uncertainties)
+kmax 17  number of nuisance parameters (sources of systematical uncertainties)
 ------------
 # we have just one channel, in which we observe 0 events
 bin bin1
@@ -17,15 +17,24 @@ process         tt_fcnc   ttH     VH      ggH     DiphotonJetBox   ttGG     ttGJ
 process         0         1       2       3       4                5        6
 rate            7.536     1.075   0.061   0.021   0.131            0.101    0.687
 ------------
-lumi    lnN    1.25 1.25 1.25 1.25 1.25 1.25 1.25
+lumi    lnN    1.025 1.025 1.025 1.025 1.025 1.025 1.025
 
-stat_tt_fcnc lnN 1.003 - - - - - -
-stat_ttH     lnN - 1.049 - - - - -
-stat_VH      lnN - - 1.206 - - - -
-stat_ggH     lnN - - - 1.604 - - -
-stat_GGJets  lnN - - - - 1.364 - -
-stat_ttGG    lnN - - - - - 1.151 -
-stat_ttGJets lnN - - - - - - 1.788
+pile-up                       lnN 1.05 1.05 1.05 1.05 1.05 1.05 1.05 
+tt_xsec                       lnN 1.05 1.05 1.05 1.05 1.05 1.05 1.05 
+diphoton_BR                   lnN 1.02 1.02 1.02 1.02 1.02 1.02 1.02 
+trigger_efficiency            lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+photon                        lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+electron                      lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+muon                          lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+b-tagging_JES                 lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+b-tagging_Purity              lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+b-tagging_stat                lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+JEC                           lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+JER                           lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+Parton_distribution_functions lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+Background_normalization      lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+Non-resonant_bkg_shape        lnN -    1.10 1.10 1.10 1.10 1.10 1.10 
+PDF_signal_kinematics         lnN 1.10 - - - - - -
 
 #xs_tt_fcnc lnN 1.50 - - - - - -
 #xs_ttH     lnN - 1.50 - - - - -
@@ -37,3 +46,30 @@ stat_ttGJets lnN - - - - - - 1.788
 
 #WW_norm gmN 4    -   0.16    -     -    WW estimate of 0.64 comes from sidebands: 4 events in sideband times 0.16 (=> ~50% statistical uncertainty)
 #bg_others lnN    -     -     -   1.30   30% uncertainty on the rest of the backgrounds
+#
+#pile-up                       lnN 1.05 1.05 1.05 1.05 1.05 1.05 1.05 
+#tt_xsec                       lnN 1.05 1.05 1.05 1.05 1.05 1.05 1.05 
+#diphoton_BR                   lnN 1.02 1.02 1.02 1.02 1.02 1.02 1.02 
+#trigger_efficiency            lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#photon_preselection           lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#photon_scale                  lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#photon_smearing               lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#electron_ID_efficiency        lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#electron_Reconstruction       lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#muon_ID_efficiency            lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#muon_ISO_efficiency           lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#b-tagging_JES                 lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#b-tagging_Purity_Heavy_flavor lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#b-tagging_Purity_Light_flavor lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#b-tagging_HFstat1             lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#b-tagging_LFstat1             lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#b-tagging_cferr1              lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#b-tagging_HFstat2             lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#b-tagging_LFstat2             lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#b-tagging_cferr2              lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#JEC                           lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#JER                           lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#Parton_distribution_functions lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#Background_normalization      lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#Non-resonant_bkg_shape        lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
+#PDF_signal_kinematics         lnN 1.10 1.10 1.10 1.10 1.10 1.10 1.10 
