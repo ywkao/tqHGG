@@ -149,13 +149,15 @@ enum histList {
     hist_deltaR_photon_photon,
     hist_deltaR_bW,
     hist_deltaR_HW,
-    hist_deltaR_tH,
+    hist_deltaR_tqh_diphoton,
+    hist_deltaR_tbw_diphoton,
     hist_deltaR_lep_met,
     hist_deltaR_jet1_jet2,
     hist_deltaR_wjet1_wjet2,
     hist_top_tqh_pt,
     hist_top_tqh_eta,
     hist_top_tqh_mass,
+    hist_top_tqh_pt_overM,
     hist_hadronic_w_candidate_pt,
     hist_hadronic_w_candidate_eta,
     hist_hadronic_w_candidate_mass,
@@ -326,13 +328,15 @@ std::string histNames[totalHistNum]{
     "hist_deltaR_photon_photon",
     "hist_deltaR_bW",
     "hist_deltaR_HW",
-    "hist_deltaR_tH",
+    "hist_deltaR_tqh_diphoton",
+    "hist_deltaR_tbw_diphoton",
     "hist_deltaR_lep_met",
     "hist_deltaR_jet1_jet2",
     "hist_deltaR_wjet1_wjet2",
     "hist_top_tqh_pt",
     "hist_top_tqh_eta",
     "hist_top_tqh_mass",
+    "hist_top_tqh_pt_overM",
     "hist_hadronic_w_candidate_pt",
     "hist_hadronic_w_candidate_eta",
     "hist_hadronic_w_candidate_mass",
@@ -502,13 +506,15 @@ int histNbins[totalHistNum]{
     40,//hist_deltaR_photon_photon
     40,//hist_deltaR_bW
     40,//hist_deltaR_HW
-    40,//hist_deltaR_tH
+    40,//hist_deltaR_tqh_diphoton
+    40,//hist_deltaR_tbw_diphoton
     40,//hist_deltaR_lep_met
     40,//hist_deltaR_jet1_jet2
     40,//hist_deltaR_wjet1_wjet2
     40,//hist_top_tqh_pt
     40,//hist_top_tqh_eta
     40,//hist_top_tqh_mass
+    40,//hist_top_tqh_pt_overM
     40,//hist_hadronic_w_candidate_pt
     40,//hist_hadronic_w_candidate_eta
     50,//hist_hadronic_w_candidate_mass
@@ -678,13 +684,15 @@ double histBinLow[totalHistNum]{
     0,//hist_deltaR_photon_photon
     0,//hist_deltaR_bW
     0,//hist_deltaR_HW
-    0,//hist_deltaR_tH
+    0,//hist_deltaR_tqh_diphoton
+    0,//hist_deltaR_tbw_diphoton
     0,//hist_deltaR_lep_met
     0,//hist_deltaR_jet1_jet2
     0,//hist_deltaR_wjet1_wjet2
     0,//hist_top_tqh_pt
     -2.5,//hist_top_tqh_eta
     0,//hist_top_tqh_mass
+    0,//hist_top_tqh_pt_overM
     0,//hist_hadronic_w_candidate_pt
     -2.5,//hist_hadronic_w_candidate_eta
     0,//hist_hadronic_w_candidate_mass
@@ -717,7 +725,7 @@ double histBinHigh[totalHistNum]{
     100,//hist_EvtInfo_NVtx
     100,//hist_EvtInfo_NVtx_wopu
     100,//hist_EvtInfo_genweight
-    300,//hist_DiPhoInfo_mass
+    180,//hist_DiPhoInfo_mass
     200,//hist_DiPhoInfo_pt
     10,//hist_DiPhoInfo_pt_overM
     2.5,//hist_DiPhoInfo_eta
@@ -854,13 +862,15 @@ double histBinHigh[totalHistNum]{
     6,//hist_deltaR_photon_photon
     6,//hist_deltaR_bW
     6,//hist_deltaR_HW
-    6,//hist_deltaR_tH
+    6,//hist_deltaR_tqh_diphoton
+    6,//hist_deltaR_tbw_diphoton
     6,//hist_deltaR_lep_met
     6,//hist_deltaR_jet1_jet2
     6,//hist_deltaR_wjet1_wjet2
     400,//hist_top_tqh_pt
     2.5,//hist_top_tqh_eta
     400,//hist_top_tqh_mass
+    10,//hist_top_tqh_pt_overM
     200,//hist_hadronic_w_candidate_pt
     2.5,//hist_hadronic_w_candidate_eta
     150,//hist_hadronic_w_candidate_mass

@@ -63,7 +63,7 @@
 
 int TMVAClassification( TString myMethodList = "" ){
    (TMVA::gConfig().GetVariablePlotting()).fMaxNumOfAllowedVariablesForScatterPlots = 256;
-   const char TAG[32] = "testAll_25_tt_hct";
+   const char TAG[32] = "testAll_16";
    // How to process{{{
    // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
    // if you use your private .rootrc, or run from a different directory, please copy the
@@ -135,9 +135,9 @@ int TMVAClassification( TString myMethodList = "" ){
    // Support Vector Machine
    Use["SVM"]             = 0;
    Use["BDT"]             = 1; // uses Adaptive Boost
-   Use["BDTG"]            = 0; // uses Gradient Boost
-   Use["BDTB"]            = 0; // uses Bagging
-   Use["BDTD"]            = 0; // decorrelation + Adaptive Boost
+   Use["BDTG"]            = 1; // uses Gradient Boost
+   Use["BDTB"]            = 1; // uses Bagging
+   Use["BDTD"]            = 1; // decorrelation + Adaptive Boost
    Use["BDTF"]            = 0; // allow usage of fisher discriminant for node splitting
    //
    // Friedman's RuleFit method, ie, an optimised series of cuts ("rules")
@@ -189,22 +189,21 @@ int TMVAClassification( TString myMethodList = "" ){
     // }}}
     // # Leptonic samples{{{
     //const char Directory[64] = "./plots_leptonic/mva";
-    const char Directory[128]  = "./plots_leptonic_update/161718/mva";
-    const char signal_dir[128] = "./plots_leptonic_update/2017old/mva";
+    const char Directory[64]  = "./plots_leptonic_latest/161718/mva";
+    const char signal_dir[64] = "./plots_leptonic_latest/2017old/mva";
     const int NUM_training_samples = 15; //total (sig, res bkg, non-res bkg) = (12, 4, 19)
     TString fname[NUM_training_samples] = {
         //Form("%s/tree_ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
         //Form("%s/tree_ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
-        //---
         //Form("%s/tree_ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
+        //Form("%s/tree_ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
+        //Form("%s/tree_TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
+        //Form("%s/tree_TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
         Form("%s/tree_TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
         Form("%s/tree_TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
         //Form("%s/tree_TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
+        //Form("%s/tree_TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
+        //Form("%s/tree_TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
         //Form("%s/tree_TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
         Form("%s/tree_DYJetsToLL.root", Directory),
         Form("%s/tree_DiPhotonJetsBox.root", Directory),
@@ -317,11 +316,11 @@ int TMVAClassification( TString myMethodList = "" ){
     //dataloader->AddVariable( "tree_jet4_CvsL", "jet4_CvsL", "", 'F');
     //dataloader->AddVariable( "tree_jet4_CvsB", "jet4_CvsB", "", 'F');
     dataloader->AddVariable( "tree_met", "met", "", 'F');
-    //dataloader->AddVariable( "tree_neutrino_pz", "neutrino_pz", "", 'F');
-    //dataloader->AddVariable( "tree_top_mass", "top_mass", "", 'F');
-    //dataloader->AddVariable( "tree_top_pt", "top_pt", "", 'F');
-    //dataloader->AddVariable( "tree_top_eta", "top_eta", "", 'F');
-    //dataloader->AddVariable( "tree_tH_deltaR", "tH_deltaR", "", 'F');
+    dataloader->AddVariable( "tree_neutrino_pz", "neutrino_pz", "", 'F');
+    dataloader->AddVariable( "tree_top_mass", "top_mass", "", 'F');
+    dataloader->AddVariable( "tree_top_pt", "top_pt", "", 'F');
+    dataloader->AddVariable( "tree_top_eta", "top_eta", "", 'F');
+    dataloader->AddVariable( "tree_tH_deltaR", "tH_deltaR", "", 'F');
 
 
    // You can add so-called "Spectator variables", which are not used in the MVA training,
@@ -331,16 +330,14 @@ int TMVAClassification( TString myMethodList = "" ){
    // dataloader->AddSpectator( "spec1 := var1*2",  "Spectator 1", "units", 'F' );
    // dataloader->AddSpectator( "spec2 := var1*3",  "Spectator 2", "units", 'F' );
     //}}}
-    //# Weighting & define training and testing{{{
+    //  Weighting & define training and testing{{{
    // global event weights per tree (see below for setting event-wise weights)
    Double_t signalWeight     = 1.0;
    Double_t backgroundWeight = 1.0;
 
     // You can add an arbitrary number of signal or background trees
     dataloader->AddSignalTree    ( MC_samples[0],     signalWeight     );
-    dataloader->AddSignalTree    ( MC_samples[1],     signalWeight     );
-    for(int i=2; i<NUM_training_samples; ++i)
-    //for(int i=1; i<NUM_training_samples; ++i)
+    for(int i=1; i<NUM_training_samples; ++i)
         dataloader->AddBackgroundTree( MC_samples[i], backgroundWeight );
 
    // To give different trees for training and testing, do as follows:
@@ -386,7 +383,6 @@ int TMVAClassification( TString myMethodList = "" ){
    // Set individual event weights (the variables must exist in the original TTree)
    // -  for signal    : `dataloader->SetSignalWeightExpression    ("weight1*weight2");`
    // -  for background: `dataloader->SetBackgroundWeightExpression("weight1*weight2");`
-   dataloader->SetSignalWeightExpression( "tree_event_weight" );
    dataloader->SetBackgroundWeightExpression( "tree_event_weight" );
    //}}}
    // Apply additional cuts on the signal and background samples (can be different){{{
@@ -405,13 +401,9 @@ int TMVAClassification( TString myMethodList = "" ){
    //    dataloader->PrepareTrainingAndTestTree( mycut,
    //         "NSigTrain=3000:NBkgTrain=3000:NSigTest=3000:NBkgTest=3000:SplitMode=Random:!V" );
    dataloader->PrepareTrainingAndTestTree( mycuts, mycutb,
-                                        "nTrain_Signal=0:nTrain_Background=0:SplitMode=Alternate:NormMode=NumEvents:!V" );
+                                        "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V" );
    //}}}
-   if (Use["BDT"])  // Adaptive Boost
-      factory->BookMethod( dataloader, TMVA::Types::kBDT, "BDT",
-                           "!H:!V:NTrees=850:MinNodeSize=2.5%:CreateMVAPdfs:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20" );
-   // Book MVA methods(skipped tmp){{{
-   /*
+   // Book MVA methods{{{
    //
    // Please lookup the various method configuration options in the corresponding cxx files, eg:
    // src/MethoCuts.cxx, etc, or here: http://tmva.sourceforge.net/optionRef.html
@@ -628,7 +620,6 @@ int TMVAClassification( TString myMethodList = "" ){
    if (Use["RuleFit"])
       factory->BookMethod( dataloader, TMVA::Types::kRuleFit, "RuleFit",
                            "H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02" );
-   */
    //}}}
    // training {{{
    // For an example of the category classifier usage, see: TMVAClassificationCategory

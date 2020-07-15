@@ -5,10 +5,10 @@ using namespace std;
 
 
 //const char TAG[64] = "";
-const char TAG[64] = "_st_hut";
-const char OUTPUT_DIR[128] = "plots_leptonic_update/161718/mva/plots";
-const char TARGET_DIR[128] = "plots_leptonic_update/161718/mva";
-const char SIGNAL_DIR[128] = "plots_leptonic_update/161718/mva";
+const char TAG[64] = "_both_hut";
+const char OUTPUT_DIR[128] = "plots_leptonic_latest/161718/mva/plots";
+const char TARGET_DIR[128] = "plots_leptonic_latest/161718/mva";
+const char SIGNAL_DIR[128] = "plots_leptonic_latest/161718/mva";
 //const char TARGET_DIR[128] = "plots_leptonic_update/161718/mva";
 //const char SIGNAL_DIR[128] = "plots_leptonic_update/161718/mva";
 //const char TARGET_DIR[128] = "collections/plots_leptonic_update/161718/app_stack";

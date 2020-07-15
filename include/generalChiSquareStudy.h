@@ -1,5 +1,28 @@
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __GENERALCHISQUARESTUDY_H__
+#define __GENERALCHISQUARESTUDY_H__
+//includes{{{
+#include <algorithm> //sts::fill_n(array, N_elements, -999)
+#include <stdio.h>
+#include <math.h>
+#include <TCanvas.h>
+#include <TChain.h>
+#include <TCanvas.h>
+#include <TColor.h>
+#include <TFile.h>
+#include <TH1D.h>
+#include <TH2D.h>
+#include <TLorentzVector.h>
+#include <TLegend.h>
+#include <TVectorD.h>
+#include <TStyle.h>
+#include <TString.h>
+#include <TMatrixD.h>
+#include <TTree.h>
+#include <vector>
+#include <string>
+#include "../include/generalChiSquareStudy.h"
+//}}}
+using namespace std;
 
 //==========================//
 //---  Useful Constants  ---//
@@ -12,9 +35,27 @@ double w_boson_width = 9.5;//GeV
 double top_quark_mass = 173.0;//GeV
 double top_quark_width = 16.3;//GeV
 
+char output_dir[512] = "result_top_reco_study";
 //==========================//
 //---  Class & Function  ---//
 //==========================//
+vector<int> get_bjjq_indices_min_chi2(std::vector<TLorentzVector> Jets, std::vector<int> indices_bjet, TLorentzVector diphoton, bool is_chi2_modified);
+vector<int> get_bjj_indices_min_chi2(std::vector<TLorentzVector> Jets, std::vector<int> indices_bjet, bool is_chi2_modified);
+vector<int> get_indices_chi2(std::vector<TLorentzVector> Jets, int index_bjet, double &chi2_min, bool is_chi2_modified);
+int get_q_index_min_chi2(std::vector<TLorentzVector> Jets, std::vector<int> indices_bjj, TLorentzVector diphoton);
+
+std::vector<int> get_bjjq_indices_min_chi2_3x3(std::vector<TLorentzVector> Jets, std::vector<int> indices_bjet, TLorentzVector diphoton);
+std::vector<int> get_bjj_indices_min_chi2_3x3(std::vector<TLorentzVector> Jets, int index_bjet, TLorentzVector diphoton, double &chi2_min);
+
+std::vector<bool> get_matching_result(std::vector<int> reco, std::vector<int> gen);
+bool check_tbwIsCorrectlyMatched(std::vector<int> index_jet_chi2, std::vector<int> index_gen_matched);
+
+bool check_bjet_matching(int index_qjet, int index_gen_matched);
+bool check_tqhIsCorrectlyMatched(int index_qjet, int jetIndex_is_quarkFromFCNtop);
+bool check_tbwIsCorrectlyMatched(std::vector<int> index_jet_chi2, std::vector<int> jetIndex_momPdgID_is_wboson, int index_bjet, int jetIndex_is_bquarkFromSMtop);
+
+// others{{{
+void report_rate(const char* name, int counter, int N);
 double GetM1M2_ratio(double M1, double M2);
 //double GetBestM1(int num_jets, int index_bjet, std::vector<int> index_jet, TLorentzVector diphoton, std::vector<TLorentzVector> Jets);
 TLorentzVector GetBestM1(double &M1, int num_jets, int index_bjet, std::vector<int> index_jet, TLorentzVector diphoton, std::vector<TLorentzVector> Jets, int &index_q, TLorentzVector &jet_q);
@@ -28,6 +69,7 @@ TLorentzVector GetGenParticle(TLorentzVector jet, Int_t GenPartInfo_size, std::v
 
 bool checkAvailability(int index, std::vector<int> ID_IsChosen);
 //void kinematics_info(const char* Title, TLorentzVector Particle);
+void kinematics_info(int index, TLorentzVector Particle);
 void kinematics_info(const char* Title, TLorentzVector Particle, int index);
 void kinematics_report(const char* recoTitle, TLorentzVector recoParticle, int id_recoParticle, const char* genTitle, TLorentzVector genParticle, int genParticle_PdgID);
 void hist_bin_fraction(TH1D *hist, const char* title, int entries_in_bin2);
@@ -42,9 +84,6 @@ void MakeFinalPlots(TCanvas *c1, TH1D* hist_simple, TH1D* hist_modified, TH1D*hi
 bool isThisDataOrNot(char* dataset);
 bool isThisMultiFile(char* dataset);
 bool isThisMCsignal(char* dataset);
-
-bool check_tqhIsCorrectlyMatched(int index_qjet, int jetIndex_is_quarkFromFCNtop);
-bool check_tbwIsCorrectlyMatched(std::vector<int> index_jet_chi2, std::vector<int> jetIndex_momPdgID_is_wboson, int index_bjet, int jetIndex_is_bquarkFromSMtop);
 
 double obtain_deltaR(bool bool_print, TLorentzVector jet, int &Matched_PdgID, int &Matched_MomPdgID, Int_t GenPartInfo_size, std::vector<int> *GenPartInfo_MomPdgID, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID);
 void obtain_gen_matched_ID(bool bool_print, TLorentzVector jet, int &index_gen, int &Matched_PdgID, int &Matched_MomPdgID, Int_t GenPartInfo_size, std::vector<int> *GenPartInfo_MomPdgID, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID);
@@ -281,5 +320,5 @@ public:
     int GetEntries(void);
     TTree *GetTTree(void);
 };
-
+//}}}
 #endif

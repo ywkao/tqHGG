@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+TAG=$1
+OPT=$2
+
+if [[ ${OPT} == '-r' ]]; then
+    mv plots_hadronic_${TAG} plots_hadronic
+    mv plots_leptonic_${TAG} plots_leptonic
+else
+    mv plots_hadronic plots_hadronic_${TAG}
+    mv plots_leptonic plots_leptonic_${TAG}
+fi

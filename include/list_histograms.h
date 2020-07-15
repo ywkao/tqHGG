@@ -13,8 +13,8 @@ TH1D *hist_EvtInfo_NVtx = new TH1D("hist_EvtInfo_NVtx", "", 50, 0, 100);
 TH1D *hist_EvtInfo_NVtx_wopu = new TH1D("hist_EvtInfo_NVtx_wopu", "", 50, 0, 100);
 TH1D *hist_EvtInfo_genweight = new TH1D("hist_EvtInfo_genweight", "", 100, 0, 100);
 //------------------------
-TH1D *hist_DiPhoInfo_mass = new TH1D("hist_DiPhoInfo_mass", "", 40, 100, 300);
-//TH1D *hist_DiPhoInfo_mass = new TH1D("hist_DiPhoInfo_mass", "", 40, 100, 180);
+//TH1D *hist_DiPhoInfo_mass = new TH1D("hist_DiPhoInfo_mass", "", 40, 100, 300);
+TH1D *hist_DiPhoInfo_mass = new TH1D("hist_DiPhoInfo_mass", "", 40, 100, 180);
 TH1D *hist_DiPhoInfo_pt = new TH1D("hist_DiPhoInfo_pt", "", 40, 0, 200);
 TH1D *hist_DiPhoInfo_pt_overM = new TH1D("hist_DiPhoInfo_pt_overM", "", 40, 0, 10);
 TH1D *hist_DiPhoInfo_eta = new TH1D("hist_DiPhoInfo_eta", "", 40, -2.5, 2.5);
@@ -171,7 +171,8 @@ TH1D *hist_deltaR_photon_photon = new TH1D("hist_deltaR_photon_photon", "", 40, 
 //---
 TH1D *hist_deltaR_bW = new TH1D("hist_deltaR_bW", "", 40, 0, 6);
 TH1D *hist_deltaR_HW = new TH1D("hist_deltaR_HW", "", 40, 0, 6);
-TH1D *hist_deltaR_tH = new TH1D("hist_deltaR_tH", "", 40, 0, 6);
+TH1D *hist_deltaR_tqh_diphoton = new TH1D("hist_deltaR_tqh_diphoton", "", 40, 0, 6);
+TH1D *hist_deltaR_tbw_diphoton = new TH1D("hist_deltaR_tbw_diphoton", "", 40, 0, 6);
 //---
 TH1D *hist_deltaR_lep_met = new TH1D("hist_deltaR_lep_met", "", 40, 0, 6);
 TH1D *hist_deltaR_jet1_jet2 = new TH1D("hist_deltaR_jet1_jet2", "", 40, 0, 6);
@@ -180,6 +181,7 @@ TH1D *hist_deltaR_wjet1_wjet2 = new TH1D("hist_deltaR_wjet1_wjet2", "", 40, 0, 6
 TH1D *hist_top_tqh_pt = new TH1D("hist_top_tqh_pt", "", 40, 0, 400);
 TH1D *hist_top_tqh_eta = new TH1D("hist_top_tqh_eta", "", 40, -2.5, 2.5);
 TH1D *hist_top_tqh_mass = new TH1D("hist_top_tqh_mass", "", 40, 0, 400);
+TH1D *hist_top_tqh_pt_overM = new TH1D("hist_top_tqh_pt_overM", "", 40, 0, 10);
 //---
 TH1D *hist_hadronic_w_candidate_pt = new TH1D("hist_hadronic_w_candidate_pt", "", 40, 0, 200);
 TH1D *hist_hadronic_w_candidate_eta = new TH1D("hist_hadronic_w_candidate_eta", "", 40, -2.5, 2.5);

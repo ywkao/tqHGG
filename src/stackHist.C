@@ -25,8 +25,8 @@ void stackHist(const char* channel){
     if(bool_isHadronic) printf("[check] from macro src/stackHist.C: isHadronic!\n");
     if(bool_isLeptonic) printf("[check] from macro src/stackHist.C: isLeptonic!\n");
     //}}}
-    MakeStackHist("hist_DiPhoInfo_mass");
-    /*
+    //MakeStackHist("hist_DiPhoInfo_mass");
+    //MakeStackHist("hist_jetq_pt");
     //### MakeStackHist{{{
     MakeStackHist("hist_EvtInfo_NPu");
     MakeStackHist("hist_EvtInfo_Rho");
@@ -171,13 +171,15 @@ void stackHist(const char* channel){
     MakeStackHist("hist_deltaR_photon_photon");
     MakeStackHist("hist_deltaR_bW");
     MakeStackHist("hist_deltaR_HW");
-    MakeStackHist("hist_deltaR_tH");
+    MakeStackHist("hist_deltaR_tqh_diphoton");
+    MakeStackHist("hist_deltaR_tbw_diphoton");
     MakeStackHist("hist_deltaR_lep_met");
     MakeStackHist("hist_deltaR_jet1_jet2");
     MakeStackHist("hist_deltaR_wjet1_wjet2");
     MakeStackHist("hist_top_tqh_pt");
     MakeStackHist("hist_top_tqh_eta");
     MakeStackHist("hist_top_tqh_mass");
+    MakeStackHist("hist_top_tqh_pt_overM");
     MakeStackHist("hist_hadronic_w_candidate_pt");
     MakeStackHist("hist_hadronic_w_candidate_eta");
     MakeStackHist("hist_hadronic_w_candidate_mass");
@@ -203,12 +205,12 @@ void stackHist(const char* channel){
     MakeStackHist("hist_leptonic_top_tbw_topKinFit_eta");
     MakeStackHist("hist_leptonic_top_tbw_topKinFit_mass");
     //end of MakeStackHist}}}
-    */
 }
 void MakeStackHist(const char* histName){
     if((string)histName == "hist_DiPhoInfo_mass") PrintTexStyle = true; else PrintTexStyle = false;
     TCanvas *c1 = new TCanvas("c1", "c1", 1000, 800);
     THStack *stackHist = new THStack("stackHist", "");//If setting titles here, the x(y)-title will NOT be able to set later.
+    THStack *stackHist_log = new THStack("stackHist_log", "");//If setting titles here, the x(y)-title will NOT be able to set later.
     //### Set up boolean{{{
     bool isIDMVA = isThisIDMVA(histName);
     bool isNum = isThisNum(histName);
@@ -220,19 +222,13 @@ void MakeStackHist(const char* histName){
     //}}}
     //### Hists{{{
     //--------------------
-    TH1D  *hist_tqh_sig_ttpair;
-    TH1D  *hist_tqh_sig_singletop;
-    TH1D  *hist_tqh_sig_st_hadronic;
     TH1D  *hist_tqh_sig_st_hadronic_hut;
     TH1D  *hist_tqh_sig_st_hadronic_hct;
-    TH1D  *hist_tqh_sig_st_leptonic;
     TH1D  *hist_tqh_sig_st_leptonic_hut;
     TH1D  *hist_tqh_sig_st_leptonic_hct;
     //---
-    TH1D  *hist_tqh_sig_tt_hadronic;
     TH1D  *hist_tqh_sig_tt_hadronic_hut;
     TH1D  *hist_tqh_sig_tt_hadronic_hct;
-    TH1D  *hist_tqh_sig_tt_leptonic;
     TH1D  *hist_tqh_sig_tt_leptonic_hut;
     TH1D  *hist_tqh_sig_tt_leptonic_hct;
     TH1D  *hist_tqh_sig[NUM_sig];
@@ -274,13 +270,16 @@ void MakeStackHist(const char* histName){
     //===============================//
     TFile *file[NUM];
     for(int i=0; i<NUM_sig; i++)
-        RegisterHistogram(file[i], fileNames_sig[i].c_str(), hist_tqh_sig[i], histName, kRed, true, false);
+        if(i<8)
+            RegisterHistogram(file[i], fileNames_sig[i].c_str(), hist_tqh_sig[i], histName, kRed, true, false, false);
+        else
+            RegisterHistogram(file[i], fileNames_sig[i].c_str(), hist_tqh_sig[i], histName, kRed, true, false, false); //no BF for ST signal
     for(int i=0; i<NUM_resbkg; i++)
-        RegisterHistogram(file[i+NUM_sig], fileNames_resbkg[i].c_str(), hist_tqh_resbkg[i], histName, kBlue-i-2, false, false);
+        RegisterHistogram(file[i+NUM_sig], fileNames_resbkg[i].c_str(), hist_tqh_resbkg[i], histName, kBlue-i-2, false, false, false);
     for(int i=0; i<NUM_nonresbkg; i++)
-        RegisterHistogram(file[i+NUM_sig+NUM_resbkg], fileNames_nonresbkg[i].c_str(), hist_tqh_nonresbkg[i], histName, kGreen+2, false, false);
+        RegisterHistogram(file[i+NUM_sig+NUM_resbkg], fileNames_nonresbkg[i].c_str(), hist_tqh_nonresbkg[i], histName, kGreen+2, false, false, false);
     for(int i=0; i<NUM_data; i++)
-        RegisterHistogram(file[i+NUM_sig+NUM_resbkg+NUM_nonresbkg], fileNames_data[i].c_str(), hist_tqh_data[i], histName, kBlack, false, true);
+        RegisterHistogram(file[i+NUM_sig+NUM_resbkg+NUM_nonresbkg], fileNames_data[i].c_str(), hist_tqh_data[i], histName, kBlack, false, false, true);
     //-----
     if((string)histName == "hist_DiPhoInfo_mass") printf("[check] [%6.2f, %6.2f]\n", hist_tqh_sig[0]->GetBinLowEdge(5), hist_tqh_sig[0]->GetBinLowEdge(7));
     //if((string)histName == "hist_DiPhoInfo_mass") printf("[check] [%6.2f, %6.2f]\n", hist_tqh_sig[0]->GetBinLowEdge(11), hist_tqh_sig[0]->GetBinLowEdge(16));
@@ -289,30 +288,22 @@ void MakeStackHist(const char* histName){
     //==================================//
     //===== Combine had/lep signal =====//
     //==================================//
-    hist_tqh_sig_tt_hadronic = (TH1D*) hist_tqh_sig[0]->Clone(); for(int i=1; i<4; i++) hist_tqh_sig_tt_hadronic->Add(hist_tqh_sig[i]);
     hist_tqh_sig_tt_hadronic_hut = (TH1D*) hist_tqh_sig[0]->Clone();
     hist_tqh_sig_tt_hadronic_hut -> Add(hist_tqh_sig[1]);
     hist_tqh_sig_tt_hadronic_hct = (TH1D*) hist_tqh_sig[2]->Clone();
     hist_tqh_sig_tt_hadronic_hct -> Add(hist_tqh_sig[3]);
     //---
-    hist_tqh_sig_tt_leptonic = (TH1D*) hist_tqh_sig[4]->Clone(); for(int i=5; i<8; i++) hist_tqh_sig_tt_leptonic->Add(hist_tqh_sig[i]);
     hist_tqh_sig_tt_leptonic_hut = (TH1D*) hist_tqh_sig[4]->Clone();
     hist_tqh_sig_tt_leptonic_hut -> Add(hist_tqh_sig[5]);
     hist_tqh_sig_tt_leptonic_hct = (TH1D*) hist_tqh_sig[6]->Clone();
     hist_tqh_sig_tt_leptonic_hct -> Add(hist_tqh_sig[7]);
     //--------------------
-    hist_tqh_sig_st_hadronic = (TH1D*) hist_tqh_sig[8]->Clone(); hist_tqh_sig_st_hadronic -> Add(hist_tqh_sig[9]);
     hist_tqh_sig_st_hadronic_hut = (TH1D*) hist_tqh_sig[8]->Clone();
     hist_tqh_sig_st_hadronic_hct = (TH1D*) hist_tqh_sig[9]->Clone();
     //---
-    hist_tqh_sig_st_leptonic = (TH1D*) hist_tqh_sig[10]->Clone(); hist_tqh_sig_st_leptonic -> Add(hist_tqh_sig[11]);
     hist_tqh_sig_st_leptonic_hut = (TH1D*) hist_tqh_sig[10]->Clone();
     hist_tqh_sig_st_leptonic_hct = (TH1D*) hist_tqh_sig[11]->Clone();
     //--------------------
-    hist_tqh_sig_singletop = (TH1D*) hist_tqh_sig_st_hadronic->Clone();
-    hist_tqh_sig_singletop->Add(hist_tqh_sig_st_leptonic);
-    hist_tqh_sig_ttpair = (TH1D*) hist_tqh_sig_tt_hadronic->Clone();
-    hist_tqh_sig_ttpair->Add(hist_tqh_sig_tt_leptonic);
     //}}}
     //### Combine backgournds {{{
     //===============================//
@@ -449,6 +440,18 @@ void MakeStackHist(const char* histName){
     stackHist->Add(hist_tqh_VG );
     stackHist->Add(hist_tqh_VV );
     if(considerQCD) stackHist->Add(hist_tqh_QCD);
+    //------------------------------
+    //### compare to samuel's plot
+    //stackHist->Add(hist_tqh_Higgs);
+    //stackHist->Add(hist_tqh_TTGG);
+    //stackHist->Add(hist_tqh_TTJets );
+    //stackHist->Add(hist_tqh_TTGJets);
+    //stackHist->Add(hist_tqh_DiPhotonJetsBox);
+    //stackHist->Add(hist_tqh_VG );
+    //stackHist->Add(hist_tqh_VV );
+    //stackHist->Add(hist_tqh_TGJets);
+    //stackHist->Add(hist_tqh_GJet);
+    //stackHist->Add(hist_tqh_DYJetsToLL );
     //}}}
     //### Choose proper signal hist to present{{{ 
     //================================================//
@@ -670,10 +673,10 @@ void MakeStackHist(const char* histName){
     if(considerQCD) legend->AddEntry(hist_tqh_QCD, "QCD", "f");
     legend->AddEntry(hist_tqh_mc_wosig, "Bkg uncertainty", "f");
     //already determined which channel
-    legend->AddEntry(hist_sig_tt_hut, Form("TT Hut #times %.0f (BF=%.2f%%)", scale_sig_tt_hut, TunableSigBranchingFraction*100), "f");
-    legend->AddEntry(hist_sig_st_hut, Form("ST Hut #times %.0f (BF=%.2f%%)", scale_sig_st_hut, TunableSigBranchingFraction*100), "f");
-    legend->AddEntry(hist_sig_tt_hct, Form("TT Hct #times %.0f (BF=%.2f%%)", scale_sig_tt_hct, TunableSigBranchingFraction*100), "f");
-    legend->AddEntry(hist_sig_st_hct, Form("ST Hct #times %.0f (BF=%.2f%%)", scale_sig_st_hct, TunableSigBranchingFraction*100), "f");
+    legend->AddEntry(hist_sig_tt_hut, Form("TT Hut #times %.0f (BF=%.2f%%)", scale_sig_tt_hut, TunableSigBranchingFraction*100.), "f");
+    legend->AddEntry(hist_sig_tt_hct, Form("TT Hct #times %.0f (BF=%.2f%%)", scale_sig_tt_hct, TunableSigBranchingFraction*100.), "f");
+    legend->AddEntry(hist_sig_st_hut, Form("ST Hut #times %.0f", scale_sig_st_hut), "f");
+    legend->AddEntry(hist_sig_st_hct, Form("ST Hct #times %.0f", scale_sig_st_hct), "f");
     legend->SetLineColor(0);
     legend->Draw("same");
     //}}}
@@ -746,8 +749,8 @@ void MakeStackHist(const char* histName){
     latex_channel.SetTextFont(43);
     latex_channel.SetTextSize(40);//26
     latex_channel.SetTextAlign(31);
-    if(bool_isHadronic) latex_channel.DrawLatex(0.72, 0.80, "#bf{Hadronic Channel}");
-    if(bool_isLeptonic) latex_channel.DrawLatex(0.72, 0.80, "#bf{Leptonic Channel}");
+    //if(bool_isHadronic) latex_channel.DrawLatex(0.72, 0.80, "#bf{Hadronic Channel}");
+    //if(bool_isLeptonic) latex_channel.DrawLatex(0.72, 0.80, "#bf{Leptonic Channel}");
     //--------------------
     TLatex latex_lumi;
     latex_lumi.SetNDC(kTRUE);
@@ -828,15 +831,12 @@ void MakeStackHist(const char* histName){
     c1->cd(); pad1->cd();
     gPad->SetLogy(1);
     if(isMassSpectrum){
-        //stackHist->SetMaximum(600);
-        //c1->SaveAs(Form("plots/stack_%s_zoomin.png", histName));
-        if(isDiPhotonSpectrum) stackHist->SetMaximum(1e+11);
-        if(isDijetSpectrum)    stackHist->SetMaximum(1e+8);
-        if(isTopSpectrum)      stackHist->SetMaximum(1e+8);
-        stackHist->SetMinimum(5e-1);
-        c1->SaveAs(Form("%s/log_scale/stack_%s_log.pdf", TARGET_DIR, histName));
+        stackHist->SetMaximum(5e+8);
+        stackHist->SetMinimum(5e-3);
     }
-    else stackHist->SetMaximum(isNum ? 1e+9 : 1e+9);
+    stackHist->SetMaximum(1e+9);
+    stackHist->SetMinimum(5e-3);
+    c1->SaveAs(Form("%s/log_scale/stack_%s_log.pdf", TARGET_DIR, histName));
     //}}}
 
     for(int i=0; i<NUM; i++) file[i]->Close();
@@ -864,10 +864,7 @@ bool isThisTopSpectrum(const char* histName){
     return false;
 }
 bool isThisMassSpectrum(const char* histName){
-    if((string)histName == "hist_inv_mass_dijet") return true;
-    if((string)histName == "hist_inv_mass_diphoton") return true;
-    if((string)histName == "hist_inv_mass_diphoton_ori") return true;
-    if((string)histName == "hist_inv_mass_tbw") return true;
+    if((string)histName == "hist_DiPhoInfo_mass") return true;
     return false;
 }
 bool isThisNum(const char* histName){
@@ -1087,12 +1084,12 @@ string GetYtitleAccordingToHistName(const char* histName, double BinWidth){
 }
 //}}}
 //### other functions{{{
-void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false){
+void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isST = true, bool isData = false){
     //printf("Registering histogram of %s\n", fileName);
     //TFile *file = TFile::Open(fileName);// Will lead to problem of opening too many file.
     file = TFile::Open(fileName);
     hist = (TH1D*)file->Get(histName);
-    if(isSigMC) hist->Scale(TunableSigBranchingFraction);
+    if(isSigMC && !isST) hist->Scale(TunableSigBranchingFraction);
     if(!isSigMC) hist->SetFillColor(color);
     hist->SetLineColor(color);
     hist->SetLineWidth(2);

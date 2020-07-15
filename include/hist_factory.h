@@ -20,12 +20,14 @@ class hist_factory
         void Draw_individual_hist(TCanvas *c1, TH1D *hist);
         void Draw_individual_hist(TCanvas *c1, TH2D *hist, const char* option);
         void Draw_all_hist(TCanvas *c1);
+        void Draw_gen_reco(TCanvas *c1, TH1D *h1, TH1D *h2);
 
         friend double GetMaxScope(TH1D* h1, TH1D* h2);
         friend void PlotTogether(TCanvas* c1, TLegend *legend, TH1D *h1, TH1D *h2, const char* path);
         friend void MakeComparisonPlots(const char* _dir, TCanvas *c1, hist_factory hf1, hist_factory hf2);
         friend void PrintCorrelationFactors(const char* title, TH2D* h_quadratic, TH2D* h_topKinFit);
         friend void MakeComparison_CorrelationFactors(hist_factory hf1, hist_factory hf2);
+
 
     private:
         char _objName[128];
@@ -39,6 +41,7 @@ class hist_factory
         TH1D* hist_eta;
         TH1D* hist_phi;
         TH1D* hist_mass;
+        TH1D* hist_gen_mass;
 
         // check reco-gen quantities
         TH1D* hist_deltaR;

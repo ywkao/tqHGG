@@ -341,9 +341,9 @@ void MakeStackHist(const char* histName){
         std::vector<const char*> vec_process;
         std::vector<double>      vec_yields;
         std::vector<double>      vec_relativeError;
-        Prepare_upperlimit_dataCard("sig_st_hut", hist_sig_st_hut, vec_process, vec_yields, vec_relativeError);
+        //Prepare_upperlimit_dataCard("sig_st_hut", hist_sig_st_hut, vec_process, vec_yields, vec_relativeError);
         //Prepare_upperlimit_dataCard("sig_st_hct", hist_sig_st_hct, vec_process, vec_yields, vec_relativeError);
-        //Prepare_upperlimit_dataCard("sig_tt_hut", hist_sig_tt_hut, vec_process, vec_yields, vec_relativeError);
+        Prepare_upperlimit_dataCard("sig_tt_hut", hist_sig_tt_hut, vec_process, vec_yields, vec_relativeError);
         //Prepare_upperlimit_dataCard("sig_tt_hct", hist_sig_tt_hct, vec_process, vec_yields, vec_relativeError);
         Prepare_upperlimit_dataCard("DiPhotonJetsBox ", hist_tqh_DiPhotonJetsBox, vec_process, vec_yields, vec_relativeError);
         Prepare_upperlimit_dataCard("GJet", hist_tqh_GJet, vec_process, vec_yields, vec_relativeError);
@@ -363,7 +363,7 @@ void MakeStackHist(const char* histName){
         int num = vec_process.size();
         printf("imax 1  number of channels\n");
         printf("jmax %d  number of backgrounds\n", num-1);
-        printf("kmax %d  number of nuisance parameters (sources of systematical uncertainties)\n", num+1);
+        printf("kmax 17 number of nuisance parameters (sources of systematical uncertainties)\n");
         printf("------------\n");
         printf("bin bin1\n");
         printf("observation 0\n");
@@ -373,16 +373,35 @@ void MakeStackHist(const char* histName){
         for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-16s", "process"); if((i+1)==vec_process.size()) printf("%d\n", i);               else printf ("%d\t", i);}
         for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-16s", "rate");    if((i+1)==vec_process.size()) printf("%.3f\n", vec_yields[i]); else printf ("%.3f\t", vec_yields[i]);}
         printf("------------\n");
-        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-16slnN ", "lumi"); if((i+1)==vec_process.size()) printf("1.25\n");                else printf ("1.25\t");}
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-16slnN ", "lumi"                         ); if((i+1)==vec_process.size()) printf("1.025\n"); else printf ("1.025\t"); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "pile-up"                      ); if((i+1)==vec_process.size()) printf("1.05\n"); else printf("1.05\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "tt_xsec"                      ); if((i+1)==vec_process.size()) printf("1.05\n"); else printf("1.05\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "diphoton_BR"                  ); if((i+1)==vec_process.size()) printf("1.02\n"); else printf("1.02\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "trigger_efficiency"           ); if((i+1)==vec_process.size()) printf("1.10\n"); else printf("1.10\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "photon"                       ); if((i+1)==vec_process.size()) printf("1.10\n"); else printf("1.10\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "electron"                     ); if((i+1)==vec_process.size()) printf("1.10\n"); else printf("1.10\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "muon"                         ); if((i+1)==vec_process.size()) printf("1.10\n"); else printf("1.10\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "b-tagging_JES"                ); if((i+1)==vec_process.size()) printf("1.10\n"); else printf("1.10\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "b-tagging_Purity"             ); if((i+1)==vec_process.size()) printf("1.10\n"); else printf("1.10\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "b-tagging_stat"               ); if((i+1)==vec_process.size()) printf("1.10\n"); else printf("1.10\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "JEC"                          ); if((i+1)==vec_process.size()) printf("1.10\n"); else printf("1.10\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "JER"                          ); if((i+1)==vec_process.size()) printf("1.10\n"); else printf("1.10\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "Parton_distribution_functions"); if((i+1)==vec_process.size()) printf("1.10\n"); else printf("1.10\t" ); }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "Background_normalization"     ); if((i+1)==vec_process.size()) printf("1.10\n"); else printf("1.10\t" ); }
         for(int i=0; i<vec_process.size(); ++i){
-            for(int j=0; j<vec_process.size(); ++j){
-                if(j==0) printf("stat_%-16slnN ", vec_process[i]);
-                if(j==i) printf("%.3f ", vec_relativeError[i]);
-                else if((j+1)==vec_process.size())    printf("-\n");
-                else     printf("- ");
-            }
+            if(i==0) printf("%-30slnN ", "Non-resonant_bkg_shape"       );
+            if((i+1)==vec_process.size()) printf("1.10\n");
+            else if(i==0) printf("%s\t", "-");
+            else printf("1.10\t" );
+        }
+        for(int i=0; i<vec_process.size(); ++i){if(i==0) printf("%-30slnN ", "PDF_signal_kinematics"        );
+            if((i+1)==vec_process.size()) printf("-\n");
+            else if(i==0) printf("%s\t", "1.10");
+            else printf("-\t" );
         }
         printf("\n");
+        CalculateHistYields_mva_score("sig_st_hut\t", hist_sig_st_hut);
+        CalculateHistYields_mva_score("sig_st_hct\t", hist_sig_st_hct);
     }
     //}}}
     // Scale signal{{{
@@ -1058,7 +1077,7 @@ void CalculateHistYields_mva_score(const char *process, TH1D* hist){
     double totalYields = hist->Integral();
     double totalError = SumErrors(hist);
 
-    if(PrintTexStyle) printf("%s & \t %15d & \t %20.7f & $\\pm$ \t %15.7f (%5.3f) \\\\\n", process, totalEntries, totalYields, totalError, 1+totalError/totalYields);
+    if(PrintTexStyle) printf("#%s & \t %15d & \t %20.7f & $\\pm$ \t %15.7f (%5.3f) \\\\\n", process, totalEntries, totalYields, totalError, 1+totalError/totalYields);
     //if(PrintTexStyle) printf("%s & \t %15d & \t %15.2f & $\\pm$ \t %10.2f\\\\\n", process, totalEntries, totalYields, totalError);
     else printf("%s \t %15.2f \t %15.2f\n", process, totalYields, totalError);
 }

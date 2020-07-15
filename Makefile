@@ -21,8 +21,8 @@ TARGET1  := bin/preselection
 #TARGET1  := bin_2/preselection
 #TARGET1  := bin_3/preselection
 TARGET2  := bin/selection
-TARGET3  := bin/generalChiSquareStudy
-TARGET3b := bin/generalChiSquareStudy_leptonic
+TARGET3  := bin/generalChiSquareStudy_hadronic_exe
+TARGET3b := bin/generalChiSquareStudy_leptonic_exe
 TARGET4  := bin/preselection_npustudy
 TARGET5  := bin/myKinFit
 
@@ -62,12 +62,16 @@ $(TARGET2): build/selection.o
 	@echo " Linking for selection cpp..."
 	@echo " $(CC) $^ -o $(TARGET2) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET2) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)
 
-$(TARGET3): build/generalChiSquareStudy.o
-	@echo " Linking for generalChiSquareStudy cpp..."
-	@echo " $(CC) $^ -o $(TARGET3) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET3) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)
+#$(TARGET3): build/generalChiSquareStudy_hadronic_exe.o build/libHistFactory.so
+#	@echo " Linking for generalChiSquareStudy_hadronic_exe cpp..."
+#	@echo " $(CC) $^ -o $(TARGET3) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET3) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)
 
-$(TARGET3b): build/generalChiSquareStudy_leptonic.o build/libHistFactory.so
-	@echo " Linking for generalChiSquareStudy_leptonic cpp..."
+$(TARGET3): build/generalChiSquareStudy_hadronic_exe.o build/libHistFactory.so
+	@echo " Linking for generalChiSquareStudy_hadronic_exe cpp..."
+	@echo " $(CC) $^ -o $(TARGET3) $(LIB)"; $(CC) $^ -o $(TARGET3) $(LIB)
+
+$(TARGET3b): build/generalChiSquareStudy_leptonic_exe.o build/libHistFactory.so
+	@echo " Linking for generalChiSquareStudy_leptonic_exe cpp..."
 	@echo " $(CC) $^ -o $(TARGET3b) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET3b) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)
 
 $(TARGET4): build/preselection_npustudy.o
@@ -97,11 +101,15 @@ build/selection.o: src/selection.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<
 
-build/generalChiSquareStudy.o: src/generalChiSquareStudy.cpp
-	@mkdir -p $(BUILDDIR)
-	@echo " $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<
+#build/generalChiSquareStudy_hadronic_exe.o: src/generalChiSquareStudy_hadronic_exe.cpp
+#	@mkdir -p $(BUILDDIR)
+#	@echo " $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<
 
-build/generalChiSquareStudy_leptonic.o: src/generalChiSquareStudy_leptonic.cpp
+build/generalChiSquareStudy_hadronic_exe.o: src/generalChiSquareStudy_hadronic_exe.cpp
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+build/generalChiSquareStudy_leptonic_exe.o: src/generalChiSquareStudy_leptonic_exe.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<
 

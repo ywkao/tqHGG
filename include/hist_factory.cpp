@@ -14,7 +14,7 @@ hist_factory::hist_factory(const char* dirName, const char* objName, const char*
     sprintf(_objName, "%s", objName);
     double _mass = _mass_scope_upper_bound;
 
-    legend = new TLegend(0.70,0.66,0.90,0.86);
+    legend = new TLegend(0.64,0.66,0.86,0.86);
 
     char _w[4] = "W";
     char _t[4] = "t";
@@ -22,14 +22,17 @@ hist_factory::hist_factory(const char* dirName, const char* objName, const char*
     char _titles[128] = "";
     if( (string) _objName == "wboson") sprintf(_particle, "%s", _w);
     if( (string) _objName == "top")    sprintf(_particle, "%s", _t);
-    printf("[check] %s\n", _particle);
+    if( (string) _objName == "tbw")    sprintf(_particle, "%s", _t);
+    if( (string) _objName == "tqh")    sprintf(_particle, "%s", _t);
+    //printf("[check] %s\n", _particle);
 
     // basic quantities
     hist_pz      = new TH1D(Form("hist_%s_pz_%s"      , objName , tag) , ";P_{z} [GeV/c];Entries"      , 40 , -200    , 200);
     hist_pt      = new TH1D(Form("hist_%s_pt_%s"      , objName , tag) , ";P_{T} [GeV/c];Entries"      , 20 , 0    , 200);
     hist_eta     = new TH1D(Form("hist_%s_eta_%s"     , objName , tag) , ";#eta;Entries"               , 20 , -2.5 , 2.5);
     hist_phi     = new TH1D(Form("hist_%s_phi_%s"     , objName , tag) , ";#phi;Entries"               , 20 , -3.0 , 3.0);
-    hist_mass    = new TH1D(Form("hist_%s_mass_%s"    , objName , tag) , ";Mass [GeV/c^{2}];Entries"   , 20 , 0    , _mass);
+    hist_mass    = new TH1D(Form("hist_%s_mass_%s"    , objName , tag) , ";Mass [GeV/c^{2}];Entries"   , 100 , 0    , _mass);
+    hist_gen_mass    = new TH1D(Form("gen_hist_%s_mass_%s"    , objName , tag) , ";Mass [GeV/c^{2}];Entries"   , 100 , 0    , _mass);
 
     // check reco-gen quantities
     sprintf(_titles, "%s", Form(";M(%s)^{gen} - M(%s)^{reco} [GeV/c^{2}];Entries", _particle, _particle));
@@ -64,6 +67,7 @@ void hist_factory::Fill_hist(TLorentzVector obj_reco, TLorentzVector obj_gen)
     double _eta     = obj_reco.Eta();
     double _phi     = obj_reco.Phi();
     double _mass    = obj_reco.M();
+    double _gen_mass= obj_gen.M();
     double _deltaR  = obj_reco.DeltaR(obj_gen);
     double _deltaM  = obj_gen.M() - obj_reco.M();
     double _deltaPT = obj_gen.Pt() - obj_reco.Pt();
@@ -73,6 +77,7 @@ void hist_factory::Fill_hist(TLorentzVector obj_reco, TLorentzVector obj_gen)
     hist_eta     -> Fill(_eta);
     hist_phi     -> Fill(_phi);
     hist_mass    -> Fill(_mass);
+    hist_gen_mass-> Fill(_gen_mass);
     hist_deltaR  -> Fill(_deltaR);
     hist_deltaM  -> Fill(_deltaM);
     hist_deltaPT -> Fill(_deltaPT);
@@ -126,6 +131,32 @@ void hist_factory::Draw_individual_hist(TCanvas *c1, TH2D *hist, const char* opt
     //printf("[INFO-hist_factory::Draw_individual_hist] Correlation Factor of %s: %f\n", hist->GetName(), hist->GetCorrelationFactor());
 }
 
+void hist_factory::Draw_gen_reco(TCanvas *c1, TH1D *h1, TH1D *h2)
+{
+    double max1 = h1 -> GetMaximum();
+    double max2 = h2 -> GetMaximum();
+    double max = (max1>max2) ? max1 : max2;
+    h1 -> SetStats(0);
+    h1 -> SetMaximum(max*1.2);
+    //h1 -> SetMinimum(1);
+    //h2 -> SetMinimum(1);
+    h1 -> Draw("hist");
+    h2 -> Draw("hist, same");
+    h1 -> SetLineWidth(2);
+    h2 -> SetLineWidth(2);
+    h2 -> SetLineColor(2);
+
+    legend->Clear();
+    legend->AddEntry(h1, "Reco", "l");
+    legend->AddEntry(h2, "Gen-level", "l");
+    legend->SetLineColor(0);
+    legend->Draw("same");
+
+    //gPad->SetLogy(1);
+
+    c1->SaveAs(Form("%s/gen_reco_%s.png", _dirName, h1->GetName()));
+}
+
 void hist_factory::Draw_all_hist(TCanvas *c1)
 {
     Draw_individual_hist(c1, hist_pz);
@@ -133,6 +164,7 @@ void hist_factory::Draw_all_hist(TCanvas *c1)
     Draw_individual_hist(c1, hist_eta);
     Draw_individual_hist(c1, hist_phi);
     Draw_individual_hist(c1, hist_mass);
+    Draw_individual_hist(c1, hist_gen_mass);
     Draw_individual_hist(c1, hist_deltaR);
     Draw_individual_hist(c1, hist_deltaM);
     Draw_individual_hist(c1, hist_deltaPT);
@@ -146,6 +178,8 @@ void hist_factory::Draw_all_hist(TCanvas *c1)
     Draw_individual_hist(c1, hist_deltaM_genM, "box");
     Draw_individual_hist(c1, hist_deltaM_genM_mean, "box");
     Draw_individual_hist(c1, hist_deltaM_genM_rms, "box");
+
+    Draw_gen_reco(c1, hist_mass, hist_gen_mass);
 }
 
 double GetMaxScope(TH1D* h1, TH1D* h2){

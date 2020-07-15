@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+function table(){
+    file=$1
+    echo "\\begin{tabular}{lrl}"
+    echo "\\hline"
+    cat ${file} | grep -iv check | grep -iv processing
+    echo "\\hline"
+    echo "\\end{tabular}"
+}
+
+
+table plots_hadronic_noBtag/info_stack_plots_hadronic
+table plots_leptonic_noBtag/info_stack_plots_leptonic
+echo "//--------------------------------------------------"
+table plots_hadronic_Btag/info_stack_plots_hadronic
+table plots_leptonic_Btag/info_stack_plots_leptonic
+echo "//--------------------------------------------------"
+table plots_hadronic_Btag_pu/info_stack_plots_hadronic
+table plots_leptonic_Btag_pu/info_stack_plots_leptonic

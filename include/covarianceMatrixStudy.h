@@ -1,5 +1,19 @@
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __COVARIANCEMATRIXSTUDY_H__
+#define __COVARIANCEMATRIXSTUDY_H__
+#include <fstream>
+#include <stdio.h>
+#include <math.h>
+#include <TCanvas.h>
+#include <TChain.h>
+#include <TFile.h>
+#include <TH1D.h>
+#include <TLorentzVector.h>
+#include <TNtuple.h>
+#include <TTree.h>
+#include <vector>
+#include <string>
+
+using namespace std;
 
 //==========================//
 //---  Useful Constants  ---//
@@ -11,6 +25,9 @@ double pfDeepCSVJetTags_loose  = 0.1522;
 //==========================//
 //---  Class & Function  ---//
 //==========================//
+int covarianceMatrixStudy(std::vector<char*> input_file, std::string tag);
+int get_constraint_on_num_jets(std::string tag);
+bool get_particle_non_void_check_result(string tag, std::vector<int> indices);
 bool checkAvailability(int index, std::vector<int> ID_IsChosen);
 double Chi2_calculator(double w_mass, double t_mass);
 double Chi2_calculator_w_only(double w_mass);
@@ -214,6 +231,7 @@ public:
     flashggStdTreeReader();
     TChain *flashggStdTree;
     void InitChain(const char* treeName);
+    void AddSingleRootFile(std::string input_file);
     void AddSingleRootFile(char* input_file);
     void AddMultiRootFile(char* input_file);
     void SetBranchAddresses(void);

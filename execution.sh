@@ -115,6 +115,7 @@ function ReRunStackPlotsOnly(){
 #make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root" "leptonic"
 #make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
 #}}}
+#make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC_hct.root"
 #------------------------- Main Exe Section -------------------------#
 #./script/setup_before_fireBatchJobs.sh 
 #./script/prepareExeForNewMC_npu_float.sh "preselection"
@@ -129,13 +130,15 @@ function ReRunStackPlotsOnly(){
 #export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH #!For topKinFit method
 #./script/prepareExeForNewMC_npu_float.sh "selection"
 
-tag="_latest"
+tag="_manual"
+#tag="_latest"
 #tag="_update"
+#for channel in "hadronic"
 for channel in "leptonic" "hadronic"
 do
     echo "mv plots_${channel}${tag} plots"; mv plots_${channel}${tag} plots; # re-stack
-    #echo "mv plots_${channel} plots"; mv plots_${channel} plots; # re-stack
     #for year in "2017old" "161718" "2018" "2017" "2016"
+    #for year in "2017old" "161718"
     for year in "161718"
     do
         #Selection ${year} ${channel}
@@ -145,11 +148,9 @@ do
         #fi
         AfterSelection ${year} ${channel}
     done
-    #./script/resetPlotsChannels.sh plots_${channel}
     ./script/resetPlotsChannels.sh plots_${channel}${tag}
-    #./script/resetPlotsChannels.sh ${target}
 done
-./script/tableMaker.sh "${tag}"
+#./script/tableMaker.sh "${tag}"
 #--------------------------------------------------
 #target_dir="plots_leptonic_latest/161718/mva"
 
@@ -170,7 +171,7 @@ done
 ### stack plots (check significance) ###
 ### please check following steps before stacking
 ### 1. include/stack_mva_output_score.h # TAG, DIR
-### 2. isCoraser=false/true
+### 2. src/output_mvaScore_stackHist.C # datacard, signal sample
 ### 3. mkdir -p plots_leptonic_latest/161718/mva/plots
 ### 4. script/run_macro_stackPlots_mvaScore.sh # tag
 #time ./script/run_macro_stackPlots_mvaScore.sh
@@ -179,14 +180,13 @@ done
 ### please check following steps before submission
 ### 1. src/app_TMVAClassificationApplication.C # FINAL_SELECTION
 #time ./script/qsubMultiJob_mvaApplication.py
-#cp src/app_TMVAClassificationApplication.C ${target_dir}
 
 ### stack plots (check final yields) ###
 #time ./script/run_macro_stackPlots_mvaScore.sh
 
 ### upperlimit ###
 ### /wk_cms2/ykao/CMSSW_8_1_0/src/HiggsAnalysis/CombinedLimit/
-### 1. quick.sh # check tag, str, signalRater
+### 1. quick.sh # check tag, str, signalRate
 ### 2. upperlimit/macro.C # check xtitle
 #time ./quick.sh
 

@@ -16,7 +16,8 @@ const int NUM_data = 1;
 const int NUM = NUM_sig + NUM_resbkg + NUM_nonresbkg + NUM_data;
 
 void MakeStackHist(const char* histName);
-void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false);
+//void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isData = false);
+void RegisterHistogram(TFile *&file, const char* fileName, TH1D* &hist, const char* histName, int color, bool isSigMC = true, bool isST = true, bool isData = false);
 void CalculateHistYields_signalRegion(const char *process, TH1D* hist);
 void CalculateHistYields_sidebandRegion(const char *process, TH1D* hist);
 void CalculateHistYields_fullRegion(const char *process, TH1D* hist);

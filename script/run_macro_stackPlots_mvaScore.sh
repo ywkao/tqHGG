@@ -26,16 +26,26 @@ root -l -b -q ${command} >> ${log}
 #echo "src/output_mvaScore_stackHist.C::output ${output_dir}"
 #echo "script/run_macro_stackPlots_mvaScore.sh::log ${log}"
 
-
-###------------------------- init upper limit -------------------------#
-tag="25_st_hut_lep"
+#------------------------- init upper limit -------------------------#
+tag="24_both_hct_lep"
 limit_dir="/wk_cms2/ykao/CMSSW_8_1_0/src/HiggsAnalysis/CombinedLimit/upperlimit"
 tag_dir=${limit_dir}/${tag}
 mkdir -p ${tag_dir}
 
-tag_file=${tag_dir}/"fcnc_ST_leptonic_counting.txt"
+tag_file=${tag_dir}/"fcnc_TT_leptonic_counting.txt"
 cp ${log} ${tag_file}
 sed -i '1,4d' ${tag_file}
 
 ls -lhrt ${tag_dir}
 cat ${tag_file}
+
+#------------------------- backup -------------------------#
+app_macro="src/app_TMVAClassificationApplication.C"
+backup_macro="src/app_TMVAClassificationApplication_${tag}.C"
+cp ${app_macro} ${backup_macro}
+
+output_score_dir="plots_leptonic_update/161718/mva"
+backup_dir="${output_score_dir}/${tag}"
+mkdir -p ${backup_dir}
+cp ${output_score_dir}/output_score* ${backup_dir}
+ls ${backup}

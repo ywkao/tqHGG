@@ -61,9 +61,8 @@
 #include "TMVA/TMVAGui.h"
 //}}}
 
-int TMVAClassification( TString myMethodList = "" ){
-   (TMVA::gConfig().GetVariablePlotting()).fMaxNumOfAllowedVariablesForScatterPlots = 256;
-   const char TAG[32] = "testAll_25_tt_hct";
+int TMVAClassification( TString myMethodList = "" )
+{
    // How to process{{{
    // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
    // if you use your private .rootrc, or run from a different directory, please copy the
@@ -81,14 +80,14 @@ int TMVAClassification( TString myMethodList = "" ){
    Use["Cuts"]            = 0;
    Use["CutsD"]           = 0;
    Use["CutsPCA"]         = 0;
-   Use["CutsGA"]          = 0; // [ERROR]
+   Use["CutsGA"]          = 0;
    Use["CutsSA"]          = 0;
    //
    // 1-dimensional likelihood ("naive Bayes estimator")
    Use["Likelihood"]      = 0;
    Use["LikelihoodD"]     = 0; // the "D" extension indicates decorrelated input variables (see option strings)
    Use["LikelihoodPCA"]   = 0; // the "PCA" extension indicates PCA-transformed input variables (see option strings)
-   Use["LikelihoodKDE"]   = 0; // [ERROR]
+   Use["LikelihoodKDE"]   = 0;
    Use["LikelihoodMIX"]   = 0;
    //
    // Mutidimensional likelihood and Nearest-Neighbour methods
@@ -135,7 +134,7 @@ int TMVAClassification( TString myMethodList = "" ){
    // Support Vector Machine
    Use["SVM"]             = 0;
    Use["BDT"]             = 1; // uses Adaptive Boost
-   Use["BDTG"]            = 0; // uses Gradient Boost
+   Use["BDTG"]            = 1; // uses Gradient Boost
    Use["BDTB"]            = 0; // uses Bagging
    Use["BDTD"]            = 0; // decorrelation + Adaptive Boost
    Use["BDTF"]            = 0; // allow usage of fisher discriminant for node splitting
@@ -187,42 +186,40 @@ int TMVAClassification( TString myMethodList = "" ){
 
     // (it is also possible to use ASCII format as input -> see TMVA Users Guide)
     // }}}
-    // # Leptonic samples{{{
-    //const char Directory[64] = "./plots_leptonic/mva";
-    const char Directory[128]  = "./plots_leptonic_update/161718/mva";
-    const char signal_dir[128] = "./plots_leptonic_update/2017old/mva";
-    const int NUM_training_samples = 15; //total (sig, res bkg, non-res bkg) = (12, 4, 19)
+    // Hadronic samples{{{
+    const char Directory[64] = "./plots_hadronic/mva";
+    const int NUM_training_samples = 9; //total (sig, res bkg, non-res bkg) = (12, 4, 19)
     TString fname[NUM_training_samples] = {
-        //Form("%s/tree_ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
+        //Form("%s/tree_ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", Directory),
+        //Form("%s/tree_ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", Directory),
+        //Form("%s/tree_TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root", Directory),
+        //Form("%s/tree_TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", Directory),
+        Form("%s/tree_TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root", Directory),
+        Form("%s/tree_TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", Directory),
         //---
-        //Form("%s/tree_ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
-        Form("%s/tree_TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
-        Form("%s/tree_TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_ST_FCNC-TH_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_TT_FCNC-TtoHJ_aTleptonic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
-        //Form("%s/tree_TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8.root", signal_dir),
-        Form("%s/tree_DYJetsToLL.root", Directory),
-        Form("%s/tree_DiPhotonJetsBox.root", Directory),
-        Form("%s/tree_GJet.root", Directory),
-        Form("%s/tree_GluGluHToGG.root", Directory),
-        Form("%s/tree_TGJets.root", Directory),
-        Form("%s/tree_TTGG.root", Directory),
-        Form("%s/tree_TTGJets.root", Directory),
-        Form("%s/tree_TTJets.root", Directory),
-        Form("%s/tree_VBFHToGG.root", Directory),
-        Form("%s/tree_VHToGG.root", Directory),
-        Form("%s/tree_WGToLNuG.root", Directory),
-        Form("%s/tree_ZGToLLG.root", Directory),
-        Form("%s/tree_ttHJetToGG.root", Directory)
-        //Form("%s/tree_QCD.root", Directory),
-        //Form("%s/tree_WW.root", Directory),
-        //Form("%s/tree_WZTo2L2Q.root", Directory),
-        //Form("%s/tree_ZZTo2L2Q.root", Directory),
+        //Form("%s/tree_DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8.root", Directory),
+        //Form("%s/tree_DiPhotonJetsBox_M40_80-Sherpa.root", Directory),
+        Form("%s/tree_DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa.root", Directory),
+        //Form("%s/tree_GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root", Directory),
+        //Form("%s/tree_GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8.root", Directory),
+        Form("%s/tree_GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root", Directory),
+        //Form("%s/tree_QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root", Directory),
+        //Form("%s/tree_QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8.root", Directory),
+        //Form("%s/tree_QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8.root", Directory),
+        //Form("%s/tree_TGJets_TuneCP5_13TeV_amcatnlo_madspin_pythia8.root", Directory),
+        //Form("%s/tree_WGToLNuG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8.root", Directory),
+        //Form("%s/tree_WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8.root", Directory),
+        //Form("%s/tree_WW_TuneCP5_13TeV-pythia8.root", Directory),
+        //Form("%s/tree_WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8.root", Directory),
+        Form("%s/tree_TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8.root", Directory),
+        Form("%s/tree_TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8.root", Directory),
+        Form("%s/tree_TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8.root", Directory),
+        //Form("%s/tree_ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8.root", Directory),
+        //Form("%s/tree_ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8.root", Directory)
+        //Form("%s/tree_VBFHToGG_M125_13TeV_amcatnlo_pythia8.root", Directory),
+        Form("%s/tree_VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root", Directory),
+        Form("%s/tree_ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8.root", Directory)
+        //Form("%s/tree_GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8.root", Directory),
     };
     //}}}
     // Open files{{{
@@ -242,7 +239,7 @@ int TMVAClassification( TString myMethodList = "" ){
     //}}}
     // Output & factory{{{
    // Create a ROOT output file where TMVA will store ntuples, histograms, etc.
-   TString outfileName( Form("%s/output_TMVA_leptonic_%s.root", Directory, TAG) );
+   TString outfileName( Form("%s/output_TMVA_hadronic.root", Directory) );
    TFile* outputFile = TFile::Open( outfileName, "RECREATE" );
 
    // Create the factory object. Later you can choose the methods
@@ -256,12 +253,10 @@ int TMVAClassification( TString myMethodList = "" ){
    // All TMVA output can be suppressed by removing the "!" (not) in
    // front of the "Silent" argument in the option string
    TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outputFile,
-                                               "!V:!Silent:Color:DrawProgressBar:Transformations=I:AnalysisType=Classification" );
-                                               //"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
+                                               "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
    //}}}
-   // # AddVariable (Leptonic){{{
-   TMVA::DataLoader *dataloader=new TMVA::DataLoader(Form("dataset_%s", TAG));
-   // old texts{{{
+   //  AddVariable (Hadronic){{{
+   TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
    // If you wish to modify default settings
    // (please check "src/Config.h" to see all available global options)
    //
@@ -275,27 +270,19 @@ int TMVAClassification( TString myMethodList = "" ){
    // dataloader->AddVariable( "myvar2 := var1-var2", "Expression 2", "", 'F' );
    // dataloader->AddVariable( "var3",                "Variable 3", "units", 'F' );
    // dataloader->AddVariable( "var4",                "Variable 4", "units", 'F' );
-   // }}}
-    dataloader->AddVariable( "tree_leadingPhoton_pt_overM", "leadingPhoton_pt_overM", "", 'F');
+    //dataloader->AddVariable( "tree_event_weight", "event_weight", "", 'F');
+    dataloader->AddVariable( "tree_leadingPhoton_pt", "leadingPhoton_pt", "", 'F');
     dataloader->AddVariable( "tree_leadingPhoton_eta", "leadingPhoton_eta", "", 'F');
     dataloader->AddVariable( "tree_leadingPhoton_IDMVA", "leadingPhoton_IDMVA", "", 'F');
-    dataloader->AddVariable( "tree_leadingPhoton_hasPixelSeed", "leadingPhoton_hasPixelSeed", "", 'F'); // bool -> float
-    dataloader->AddVariable( "tree_subleadingPhoton_pt_overM", "subleadingPhoton_pt_overM", "", 'F');
+    dataloader->AddVariable( "tree_subleadingPhoton_pt", "subleadingPhoton_pt", "", 'F');
     dataloader->AddVariable( "tree_subleadingPhoton_eta", "subleadingPhoton_eta", "", 'F');
     dataloader->AddVariable( "tree_subleadingPhoton_IDMVA", "subleadingPhoton_IDMVA", "", 'F');
-    dataloader->AddVariable( "tree_subleadingPhoton_hasPixelSeed", "subleadingPhoton_hasPixelSeed", "", 'F'); // bool -> float
-    dataloader->AddVariable( "tree_max_IDMVA", "max_IDMVA", "", 'F');
-    dataloader->AddVariable( "tree_min_IDMVA", "min_IDMVA", "", 'F');
     dataloader->AddVariable( "tree_diphoton_pt", "diphoton_pt", "", 'F');
     dataloader->AddVariable( "tree_diphoton_eta", "diphoton_eta", "", 'F');
-    dataloader->AddVariable( "tree_diphoton_cos_deltaPhi", "diphoton_cos_deltaPhi", "", 'F');
-    dataloader->AddVariable( "tree_lepton_pt", "lepton_pt", "", 'F');
-    dataloader->AddVariable( "tree_lepton_eta", "lepton_eta", "", 'F');
-    dataloader->AddVariable( "tree_lepton_charge", "lepton_charge", "", 'F'); // int -> float
-    dataloader->AddVariable( "tree_lepton_leadingPhoton_deltaR", "lepton_leadingPhoton_deltaR", "", 'F');
-    dataloader->AddVariable( "tree_lepton_subleadingPhoton_deltaR", "lepton_subleadingPhoton_deltaR", "", 'F');
-    dataloader->AddVariable( "tree_lepton_diphoton_deltaTheta", "lepton_diphoton_deltaTheta", "", 'F');
-    dataloader->AddVariable( "tree_num_jets", "num_jets", "", 'F');
+    dataloader->AddVariable( "tree_diphoton_deltaR", "diphoton_deltaR", "", 'F');
+    //dataloader->AddVariable( "tree_lepton_pt", "lepton_pt", "", 'F');
+    //dataloader->AddVariable( "tree_lepton_eta", "lepton_eta", "", 'F');
+    //dataloader->AddVariable( "tree_lepton_charge", "lepton_charge", "", 'I');
     dataloader->AddVariable( "tree_jet1_pt", "jet1_pt", "", 'F');
     dataloader->AddVariable( "tree_jet1_eta", "jet1_eta", "", 'F');
     dataloader->AddVariable( "tree_jet1_btag", "jet1_btag", "", 'F');
@@ -306,23 +293,21 @@ int TMVAClassification( TString myMethodList = "" ){
     dataloader->AddVariable( "tree_jet2_btag", "jet2_btag", "", 'F');
     dataloader->AddVariable( "tree_jet2_CvsL", "jet2_CvsL", "", 'F');
     dataloader->AddVariable( "tree_jet2_CvsB", "jet2_CvsB", "", 'F');
-    //dataloader->AddVariable( "tree_jet3_pt", "jet3_pt", "", 'F');
-    //dataloader->AddVariable( "tree_jet3_eta", "jet3_eta", "", 'F');
-    //dataloader->AddVariable( "tree_jet3_btag", "jet3_btag", "", 'F');
-    //dataloader->AddVariable( "tree_jet3_CvsL", "jet3_CvsL", "", 'F');
-    //dataloader->AddVariable( "tree_jet3_CvsB", "jet3_CvsB", "", 'F');
-    //dataloader->AddVariable( "tree_jet4_pt", "jet4_pt", "", 'F');
-    //dataloader->AddVariable( "tree_jet4_eta", "jet4_eta", "", 'F');
-    //dataloader->AddVariable( "tree_jet4_btag", "jet4_btag", "", 'F');
-    //dataloader->AddVariable( "tree_jet4_CvsL", "jet4_CvsL", "", 'F');
-    //dataloader->AddVariable( "tree_jet4_CvsB", "jet4_CvsB", "", 'F');
-    dataloader->AddVariable( "tree_met", "met", "", 'F');
+    dataloader->AddVariable( "tree_jet3_pt", "jet3_pt", "", 'F');
+    dataloader->AddVariable( "tree_jet3_eta", "jet3_eta", "", 'F');
+    dataloader->AddVariable( "tree_jet3_btag", "jet3_btag", "", 'F');
+    dataloader->AddVariable( "tree_jet3_CvsL", "jet3_CvsL", "", 'F');
+    dataloader->AddVariable( "tree_jet3_CvsB", "jet3_CvsB", "", 'F');
+    dataloader->AddVariable( "tree_jet4_pt", "jet4_pt", "", 'F');
+    dataloader->AddVariable( "tree_jet4_eta", "jet4_eta", "", 'F');
+    dataloader->AddVariable( "tree_jet4_btag", "jet4_btag", "", 'F');
+    dataloader->AddVariable( "tree_jet4_CvsL", "jet4_CvsL", "", 'F');
+    dataloader->AddVariable( "tree_jet4_CvsB", "jet4_CvsB", "", 'F');
     //dataloader->AddVariable( "tree_neutrino_pz", "neutrino_pz", "", 'F');
-    //dataloader->AddVariable( "tree_top_mass", "top_mass", "", 'F');
-    //dataloader->AddVariable( "tree_top_pt", "top_pt", "", 'F');
-    //dataloader->AddVariable( "tree_top_eta", "top_eta", "", 'F');
-    //dataloader->AddVariable( "tree_tH_deltaR", "tH_deltaR", "", 'F');
-
+    dataloader->AddVariable( "tree_top_mass", "top_mass", "", 'F');
+    dataloader->AddVariable( "tree_top_pt", "top_pt", "", 'F');
+    dataloader->AddVariable( "tree_top_eta", "top_eta", "", 'F');
+    dataloader->AddVariable( "tree_tH_deltaR", "tH_deltaR", "", 'F');
 
    // You can add so-called "Spectator variables", which are not used in the MVA training,
    // but will appear in the final "TestTree" produced by TMVA. This TestTree will contain the
@@ -331,7 +316,7 @@ int TMVAClassification( TString myMethodList = "" ){
    // dataloader->AddSpectator( "spec1 := var1*2",  "Spectator 1", "units", 'F' );
    // dataloader->AddSpectator( "spec2 := var1*3",  "Spectator 2", "units", 'F' );
     //}}}
-    //# Weighting & define training and testing{{{
+    //  Weighting & define training and testing{{{
    // global event weights per tree (see below for setting event-wise weights)
    Double_t signalWeight     = 1.0;
    Double_t backgroundWeight = 1.0;
@@ -340,7 +325,6 @@ int TMVAClassification( TString myMethodList = "" ){
     dataloader->AddSignalTree    ( MC_samples[0],     signalWeight     );
     dataloader->AddSignalTree    ( MC_samples[1],     signalWeight     );
     for(int i=2; i<NUM_training_samples; ++i)
-    //for(int i=1; i<NUM_training_samples; ++i)
         dataloader->AddBackgroundTree( MC_samples[i], backgroundWeight );
 
    // To give different trees for training and testing, do as follows:
@@ -386,7 +370,6 @@ int TMVAClassification( TString myMethodList = "" ){
    // Set individual event weights (the variables must exist in the original TTree)
    // -  for signal    : `dataloader->SetSignalWeightExpression    ("weight1*weight2");`
    // -  for background: `dataloader->SetBackgroundWeightExpression("weight1*weight2");`
-   dataloader->SetSignalWeightExpression( "tree_event_weight" );
    dataloader->SetBackgroundWeightExpression( "tree_event_weight" );
    //}}}
    // Apply additional cuts on the signal and background samples (can be different){{{
@@ -405,13 +388,10 @@ int TMVAClassification( TString myMethodList = "" ){
    //    dataloader->PrepareTrainingAndTestTree( mycut,
    //         "NSigTrain=3000:NBkgTrain=3000:NSigTest=3000:NBkgTest=3000:SplitMode=Random:!V" );
    dataloader->PrepareTrainingAndTestTree( mycuts, mycutb,
+                                        //"nTrain_Signal=10000:nTrain_Background=10000:SplitMode=Random:NormMode=NumEvents:!V" );
                                         "nTrain_Signal=0:nTrain_Background=0:SplitMode=Alternate:NormMode=NumEvents:!V" );
    //}}}
-   if (Use["BDT"])  // Adaptive Boost
-      factory->BookMethod( dataloader, TMVA::Types::kBDT, "BDT",
-                           "!H:!V:NTrees=850:MinNodeSize=2.5%:CreateMVAPdfs:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20" );
-   // Book MVA methods(skipped tmp){{{
-   /*
+   // Book MVA methods{{{
    //
    // Please lookup the various method configuration options in the corresponding cxx files, eg:
    // src/MethoCuts.cxx, etc, or here: http://tmva.sourceforge.net/optionRef.html
@@ -628,7 +608,6 @@ int TMVAClassification( TString myMethodList = "" ){
    if (Use["RuleFit"])
       factory->BookMethod( dataloader, TMVA::Types::kRuleFit, "RuleFit",
                            "H:!V:RuleFitModule=RFTMVA:Model=ModRuleLinear:MinImp=0.001:RuleMinDist=0.001:NTrees=20:fEventsMin=0.01:fEventsMax=0.5:GDTau=-1.0:GDTauPrec=0.01:GDStep=0.01:GDNSteps=10000:GDErrScale=1.02" );
-   */
    //}}}
    // training {{{
    // For an example of the category classifier usage, see: TMVAClassificationCategory
@@ -670,7 +649,7 @@ int TMVAClassification( TString myMethodList = "" ){
 
    return 0;
 }
-
+// main function (need not look at this code){{{
 int main( int argc, char** argv )
 {
    // Select methods (don't look at this code - not of interest)
@@ -683,3 +662,4 @@ int main( int argc, char** argv )
    }
    return TMVAClassification(methodList);
 }
+//}}}

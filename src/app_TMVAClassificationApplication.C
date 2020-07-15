@@ -128,10 +128,10 @@ void TMVAClassificationApplication( TString myMethodList = "" )
     }
     //}}}
 
-    const char Directory[64]  = "./plots_leptonic_update/161718/mva";
-    const char signal_dir[64] = "./plots_leptonic_update/2017old/mva";
+    const char Directory[64]  = "./plots_leptonic_latest/161718/mva";
+    const char signal_dir[64] = "./plots_leptonic_latest/2017old/mva";
     const char dataset[256] = "TT_FCNC-aTtoHJ_Tleptonic_HToaa_eta_hut-MadGraph5-pythia8";
-    const char tag[64]        = "testAll_25_st_hut";
+    const char tag[64]        = "testAll_24_both_hut";
     //TString I/O{{{
     TString dir               = Form("%s/dataset_%s/weights/", Directory, tag); // booking of MVA method
     TString fname = Form("%s/tree_%s.root", signal_dir, dataset);
@@ -214,11 +214,11 @@ void TMVAClassificationApplication( TString myMethodList = "" )
     reader->AddVariable( "tree_jet1_btag", &tree_jet1_btag);
     reader->AddVariable( "tree_jet1_CvsL", &tree_jet1_CvsL);
     reader->AddVariable( "tree_jet1_CvsB", &tree_jet1_CvsB);
-    //reader->AddVariable( "tree_jet2_pt", &tree_jet2_pt);
-    //reader->AddVariable( "tree_jet2_eta", &tree_jet2_eta);
-    //reader->AddVariable( "tree_jet2_btag", &tree_jet2_btag);
-    //reader->AddVariable( "tree_jet2_CvsL", &tree_jet2_CvsL);
-    //reader->AddVariable( "tree_jet2_CvsB", &tree_jet2_CvsB);
+    reader->AddVariable( "tree_jet2_pt", &tree_jet2_pt);
+    reader->AddVariable( "tree_jet2_eta", &tree_jet2_eta);
+    reader->AddVariable( "tree_jet2_btag", &tree_jet2_btag);
+    reader->AddVariable( "tree_jet2_CvsL", &tree_jet2_CvsL);
+    reader->AddVariable( "tree_jet2_CvsB", &tree_jet2_CvsB);
     //reader->AddVariable( "tree_jet3_pt", &tree_jet3_pt);
     //reader->AddVariable( "tree_jet3_eta", &tree_jet3_eta);
     //reader->AddVariable( "tree_jet3_btag", &tree_jet3_btag);
@@ -230,11 +230,11 @@ void TMVAClassificationApplication( TString myMethodList = "" )
     //reader->AddVariable( "tree_jet4_CvsL", &tree_jet4_CvsL);
     //reader->AddVariable( "tree_jet4_CvsB", &tree_jet4_CvsB);
     reader->AddVariable( "tree_met", &tree_met);
-    //reader->AddVariable( "tree_neutrino_pz", &tree_neutrino_pz);
-    //reader->AddVariable( "tree_top_mass", &tree_top_mass);
-    //reader->AddVariable( "tree_top_pt", &tree_top_pt);
-    //reader->AddVariable( "tree_top_eta", &tree_top_eta);
-    //reader->AddVariable( "tree_tH_deltaR", &tree_tH_deltaR);
+    reader->AddVariable( "tree_neutrino_pz", &tree_neutrino_pz);
+    reader->AddVariable( "tree_top_mass", &tree_top_mass);
+    reader->AddVariable( "tree_top_pt", &tree_top_pt);
+    reader->AddVariable( "tree_top_eta", &tree_top_eta);
+    reader->AddVariable( "tree_tH_deltaR", &tree_tH_deltaR);
     //}}}
     //Book the MVA methods{{{
     TString prefix = "TMVAClassification";
@@ -383,11 +383,11 @@ void TMVAClassificationApplication( TString myMethodList = "" )
     theTree->SetBranchAddress( "tree_jet1_btag", &tree_jet1_btag );
     theTree->SetBranchAddress( "tree_jet1_CvsL", &tree_jet1_CvsL );
     theTree->SetBranchAddress( "tree_jet1_CvsB", &tree_jet1_CvsB );
-    //theTree->SetBranchAddress( "tree_jet2_pt", &tree_jet2_pt );
-    //theTree->SetBranchAddress( "tree_jet2_eta", &tree_jet2_eta );
-    //theTree->SetBranchAddress( "tree_jet2_btag", &tree_jet2_btag );
-    //theTree->SetBranchAddress( "tree_jet2_CvsL", &tree_jet2_CvsL );
-    //theTree->SetBranchAddress( "tree_jet2_CvsB", &tree_jet2_CvsB );
+    theTree->SetBranchAddress( "tree_jet2_pt", &tree_jet2_pt );
+    theTree->SetBranchAddress( "tree_jet2_eta", &tree_jet2_eta );
+    theTree->SetBranchAddress( "tree_jet2_btag", &tree_jet2_btag );
+    theTree->SetBranchAddress( "tree_jet2_CvsL", &tree_jet2_CvsL );
+    theTree->SetBranchAddress( "tree_jet2_CvsB", &tree_jet2_CvsB );
     //theTree->SetBranchAddress( "tree_jet3_pt", &tree_jet3_pt );
     //theTree->SetBranchAddress( "tree_jet3_eta", &tree_jet3_eta );
     //theTree->SetBranchAddress( "tree_jet3_btag", &tree_jet3_btag );
@@ -399,17 +399,15 @@ void TMVAClassificationApplication( TString myMethodList = "" )
     //theTree->SetBranchAddress( "tree_jet4_CvsL", &tree_jet4_CvsL );
     //theTree->SetBranchAddress( "tree_jet4_CvsB", &tree_jet4_CvsB );
     theTree->SetBranchAddress( "tree_met", &tree_met );
-    //theTree->SetBranchAddress( "tree_neutrino_pz", &tree_neutrino_pz );
-    //theTree->SetBranchAddress( "tree_top_mass", &tree_top_mass );
-    //theTree->SetBranchAddress( "tree_top_pt", &tree_top_pt );
-    //theTree->SetBranchAddress( "tree_top_eta", &tree_top_eta );
-    //theTree->SetBranchAddress( "tree_tH_deltaR", &tree_tH_deltaR );
+    theTree->SetBranchAddress( "tree_neutrino_pz", &tree_neutrino_pz );
+    theTree->SetBranchAddress( "tree_top_mass", &tree_top_mass );
+    theTree->SetBranchAddress( "tree_top_pt", &tree_top_pt );
+    theTree->SetBranchAddress( "tree_top_eta", &tree_top_eta );
+    theTree->SetBranchAddress( "tree_tH_deltaR", &tree_tH_deltaR );
     //}}}
     int   n_final_entry = 0;
     float n_final_yield = 0;
-    //float FINAL_SELECTION = 0.05; //24_st_hu(c)t, determined by ZA
-    //float FINAL_SELECTION = 0.136; //25_st_hct, determined by ZA
-    float FINAL_SELECTION = 0.104; //25_st_hut, determined by ZA
+    float FINAL_SELECTION = 0.184; //25_st_hut, determined by ZA
     // Event loop{{{
     // Efficiency calculator for cut method
     Int_t    nSelCutsGA = 0;
