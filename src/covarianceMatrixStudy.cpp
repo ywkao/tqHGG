@@ -10,7 +10,7 @@
 //***************************************************************************
 #include "../include/covarianceMatrixStudy.C"
 double w_boson_mass = 80.379;//GeV
-double top_quark_mass = 173.0;//GeV
+double top_quark_mass = 172.5;//GeV
 
 //int covarianceMatrixStudy(std::vector<char*> input_file, string tag){
 int covarianceMatrixStudy(string input_file, string tag){

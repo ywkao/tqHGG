@@ -8,7 +8,7 @@
 // Author      : Yu-Wei Kao [ykao@cern.ch]
 //
 //***************************************************************************}}}
-//### include & bool (channel, bjet selection){{{
+//### include{{{
 #include <typeinfo>
 #include <iostream>
 #include <stdio.h>
@@ -20,22 +20,26 @@
 #include <TVectorD.h>
 #include <TMath.h>
 #include <TMatrixD.h>
-#include "../include/main.h"
-#include "../include/selection.h"
-#include "../include/enumhist.h"
-#include "../include/preselection_criteria.h"
+
+#include "main.h"
+#include "selection.h"
+#include "enumhist.h"
+#include "preselection_criteria.h"
+#include "ctag_reshaping.h"
+
 #include "../../TopKinFit/kinfit.h"
 #include "../../TopKinFit/TopLep.h"
+
 using namespace std;
 //}}}
 //bool{{{
 bool bool_isHadronic;
 bool bool_isLeptonic;
 //--- control bjet selection ---//
-bool bool_bjet_is_loose  = false;
-bool bool_bjet_is_medium = true;
+bool bool_bjet_is_loose  = true;
+bool bool_bjet_is_medium = false;
 bool bool_bjet_is_tight  = false;
-bool bool_num_bjets_is_exactly_one = true;
+bool bool_num_bjets_is_exactly_one = false;
 bool bool_num_bjets_is_atleast_one = !bool_num_bjets_is_exactly_one;
 //}}}
 void Selection(char* input_file, char* output_file, char* output_tree, char* dataset, char* output_dir, char* channel){
@@ -180,8 +184,12 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
     int counter_coeff_D_isNegative = 0;
     int counter_bjet_is_bquark = 0;
     int counter_irregular_disc = 0;
+    double total_weight_before = 0.;
+    double total_weight_after = 0.;
     //}}}
 
+    retrieve_scale_factor sf; // will open a root file
+    //sf.debug_mode();
     //==================================================//
     //-------------------- Event Loop ------------------//
     //==================================================//
@@ -254,9 +262,9 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         //Reminder: EvtInfo_NormalizationFactor_lumi = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
         //}}}
         // blind data{{{
-        bool pass_interested_region = treeReader.DiPhoInfo_mass > 100 && treeReader.DiPhoInfo_mass < 180;
+        bool pass_interested_region = treeReader.DiPhoInfo_mass > 100. && treeReader.DiPhoInfo_mass < 180.;
         if(!pass_interested_region) continue;
-        bool pass_signal_region = treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130;
+        bool pass_signal_region = treeReader.DiPhoInfo_mass > 120. && treeReader.DiPhoInfo_mass < 130.;
         if(isData && pass_signal_region) continue;
         //}}}
         //bjet determination {{{
@@ -273,14 +281,14 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         int num_bjets_tight = 0, num_bjets_loose = 0, num_bjets_medium = 0;
         int index_leading_bjet_tight = -999, index_leading_bjet_loose = -999, index_leading_bjet_medium = -999;
 
-        //categorize bjet according to deepCSV score{{{
+        //----- categorize bjet according to deepCSV score -----//
         if(!(treeReader.num_jets<1)){
             for(int i=0; i<treeReader.num_jets; ++i){
                 jet.SetPtEtaPhiE(treeReader.JetInfo_jet_pt_selection->at(i),treeReader.JetInfo_jet_eta_selection->at(i),treeReader.JetInfo_jet_phi_selection->at(i),treeReader.JetInfo_jet_energy_selection->at(i));
                 float btag_score = treeReader.JetInfo_jet_pfDeepCSVJetTags_probb_selection->at(i)+treeReader.JetInfo_jet_pfDeepCSVJetTags_probbb_selection->at(i);
-                //---
                 float ctag_probc = treeReader.JetInfo_jet_pfDeepCSVJetTags_probc_selection->at(i);
-                float CvsL_score = ctag_probc / ( ctag_probc + treeReader.JetInfo_jet_pfDeepCSVJetTags_probudsg_selection->at(i) );
+                float prob_usdg  = treeReader.JetInfo_jet_pfDeepCSVJetTags_probudsg_selection->at(i);
+                float CvsL_score = ctag_probc / ( ctag_probc + prob_usdg );
                 float CvsB_score = ctag_probc / ( ctag_probc + btag_score );
 
                 btag_scores_raw.push_back(btag_score);
@@ -311,8 +319,7 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
                 }
             }//end of looping jets
         }
-        //}}}
-        //determine leading bjet according to chosen WP{{{
+        //----- determine leading bjet according to chosen WP -----//
         if(bool_bjet_is_loose){
             index_bjet = index_leading_bjet_loose;
             if(index_bjet != -999){
@@ -344,7 +351,6 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
             }
         }
         //}}}
-        //}}}
         // store num(l/j/b) before selection{{{
         h[hist_num_leptons] -> Fill(treeReader.num_leptons, isData ? 1. : NormalizationFactor);// # of selected objects.
         h[hist_num_jets] -> Fill(treeReader.num_jets, isData ? 1. : NormalizationFactor);
@@ -363,32 +369,28 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         }
         //}}}
 
-        // ### bjet = jet with the hightes b-tag scores -> To be implemented ! {{{
-        //index_bjet = std::max_element(btag_scores_raw.begin(), btag_scores_raw.end()) - btag_scores_raw.begin();
-        //bjet = Jets[index_bjet];
-        ////}}}
-
-        // Event selection{{{
+        //=============== Event selection ===============//
         // seperate channels{{{
         bool passEvent=true;
         //--------- Hadronic Channel ---------//
         if(bool_isHadronic){
             if(treeReader.num_leptons>0) passEvent = false;
-            //if(treeReader.num_jets<3) passEvent = false;
-            if(treeReader.num_jets<4) passEvent = false;
+            if(treeReader.num_jets<3) passEvent = false;
+            //if(treeReader.num_jets<4) passEvent = false;
         //--------- Leptonic Channel ---------//
         } else{ // bool_isLeptonic == true
             if(treeReader.num_leptons<1) passEvent = false;
             if(treeReader.num_jets<1) passEvent = false;
         }
         if(!passEvent) continue;
-        //}}}
-        //bjet selection{{{
+
+        //---------- b-jet selection ----------//
         bool pass_bjets_multiplicity_selection;
         if(bool_num_bjets_is_exactly_one) pass_bjets_multiplicity_selection = num_bjets == 1;
         if(bool_num_bjets_is_atleast_one) pass_bjets_multiplicity_selection = num_bjets >= 1;
         //if(bool_isHadronic && !pass_bjets_multiplicity_selection) continue;
-        if(!pass_bjets_multiplicity_selection) continue;
+        //if(!pass_bjets_multiplicity_selection) continue;
+        if(bool_isHadronic && !pass_bjets_multiplicity_selection) continue;
         //end of bjet section}}}
         // Photon IDMVA slection{{{
         float _leadIDMVA = treeReader.DiPhoInfo_leadIDMVA;
@@ -403,11 +405,11 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         h[hist_DiPhoInfo_minIDMVA_beforeCut]            -> Fill(minIDMVA                                 , isData ? 1. : NormalizationFactor);
         //---------- supress QCD ----------//
         //bool pass_photon_IDMVA = treeReader.DiPhoInfo_leadIDMVA>CRITERION_PHOTON_IDMVA && treeReader.DiPhoInfo_subleadIDMVA>CRITERION_PHOTON_IDMVA;
-        bool pass_photon_IDMVA = treeReader.DiPhoInfo_leadIDMVA>0 && treeReader.DiPhoInfo_subleadIDMVA>0;
+        bool pass_photon_IDMVA = treeReader.DiPhoInfo_leadIDMVA > -0.7 && treeReader.DiPhoInfo_subleadIDMVA > -0.7;
         if(!pass_photon_IDMVA) continue;
         //}}}
-        //}}}
-        // Store info{{{
+        
+        //----- Store info -----//
         // NPu, Rho, NVtx{{{
         //========= Store Info =========//
         h[hist_EvtInfo_NPu] -> Fill(treeReader.EvtInfo_NPu, isData ? 1. : NormalizationFactor);
@@ -590,14 +592,31 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
             h[hist_lepton_diphoton_deltaTheta]     -> Fill(tree_lepton_diphoton_deltaTheta, isData ? 1. : NormalizationFactor);
         }
         //}}}
+
+        double sf_ctag_reshaping = 1.;
         // Jets{{{
         //--------- Jets ---------//
         std::vector<TLorentzVector> Jets;
-        std::vector<float> Jets_btag_score, Jets_CvsL_score, Jets_CvsB_score;
+        std::vector<float> Jets_btag_score, Jets_ctag_score, Jets_CvsL_score, Jets_CvsB_score;
         h[hist_jets_size] -> Fill(treeReader.jets_size, isData ? 1. : NormalizationFactor);
         tree_num_jets = (float) treeReader.num_jets;
         if(treeReader.num_jets>0){
             for(int i=0; i<treeReader.num_jets; ++i){
+                int hadron_flavor = treeReader.hadronFlavor_selection->at(i);
+                TString type;
+                if(hadron_flavor == 5) type = "b";
+                else if(hadron_flavor == 4) type = "c";
+                else type = "l";
+
+                TString name = "SF" + type + "_hist";
+                float ctag_probc = treeReader.JetInfo_jet_pfDeepCSVJetTags_probc_selection->at(i);
+                float btag_score = treeReader.JetInfo_jet_pfDeepCSVJetTags_probb_selection->at(i)+treeReader.JetInfo_jet_pfDeepCSVJetTags_probbb_selection->at(i);
+                float CvsL_score = ctag_probc / ( ctag_probc + treeReader.JetInfo_jet_pfDeepCSVJetTags_probudsg_selection->at(i) );
+                float CvsB_score = ctag_probc / ( ctag_probc + btag_score );
+
+                double scale_factor = sf.get_scale_factor(name, CvsL_score, CvsB_score);
+                sf_ctag_reshaping = isData ? 1. : sf_ctag_reshaping * scale_factor;
+
                 h[hist_JetInfo_jet_pt] -> Fill(treeReader.JetInfo_jet_pt_selection->at(i), isData ? 1. : NormalizationFactor);
                 h[hist_JetInfo_jet_eta] -> Fill(treeReader.JetInfo_jet_eta_selection->at(i), isData ? 1. : NormalizationFactor);
                 h[hist_JetInfo_jet_phi] -> Fill(treeReader.JetInfo_jet_phi_selection->at(i), isData ? 1. : NormalizationFactor);
@@ -605,11 +624,8 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
                 h[hist_JetInfo_jet_diphoton_deltaR] -> Fill(treeReader.JetInfo_jet_diphoton_deltaR_selection->at(i), isData ? 1. : NormalizationFactor);
                 TLorentzVector jet; jet.SetPtEtaPhiE(treeReader.JetInfo_jet_pt_selection->at(i),treeReader.JetInfo_jet_eta_selection->at(i),treeReader.JetInfo_jet_phi_selection->at(i),treeReader.JetInfo_jet_energy_selection->at(i));
                 Jets.push_back(jet);
-                float ctag_probc = treeReader.JetInfo_jet_pfDeepCSVJetTags_probc_selection->at(i);
-                float btag_score = treeReader.JetInfo_jet_pfDeepCSVJetTags_probb_selection->at(i)+treeReader.JetInfo_jet_pfDeepCSVJetTags_probbb_selection->at(i);
-                float CvsL_score = ctag_probc / ( ctag_probc + treeReader.JetInfo_jet_pfDeepCSVJetTags_probudsg_selection->at(i) );
-                float CvsB_score = ctag_probc / ( ctag_probc + btag_score );
                 Jets_btag_score.push_back(btag_score);
+                Jets_ctag_score.push_back(ctag_probc);
                 Jets_CvsL_score.push_back(CvsL_score);
                 Jets_CvsB_score.push_back(CvsB_score);
                 if(i==0){//leading jet
@@ -654,7 +670,37 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
         h[hist_MetInfo_Py] -> Fill(treeReader.MetInfo_Py, isData ? 1. : NormalizationFactor);
         h[hist_MetInfo_SumET] -> Fill(treeReader.MetInfo_SumET, isData ? 1. : NormalizationFactor);
         //}}}
-        //end of store info}}}
+
+        //----- take the jet with the highest scores as b-jet -----//
+        index_bjet = std::max_element(Jets_btag_score.begin(), Jets_btag_score.end()) - Jets_btag_score.begin();
+        bjet = Jets[index_bjet];
+
+        std::vector<float> Jets_btag_score_sorted = Jets_btag_score;
+        std::vector<float> Jets_ctag_score_sorted = Jets_ctag_score;
+        std::sort(Jets_btag_score_sorted.begin(), Jets_btag_score_sorted.end(), sortByValue);
+        std::sort(Jets_ctag_score_sorted.begin(), Jets_ctag_score_sorted.end(), sortByValue);
+
+        if(treeReader.num_jets>0){
+            float max_btag_score = Jets_btag_score_sorted[0];
+            float max_ctag_score = Jets_ctag_score_sorted[0];
+            h[hist_max_btag_score]     -> Fill(max_btag_score     , isData ? 1. : NormalizationFactor);
+            h[hist_max_ctag_score]     -> Fill(max_ctag_score     , isData ? 1. : NormalizationFactor);
+            h[hist_max_btag_score_reshaped]     -> Fill(max_btag_score     , isData ? 1. : NormalizationFactor * sf_ctag_reshaping);
+            h[hist_max_ctag_score_reshaped]     -> Fill(max_ctag_score     , isData ? 1. : NormalizationFactor * sf_ctag_reshaping);
+            total_weight_before += isData ? 1. : NormalizationFactor;
+            total_weight_after  += isData ? 1. : NormalizationFactor * sf_ctag_reshaping;
+        }
+
+        if(treeReader.num_jets>1){
+            float second_max_btag_score = Jets_btag_score_sorted[1];
+            float second_max_ctag_score = Jets_ctag_score_sorted[1];
+            h[hist_2nd_max_btag_score] -> Fill(second_max_btag_score , isData ? 1. : NormalizationFactor);
+            h[hist_2nd_max_ctag_score] -> Fill(second_max_ctag_score , isData ? 1. : NormalizationFactor);
+            h[hist_2nd_max_btag_score_reshaped] -> Fill(second_max_btag_score , isData ? 1. : NormalizationFactor * sf_ctag_reshaping);
+            h[hist_2nd_max_ctag_score_reshaped] -> Fill(second_max_ctag_score , isData ? 1. : NormalizationFactor * sf_ctag_reshaping);
+        }
+        
+        /*
         // top reconstruction{{{
         //================================================//
         //-----------   top reconstruction     -----------//
@@ -946,18 +992,27 @@ void Selection(char* input_file, char* output_file, char* output_tree, char* dat
 
         } // end of else
         //}}}
+        */
 
         //=============== M1, M2 selections ===============//
-        float M2 = tree_top_mass;
-        bool pass_M1_selection = (M1>140.) && (M1<200.);
-        bool pass_M2_selection = (M2>150.) && (M2<200.);
-        if(!pass_M1_selection) continue;
-        if(!pass_M2_selection) continue;
-        //if(M1<0) continue;// select on q-jet
+        //float M2 = tree_top_mass;
+        //bool pass_M1_selection = (M1>140.) && (M1<200.);
+        //bool pass_M2_selection = (M2>150.) && (M2<200.);
+        //if(!pass_M1_selection) continue;
+        //if(!pass_M2_selection) continue;
+        ////if(M1<0) continue;// select on q-jet
 
         counter_selected_events += 1;
         myAnalysisTree->Fill();
     }//end of event loop
+
+    double rescale = total_weight_before / total_weight_after;
+    printf("[info] rescale = %.2f (%.2f / %.2f)\n", rescale, total_weight_before, total_weight_after);
+
+    h[hist_2nd_max_ctag_score_reshaped] -> Scale(rescale);
+    h[hist_2nd_max_btag_score_reshaped] -> Scale(rescale);
+    h[hist_max_ctag_score_reshaped]     -> Scale(rescale);
+    h[hist_max_btag_score_reshaped]     -> Scale(rescale);
 
     //### counters, yields, plots, close{{{
     printf("[INFO] total entry after  selection    = %d\n", counter_selected_events);
@@ -1154,7 +1209,7 @@ void myTreeClass::SetBranchAddresses(){
     mytree -> SetBranchAddress("MuonInfo_muon_energy", &MuonInfo_muon_energy_selection);
     mytree -> SetBranchAddress("MuonInfo_muon_diphoton_deltaR", &MuonInfo_muon_diphoton_deltaR_selection);
     //------------------------
-    //mytree -> SetBranchAddress("GenPartInfo_size", &GenPartInfo_size);
+    //mytree -> SetBranchAddress("GenPartInfo_gen_size", &GenPartInfo_gen_size_selection);
     //mytree -> SetBranchAddress("GenPartInfo_gen_Pt", &GenPartInfo_gen_Pt_selection);
     //mytree -> SetBranchAddress("GenPartInfo_gen_Eta", &GenPartInfo_gen_Eta_selection);
     //mytree -> SetBranchAddress("GenPartInfo_gen_Phi", &GenPartInfo_gen_Phi_selection);
@@ -1163,6 +1218,7 @@ void myTreeClass::SetBranchAddresses(){
     //mytree -> SetBranchAddress("GenPartInfo_gen_Status", &GenPartInfo_gen_Status_selection);
     //mytree -> SetBranchAddress("GenPartInfo_gen_nMo", &GenPartInfo_gen_nMo_selection);
     //mytree -> SetBranchAddress("GenPartInfo_gen_nDa", &GenPartInfo_gen_nDa_selection);
+    mytree -> SetBranchAddress("hadronFlavor", &hadronFlavor_selection);
     //------------------------
     mytree -> SetBranchAddress("jets_size", &jets_size);
     mytree -> SetBranchAddress("num_jets", &num_jets);
@@ -1195,6 +1251,7 @@ myParameters::myParameters(){
     GenPartInfo_gen_Status_selection = new std::vector<int>;
     GenPartInfo_gen_nMo_selection = new std::vector<int>;
     GenPartInfo_gen_nDa_selection = new std::vector<int>;
+    hadronFlavor_selection = new std::vector<int>;
     JetInfo_jet_pt_selection = new std::vector<float>;
     JetInfo_jet_eta_selection = new std::vector<float>;
     JetInfo_jet_phi_selection = new std::vector<float>;
@@ -1226,6 +1283,7 @@ myParameters::~myParameters(){
     delete GenPartInfo_gen_Status_selection;
     delete GenPartInfo_gen_nMo_selection;
     delete GenPartInfo_gen_nDa_selection;
+    delete hadronFlavor_selection;
     delete JetInfo_jet_pt_selection;
     delete JetInfo_jet_eta_selection;
     delete JetInfo_jet_phi_selection;
@@ -1363,3 +1421,7 @@ flashggStdTreeParameters::~flashggStdTreeParameters(){
     //------------------------
 }
 //}}}
+bool sortByValue(const float &a,const float &b)
+{
+    return a>b;
+}

@@ -11,11 +11,12 @@
 // Author      : Yu-Wei Kao [ykao@cern.ch]
 //
 //***************************************************************************
-#include "../include/generalChiSquareStudy.C"
-#include "../include/cross_section.h"
-#include "../include/hist_factory.h"
-#include "../include/print_tool.C"
-#include "../include/plotHelper.C"
+#include "generalChiSquareStudy.C"
+#include "cross_section.h"
+#include "hist_factory.h"
+#include "print_tool.C"
+#include "plotHelper.C"
+#include "gen_reco_performance_helper.h"
 //--- control bjet selection ---//
 bool printSelectedJetsInfo = false;
 //bool bool_bjet_is_loose  = true;
@@ -24,33 +25,29 @@ bool printSelectedJetsInfo = false;
 //bool bool_num_bjets_is_exactly_one = false;
 //bool bool_num_bjets_is_atleast_one = !bool_num_bjets_is_exactly_one;
 //}}}
-int CONSTRAINT_NUM_JETS = 3; //TT=4, ST=3
-int main(int argc, char *argv[]){
-    // I/O and event info
-    //============================//
-    //----- Input file names -----//
-    //============================//
-    char input_file[512]; sprintf(input_file, "%s", argv[1]); printf("[INFO] input_file  = %s\n", input_file);
-    char output_file[512]; sprintf(output_file, "%s", argv[2]); printf("[INFO] output_file = %s\n", output_file);
-    char dataset[512]; sprintf(dataset, "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset);
-    bool isData = isThisDataOrNot(dataset);
-    bool isMCsignal = isThisMCsignal(dataset);
-    bool isMultiFile = isThisMultiFile(dataset);
+void chi2_study(char *input_tag, char *output_file, char* dataset)
+{
+    // I/O and event info{{{
+    bool isData = false;
     TFile *fout = new TFile(output_file, "RECREATE");
-    //==============================//
-    //----- Read input file(s) -----//
-    //==============================//
+
     flashggStdTreeReader treeReader;
     treeReader.InitChain("flashggNtuples/flashggStdTree");
     
+    char input_file[512];
     char dir[512] = "/wk_cms2/youying/public/tH_FCNC/Era2017_RR-31Mar2018_v2";
-    //sprintf(input_file, "%s", Form("%s/ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", dir))     ; treeReader.AddSingleRootFile(input_file) ;
-    //sprintf(input_file, "%s", Form("%s/TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", dir))   ; treeReader.AddSingleRootFile(input_file) ;
-    //sprintf(input_file, "%s", Form("%s/TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root", dir))   ; treeReader.AddSingleRootFile(input_file) ;
-    sprintf(input_file, "%s", Form("%s/ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", dir))     ; treeReader.AddSingleRootFile(input_file) ;
-    //sprintf(input_file, "%s", Form("%s/TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", dir)) ; treeReader.AddSingleRootFile(input_file) ;
-    //sprintf(input_file, "%s", Form("%s/TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root", dir)) ; treeReader.AddSingleRootFile(input_file) ;
-    
+    if( (string) input_tag == "st_hct" ){ sprintf(input_file, "%s", Form("%s/ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", dir))     ; treeReader.AddSingleRootFile(input_file) ; }
+    if( (string) input_tag == "tt_hct" ){ sprintf(input_file, "%s", Form("%s/TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root", dir)) ; treeReader.AddSingleRootFile(input_file) ; }
+    if( (string) input_tag == "tt_hct" ){ sprintf(input_file, "%s", Form("%s/TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root", dir)) ; treeReader.AddSingleRootFile(input_file) ; }
+    if( (string) input_tag == "st_hut" ){ sprintf(input_file, "%s", Form("%s/ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", dir))     ; treeReader.AddSingleRootFile(input_file) ; }
+    if( (string) input_tag == "tt_hut" ){ sprintf(input_file, "%s", Form("%s/TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root", dir)) ; treeReader.AddSingleRootFile(input_file) ; }
+    if( (string) input_tag == "tt_hut" ){ sprintf(input_file, "%s", Form("%s/TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root", dir)) ; treeReader.AddSingleRootFile(input_file) ; }
+
+
+    bool is_tt_signal = false;
+    if( (string) input_tag == "tt_hut" || (string) input_tag == "tt_hct") is_tt_signal = true;
+    int CONSTRAINT_NUM_JETS = is_tt_signal ? 4 : 3; //TT=4, ST=3
+    //}}}
     // Opening{{{
     // init{{{
     treeReader.SetBranchAddresses();
@@ -81,7 +78,7 @@ int main(int argc, char *argv[]){
     }
     NormalizationFactor = 1000. * Luminosity * CrossSection * BranchingFraction / TotalGenweight;
     printf("[INFO] TotalGenweight = %f!\n", TotalGenweight);
-    printf("[INFO] NormalizationFactor = %f!\n");
+    printf("[INFO] NormalizationFactor = %f!\n", NormalizationFactor);
     //}}}
     // histograms{{{
     //==================================================//
@@ -218,11 +215,13 @@ int main(int argc, char *argv[]){
         int counter_not_matched_but_is_in_the_list = 0;
         int counter_difference = 0;
     //}}}
+
+    performance_helper ph_top_tbw("top_tbw", input_tag, output_histDir);
+    ph_top_tbw.debug_mode();
     //===============================================//
     //----------------   Event Loop  ----------------//
     //===============================================//
-    //for(int ientry=0; ientry<nentries; ientry++){
-    for(int ientry=0; ientry<1000; ientry++){
+    for(int ientry=0; ientry<nentries; ientry++){
         //preselection, b-jet, geninfo{{{
         treeReader.flashggStdTree->GetEntry(ientry);//load data
         // Pre-process{{{
@@ -238,7 +237,6 @@ int main(int argc, char *argv[]){
         if(!treeReader.EvtInfo_passTrigger) continue;
         //control region
         if(treeReader.DiPhoInfo_mass<100 || treeReader.DiPhoInfo_mass>180) continue;
-        //if( !isMCsignal && treeReader.DiPhoInfo_mass>120 && treeReader.DiPhoInfo_mass<130) continue;
         //require the quality of photons. (PT requirement)
         //bool pass_leadingPhotonPT = treeReader.DiPhoInfo_leadPt > treeReader.DiPhoInfo_mass / 2.;
         //bool pass_subleadingPhotonPT = treeReader.DiPhoInfo_subleadPt > treeReader.DiPhoInfo_mass / 4.;
@@ -647,6 +645,7 @@ int main(int argc, char *argv[]){
         std::vector<int> jetIndex_is_bquarkFromSMtop_moreThanOne(2, -999);
         std::vector<int> jetIndex_is_quarkFromFCNtop_moreThanOne(2, -999);
         std::vector<int> genIndex_is_quarkFromWboson(2, -999);
+
         for(int i=0; i<mytree.num_jets; ++i){
             //retrieve index of genParticle, matched ID, and matched mom ID
             int index_gen, Matched_PdgID, Matched_MomPdgID;
@@ -654,35 +653,31 @@ int main(int argc, char *argv[]){
             obtain_gen_matched_ID(printSelectedJetsInfo, Jets[i], index_gen, Matched_PdgID, Matched_MomPdgID, treeReader.GenPartInfo_size,\
                                   treeReader.GenPartInfo_MomPdgID, treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass,\
                                   treeReader.GenPartInfo_Status, treeReader.GenPartInfo_PdgID);
-            //counting
-            if( abs(Matched_MomPdgID)==24 ) counter_momPdgID_is_wboson += 1;
-            if( abs(Matched_PdgID)==5 && abs(Matched_MomPdgID)==6 ) counter_is_bquarkFromSMtop += 1;
-            if( abs(Matched_PdgID)!=5 && abs(Matched_MomPdgID)==6 ) counter_is_quarkFromFCNtop += 1;
 
-            //index
             if( abs(Matched_MomPdgID)==24 ){
-                if(counter_momPdgID_is_wboson==1) jetIndex_momPdgID_is_wboson[0] = i;
-                if(counter_momPdgID_is_wboson==2) jetIndex_momPdgID_is_wboson[1] = i;
-            }
-            if( abs(Matched_PdgID)==5 && abs(Matched_MomPdgID)==6 ) jetIndex_is_bquarkFromSMtop = i;
-            if( abs(Matched_PdgID)!=5 && abs(Matched_MomPdgID)==6 ) jetIndex_is_quarkFromFCNtop = i;
-
-            // fix bug when w quark is matched twice
-            if( abs(Matched_MomPdgID)==24 ){
-                if(counter_momPdgID_is_wboson==1) genIndex_is_quarkFromWboson[0] = index_gen;
-                if(counter_momPdgID_is_wboson==2) genIndex_is_quarkFromWboson[1] = index_gen;
+                counter_momPdgID_is_wboson += 1;
+                if(counter_momPdgID_is_wboson==1){
+                    jetIndex_momPdgID_is_wboson[0] = i;
+                    genIndex_is_quarkFromWboson[0] = index_gen;
+                }
+                if(counter_momPdgID_is_wboson==2){
+                    jetIndex_momPdgID_is_wboson[1] = i;
+                    genIndex_is_quarkFromWboson[1] = index_gen;
+                }
             }
 
-            // fix bug when bquark is matched twice
             if( abs(Matched_PdgID)==5 && abs(Matched_MomPdgID)==6 ){
+                counter_is_bquarkFromSMtop += 1;
                 if(counter_is_bquarkFromSMtop==1) jetIndex_is_bquarkFromSMtop_moreThanOne[0] = i;
                 if(counter_is_bquarkFromSMtop==2) jetIndex_is_bquarkFromSMtop_moreThanOne[1] = i;
+                if( abs(Matched_PdgID)==5 && abs(Matched_MomPdgID)==6 ) jetIndex_is_bquarkFromSMtop = i;
             }
 
-            // fix bug when q-tqh is matched twice
             if( abs(Matched_PdgID)!=5 && abs(Matched_MomPdgID)==6 ){
+                counter_is_quarkFromFCNtop += 1;
                 if(counter_is_quarkFromFCNtop==1) jetIndex_is_quarkFromFCNtop_moreThanOne[0] = i;
                 if(counter_is_quarkFromFCNtop==2) jetIndex_is_quarkFromFCNtop_moreThanOne[1] = i;
+                if( abs(Matched_PdgID)!=5 && abs(Matched_MomPdgID)==6 ) jetIndex_is_quarkFromFCNtop = i;
             }
         }
         //--------------------------------------------------
@@ -757,7 +752,7 @@ int main(int argc, char *argv[]){
         // gen-matched indices
         std::vector<int> index_jet_gen_matched = { jetIndex_is_bquarkFromSMtop, jetIndex_momPdgID_is_wboson[0], jetIndex_momPdgID_is_wboson[1], jetIndex_is_quarkFromFCNtop };
 
-        // Multiplicity & WP
+        // Multiplicity & WP{{{
         std::vector<bool> bool_multiplicity_condition = {false, true};
         for(std::size_t ibool=0; ibool!=bool_multiplicity_condition.size(); ++ibool){
             bool bool_num_bjets_is_exactly_one = bool_multiplicity_condition[ibool];
@@ -827,7 +822,6 @@ int main(int argc, char *argv[]){
                 if(index_bjet_method_2 == jetIndex_is_bquarkFromSMtop)
                     hist_entries_bjet_wp_matched  -> Fill(iwp);
 
-
                 // four methods for top reconstruction(ST){{{
                 //### chi-2 Study
                 indices_bjet = {index_bjet_method_2}; // b-jet with the highest b-tag scores
@@ -890,6 +884,19 @@ int main(int argc, char *argv[]){
                 if( index_jet_chi2_modified[0] == jetIndex_is_bquarkFromSMtop && ibool == 0 ){ hist_rate_permuting_bjet_is_bquark_mod -> Fill(iwp); }
                 if( index_jet_chi2_improved[0] == jetIndex_is_bquarkFromSMtop && ibool == 0 ){ hist_rate_permuting_bjet_is_bquark_imp -> Fill(iwp); }
                 //}}}
+
+                //--- Use the latest method ---//
+                index_jet_chi2_modified; // ST
+                TLorentzVector bjet_  = Jets[index_jet_chi2_modified[0]];
+                TLorentzVector wjet1_ = Jets[index_jet_chi2_modified[1]];
+                TLorentzVector wjet2_ = Jets[index_jet_chi2_modified[2]];
+
+                TLorentzVector wboson_ = wjet1_ + wjet2_;
+                TLorentzVector topquark_ = bjet_ + wboson;
+
+                //chargedLepton, neutrino, wboson, bquark, topquark, antitopquark, topquark_tbw, topquark_tqh;
+                ph_top_tbw.fill_hists(topquark_tbw, topquark_);
+
                 Nevents_pass_selection[iwp][ibool] += 1;
             } // end of wp for loop
         } // end of mulplicity condition for loop
@@ -1619,16 +1626,13 @@ int main(int argc, char *argv[]){
     //==================================================//
     //---------------------  Report  -------------------//
     //==================================================//
-    hist_entries_bjet_wp_selected -> Draw("b");
-    hist_entries_bjet_wp_matched  -> Draw("b same");
+    //report{{{
     PrintCountsAndRatio("[re-visit] selection eff. loose",  hist_entries_bjet_wp_selected->GetBinContent(1), nentries);
     PrintCountsAndRatio("[re-visit] selection eff. medium", hist_entries_bjet_wp_selected->GetBinContent(2), nentries);
     PrintCountsAndRatio("[re-visit] selection eff. tight",  hist_entries_bjet_wp_selected->GetBinContent(3), nentries);
     PrintCountsAndRatio("[re-visit] matching  eff. loose",   hist_entries_bjet_wp_matched->GetBinContent(1), hist_entries_bjet_wp_selected->GetBinContent(1));
     PrintCountsAndRatio("[re-visit] matching  eff. medium",  hist_entries_bjet_wp_matched->GetBinContent(2), hist_entries_bjet_wp_selected->GetBinContent(2));
     PrintCountsAndRatio("[re-visit] matching  eff. tight",   hist_entries_bjet_wp_matched->GetBinContent(3), hist_entries_bjet_wp_selected->GetBinContent(3));
-
-    //report{{{
     PrintCountsAndRatio("counter_index_bjet_method_2", counter_index_bjet_method_2, Nevents_pass_selection[0][0]);
     PrintCountsAndRatio("anti_counter_index_bjet_method_2", anti_counter_index_bjet_method_2, Nevents_pass_selection[0][0]);
     PrintCountsAndRatio("counter_genmatched_index_bjet_unphysical", counter_genmatched_index_bjet_unphysical, Nevents_pass_selection[0][0]);
@@ -1669,14 +1673,18 @@ int main(int argc, char *argv[]){
     }
     //}}}
 
+    ph_top_tbw.make_plots();
+
+
+
+    /*
+    //hist_entries_bjet_wp.png{{{
     TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
     //TLegend *legend = new TLegend(0.50,0.20,0.88,0.45);
     TLegend *legend = new TLegend(0.60, 0.70, 0.85, 0.85);
     legend->SetTextFont(43);
     legend->SetLineColor(0);
 
-    printf("Hello World\n");
-    //hist_entries_bjet_wp.png{{{
     gPad->SetGrid();
     gPad->SetTicks(0,1);
 
@@ -1697,8 +1705,6 @@ int main(int argc, char *argv[]){
 
     c1->SaveAs(Form("%s/hist_entries_bjet_wp.png", output_histDir));
     //}}}
-
-    /*
     //bjet rate-WP plots{{{
     // Normalization{{{
     for(int i=0; i<3; ++i){
@@ -1762,8 +1768,6 @@ int main(int argc, char *argv[]){
     c1->SaveAs(Form("%s/hist_rate_bquark_is_included_atleastOne.png", output_histDir))      ;
     //}}}
     */
-
-
     /* skip tmp{{{
     //--- report(TT) ---//
     // top correct rate{{{
@@ -1972,6 +1976,14 @@ int main(int argc, char *argv[]){
     // the end{{{
     fout->Write();
     fout->Close();
-    return 0;
     //}}}
+}
+
+int main(int argc, char *argv[]){
+    char input_tag[512]  ; sprintf(input_tag ,  "%s", argv[1]); printf("[INFO] input_tag   = %s\n", input_tag) ;
+    char output_file[512]; sprintf(output_file, "%s", argv[2]); printf("[INFO] output_file = %s\n", output_file);
+    char dataset[512]    ; sprintf(dataset    , "%s", argv[3]); printf("[INFO] dataset     = %s\n", dataset)    ;
+    chi2_study(input_tag, output_file, dataset);
+
+    return 0;
 }

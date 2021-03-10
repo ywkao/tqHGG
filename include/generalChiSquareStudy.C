@@ -299,7 +299,12 @@ bool check_tbwIsCorrectlyMatched(std::vector<int> index_jet_chi2, std::vector<in
 
 bool check_tbwIsCorrectlyMatched(std::vector<int> index_jet_chi2, std::vector<int> jetIndex_momPdgID_is_wboson, int index_bjet, int jetIndex_is_bquarkFromSMtop) // old version
 {
-    bool are_From_W_boson = (  ((index_jet_chi2[0] == jetIndex_momPdgID_is_wboson[0]) && (index_jet_chi2[1] == jetIndex_momPdgID_is_wboson[1]))\
+    bool are_From_W_boson;
+
+    if(jetIndex_momPdgID_is_wboson[0] == -999 || jetIndex_momPdgID_is_wboson[1] == -999)
+        are_From_W_boson = false;
+    else
+        are_From_W_boson = ( ((index_jet_chi2[0] == jetIndex_momPdgID_is_wboson[0]) && (index_jet_chi2[1] == jetIndex_momPdgID_is_wboson[1]))\
                             || ((index_jet_chi2[0] == jetIndex_momPdgID_is_wboson[1]) && (index_jet_chi2[1] == jetIndex_momPdgID_is_wboson[0])) );
     bool tbwIsCorrectlyMatched = (index_bjet == jetIndex_is_bquarkFromSMtop) && are_From_W_boson;
     return tbwIsCorrectlyMatched;
@@ -437,7 +442,7 @@ double obtain_deltaR(bool bool_print, TLorentzVector jet, int &Matched_PdgID, in
 // print gen info{{{
 void obtain_gen_matched_ID(bool bool_print, TLorentzVector jet, int &index_gen, int &Matched_PdgID, int &Matched_MomPdgID, Int_t GenPartInfo_size, std::vector<int> *GenPartInfo_MomPdgID, std::vector<float> *GenPartInfo_Pt, std::vector<float> *GenPartInfo_Eta, std::vector<float> *GenPartInfo_Phi, std::vector<float> *GenPartInfo_Mass, std::vector<int> *GenPartInfo_Status, std::vector<int> *GenPartInfo_PdgID){
     TLorentzVector truelove;//we are looking for the right genParticle to match the jet.
-    int index = -999, truelove_PdgID = -999; double delta_R_min = 999.;
+    int index = -999, truelove_PdgID = -999; double delta_R_min = 999.; index_gen = -1;
     for(int i=0; i<GenPartInfo_size; i++){
         if( abs(GenPartInfo_Status->at(i)) != 23 ) continue;//remove incoming/intermediate particles
         //if( abs(GenPartInfo_PdgID->at(i)) > 6 ) continue;//exclude top quark & other particles

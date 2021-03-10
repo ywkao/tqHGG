@@ -20,7 +20,6 @@
 #include <TTree.h>
 #include <vector>
 #include <string>
-#include "../include/generalChiSquareStudy.h"
 //}}}
 using namespace std;
 
@@ -39,6 +38,8 @@ char output_dir[512] = "result_top_reco_study";
 //==========================//
 //---  Class & Function  ---//
 //==========================//
+void chi2_study(char *input_file, char *output_file, char* dataset);
+
 vector<int> get_bjjq_indices_min_chi2(std::vector<TLorentzVector> Jets, std::vector<int> indices_bjet, TLorentzVector diphoton, bool is_chi2_modified);
 vector<int> get_bjj_indices_min_chi2(std::vector<TLorentzVector> Jets, std::vector<int> indices_bjet, bool is_chi2_modified);
 vector<int> get_indices_chi2(std::vector<TLorentzVector> Jets, int index_bjet, double &chi2_min, bool is_chi2_modified);

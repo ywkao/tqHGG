@@ -135,6 +135,7 @@ public:
     float DiPhoInfo_phi;
     float DiPhoInfo_energy;
     //------------------------
+    Int_t           GenPartInfo_gen_size;
     std::vector<float>   GenPartInfo_gen_Pt;
     std::vector<float>   GenPartInfo_gen_Eta;
     std::vector<float>   GenPartInfo_gen_Phi;
@@ -143,6 +144,7 @@ public:
     std::vector<int>     GenPartInfo_gen_Status;
     std::vector<int>     GenPartInfo_gen_nMo;
     std::vector<int>     GenPartInfo_gen_nDa;
+    std::vector<int>     hadronFlavor;
     //------------------------
     Int_t num_jets;// # of selected objects.
     std::vector<float> JetInfo_jet_pt;
@@ -180,6 +182,7 @@ public:
     //------------------------
     //containers used in selection stage
     //------------------------
+    Int_t           GenPartInfo_gen_size_selection;
     std::vector<float>   *GenPartInfo_gen_Pt_selection;
     std::vector<float>   *GenPartInfo_gen_Eta_selection;
     std::vector<float>   *GenPartInfo_gen_Phi_selection;
@@ -188,6 +191,7 @@ public:
     std::vector<int>     *GenPartInfo_gen_Status_selection;
     std::vector<int>     *GenPartInfo_gen_nMo_selection;
     std::vector<int>     *GenPartInfo_gen_nDa_selection;
+    std::vector<int>     *hadronFlavor_selection;
     //------------------------
     std::vector<float> *JetInfo_jet_pt_selection;
     std::vector<float> *JetInfo_jet_eta_selection;

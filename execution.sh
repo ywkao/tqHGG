@@ -82,16 +82,19 @@ function ReRunStackPlotsOnly(){
 #time ./script/exe_selection_batch.sh "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8" "leptonic"
 #time ./script/exe_selection_batch.sh "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8" "hadronic"
 #}}}
-# top reconstruction study hadronic{{{
+# top reconstruction study hadronic
 #export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH ###!!! For topKinFit method purpose.
 
+
 ## TT signal
+cp include/covMatrix_tt_hut.C include/covMatrix.C
 #make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root"
-#make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root" "hadronic"
+make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hut-MadGraph5-pythia8.root" "hadronic"
 #
 #make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root"
 #make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-TtoHJ_aThadronic_HToaa_eta_hct-MadGraph5-pythia8.root" "hadronic"
 #
+#cp include/covMatrix_tt_hct.C include/covMatrix.C
 #make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root"
 #make && time ./script/exe_generalChiSquareStudy.sh "TT_FCNC-aTtoHJ_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root" "hadronic"
 #
@@ -100,9 +103,11 @@ function ReRunStackPlotsOnly(){
 #
 #
 ## ST signal
+#cp include/covMatrix_st_hut.C include/covMatrix.C
 #make && time ./script/exe_covarianceMatrixStudy.sh "ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root"
 #make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Thadronic_HToaa_eta_hut-MadGraph5-pythia8.root" "hadronic"
 #
+#cp include/covMatrix_st_hct.C include/covMatrix.C
 #make && time ./script/exe_covarianceMatrixStudy.sh "ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root"
 #make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Thadronic_HToaa_eta_hct-MadGraph5-pythia8.root" "hadronic"
 #}}}
@@ -116,7 +121,7 @@ function ReRunStackPlotsOnly(){
 #make && time ./script/exe_generalChiSquareStudy.sh "ST_FCNC-TH_Tleptonic_HToaa_eta_hct-MadGraph5-pythia8.root" "leptonic"
 #}}}
 #make && time ./script/exe_covarianceMatrixStudy.sh "TT_FCNC_hct.root"
-#------------------------- Main Exe Section -------------------------#
+##------------------------- Main Exe Section -------------------------#
 #./script/setup_before_fireBatchJobs.sh 
 #./script/prepareExeForNewMC_npu_float.sh "preselection"
 #for year in "2017old" "2018" "2017" "2016"
@@ -126,32 +131,28 @@ function ReRunStackPlotsOnly(){
 #Intermission # not yet
 #time ./script/convert_outputPreselection_to_inputSelection.sh
 
-#--------------------------------------------------#
+##--------------------------------------------------#
 #export LD_LIBRARY_PATH=../TopKinFit/:$LD_LIBRARY_PATH #!For topKinFit method
 #./script/prepareExeForNewMC_npu_float.sh "selection"
+#
+#tag="_ctagReshaping_tightPUID" #tag="_manual" #"_latest" #"_update"
+#for channel in "leptonic" "hadronic"
+#do
+#    #echo "mv plots_${channel}${tag} plots"; mv plots_${channel}${tag} plots; # re-stack
+#    for year in "2017old" "161718" "2018" "2017" "2016"
+#    do
+#        Selection ${year} ${channel}
+#        if [ $year == "2016" ]; then
+#            ./script/warning_use2017VHToGG_as2016VHToGG.sh
+#            ls "plots/2016"
+#        fi
+#        AfterSelection ${year} ${channel}
+#    done
+#    ./script/resetPlotsChannels.sh plots_${channel}${tag}
+#done
+##./script/tableMaker.sh "${tag}"
 
-tag="_manual"
-#tag="_latest"
-#tag="_update"
-#for channel in "hadronic"
-for channel in "leptonic" "hadronic"
-do
-    echo "mv plots_${channel}${tag} plots"; mv plots_${channel}${tag} plots; # re-stack
-    #for year in "2017old" "161718" "2018" "2017" "2016"
-    #for year in "2017old" "161718"
-    for year in "161718"
-    do
-        #Selection ${year} ${channel}
-        #if [ $year == "2016" ]; then
-        #    ./script/warning_use2017VHToGG_as2016VHToGG.sh
-        #    ls "plots/2016"
-        #fi
-        AfterSelection ${year} ${channel}
-    done
-    ./script/resetPlotsChannels.sh plots_${channel}${tag}
-done
-#./script/tableMaker.sh "${tag}"
-#--------------------------------------------------
+# MVA training{{{
 #target_dir="plots_leptonic_latest/161718/mva"
 
 ### MVA training ###
@@ -197,4 +198,4 @@ done
 #ReRunStackPlotsOnly 161718 "leptonic"
 #./script/tableMaker.sh
 #./script/check_errors.sh
-
+#}}}

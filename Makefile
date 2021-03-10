@@ -54,19 +54,15 @@ $(TARGET0): build/covarianceMatrixStudy.o
 	@echo " Linking..."
 	@echo " $(CC) $^ -o $(TARGET0) $(LIB)"; $(CC) $^ -o $(TARGET0) $(LIB)
 
-$(TARGET1): build/preselection.o
+$(TARGET1): build/preselection.o build/genMatching.o
 	@echo " Linking..."
 	@echo " $(CC) $^ -o $(TARGET1) $(LIB)"; $(CC) $^ -o $(TARGET1) $(LIB)
 
-$(TARGET2): build/selection.o
+$(TARGET2): build/selection.o build/ctag_reshaping.o
 	@echo " Linking for selection cpp..."
 	@echo " $(CC) $^ -o $(TARGET2) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET2) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)
 
-#$(TARGET3): build/generalChiSquareStudy_hadronic_exe.o build/libHistFactory.so
-#	@echo " Linking for generalChiSquareStudy_hadronic_exe cpp..."
-#	@echo " $(CC) $^ -o $(TARGET3) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)"; $(CC) $^ -o $(TARGET3) -L/wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit -lKinFit $(LIB)
-
-$(TARGET3): build/generalChiSquareStudy_hadronic_exe.o build/libHistFactory.so
+$(TARGET3): build/generalChiSquareStudy_hadronic_exe.o build/libHistFactory.so build/gen_reco_performance_helper.o
 	@echo " Linking for generalChiSquareStudy_hadronic_exe cpp..."
 	@echo " $(CC) $^ -o $(TARGET3) $(LIB)"; $(CC) $^ -o $(TARGET3) $(LIB)
 
@@ -93,17 +89,25 @@ build/covarianceMatrixStudy.o: src/covarianceMatrixStudy.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
-build/preselection.o: src/preselection.cpp
+build/preselection.o: src/preselection_exe.cpp
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+build/genMatching.o: include/genMatching.cc
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+build/ctag_reshaping.o: include/ctag_reshaping.cpp
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+build/gen_reco_performance_helper.o: include/gen_reco_performance_helper.cc include/gen_reco_performance_helper.h
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 build/selection.o: src/selection.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<
-
-#build/generalChiSquareStudy_hadronic_exe.o: src/generalChiSquareStudy_hadronic_exe.cpp
-#	@mkdir -p $(BUILDDIR)
-#	@echo " $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) -I /wk_cms2/ykao/CMSSW_9_4_10/src/2017/TopKinFit $(CFLAGS) $(INC) -c -o $@ $<
 
 build/generalChiSquareStudy_hadronic_exe.o: src/generalChiSquareStudy_hadronic_exe.cpp
 	@mkdir -p $(BUILDDIR)

@@ -21,7 +21,8 @@ ExeAnalysis(){
 
     # execution
     echo ${message}
-    echo ${message_chi}; ${exe} ${inputfile} ${outputfile} ${dataset};
+    echo ${message_chi}; ${exe} ${file} ${outputfile} ${dataset};
+    #echo ${message_chi}; ${exe} ${inputfile} ${outputfile} ${dataset};
 
     #cp -rp "${OUTPUTDIR}/hist_factory_${channel}" "${OUTPUTDIR}/hist_factory_${channel}_${ext}"
 }

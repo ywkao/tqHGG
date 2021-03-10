@@ -92,6 +92,14 @@ enum histList {
     hist_lepton_leadingPhoton_deltaR,
     hist_lepton_subleadingPhoton_deltaR,
     hist_lepton_diphoton_deltaTheta,
+    hist_max_btag_score,
+    hist_2nd_max_btag_score,
+    hist_max_ctag_score,
+    hist_2nd_max_ctag_score,
+    hist_max_btag_score_reshaped,
+    hist_2nd_max_btag_score_reshaped,
+    hist_max_ctag_score_reshaped,
+    hist_2nd_max_ctag_score_reshaped,
     hist_jet1_pt,
     hist_jet1_eta,
     hist_jet1_phi,
@@ -271,6 +279,14 @@ std::string histNames[totalHistNum]{
     "hist_lepton_leadingPhoton_deltaR",
     "hist_lepton_subleadingPhoton_deltaR",
     "hist_lepton_diphoton_deltaTheta",
+    "hist_max_btag_score",
+    "hist_2nd_max_btag_score",
+    "hist_max_ctag_score",
+    "hist_2nd_max_ctag_score",
+    "hist_max_btag_score_reshaped",
+    "hist_2nd_max_btag_score_reshaped",
+    "hist_max_ctag_score_reshaped",
+    "hist_2nd_max_ctag_score_reshaped",
     "hist_jet1_pt",
     "hist_jet1_eta",
     "hist_jet1_phi",
@@ -449,6 +465,14 @@ int histNbins[totalHistNum]{
     40,//hist_lepton_leadingPhoton_deltaR
     40,//hist_lepton_subleadingPhoton_deltaR
     40,//hist_lepton_diphoton_deltaTheta
+    50,//hist_max_btag_score
+    50,//hist_2nd_max_btag_score
+    50,//hist_max_ctag_score
+    50,//hist_2nd_max_ctag_score
+    50,//hist_max_btag_score_reshaped
+    50,//hist_2nd_max_btag_score_reshaped
+    50,//hist_max_ctag_score_reshaped
+    50,//hist_2nd_max_ctag_score_reshaped
     40,//hist_jet1_pt
     40,//hist_jet1_eta
     40,//hist_jet1_phi
@@ -627,6 +651,14 @@ double histBinLow[totalHistNum]{
     0,//hist_lepton_leadingPhoton_deltaR
     0,//hist_lepton_subleadingPhoton_deltaR
     0,//hist_lepton_diphoton_deltaTheta
+    0,//hist_max_btag_score
+    0,//hist_2nd_max_btag_score
+    0,//hist_max_ctag_score
+    0,//hist_2nd_max_ctag_score
+    0,//hist_max_btag_score_reshaped
+    0,//hist_2nd_max_btag_score_reshaped
+    0,//hist_max_ctag_score_reshaped
+    0,//hist_2nd_max_ctag_score_reshaped
     0,//hist_jet1_pt
     -2.5,//hist_jet1_eta
     -3.0,//hist_jet1_phi
@@ -805,6 +837,14 @@ double histBinHigh[totalHistNum]{
     6,//hist_lepton_leadingPhoton_deltaR
     6,//hist_lepton_subleadingPhoton_deltaR
     3.0,//hist_lepton_diphoton_deltaTheta
+    1,//hist_max_btag_score
+    1,//hist_2nd_max_btag_score
+    1,//hist_max_ctag_score
+    1,//hist_2nd_max_ctag_score
+    1,//hist_max_btag_score_reshaped
+    1,//hist_2nd_max_btag_score_reshaped
+    1,//hist_max_ctag_score_reshaped
+    1,//hist_2nd_max_ctag_score_reshaped
     200,//hist_jet1_pt
     2.5,//hist_jet1_eta
     3.0,//hist_jet1_phi

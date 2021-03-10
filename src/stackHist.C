@@ -25,9 +25,17 @@ void stackHist(const char* channel){
     if(bool_isHadronic) printf("[check] from macro src/stackHist.C: isHadronic!\n");
     if(bool_isLeptonic) printf("[check] from macro src/stackHist.C: isLeptonic!\n");
     //}}}
-    //MakeStackHist("hist_DiPhoInfo_mass");
+    MakeStackHist("hist_DiPhoInfo_mass");
+    MakeStackHist("hist_max_btag_score");
+    MakeStackHist("hist_2nd_max_btag_score");
+    MakeStackHist("hist_max_ctag_score");
+    MakeStackHist("hist_2nd_max_ctag_score");
+    MakeStackHist("hist_max_btag_score_reshaped");
+    MakeStackHist("hist_2nd_max_btag_score_reshaped");
+    MakeStackHist("hist_max_ctag_score_reshaped");
+    MakeStackHist("hist_2nd_max_ctag_score_reshaped");
     //MakeStackHist("hist_jetq_pt");
-    //### MakeStackHist{{{
+    //////### MakeStackHist{{{
     MakeStackHist("hist_EvtInfo_NPu");
     MakeStackHist("hist_EvtInfo_Rho");
     MakeStackHist("hist_EvtInfo_Rho_wopu");
@@ -114,6 +122,14 @@ void stackHist(const char* channel){
     MakeStackHist("hist_lepton_leadingPhoton_deltaR");
     MakeStackHist("hist_lepton_subleadingPhoton_deltaR");
     MakeStackHist("hist_lepton_diphoton_deltaTheta");
+    MakeStackHist("hist_max_btag_score");
+    MakeStackHist("hist_2nd_max_btag_score");
+    MakeStackHist("hist_max_ctag_score");
+    MakeStackHist("hist_2nd_max_ctag_score");
+    MakeStackHist("hist_max_btag_score_reshaped");
+    MakeStackHist("hist_2nd_max_btag_score_reshaped");
+    MakeStackHist("hist_max_ctag_score_reshaped");
+    MakeStackHist("hist_2nd_max_ctag_score_reshaped");
     MakeStackHist("hist_jet1_pt");
     MakeStackHist("hist_jet1_eta");
     MakeStackHist("hist_jet1_phi");
@@ -204,7 +220,7 @@ void stackHist(const char* channel){
     MakeStackHist("hist_leptonic_top_tbw_topKinFit_pt");
     MakeStackHist("hist_leptonic_top_tbw_topKinFit_eta");
     MakeStackHist("hist_leptonic_top_tbw_topKinFit_mass");
-    //end of MakeStackHist}}}
+    //////end of MakeStackHist}}}
 }
 void MakeStackHist(const char* histName){
     if((string)histName == "hist_DiPhoInfo_mass") PrintTexStyle = true; else PrintTexStyle = false;
@@ -907,6 +923,14 @@ bool isThisEtaPhi(const char* histName){
 //}}}
 //### title functions{{{
 string GetXtitleAccordingToHistName(const char* histName){
+    if((string)histName == "hist_max_btag_score") return "Max btag score";
+    if((string)histName == "hist_2nd_max_btag_score") return "2nd max btag score";
+    if((string)histName == "hist_max_ctag_score") return "Max ctag score";
+    if((string)histName == "hist_2nd_max_ctag_score") return "2nd max ctag score";
+    if((string)histName == "hist_max_btag_score_reshaped") return "Max btag score (reshaped)";
+    if((string)histName == "hist_2nd_max_btag_score_reshaped") return "2nd max btag score (reshaped)";
+    if((string)histName == "hist_max_ctag_score_reshaped") return "Max ctag score (reshaped)";
+    if((string)histName == "hist_2nd_max_ctag_score_reshaped") return "2nd max ctag score (reshaped)";
     if((string)histName == "hist_EvtInfo_NPu") return "Number of pile up";
     if((string)histName == "hist_EvtInfo_Rho") return "Rho";
     if((string)histName == "hist_EvtInfo_Rho_wopu") return "Rho (w/o pu)";
@@ -997,6 +1021,15 @@ string GetXtitleAccordingToHistName(const char* histName){
 string GetYtitleAccordingToHistName(const char* histName, double BinWidth){
     string str_ytitle_1("Entries");
     string str_ytitle_2(Form("Entries / %.2f [GeV]", BinWidth));
+    if((string)histName == "hist_max_btag_score") return str_ytitle_1;
+    if((string)histName == "hist_2nd_max_btag_score") return str_ytitle_1;
+    if((string)histName == "hist_max_ctag_score") return str_ytitle_1;
+    if((string)histName == "hist_2nd_max_ctag_score") return str_ytitle_1;
+    if((string)histName == "hist_max_btag_score_reshaped") return str_ytitle_1;
+    if((string)histName == "hist_2nd_max_btag_score_reshaped") return str_ytitle_1;
+    if((string)histName == "hist_max_ctag_score_reshaped") return str_ytitle_1;
+    if((string)histName == "hist_2nd_max_ctag_score_reshaped") return str_ytitle_1;
+    //----------------------------------------------------------------------
     if((string)histName == "hist_EvtInfo_NPu") return str_ytitle_1;
     if((string)histName == "hist_EvtInfo_Rho") return str_ytitle_1;
     if((string)histName == "hist_EvtInfo_NVtx") return str_ytitle_1;

@@ -25,6 +25,7 @@ tables/*.pdf
 puInfo
 
 # Ignore any logs and test files
+*test*
 log/*
 test/*
 *.swp

@@ -23,7 +23,7 @@ function prepare(){
     sed -i 's/Int_t EvtInfo_NPu;/\/\/Int_t EvtInfo_NPu;/' ${FILE}
     sed -i 's/\/\/float EvtInfo_NPu;/float EvtInfo_NPu;/' ${FILE}
     if [ ${NAME} == "preselection" ] || [ ${NAME} == "preselection_npustudy" ]; then
-        sed -i 's/EvtInfo_NPu\/I/EvtInfo_NPu\/F/' src/${NAME}.cpp
+        sed -i 's/EvtInfo_NPu\/I/EvtInfo_NPu\/F/' src/${NAME}_exe.cpp
     fi
     make
     echo "[INFO] mv ./${BIN}/${NAME} ./${BIN}/${NAME}_npu_float"; mv ./${BIN}/${NAME} ./${BIN}/${NAME}_npu_float
@@ -31,7 +31,7 @@ function prepare(){
 
     # reset!
     if [ ${NAME} == "preselection" ] || [ ${NAME} == "preselection_npustudy" ]; then
-        sed -i 's/EvtInfo_NPu\/F/EvtInfo_NPu\/I/' src/${NAME}.cpp
+        sed -i 's/EvtInfo_NPu\/F/EvtInfo_NPu\/I/' src/${NAME}_exe.cpp
     fi
     sed -i 's/\/\/Int_t EvtInfo_NPu;/Int_t EvtInfo_NPu;/' ${FILE}
     sed -i 's/float EvtInfo_NPu;/\/\/float EvtInfo_NPu;/' ${FILE}

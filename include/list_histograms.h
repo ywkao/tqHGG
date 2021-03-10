@@ -107,6 +107,15 @@ TH1D *hist_lepton_diphoton_deltaTheta = new TH1D("hist_lepton_diphoton_deltaThet
 //wjet1(2): jet constitute w_candidate // had process
 //jetq: jet chosen to be the one in tqh coupling //sig tt samples
 //------------------------
+TH1D *hist_max_btag_score = new TH1D("hist_max_btag_score", "", 50, 0, 1);
+TH1D *hist_2nd_max_btag_score = new TH1D("hist_2nd_max_btag_score", "", 50, 0, 1);
+TH1D *hist_max_ctag_score = new TH1D("hist_max_ctag_score", "", 50, 0, 1);
+TH1D *hist_2nd_max_ctag_score = new TH1D("hist_2nd_max_ctag_score", "", 50, 0, 1);
+TH1D *hist_max_btag_score_reshaped = new TH1D("hist_max_btag_score_reshaped", "", 50, 0, 1);
+TH1D *hist_2nd_max_btag_score_reshaped = new TH1D("hist_2nd_max_btag_score_reshaped", "", 50, 0, 1);
+TH1D *hist_max_ctag_score_reshaped = new TH1D("hist_max_ctag_score_reshaped", "", 50, 0, 1);
+TH1D *hist_2nd_max_ctag_score_reshaped = new TH1D("hist_2nd_max_ctag_score_reshaped", "", 50, 0, 1);
+//------------------------
 TH1D *hist_jet1_pt = new TH1D("hist_jet1_pt", "", 40, 0, 200);
 TH1D *hist_jet1_eta = new TH1D("hist_jet1_eta", "", 40, -2.5, 2.5);
 TH1D *hist_jet1_phi = new TH1D("hist_jet1_phi", "", 40, -3.0, 3.0);

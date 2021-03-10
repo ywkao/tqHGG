@@ -23,6 +23,7 @@
 #include "../include/cross_section_2017.h"
 #include "../include/cross_section_2018.h"
 #include "../include/preselection_criteria.h"
+#include "genMatching.h"
 using namespace std;
 //}}}
 
@@ -319,8 +320,8 @@ int main(int argc, char *argv[]){
         //===========================//
         //-----  Store GenInfo  -----//
         //===========================//
-        ////### [warnning] will take too much space!!! more trials are needed!!!
-        //mytree.GenPartInfo_size = treeReader.GenPartInfo_size;
+        //////### [warnning] will take too much space!!! more trials are needed!!!
+        //mytree.GenPartInfo_gen_size = treeReader.GenPartInfo_size;
         //for(int i=0; i<treeReader.GenPartInfo_size; i++){
         //        mytree.GenPartInfo_gen_Pt.push_back(treeReader.GenPartInfo_Pt->at(i));
         //        mytree.GenPartInfo_gen_Eta.push_back(treeReader.GenPartInfo_Eta->at(i));
@@ -332,7 +333,76 @@ int main(int argc, char *argv[]){
         //        mytree.GenPartInfo_gen_nMo.push_back(treeReader.GenPartInfo_nMo->at(i));
         //        mytree.GenPartInfo_gen_nDa.push_back(treeReader.GenPartInfo_nDa->at(i));
         //}
-        //end of store gen info}}}
+        ////end of store gen info}}}
+
+        // # Get hadron flavor{{{
+        vector<int> gen_index_first_loop;
+        vector<int> gen_flavor_first_loop;
+        vector<double> gen_deltaR_first_loop;
+        //printf("\n--------------------------------------------------\n");
+        //printf("Event number = %d\n", ientry);
+        //printf("\n--------------------------------------------------\n");
+        if(Jets.size()>0){
+            for(int i=0; i<Jets.size(); i++){
+                double delta_R_min;
+                std::vector<int> exclusion_list;
+                vector<int> result = obtain_hadron_flavor(Jets[i], delta_R_min, exclusion_list, treeReader.GenPartInfo_size, treeReader.GenPartInfo_PdgID, \
+                                                          treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status);
+                gen_index_first_loop.push_back(result[0]);
+                gen_flavor_first_loop.push_back(result[1]);
+                gen_deltaR_first_loop.push_back(delta_R_min);
+            }
+
+            //printf("[check-obtain] index: ");
+            //for(int i=0; i<Jets.size(); i++) printf("%d ", gen_index_first_loop[i]);
+            //printf("\n");
+
+            //printf("[check-obtain] flavor: ");
+            //for(int i=0; i<Jets.size(); i++) printf("%d ", gen_flavor_first_loop[i]);
+            //printf("\n");
+
+            //printf("[check-obtain] deltaR: ");
+            //for(int i=0; i<Jets.size(); i++) printf("%.2f ", gen_deltaR_first_loop[i]);
+            //printf("\n");
+
+            //--- Get the duplicate elements in vector ---//
+            std::map<int, int> duplicateElements;
+            std::vector<int> repeated_location_in_vector = findDuplicates(gen_index_first_loop, duplicateElements);
+
+            //std::cout << "duplicateElements.size() = " << duplicateElements.size() << std::endl;
+            //for (auto & elem : duplicateElements)
+            //    std::cout << "[repeated] " << elem.first << " :: " << elem.second << std::endl;
+            //for (auto & elem : repeated_location_in_vector)
+            //    std::cout << "[location] " << elem << std::endl;
+
+            bool has_repeated_elements = duplicateElements.size() > 0;
+            if(has_repeated_elements){
+                double deltaR_01 = gen_deltaR_first_loop[repeated_location_in_vector[0]];
+                double deltaR_02 = gen_deltaR_first_loop[repeated_location_in_vector[1]];
+                int location_failed_jet = (deltaR_01 > deltaR_02) ? repeated_location_in_vector[0] : repeated_location_in_vector[1];
+                int repeated_gen_index = gen_index_first_loop[repeated_location_in_vector[0]];
+
+                double delta_R_min;
+                std::vector<int> exclusion_list = {repeated_gen_index};
+                vector<int> result = obtain_hadron_flavor(Jets[location_failed_jet], delta_R_min, exclusion_list, treeReader.GenPartInfo_size, treeReader.GenPartInfo_PdgID, \
+                                                          treeReader.GenPartInfo_Pt, treeReader.GenPartInfo_Eta, treeReader.GenPartInfo_Phi, treeReader.GenPartInfo_Mass, treeReader.GenPartInfo_Status);
+                gen_flavor_first_loop[location_failed_jet] = result[1];
+            }
+
+            //printf("[check-again] flavor: ");
+            //for(int i=0; i<Jets.size(); i++) printf("%d ", gen_flavor_first_loop[i]);
+            //printf("\n");
+        } else{
+            //printf("[check-obtain] # of selected jets is zero.\n");
+        }
+        //}}}
+
+        if(Jets.size()>0){
+            for(int i=0; i<Jets.size(); i++){
+                mytree.hadronFlavor.push_back(gen_flavor_first_loop[i]);
+            }
+        }
+
         // # Event counting{{{
         //==================================================//
         //-------------   Event Counting     ---------------//
@@ -757,7 +827,7 @@ void myTreeClass::MakeNewBranchAddresses(){
     mytree -> Branch("EvtInfo_NVtx", &EvtInfo_NVtx, "EvtInfo_NVtx/I");
     mytree -> Branch("EvtInfo_genweight", &EvtInfo_genweight, "EvtInfo_genweight/F");
     //------------------------
-    //mytree -> Branch("GenPartInfo_size", &GenPartInfo_size, "GenPartInfo_size/I");
+    //mytree -> Branch("GenPartInfo_gen_size", &GenPartInfo_gen_size, "GenPartInfo_gen_size/I");
     //mytree -> Branch("GenPartInfo_gen_Pt", &GenPartInfo_gen_Pt);
     //mytree -> Branch("GenPartInfo_gen_Eta", &GenPartInfo_gen_Eta);
     //mytree -> Branch("GenPartInfo_gen_Phi", &GenPartInfo_gen_Phi);
@@ -766,6 +836,7 @@ void myTreeClass::MakeNewBranchAddresses(){
     //mytree -> Branch("GenPartInfo_gen_Status", &GenPartInfo_gen_Status);
     //mytree -> Branch("GenPartInfo_gen_nMo", &GenPartInfo_gen_nMo);
     //mytree -> Branch("GenPartInfo_gen_nDa", &GenPartInfo_gen_nDa);
+    mytree -> Branch("hadronFlavor", &hadronFlavor);
     //------------------------
     mytree -> Branch("DiPhoInfo_mass", &DiPhoInfo_mass, "DiPhoInfo_mass/F");
     mytree -> Branch("DiPhoInfo_pt", &DiPhoInfo_pt, "DiPhoInfo_pt/F");
@@ -842,6 +913,7 @@ void myParameters::Clear(){
     DiPhoInfo_energy = 0;
     //------------------------
     num_jets = 0;
+    hadronFlavor.clear();
     JetInfo_jet_pt.clear();
     JetInfo_jet_eta.clear();
     JetInfo_jet_phi.clear();
